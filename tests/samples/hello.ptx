@@ -1,0 +1,48 @@
+.version 8.8
+.target sm_86
+.address_size 64
+
+.extern .func (.param .b32 func_retval0) vprintf(
+    .param .b64 vprintf_param_0,
+    .param .b64 vprintf_param_1
+);
+
+.global .align 1 .b8 $str[33] = {
+    73, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 32, 102, 114, 111, 109,
+    32, 71, 80, 85, 32, 116, 104, 114, 101, 97, 100, 32, 37, 100, 33, 10
+};
+
+.visible .entry _Z12hello_kernelv()
+{
+    .local .align 8 .b8 __local_depot0[8];
+    .reg .b64 %SP;
+    .reg .b64 %SPL;
+    .reg .b32 %r<7>;
+    .reg .b64 %rd<4>;
+
+    mov.u64 %SPL, __local_depot0;
+    cvta.local.u64 %SP, %SPL;
+
+    mov.u32 %r1, %ctaid.x;
+    mov.u32 %r2, %ntid.x;
+    mul.lo.s32 %r3, %r1, %r2;
+    mov.u32 %r4, %tid.x;
+    add.s32 %r5, %r3, %r4;
+
+    st.u32 [%SP+0], %r5;
+    mov.u64 %rd1, $str;
+    cvta.global.u64 %rd2, %rd1;
+    add.u64 %rd3, %SP, 0;
+    {
+        .reg .b32 temp_param_reg;
+        .param .b64 param0;
+        st.param.b64 [param0+0], %rd2;
+        .param .b64 param1;
+        st.param.b64 [param1+0], %rd3;
+        .param .b32 retval0;
+        call.uni (retval0), vprintf, (param0, param1);
+        ld.param.b32 %r6, [retval0+0];
+    }
+
+    ret;
+}

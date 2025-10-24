@@ -1,0 +1,25 @@
+[package]
+name = "ptx-parser"
+version = "0.1.0"
+edition = "2024"
+description = "Parse NVIDIA PTX 9.0 assembly into a structured AST and explore modules via a CLI."
+license = "MIT"
+readme = "README.md"
+documentation = "https://docs.rs/ptx-parser"
+keywords = ["ptx", "cuda", "parser"]
+categories = ["parser-implementations"]
+
+[lib]
+name = "ptx_parser"
+path = "src/lib.rs"
+
+[[bin]]
+name = "ptx-parser-bin"
+path = "src/main.rs"
+
+[dependencies]
+thiserror = "1.0"
+clap = { version = "4.5", features = ["derive"] }
+
+[dev-dependencies]
+tempfile = "3.10"
