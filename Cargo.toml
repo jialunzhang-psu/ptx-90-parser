@@ -5,9 +5,11 @@ edition = "2024"
 description = "Parse NVIDIA PTX 9.0 assembly into a structured AST and explore modules via a CLI."
 license = "MIT"
 readme = "README.md"
-documentation = "https://docs.rs/ptx-parser"
+documentation = "https://docs.rs/ptx-90-parser"
 keywords = ["ptx", "cuda", "parser"]
+homepage = "https://github.com/jialunzhang-psu/ptx-90-parser"
 categories = ["parser-implementations"]
+repository = "https://github.com/jialunzhang-psu/ptx-90-parser"
 
 [lib]
 name = "ptx_parser"
