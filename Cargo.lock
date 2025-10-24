@@ -184,7 +184,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ptx-parser"
+name = "ptx-90-parser"
 version = "0.1.0"
 dependencies = [
  "clap",

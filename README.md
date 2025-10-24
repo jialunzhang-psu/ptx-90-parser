@@ -1,7 +1,7 @@
-# ptx-parser
+# ptx-90-parser
 
 There is already a crate named `ptx-parser` on crates.io, but it has not been
-updated for 2 years and does not support PTX 9.0. This crate, `ptx-parser-90`,
+updated for 2 years and does not support PTX 9.0. This crate, `ptx-90-parser`,
 parses NVIDIA PTX 9.0 assembly source into a structured abstract syntax tree. It
 also ships with a small companion CLI that prints module summaries and
 optionally emits a tree representation of the parsed PTX.
