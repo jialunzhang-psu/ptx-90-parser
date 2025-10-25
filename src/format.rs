@@ -1,12 +1,13 @@
 use ptx_parser::{
     AddressBase, AddressDisplacement, AddressDisplacementKind, AddressSign, DwarfDirective,
-    EntryFunction, FuncFunction, FunctionAlias, FunctionBody, FunctionDim3, FunctionEntryDirective,
-    FunctionHeaderDirective, FunctionKernelDirective, FunctionStatement,
-    GenericFunctionDeclaration, GlobalInitializer, InitializerValue, Instruction, LinkingDirective,
-    LinkingDirectiveKind, LocationDirective, MemoryOperand, ModifierKind, Module,
-    ModuleDebugDirective, ModuleDirective, ModuleDirectiveKind, ModuleVariableDirective,
-    NumericLiteral, Operand, Parameter, PragmaDirective, RegisterDeclaration, RegisterSpecifier,
-    StatementDirective, StatementSectionDirective, VariableDirective, VariableQualifier,
+    EntryFunction, ExternCallBlock, ExternCallSetup, FuncFunction, FunctionAlias, FunctionBody,
+    FunctionDim3, FunctionEntryDirective, FunctionHeaderDirective, FunctionKernelDirective,
+    FunctionStatement, GenericFunctionDeclaration, GlobalInitializer, InitializerValue,
+    Instruction, LinkingDirective, LinkingDirectiveKind, LocationDirective, MemoryOperand,
+    ModifierKind, Module, ModuleDebugDirective, ModuleDirective, ModuleDirectiveKind,
+    ModuleVariableDirective, NumericLiteral, Operand, Parameter, PragmaDirective,
+    RegisterDeclaration, RegisterSpecifier, StatementDirective, StatementSectionDirective,
+    VariableDirective, VariableQualifier,
 };
 
 pub fn module_to_tree(module: &Module) -> String {
@@ -462,6 +463,7 @@ fn write_statement(writer: &mut TreeWriter, stmt: &FunctionStatement) {
         FunctionStatement::Label(name) => writer.line(&format!("(label {})", quote(name.as_str()))),
         FunctionStatement::Directive(directive) => write_statement_directive(writer, directive),
         FunctionStatement::Instruction(instr) => write_instruction(writer, instr),
+        FunctionStatement::ExternCallBlock(block) => write_extern_call_block(writer, block),
     }
 }
 
@@ -516,6 +518,41 @@ fn write_statement_directive(writer: &mut TreeWriter, directive: &StatementDirec
         StatementDirective::Pragma(pragma) => write_pragma_directive(writer, pragma),
         StatementDirective::Section(section) => write_section_directive(writer, section),
     }
+}
+
+fn write_extern_call_block(writer: &mut TreeWriter, block: &ExternCallBlock) {
+    writer.open("extern_call");
+    if !block.declarations.is_empty() {
+        writer.open("declarations");
+        for decl in &block.declarations {
+            write_entry_directive(writer, decl);
+        }
+        writer.close();
+    }
+
+    if !block.setup.is_empty() {
+        writer.open("setup");
+        for step in &block.setup {
+            match step {
+                ExternCallSetup::Param(param) => write_generic_entry(writer, param),
+                ExternCallSetup::Store(instr) => write_instruction(writer, instr),
+            }
+        }
+        writer.close();
+    }
+
+    writer.open("call");
+    write_instruction(writer, &block.call);
+    writer.close();
+
+    if !block.post_call.is_empty() {
+        writer.open("post_call");
+        for instr in &block.post_call {
+            write_instruction(writer, instr);
+        }
+        writer.close();
+    }
+    writer.close();
 }
 
 fn write_dwarf_directive(writer: &mut TreeWriter, directive: &DwarfDirective) {

@@ -1,23 +1,24 @@
 use crate::{
+    InstructionOpcode,
     r#type::{
         AddressBase, AddressDisplacement, AddressDisplacementKind, AddressSign,
         AddressSizeDirective, ArraySpecifier, AsyncGroupModifier, AtomicOperationModifier,
         CacheModifier, CallModifier, ConditionModifier, DwarfDirective, EntryFunction,
-        FileDirective, FuncFunction, FunctionAlias, FunctionBody, FunctionDeclarationKind,
-        FunctionDim3, FunctionEntryDirective, FunctionHeaderDirective, FunctionKernelDirective,
-        FunctionLinkage, FunctionStatement, FunctionVisibility, GenericFunctionDeclaration,
-        GlobalAddressSpace, GlobalInitializer, GlobalLinkage, GlobalMutability, GlobalVisibility,
-        InitializerValue, Instruction, LinkingDirective, LinkingDirectiveKind, LocationDirective,
-        MathModeModifier, MemoryOperand, MemoryOrderModifier, MemoryScopeModifier, ModifierKind,
-        Module, ModuleDebugDirective, ModuleDirective, ModuleDirectiveKind,
-        ModuleVariableDirective, NumericLiteral, OpcodeKind, Operand, Parameter,
-        ParameterQualifiers, ParameterSpecifier, ParameterStorage, PointerAddressSpace,
-        PointerQualifier, PragmaDirective, PtxParseError, RegisterDeclaration, RegisterSpecifier,
-        RegisterType, RoundingModifier, ScalarType, SectionDirective, ShuffleModifier,
-        StateSpaceModifier, StatementDirective, StatementSectionDirective, SynchronizationModifier,
-        TargetDirective, TypeModifier, VariableDirective, VariableQualifier, VersionDirective,
+        ExternCallBlock, ExternCallSetup, FileDirective, FuncFunction, FunctionAlias, FunctionBody,
+        FunctionDeclarationKind, FunctionDim3, FunctionEntryDirective, FunctionHeaderDirective,
+        FunctionKernelDirective, FunctionLinkage, FunctionStatement, FunctionVisibility,
+        GenericFunctionDeclaration, GlobalAddressSpace, GlobalInitializer, GlobalLinkage,
+        GlobalMutability, GlobalVisibility, InitializerValue, Instruction, LinkingDirective,
+        LinkingDirectiveKind, LocationDirective, MathModeModifier, MemoryOperand,
+        MemoryOrderModifier, MemoryScopeModifier, ModifierKind, Module, ModuleDebugDirective,
+        ModuleDirective, ModuleDirectiveKind, ModuleVariableDirective, NumericLiteral, OpcodeKind,
+        Operand, Parameter, ParameterQualifiers, ParameterSpecifier, ParameterStorage,
+        PointerAddressSpace, PointerQualifier, PragmaDirective, PtxParseError, RegisterDeclaration,
+        RegisterSpecifier, RegisterType, RoundingModifier, ScalarType, SectionDirective,
+        ShuffleModifier, StateSpaceModifier, StatementDirective, StatementSectionDirective,
+        SynchronizationModifier, TargetDirective, TypeModifier, VariableDirective,
+        VariableQualifier, VersionDirective,
     },
-    InstructionOpcode,
 };
 
 use std::collections::VecDeque;
@@ -100,6 +101,47 @@ enum ParsedFunction {
     Entry(EntryFunction),
     Func(FuncFunction),
     Linking(LinkingDirective),
+}
+
+enum Frame {
+    Root(RootFrame),
+    Call(CallBlockFrame),
+}
+
+struct RootFrame {
+    entry_directives: Vec<FunctionEntryDirective>,
+    statements: Vec<FunctionStatement>,
+    in_declaration: bool,
+}
+
+impl RootFrame {
+    fn new() -> Self {
+        Self {
+            entry_directives: Vec::new(),
+            statements: Vec::new(),
+            in_declaration: true,
+        }
+    }
+}
+
+struct CallBlockFrame {
+    declarations: Vec<FunctionEntryDirective>,
+    setup: Vec<ExternCallSetup>,
+    call: Option<Instruction>,
+    post_call: Vec<Instruction>,
+    allow_declarations: bool,
+}
+
+impl CallBlockFrame {
+    fn new() -> Self {
+        Self {
+            declarations: Vec::new(),
+            setup: Vec::new(),
+            call: None,
+            post_call: Vec::new(),
+            allow_declarations: true,
+        }
+    }
 }
 
 impl<'a> Parser<'a> {
@@ -224,12 +266,10 @@ impl<'a> Parser<'a> {
         let (directives, name, params, return_param) =
             parse_function_header(header_part, keyword, header_start_line)?;
 
-        let mut entry_directives = Vec::new();
-        let mut body_statements = Vec::new();
         let mut brace_depth: i32 = 1; // account for the opening brace consumed with the header
         let mut stmt_buffer = String::new();
         let mut pending_comment: Option<String> = None;
-        let mut in_declaration = true;
+        let mut frame_stack = vec![Frame::Root(RootFrame::new())];
 
         if !after_brace.is_empty() {
             if process_body_segment(
@@ -239,9 +279,7 @@ impl<'a> Parser<'a> {
                 &mut brace_depth,
                 &mut stmt_buffer,
                 &mut pending_comment,
-                &mut in_declaration,
-                &mut entry_directives,
-                &mut body_statements,
+                &mut frame_stack,
             )? {
                 if !stmt_buffer.trim().is_empty() {
                     return Err(PtxParseError::InvalidInstruction {
@@ -249,11 +287,7 @@ impl<'a> Parser<'a> {
                         message: "unterminated instruction in function body".into(),
                     });
                 }
-
-                let body = FunctionBody {
-                    entry_directives,
-                    statements: body_statements,
-                };
+                let body = finalize_body(frame_stack)?;
                 return Ok(match keyword {
                     ".entry" => ParsedFunction::Entry(EntryFunction {
                         name,
@@ -300,9 +334,7 @@ impl<'a> Parser<'a> {
                 &mut brace_depth,
                 &mut stmt_buffer,
                 &mut pending_comment,
-                &mut in_declaration,
-                &mut entry_directives,
-                &mut body_statements,
+                &mut frame_stack,
             )? {
                 break;
             }
@@ -322,10 +354,7 @@ impl<'a> Parser<'a> {
             });
         }
 
-        let body = FunctionBody {
-            entry_directives,
-            statements: body_statements,
-        };
+        let body = finalize_body(frame_stack)?;
         Ok(match keyword {
             ".entry" => ParsedFunction::Entry(EntryFunction {
                 name,
@@ -418,40 +447,38 @@ fn process_body_segment(
     brace_depth: &mut i32,
     stmt_buffer: &mut String,
     pending_comment: &mut Option<String>,
-    in_declaration: &mut bool,
-    entry_directives: &mut Vec<FunctionEntryDirective>,
-    statements: &mut Vec<FunctionStatement>,
+    frame_stack: &mut Vec<Frame>,
 ) -> Result<bool, PtxParseError> {
-    let open = count_occurrences(segment, '{') as i32;
-    let close = count_occurrences(segment, '}') as i32;
-    *brace_depth += open;
-    *brace_depth -= close;
+    let trimmed_segment = segment.trim();
 
-    if *brace_depth < 0 {
-        return Err(PtxParseError::InvalidFunctionHeader {
-            line: line_number,
-            message: "mismatched braces in function body".into(),
-        });
-    }
-
-    let sanitized = segment
-        .replace('{', " ")
-        .replace('}', " ")
-        .trim()
-        .to_string();
-
-    if sanitized.is_empty() {
+    if trimmed_segment.is_empty() {
         if let Some(comment) = comment {
             *pending_comment = Some(comment);
         }
         return Ok(*brace_depth == 0);
     }
 
-    if sanitized.ends_with(':') || sanitized.starts_with('.') || sanitized.starts_with("@@") {
-        match parse_function_stmt(&sanitized, comment, line_number, in_declaration)? {
-            FunctionBodyItem::Entry(entry) => entry_directives.push(entry),
-            FunctionBodyItem::Statement(stmt) => statements.push(stmt),
+    if trimmed_segment == "{" {
+        enter_call_block(brace_depth, frame_stack, line_number)?;
+        if let Some(comment) = comment {
+            *pending_comment = Some(comment);
         }
+        return Ok(*brace_depth == 0);
+    }
+
+    if trimmed_segment == "}" {
+        exit_call_block(brace_depth, frame_stack, line_number)?;
+        if let Some(comment) = comment {
+            *pending_comment = Some(comment);
+        }
+        return Ok(*brace_depth == 0);
+    }
+
+    if trimmed_segment.ends_with(':')
+        || trimmed_segment.starts_with('.')
+        || trimmed_segment.starts_with("@@")
+    {
+        handle_complete_statement(trimmed_segment, comment, line_number, frame_stack)?;
         stmt_buffer.clear();
         *pending_comment = None;
         return Ok(*brace_depth == 0);
@@ -460,7 +487,7 @@ fn process_body_segment(
     if !stmt_buffer.is_empty() {
         stmt_buffer.push(' ');
     }
-    stmt_buffer.push_str(&sanitized);
+    stmt_buffer.push_str(trimmed_segment);
 
     if let Some(comment) = comment {
         *pending_comment = Some(comment);
@@ -470,15 +497,7 @@ fn process_body_segment(
         let (statement, rest) = stmt_buffer.split_at(idx + 1);
         let statement = statement.trim();
         if !statement.is_empty() {
-            match parse_function_stmt(
-                statement,
-                pending_comment.take(),
-                line_number,
-                in_declaration,
-            )? {
-                FunctionBodyItem::Entry(entry) => entry_directives.push(entry),
-                FunctionBodyItem::Statement(stmt) => statements.push(stmt),
-            };
+            handle_complete_statement(statement, pending_comment.take(), line_number, frame_stack)?;
         } else {
             pending_comment.take();
         }
@@ -486,6 +505,251 @@ fn process_body_segment(
     }
 
     Ok(*brace_depth == 0)
+}
+
+fn handle_complete_statement(
+    statement: &str,
+    comment: Option<String>,
+    line_number: usize,
+    frame_stack: &mut Vec<Frame>,
+) -> Result<(), PtxParseError> {
+    match frame_stack
+        .last_mut()
+        .ok_or_else(|| PtxParseError::InvalidInstruction {
+            line: line_number,
+            message: "unexpected empty frame stack".into(),
+        })? {
+        Frame::Root(root) => handle_root_statement(statement, comment, line_number, root),
+        Frame::Call(call) => handle_call_statement(statement, comment, line_number, call),
+    }
+}
+
+fn handle_root_statement(
+    statement: &str,
+    comment: Option<String>,
+    line_number: usize,
+    root: &mut RootFrame,
+) -> Result<(), PtxParseError> {
+    let mut in_declaration = root.in_declaration;
+    let item = parse_function_stmt(statement, comment, line_number, &mut in_declaration)?;
+    root.in_declaration = in_declaration;
+    match item {
+        FunctionBodyItem::Entry(entry) => root.entry_directives.push(entry),
+        FunctionBodyItem::Statement(stmt) => root.statements.push(stmt),
+    }
+    Ok(())
+}
+
+fn handle_call_statement(
+    statement: &str,
+    comment: Option<String>,
+    line_number: usize,
+    call: &mut CallBlockFrame,
+) -> Result<(), PtxParseError> {
+    if statement.ends_with(':') {
+        return Err(PtxParseError::InvalidDirective {
+            line: line_number,
+            message: "labels are not allowed inside external call blocks".into(),
+        });
+    }
+
+    if statement.starts_with('.') || statement.starts_with("@@") {
+        let keyword = statement
+            .split_whitespace()
+            .next()
+            .unwrap_or_default()
+            .trim_start_matches('.');
+        match keyword.to_ascii_lowercase().as_str() {
+            "reg" => {
+                if !call.allow_declarations {
+                    return Err(PtxParseError::InvalidDirective {
+                        line: line_number,
+                        message:
+                            "register declarations must precede parameter setup instructions in external call blocks"
+                                .into(),
+                    });
+                }
+                let mut local_in_decl = true;
+                match parse_function_directive_stmt(
+                    statement,
+                    comment,
+                    line_number,
+                    &mut local_in_decl,
+                )? {
+                    FunctionBodyItem::Entry(FunctionEntryDirective::Reg(reg)) => {
+                        call.declarations.push(FunctionEntryDirective::Reg(reg));
+                    }
+                    _ => {
+                        return Err(PtxParseError::InvalidDirective {
+                            line: line_number,
+                            message: "unexpected directive in external call block".into(),
+                        });
+                    }
+                }
+                return Ok(());
+            }
+            "param" => {
+                let mut local_in_decl = true;
+                match parse_function_directive_stmt(
+                    statement,
+                    comment,
+                    line_number,
+                    &mut local_in_decl,
+                )? {
+                    FunctionBodyItem::Entry(FunctionEntryDirective::Param(param)) => {
+                        call.setup.push(ExternCallSetup::Param(param));
+                        call.allow_declarations = false;
+                    }
+                    _ => {
+                        return Err(PtxParseError::InvalidDirective {
+                            line: line_number,
+                            message:
+                                "failed to parse parameter directive inside external call block"
+                                    .into(),
+                        });
+                    }
+                }
+                return Ok(());
+            }
+            _ => {
+                return Err(PtxParseError::InvalidDirective {
+                    line: line_number,
+                    message: format!(
+                        "unsupported directive '.{keyword}' inside external call block"
+                    ),
+                });
+            }
+        }
+    }
+
+    let instruction = parse_instruction(statement, comment, line_number)?;
+    if call.call.is_none() {
+        if matches!(instruction.opcode.kind, OpcodeKind::St) {
+            call.allow_declarations = false;
+            call.setup.push(ExternCallSetup::Store(instruction));
+        } else {
+            call.allow_declarations = false;
+            call.call = Some(instruction);
+        }
+    } else {
+        call.post_call.push(instruction);
+    }
+
+    Ok(())
+}
+
+fn enter_call_block(
+    brace_depth: &mut i32,
+    frame_stack: &mut Vec<Frame>,
+    line_number: usize,
+) -> Result<(), PtxParseError> {
+    if matches!(frame_stack.last(), Some(Frame::Call(_))) {
+        return Err(PtxParseError::InvalidDirective {
+            line: line_number,
+            message: "nested blocks are not allowed".into(),
+        });
+    }
+
+    if let Some(Frame::Root(root)) = frame_stack.last_mut() {
+        root.in_declaration = false;
+    }
+
+    frame_stack.push(Frame::Call(CallBlockFrame::new()));
+    *brace_depth += 1;
+    Ok(())
+}
+
+fn exit_call_block(
+    brace_depth: &mut i32,
+    frame_stack: &mut Vec<Frame>,
+    line_number: usize,
+) -> Result<(), PtxParseError> {
+    if *brace_depth == 0 {
+        return Err(PtxParseError::InvalidFunctionHeader {
+            line: line_number,
+            message: "mismatched braces in function body".into(),
+        });
+    }
+    *brace_depth -= 1;
+
+    if frame_stack.len() == 1 {
+        if let Some(Frame::Root(root)) = frame_stack.last_mut() {
+            root.in_declaration = false;
+        }
+        return Ok(());
+    }
+
+    let frame = frame_stack
+        .pop()
+        .ok_or_else(|| PtxParseError::InvalidFunctionHeader {
+            line: line_number,
+            message: "unexpected block termination".into(),
+        })?;
+
+    let call_frame = match frame {
+        Frame::Call(frame) => frame,
+        Frame::Root(_) => {
+            return Err(PtxParseError::InvalidFunctionHeader {
+                line: line_number,
+                message: "attempted to close root frame unexpectedly".into(),
+            });
+        }
+    };
+
+    let call_instruction = call_frame
+        .call
+        .ok_or_else(|| PtxParseError::InvalidInstruction {
+            line: line_number,
+            message: "external call block missing call instruction".into(),
+        })?;
+
+    let block = ExternCallBlock {
+        declarations: call_frame.declarations,
+        setup: call_frame.setup,
+        call: call_instruction,
+        post_call: call_frame.post_call,
+    };
+
+    match frame_stack
+        .last_mut()
+        .ok_or_else(|| PtxParseError::InvalidFunctionHeader {
+            line: line_number,
+            message: "missing parent frame for external call block".into(),
+        })? {
+        Frame::Root(root) => {
+            root.in_declaration = false;
+            root.statements
+                .push(FunctionStatement::ExternCallBlock(block));
+        }
+        Frame::Call(_) => {
+            return Err(PtxParseError::InvalidDirective {
+                line: line_number,
+                message: "nested external call block detected".into(),
+            });
+        }
+    }
+
+    Ok(())
+}
+
+fn finalize_body(frame_stack: Vec<Frame>) -> Result<FunctionBody, PtxParseError> {
+    if frame_stack.len() != 1 {
+        return Err(PtxParseError::InvalidInstruction {
+            line: 0,
+            message: "unbalanced frame stack".into(),
+        });
+    }
+
+    match frame_stack.into_iter().next().expect("root frame") {
+        Frame::Root(root) => Ok(FunctionBody {
+            entry_directives: root.entry_directives,
+            statements: root.statements,
+        }),
+        Frame::Call(_) => Err(PtxParseError::InvalidInstruction {
+            line: 0,
+            message: "dangling external call block".into(),
+        }),
+    }
 }
 
 fn parse_function_prototype_linking(header: &str) -> Option<LinkingDirective> {
@@ -1653,6 +1917,12 @@ fn parse_function_directive_stmt(
 
     match normalized.as_str() {
         "reg" => {
+            if !*in_declaration {
+                return Err(PtxParseError::InvalidDirective {
+                    line: line_number,
+                    message: "register directives are only permitted in the declaration section of a function".into(),
+                });
+            }
             let directive = parse_register_declaration(
                 keyword,
                 without_semicolon,
@@ -1665,6 +1935,14 @@ fn parse_function_directive_stmt(
             )))
         }
         "local" | "param" | "shared" => {
+            if !*in_declaration {
+                return Err(PtxParseError::InvalidDirective {
+                    line: line_number,
+                    message: format!(
+                        ".{normalized} directives are only permitted before the first instruction in a function body"
+                    ),
+                });
+            }
             let kind = match normalized.as_str() {
                 "local" => FunctionDeclarationKind::Local,
                 "param" => FunctionDeclarationKind::Param,
@@ -1686,7 +1964,6 @@ fn parse_function_directive_stmt(
                 FunctionDeclarationKind::Shared => FunctionEntryDirective::Shared(directive),
                 _ => unreachable!(),
             };
-
             Ok(FunctionBodyItem::Entry(entry))
         }
         "pragma" => {
@@ -1939,6 +2216,7 @@ fn parse_operands(raw: &str, line_number: usize) -> Result<Vec<Operand>, PtxPars
     let mut current = String::new();
     let mut paren_depth = 0usize;
     let mut bracket_depth = 0usize;
+    let mut brace_depth = 0usize;
 
     let push_current =
         |store: &mut Vec<Operand>, token: &mut String| -> Result<(), PtxParseError> {
@@ -1952,7 +2230,7 @@ fn parse_operands(raw: &str, line_number: usize) -> Result<Vec<Operand>, PtxPars
 
     for ch in raw.chars() {
         match ch {
-            ',' if paren_depth == 0 && bracket_depth == 0 => {
+            ',' if paren_depth == 0 && bracket_depth == 0 && brace_depth == 0 => {
                 push_current(&mut operands, &mut current)?;
             }
             '(' => {
@@ -1983,6 +2261,20 @@ fn parse_operands(raw: &str, line_number: usize) -> Result<Vec<Operand>, PtxPars
                 bracket_depth -= 1;
                 current.push(ch);
             }
+            '{' => {
+                brace_depth += 1;
+                current.push(ch);
+            }
+            '}' => {
+                if brace_depth == 0 {
+                    return Err(PtxParseError::InvalidInstruction {
+                        line: line_number,
+                        message: "unmatched '}' in operand list".into(),
+                    });
+                }
+                brace_depth -= 1;
+                current.push(ch);
+            }
             _ => current.push(ch),
         }
     }
@@ -1998,6 +2290,13 @@ fn parse_operands(raw: &str, line_number: usize) -> Result<Vec<Operand>, PtxPars
         return Err(PtxParseError::InvalidInstruction {
             line: line_number,
             message: "unterminated '[' in operand list".into(),
+        });
+    }
+
+    if brace_depth != 0 {
+        return Err(PtxParseError::InvalidInstruction {
+            line: line_number,
+            message: "unterminated '{' in operand list".into(),
         });
     }
 
@@ -2019,6 +2318,21 @@ fn parse_operand(token: &str, line_number: usize) -> Result<Operand, PtxParseErr
     }
 
     if token.starts_with('(') && token.ends_with(')') {
+        let inner = token[1..token.len() - 1].trim();
+        let items = if inner.is_empty() {
+            Vec::new()
+        } else {
+            inner
+                .split(',')
+                .map(|part| part.trim())
+                .filter(|part| !part.is_empty())
+                .map(|part| part.to_string())
+                .collect()
+        };
+        return Ok(Operand::Parenthesized(items));
+    }
+
+    if token.starts_with('{') && token.ends_with('}') {
         let inner = token[1..token.len() - 1].trim();
         let items = if inner.is_empty() {
             Vec::new()
@@ -2720,10 +3034,6 @@ fn strip_comments(line: &str) -> String {
     } else {
         line.trim().to_string()
     }
-}
-
-fn count_occurrences(line: &str, ch: char) -> usize {
-    line.chars().filter(|c| *c == ch).count()
 }
 
 fn contains_keyword(line: &str, keyword: &str) -> bool {

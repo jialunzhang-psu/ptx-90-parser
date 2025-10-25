@@ -316,12 +316,28 @@ pub enum FunctionEntryDirective {
     Dwarf(DwarfDirective),
 }
 
+/// Nested statement block enclosed in braces.
 /// Executable items that appear within a function body.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FunctionStatement {
     Label(String),
     Directive(StatementDirective),
     Instruction(Instruction),
+    ExternCallBlock(ExternCallBlock),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ExternCallSetup {
+    Param(GenericFunctionDeclaration),
+    Store(Instruction),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ExternCallBlock {
+    pub declarations: Vec<FunctionEntryDirective>,
+    pub setup: Vec<ExternCallSetup>,
+    pub call: Instruction,
+    pub post_call: Vec<Instruction>,
 }
 
 /// Recognised declaration directive kinds.

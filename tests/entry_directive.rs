@@ -1,5 +1,5 @@
 use ptx_parser::{
-    parse_entry_directive, FunctionDeclarationKind, FunctionEntryDirective, RegisterSpecifier,
+    FunctionDeclarationKind, FunctionEntryDirective, RegisterSpecifier, parse_entry_directive,
 };
 
 #[test]

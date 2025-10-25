@@ -1,4 +1,4 @@
-use ptx_parser::{parse_stmt_directive, FunctionStatement, StatementDirective};
+use ptx_parser::{FunctionStatement, StatementDirective, parse_stmt_directive};
 
 #[test]
 fn parses_loc_directive() {
@@ -14,6 +14,9 @@ fn parses_loc_directive() {
 }
 
 #[test]
-fn rejects_entry_directive() {
-    assert!(parse_stmt_directive(".reg .s32 i;").is_err());
+fn parses_reg_statement() {
+    assert!(
+        parse_stmt_directive(".reg .s32 i;").is_err(),
+        ".reg should not be accepted as a standalone statement"
+    );
 }

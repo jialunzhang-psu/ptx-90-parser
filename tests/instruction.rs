@@ -1,6 +1,6 @@
 use ptx_parser::{
-    parse_instruction_line, AddressBase, AddressDisplacementKind, AddressSign, CallModifier,
-    ConditionModifier, ModifierKind, OpcodeKind, Operand, TypeModifier,
+    AddressBase, AddressDisplacementKind, AddressSign, CallModifier, ConditionModifier,
+    ModifierKind, OpcodeKind, Operand, TypeModifier, parse_instruction_line,
 };
 
 #[test]

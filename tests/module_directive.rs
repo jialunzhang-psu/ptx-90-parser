@@ -1,6 +1,6 @@
 use ptx_parser::{
-    parse_module_directive, GlobalInitializer, InitializerValue, ModuleDirective,
-    ModuleVariableDirective, NumericLiteral, PtxParseError, ScalarType, VariableDirective,
+    GlobalInitializer, InitializerValue, ModuleDirective, ModuleVariableDirective, NumericLiteral,
+    PtxParseError, ScalarType, VariableDirective, parse_module_directive,
 };
 
 #[test]

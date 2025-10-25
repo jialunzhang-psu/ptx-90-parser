@@ -1,4 +1,4 @@
-use ptx_parser::{parse, ModuleDirective, ModuleDirectiveKind, ModuleVariableDirective};
+use ptx_parser::{ModuleDirective, ModuleDirectiveKind, ModuleVariableDirective, parse};
 
 #[test]
 fn parses_module_headers() {

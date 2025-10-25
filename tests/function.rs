@@ -1,7 +1,20 @@
 use ptx_parser::{
-    parse, FunctionEntryDirective, FunctionHeaderDirective, FunctionKernelDirective,
-    FunctionStatement, ModuleDirective, ParameterStorage,
+    FunctionEntryDirective, FunctionHeaderDirective, FunctionKernelDirective, FunctionStatement,
+    ModuleDirective, ParameterStorage, StatementDirective, parse,
 };
+
+fn non_brace_statements<'a>(statements: &'a [FunctionStatement]) -> Vec<&'a FunctionStatement> {
+    statements
+        .iter()
+        .filter(|stmt| {
+            !matches!(
+                stmt,
+                FunctionStatement::Directive(StatementDirective::Section(section))
+                    if section.raw == "{" || section.raw == "}"
+            )
+        })
+        .collect()
+}
 
 #[test]
 fn parses_func_with_return_param_and_body() {
@@ -42,7 +55,7 @@ ret;
         FunctionEntryDirective::Reg(_)
     ));
 
-    let statements = &function.body.statements;
+    let statements = non_brace_statements(&function.body.statements);
     assert_eq!(statements.len(), 2);
     assert!(matches!(statements[0], FunctionStatement::Instruction(_)));
     assert!(matches!(statements[1], FunctionStatement::Instruction(_)));
@@ -88,7 +101,7 @@ fn parses_func_with_param_storage_and_array() {
         FunctionEntryDirective::Reg(_)
     ));
 
-    let statements = &function.body.statements;
+    let statements = non_brace_statements(&function.body.statements);
     assert_eq!(statements.len(), 3);
     assert!(matches!(statements[0], FunctionStatement::Instruction(_)));
     assert!(matches!(statements[1], FunctionStatement::Instruction(_)));
@@ -124,10 +137,11 @@ ret;
     assert_eq!(func.params.len(), 2);
     assert_eq!(func.params[0].name, "N");
     assert_eq!(func.params[1].name, "dbl");
-    assert!(func
-        .directives
-        .iter()
-        .any(|directive| matches!(directive, FunctionHeaderDirective::NoReturn)));
+    assert!(
+        func.directives
+            .iter()
+            .any(|directive| matches!(directive, FunctionHeaderDirective::NoReturn))
+    );
     let entry_directives = &func.body.entry_directives;
     assert_eq!(entry_directives.len(), 1);
     assert!(matches!(
@@ -135,7 +149,8 @@ ret;
         FunctionEntryDirective::Reg(_)
     ));
 
-    assert_eq!(func.body.statements.len(), 2);
+    let statements = non_brace_statements(&func.body.statements);
+    assert_eq!(statements.len(), 2);
 }
 
 #[test]
@@ -169,7 +184,8 @@ fn parses_entry_with_large_array_param() {
         entry.body.entry_directives[0],
         FunctionEntryDirective::Reg(_)
     ));
-    assert_eq!(entry.body.statements.len(), 1);
+    let statements = non_brace_statements(&entry.body.statements);
+    assert_eq!(statements.len(), 1);
 }
 
 #[test]
@@ -205,5 +221,6 @@ fn parses_entry_with_multiple_params() {
         entry.body.entry_directives[0],
         FunctionEntryDirective::Reg(_)
     ));
-    assert_eq!(entry.body.statements.len(), 3);
+    let statements = non_brace_statements(&entry.body.statements);
+    assert_eq!(statements.len(), 3);
 }
