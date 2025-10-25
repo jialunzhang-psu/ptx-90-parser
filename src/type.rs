@@ -308,9 +308,9 @@ pub struct PragmaDirective {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FunctionEntryDirective {
     Reg(RegisterDeclaration),
-    Local(GenericFunctionDeclaration),
-    Param(GenericFunctionDeclaration),
-    Shared(GenericFunctionDeclaration),
+    Local(VariableDirective),
+    Param(VariableDirective),
+    Shared(VariableDirective),
     Pragma(PragmaDirective),
     Loc(LocationDirective),
     Dwarf(DwarfDirective),
@@ -328,7 +328,7 @@ pub enum FunctionStatement {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ExternCallSetup {
-    Param(GenericFunctionDeclaration),
+    Param(VariableDirective),
     Store(Instruction),
 }
 
@@ -338,26 +338,6 @@ pub struct ExternCallBlock {
     pub setup: Vec<ExternCallSetup>,
     pub call: Instruction,
     pub post_call: Vec<Instruction>,
-}
-
-/// Recognised declaration directive kinds.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FunctionDeclarationKind {
-    AbiPreserve,
-    AbiPreserveControl,
-    Align,
-    Attribute,
-    CallTargets,
-    CallPrototype,
-    Local,
-    Maxnreg,
-    Maxsmem,
-    Noreturn,
-    Param,
-    Pragma,
-    Reg,
-    Section,
-    Shared,
 }
 
 /// Concretely parsed `.reg` directive inside a function body.
@@ -382,16 +362,6 @@ pub struct RegisterType {
 pub enum RegisterSpecifier {
     Named(String),
     Range { prefix: String, count: u32 },
-}
-
-/// Generic fallback for function declaration directives without dedicated parsing.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct GenericFunctionDeclaration {
-    pub kind: FunctionDeclarationKind,
-    pub keyword: String,
-    pub arguments: Vec<String>,
-    pub comment: Option<String>,
-    pub raw: String,
 }
 
 /// Directive that applies to individual statements.
@@ -842,6 +812,7 @@ pub enum GlobalAddressSpace {
     Const,
     Shared,
     Local,
+    Param,
 }
 
 /// Mutability qualifiers applicable to globals.
@@ -1205,6 +1176,7 @@ impl fmt::Display for GlobalAddressSpace {
             GlobalAddressSpace::Const => write!(f, "const"),
             GlobalAddressSpace::Shared => write!(f, "shared"),
             GlobalAddressSpace::Local => write!(f, "local"),
+            GlobalAddressSpace::Param => write!(f, "param"),
         }
     }
 }
@@ -1215,29 +1187,6 @@ impl fmt::Display for GlobalMutability {
             GlobalMutability::Const => write!(f, "const"),
             GlobalMutability::Volatile => write!(f, "volatile"),
         }
-    }
-}
-
-impl fmt::Display for FunctionDeclarationKind {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let label = match self {
-            FunctionDeclarationKind::AbiPreserve => "abi_preserve",
-            FunctionDeclarationKind::AbiPreserveControl => "abi_preserve_control",
-            FunctionDeclarationKind::Align => "align",
-            FunctionDeclarationKind::Attribute => "attribute",
-            FunctionDeclarationKind::CallTargets => "calltargets",
-            FunctionDeclarationKind::CallPrototype => "callprototype",
-            FunctionDeclarationKind::Local => "local",
-            FunctionDeclarationKind::Maxnreg => "maxnreg",
-            FunctionDeclarationKind::Maxsmem => "maxsmem",
-            FunctionDeclarationKind::Noreturn => "noreturn",
-            FunctionDeclarationKind::Param => "param",
-            FunctionDeclarationKind::Pragma => "pragma",
-            FunctionDeclarationKind::Reg => "reg",
-            FunctionDeclarationKind::Section => "section",
-            FunctionDeclarationKind::Shared => "shared",
-        };
-        write!(f, "{}", label)
     }
 }
 

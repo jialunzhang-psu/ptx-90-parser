@@ -5,19 +5,18 @@ use crate::{
         AddressSizeDirective, ArraySpecifier, AsyncGroupModifier, AtomicOperationModifier,
         CacheModifier, CallModifier, ConditionModifier, DwarfDirective, EntryFunction,
         ExternCallBlock, ExternCallSetup, FileDirective, FuncFunction, FunctionAlias, FunctionBody,
-        FunctionDeclarationKind, FunctionDim3, FunctionEntryDirective, FunctionHeaderDirective,
-        FunctionKernelDirective, FunctionLinkage, FunctionStatement, FunctionVisibility,
-        GenericFunctionDeclaration, GlobalAddressSpace, GlobalInitializer, GlobalLinkage,
-        GlobalMutability, GlobalVisibility, InitializerValue, Instruction, LinkingDirective,
-        LinkingDirectiveKind, LocationDirective, MathModeModifier, MemoryOperand,
-        MemoryOrderModifier, MemoryScopeModifier, ModifierKind, Module, ModuleDebugDirective,
-        ModuleDirective, ModuleDirectiveKind, ModuleVariableDirective, NumericLiteral, OpcodeKind,
-        Operand, Parameter, ParameterQualifiers, ParameterSpecifier, ParameterStorage,
-        PointerAddressSpace, PointerQualifier, PragmaDirective, PtxParseError, RegisterDeclaration,
-        RegisterSpecifier, RegisterType, RoundingModifier, ScalarType, SectionDirective,
-        ShuffleModifier, StateSpaceModifier, StatementDirective, StatementSectionDirective,
-        SynchronizationModifier, TargetDirective, TypeModifier, VariableDirective,
-        VariableQualifier, VersionDirective,
+        FunctionDim3, FunctionEntryDirective, FunctionHeaderDirective, FunctionKernelDirective,
+        FunctionLinkage, FunctionStatement, FunctionVisibility, GlobalAddressSpace,
+        GlobalInitializer, GlobalLinkage, GlobalMutability, GlobalVisibility, InitializerValue,
+        Instruction, LinkingDirective, LinkingDirectiveKind, LocationDirective, MathModeModifier,
+        MemoryOperand, MemoryOrderModifier, MemoryScopeModifier, ModifierKind, Module,
+        ModuleDebugDirective, ModuleDirective, ModuleDirectiveKind, ModuleVariableDirective,
+        NumericLiteral, OpcodeKind, Operand, Parameter, ParameterQualifiers, ParameterSpecifier,
+        ParameterStorage, PointerAddressSpace, PointerQualifier, PragmaDirective, PtxParseError,
+        RegisterDeclaration, RegisterSpecifier, RegisterType, RoundingModifier, ScalarType,
+        SectionDirective, ShuffleModifier, StateSpaceModifier, StatementDirective,
+        StatementSectionDirective, SynchronizationModifier, TargetDirective, TypeModifier,
+        VariableDirective, VariableQualifier, VersionDirective,
     },
 };
 
@@ -1873,6 +1872,106 @@ fn parse_function_stmt(
     )))
 }
 
+fn parse_function_variable_directive(
+    keyword: &str,
+    mut arguments: Vec<String>,
+    comment: Option<String>,
+    raw: &str,
+    line_number: usize,
+) -> Result<VariableDirective, PtxParseError> {
+    if arguments.is_empty() {
+        return Err(PtxParseError::InvalidDirective {
+            line: line_number,
+            message: "missing variable name".into(),
+        });
+    }
+
+    let name_token = arguments
+        .pop()
+        .unwrap()
+        .trim()
+        .trim_end_matches(';')
+        .to_string();
+
+    let (name, array) = split_name_token(&name_token, line_number)?;
+
+    let mut alignment = None;
+    let mut ty = None;
+    let mut qualifiers = Vec::new();
+    let mut idx = 0;
+
+    while idx < arguments.len() {
+        let token = arguments[idx].trim().trim_end_matches(',');
+
+        if token.eq_ignore_ascii_case(".align") {
+            let value_token = arguments
+                .get(idx + 1)
+                .ok_or_else(|| PtxParseError::InvalidDirective {
+                    line: line_number,
+                    message: "expected alignment value after .align".into(),
+                })?
+                .trim()
+                .trim_end_matches(',');
+            alignment =
+                Some(
+                    value_token
+                        .parse::<u32>()
+                        .map_err(|_| PtxParseError::InvalidDirective {
+                            line: line_number,
+                            message: format!("invalid alignment value '{}'", value_token),
+                        })?,
+                );
+            idx += 2;
+            continue;
+        }
+
+        if let Some(scalar) = parse_scalar_type(token) {
+            if ty.is_some() {
+                return Err(PtxParseError::InvalidDirective {
+                    line: line_number,
+                    message: "duplicate type specifier in variable declaration".into(),
+                });
+            }
+            ty = Some(scalar);
+            idx += 1;
+            continue;
+        }
+
+        qualifiers.push(variable_qualifier_from_token(
+            token,
+            line_number,
+            VariableQualifierContext::StateSpace,
+        )?);
+        idx += 1;
+    }
+
+    let raw_line = match comment {
+        Some(comment) if !comment.is_empty() => format!("{raw} // {comment}"),
+        _ => raw.to_string(),
+    };
+
+    let address_space = match keyword {
+        ".local" => Some(GlobalAddressSpace::Local),
+        ".shared" => Some(GlobalAddressSpace::Shared),
+        ".param" => Some(GlobalAddressSpace::Param),
+        _ => None,
+    };
+
+    Ok(VariableDirective {
+        visibility: None,
+        linkages: Vec::new(),
+        address_space,
+        mutability: None,
+        alignment,
+        ty,
+        qualifiers,
+        name,
+        array,
+        initializer: None,
+        raw: raw_line,
+    })
+}
+
 fn parse_function_directive_stmt(
     line: &str,
     comment: Option<String>,
@@ -1943,28 +2042,23 @@ fn parse_function_directive_stmt(
                     ),
                 });
             }
-            let kind = match normalized.as_str() {
-                "local" => FunctionDeclarationKind::Local,
-                "param" => FunctionDeclarationKind::Param,
-                "shared" => FunctionDeclarationKind::Shared,
-                _ => unreachable!(),
-            };
+            let constructor: fn(VariableDirective) -> FunctionEntryDirective =
+                match normalized.as_str() {
+                    "local" => FunctionEntryDirective::Local,
+                    "param" => FunctionEntryDirective::Param,
+                    "shared" => FunctionEntryDirective::Shared,
+                    _ => unreachable!(),
+                };
 
-            let directive = GenericFunctionDeclaration {
-                kind,
-                keyword: keyword.to_string(),
+            let declaration = parse_function_variable_directive(
+                keyword,
                 arguments,
                 comment,
-                raw: trimmed.to_string(),
-            };
+                trimmed,
+                line_number,
+            )?;
 
-            let entry = match kind {
-                FunctionDeclarationKind::Local => FunctionEntryDirective::Local(directive),
-                FunctionDeclarationKind::Param => FunctionEntryDirective::Param(directive),
-                FunctionDeclarationKind::Shared => FunctionEntryDirective::Shared(directive),
-                _ => unreachable!(),
-            };
-            Ok(FunctionBodyItem::Entry(entry))
+            Ok(FunctionBodyItem::Entry(constructor(declaration)))
         }
         "pragma" => {
             let mut pragma_arguments = Vec::new();

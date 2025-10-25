@@ -2,9 +2,9 @@ use std::fmt::Write as _;
 
 use crate::r#type::{
     ExternCallBlock, ExternCallSetup, FunctionBody, FunctionEntryDirective,
-    FunctionHeaderDirective, FunctionKernelDirective, FunctionStatement,
-    GenericFunctionDeclaration, Module, ModuleDebugDirective, ModuleDirective, ModuleDirectiveKind,
-    ModuleVariableDirective, Parameter, StatementDirective,
+    FunctionHeaderDirective, FunctionKernelDirective, FunctionStatement, Module,
+    ModuleDebugDirective, ModuleDirective, ModuleDirectiveKind, ModuleVariableDirective, Parameter,
+    StatementDirective, VariableDirective,
 };
 
 /// Convert a parsed PTX [`Module`] back into PTX source text.
@@ -315,8 +315,8 @@ fn format_dim3(dim: &crate::r#type::FunctionDim3) -> String {
     result
 }
 
-fn write_generic_declaration(decl: &GenericFunctionDeclaration) -> String {
-    line_with_comment(&decl.raw, decl.comment.as_deref())
+fn write_variable_declaration(decl: &VariableDirective) -> String {
+    decl.raw.clone()
 }
 
 fn line_with_comment(raw: &str, comment: Option<&str>) -> String {
@@ -338,7 +338,7 @@ impl ModuleWriter {
             FunctionEntryDirective::Reg(reg) => line_with_comment(&reg.raw, reg.comment.as_deref()),
             FunctionEntryDirective::Local(decl)
             | FunctionEntryDirective::Param(decl)
-            | FunctionEntryDirective::Shared(decl) => write_generic_declaration(decl),
+            | FunctionEntryDirective::Shared(decl) => write_variable_declaration(decl),
             FunctionEntryDirective::Pragma(pragma) => {
                 line_with_comment(&pragma.raw, pragma.comment.as_deref())
             }
@@ -410,7 +410,7 @@ impl ModuleWriter {
                     self.lines.push(format!(
                         "{}{}",
                         indent(indent_level + 1),
-                        write_generic_declaration(param)
+                        write_variable_declaration(param)
                     ));
                 }
                 ExternCallSetup::Store(inst) => {

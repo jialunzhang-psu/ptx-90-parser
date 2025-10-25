@@ -1,5 +1,6 @@
 use ptx_parser::{
-    FunctionDeclarationKind, FunctionEntryDirective, RegisterSpecifier, parse_entry_directive,
+    FunctionEntryDirective, GlobalAddressSpace, RegisterSpecifier, ScalarType,
+    parse_entry_directive,
 };
 
 #[test]
@@ -32,8 +33,10 @@ fn parses_local_entry_directive() {
         FunctionEntryDirective::Local(generic) => generic,
         other => panic!("expected local declaration, got {:?}", other),
     };
-    assert_eq!(generic.kind, FunctionDeclarationKind::Local);
-    assert!(generic.keyword.starts_with(".local"));
+    assert_eq!(generic.address_space, Some(GlobalAddressSpace::Local));
+    assert_eq!(generic.alignment, Some(8));
+    assert_eq!(generic.ty, Some(ScalarType::B8));
+    assert_eq!(generic.name, "scratch");
     assert!(generic.raw.contains("scratch"));
 }
 
@@ -44,7 +47,7 @@ fn parses_param_entry_directive() {
         FunctionEntryDirective::Param(generic) => generic,
         other => panic!("expected param declaration, got {:?}", other),
     };
-    assert_eq!(generic.kind, FunctionDeclarationKind::Param);
+    assert_eq!(generic.address_space, Some(GlobalAddressSpace::Param));
     assert!(generic.raw.contains("param0"));
 }
 
@@ -56,7 +59,7 @@ fn parses_shared_entry_directive() {
         FunctionEntryDirective::Shared(generic) => generic,
         other => panic!("expected shared declaration, got {:?}", other),
     };
-    assert_eq!(generic.kind, FunctionDeclarationKind::Shared);
+    assert_eq!(generic.address_space, Some(GlobalAddressSpace::Shared));
     assert!(generic.raw.contains("sdata"));
 }
 

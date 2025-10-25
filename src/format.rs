@@ -2,12 +2,11 @@ use ptx_parser::{
     AddressBase, AddressDisplacement, AddressDisplacementKind, AddressSign, DwarfDirective,
     EntryFunction, ExternCallBlock, ExternCallSetup, FuncFunction, FunctionAlias, FunctionBody,
     FunctionDim3, FunctionEntryDirective, FunctionHeaderDirective, FunctionKernelDirective,
-    FunctionStatement, GenericFunctionDeclaration, GlobalInitializer, InitializerValue,
-    Instruction, LinkingDirective, LinkingDirectiveKind, LocationDirective, MemoryOperand,
-    ModifierKind, Module, ModuleDebugDirective, ModuleDirective, ModuleDirectiveKind,
-    ModuleVariableDirective, NumericLiteral, Operand, Parameter, PragmaDirective,
-    RegisterDeclaration, RegisterSpecifier, StatementDirective, StatementSectionDirective,
-    VariableDirective, VariableQualifier,
+    FunctionStatement, GlobalInitializer, InitializerValue, Instruction, LinkingDirective,
+    LinkingDirectiveKind, LocationDirective, MemoryOperand, ModifierKind, Module,
+    ModuleDebugDirective, ModuleDirective, ModuleDirectiveKind, ModuleVariableDirective,
+    NumericLiteral, Operand, Parameter, PragmaDirective, RegisterDeclaration, RegisterSpecifier,
+    StatementDirective, StatementSectionDirective, VariableDirective, VariableQualifier,
 };
 
 pub fn module_to_tree(module: &Module) -> String {
@@ -449,9 +448,11 @@ fn write_param(writer: &mut TreeWriter, param: &Parameter) {
 fn write_entry_directive(writer: &mut TreeWriter, directive: &FunctionEntryDirective) {
     match directive {
         FunctionEntryDirective::Reg(decl) => write_register_declaration(writer, decl),
-        FunctionEntryDirective::Local(decl) => write_generic_entry(writer, decl),
-        FunctionEntryDirective::Param(decl) => write_generic_entry(writer, decl),
-        FunctionEntryDirective::Shared(decl) => write_generic_entry(writer, decl),
+        FunctionEntryDirective::Local(decl) => write_function_variable_entry(writer, "local", decl),
+        FunctionEntryDirective::Param(decl) => write_function_variable_entry(writer, "param", decl),
+        FunctionEntryDirective::Shared(decl) => {
+            write_function_variable_entry(writer, "shared", decl)
+        }
         FunctionEntryDirective::Pragma(pragma) => write_pragma_directive(writer, pragma),
         FunctionEntryDirective::Loc(loc) => write_loc_directive(writer, loc),
         FunctionEntryDirective::Dwarf(dwarf) => write_dwarf_directive(writer, dwarf),
@@ -498,15 +499,48 @@ fn write_register_declaration(writer: &mut TreeWriter, decl: &RegisterDeclaratio
     writer.close();
 }
 
-fn write_generic_entry(writer: &mut TreeWriter, directive: &GenericFunctionDeclaration) {
-    writer.open(&directive.keyword);
-    writer.line(&format!("(kind {})", directive.kind));
-    for argument in &directive.arguments {
-        writer.line(&format!("(argument {})", quote(argument.as_str())));
+fn write_function_variable_entry(
+    writer: &mut TreeWriter,
+    space: &str,
+    directive: &VariableDirective,
+) {
+    writer.open(space);
+    writer.line(&format!("(name {})", quote(&directive.name)));
+
+    if let Some(alignment) = directive.alignment {
+        writer.line(&format!("(alignment {})", alignment));
     }
-    if let Some(comment) = &directive.comment {
-        writer.line(&format!("(comment {})", quote(comment.as_str())));
+
+    if let Some(ty) = directive.ty {
+        writer.line(&format!("(type {})", ty));
     }
+
+    if !directive.qualifiers.is_empty() {
+        writer.open("qualifiers");
+        for qualifier in &directive.qualifiers {
+            match qualifier {
+                VariableQualifier::Vector(width) => writer.line(&format!("(vector {})", width)),
+                VariableQualifier::Sampler => writer.line("(sampler)"),
+            }
+        }
+        writer.close();
+    }
+
+    if let Some(array) = &directive.array {
+        writer.open("array");
+        for (index, bound) in array.dimensions.iter().enumerate() {
+            match bound {
+                Some(value) => writer.line(&format!("(dimension {} {})", index, value)),
+                None => writer.line(&format!("(dimension {} unspecified)", index)),
+            }
+        }
+        writer.close();
+    }
+
+    if let Some(space_attr) = directive.address_space {
+        writer.line(&format!("(address_space {})", space_attr));
+    }
+
     writer.line(&format!("(raw {})", quote(&directive.raw)));
     writer.close();
 }
@@ -534,7 +568,9 @@ fn write_extern_call_block(writer: &mut TreeWriter, block: &ExternCallBlock) {
         writer.open("setup");
         for step in &block.setup {
             match step {
-                ExternCallSetup::Param(param) => write_generic_entry(writer, param),
+                ExternCallSetup::Param(param) => {
+                    write_function_variable_entry(writer, "param", param)
+                }
                 ExternCallSetup::Store(instr) => write_instruction(writer, instr),
             }
         }
