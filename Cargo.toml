@@ -22,6 +22,7 @@ path = "src/main.rs"
 [dependencies]
 thiserror = "1.0"
 clap = { version = "4.5", features = ["derive"] }
+logos = "0.15.1"
 
 [dev-dependencies]
 tempfile = "3.10"
