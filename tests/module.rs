@@ -1,4 +1,5 @@
-use crate::util::{parse, parse_result};
+mod util;
+use util::{parse, parse_result};
 use ptx_parser::r#type::module::{
     AddressSizeDirective, FileDirective, Module, ModuleDebugDirective, ModuleDirective,
     ModuleInfoDirectiveKind, TargetDirective, VersionDirective,

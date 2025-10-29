@@ -1,4 +1,5 @@
-use crate::util::parse;
+mod util;
+use util::parse;
 use ptx_parser::r#type::{
     common::{AddressSpace, DataLinkage, DataType},
     variable::{

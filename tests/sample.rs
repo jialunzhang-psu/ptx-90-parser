@@ -1,20 +1,4 @@
-#[path = "parser/util.rs"]
 mod util;
-
-#[path = "parser/common.rs"]
-mod common;
-
-#[path = "parser/instruction/mod.rs"]
-mod instruction;
-
-#[path = "parser/variable.rs"]
-mod variable;
-
-#[path = "parser/function.rs"]
-mod function;
-
-#[path = "parser/module.rs"]
-mod module;
 
 #[test]
 fn parses_sample_ptx_files() {

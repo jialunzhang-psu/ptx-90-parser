@@ -1,5 +1,7 @@
-
-use crate::util::{parse, parse_result};
+#[path = "instruction/mod.rs"]
+mod instruction;
+mod util;
+use util::{parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{

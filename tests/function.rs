@@ -1,4 +1,5 @@
-use crate::util::{parse, parse_result};
+mod util;
+use util::{parse, parse_result};
 use ptx_parser::r#type::common::CodeLinkage;
 use ptx_parser::r#type::function::{FunctionHeaderDirective, FunctionKernelDirective};
 
