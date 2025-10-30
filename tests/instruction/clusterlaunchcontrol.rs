@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -11,6 +11,9 @@ use ptx_parser::{
 
 #[test]
 fn parses_try_cancel_without_optional_modifiers() {
+    assert_roundtrip::<TryCancel>(
+        "clusterlaunchcontrol.try_cancel.async.mbarrier::complete_tx::bytes.b128 [addr], [mbar];",
+    );
     assert_eq!(
         parse::<TryCancel>(
             "clusterlaunchcontrol.try_cancel.async.mbarrier::complete_tx::bytes.b128 [addr], [mbar];",
@@ -34,8 +37,13 @@ fn parses_try_cancel_without_optional_modifiers() {
 
 #[test]
 fn parses_try_cancel_with_space_and_multicast() {
+    assert_roundtrip::<TryCancel>(
+        "clusterlaunchcontrol.try_cancel.async.shared::cta.mbarrier::complete_tx::bytes.multicast::cluster::all.b128 [addr], [mbar];",
+    );
     assert_eq!(
-        parse::<TryCancel>("clusterlaunchcontrol.try_cancel.async.shared::cta.mbarrier::complete_tx::bytes.multicast::cluster::all.b128 [addr], [mbar];"),
+        parse::<TryCancel>(
+            "clusterlaunchcontrol.try_cancel.async.shared::cta.mbarrier::complete_tx::bytes.multicast::cluster::all.b128 [addr], [mbar];"
+        ),
         TryCancel {
             space: Some(Space::SharedCta),
             completion_mechanism: CompletionMechanism::MbarrierCompleteTxBytes,

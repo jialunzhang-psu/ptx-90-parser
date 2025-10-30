@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -35,6 +35,10 @@ fn parses_load_a_with_shape_first() {
             stride: None,
         })
     );
+
+    assert_roundtrip::<Instruction>(
+        "wmma.load.a.sync.aligned.row.m16n16k16.f16 {%r0, %r1, %r2, %r3}, [%rd4];",
+    );
 }
 
 #[test]
@@ -61,6 +65,10 @@ fn parses_load_b_with_layout_first_and_stride() {
             stride: Some(Operand::Immediate(Immediate("32".into()))),
         })
     );
+
+    assert_roundtrip::<Instruction>(
+        "wmma.load.b.sync.aligned.col.m8n32k16.shared.s8 {%r5, %r6}, [%rd7+16], 32;",
+    );
 }
 
 #[test]
@@ -82,6 +90,10 @@ fn parses_load_c_with_shared_cta_space() {
             ),
             stride: None,
         })
+    );
+
+    assert_roundtrip::<Instruction>(
+        "wmma.load.c.sync.aligned.row.m8n8k4.shared::cta.f64 %r1, [%rd2];",
     );
 }
 

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -18,6 +18,7 @@ fn parses_generic_mapa() {
             cta: Operand::Register(RegisterOperand::Single("%r2".into())),
         }
     );
+    assert_roundtrip::<Mapa>("mapa.u32 %r0, %r1, %r2;");
 }
 
 #[test]
@@ -31,6 +32,7 @@ fn parses_shared_cluster_register_form() {
             cta: Operand::Immediate(Immediate("4".into())),
         }
     );
+    assert_roundtrip::<Mapa>("mapa.shared::cluster.u64 %rd0, %rd1, 4;");
 }
 
 #[test]
@@ -44,6 +46,7 @@ fn parses_shared_cluster_variable_forms() {
             cta: Operand::Register(RegisterOperand::Single("%r4".into())),
         }
     );
+    assert_roundtrip::<Mapa>("mapa.shared::cluster.u32 %r3, shared_var, %r4;");
 
     assert_eq!(
         parse::<Mapa>("mapa.shared::cluster.u32 %r5, shared_var + 16, %r6;"),
@@ -55,6 +58,7 @@ fn parses_shared_cluster_variable_forms() {
             cta: Operand::Register(RegisterOperand::Single("%r6".into())),
         }
     );
+    assert_roundtrip::<Mapa>("mapa.shared::cluster.u32 %r5, shared_var + 16, %r6;");
 }
 
 #[test]

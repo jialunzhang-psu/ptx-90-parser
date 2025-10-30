@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -13,6 +13,7 @@ fn immediate_address(value: &str) -> AddressOperand {
 
 #[test]
 fn parses_prefetchu_instruction() {
+    assert_roundtrip::<Prefetchu>("prefetchu.L1 [0];");
     assert_eq!(
         parse::<Prefetchu>("prefetchu.L1 [0];"),
         Prefetchu {
@@ -24,6 +25,7 @@ fn parses_prefetchu_instruction() {
 
 #[test]
 fn rejects_prefetchu_with_invalid_level() {
+    assert_roundtrip::<Prefetchu>("prefetchu.L1 [0];");
     let err = parse_result::<Prefetchu>("prefetchu.L2 [0];")
         .expect_err("prefetchu should only accept .L1 level");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
@@ -31,6 +33,7 @@ fn rejects_prefetchu_with_invalid_level() {
 
 #[test]
 fn rejects_prefetchu_without_semicolon() {
+    assert_roundtrip::<Prefetchu>("prefetchu.L1 [0];");
     let err = parse_result::<Prefetchu>("prefetchu.L1 [0]")
         .expect_err("prefetchu requires a terminating semicolon");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedEof));

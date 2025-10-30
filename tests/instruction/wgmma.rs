@@ -1,25 +1,18 @@
+use crate::util::*;
 use ptx_parser::{
-    lexer::tokenize,
-    parser::{ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream},
+    parser::ParseErrorKind,
     r#type::{
         common::{PredicateRegister, RegisterOperand},
         instruction::wgmma::*,
     },
 };
 
-fn parse_wgmma(source: &str) -> Result<Wgmma, PtxParseError> {
-    let tokens = tokenize(source).expect("tokenization should succeed");
-    let mut stream = PtxTokenStream::new(&tokens);
-    Wgmma::parse(&mut stream)
-}
-
 #[test]
 fn parses_f16_descriptor_variant() {
-    let instruction = parse_wgmma(
-        "wgmma.mma_async.sync.aligned.shape.m64n16k16.dtype.f16.f16 \
-         %rd0, %rd1, %rd2, %p1, -1, 1, 0, 1;",
-    )
-    .expect("expected descriptor variant to parse");
+    let source = "wgmma.mma_async.sync.aligned.shape.m64n16k16.dtype.f16.f16 \
+                  %rd0, %rd1, %rd2, %p1, -1, 1, 0, 1;";
+    let instruction = parse_result::<Wgmma>(source).expect("expected descriptor variant to parse");
+    assert_roundtrip::<Wgmma>(source);
 
     match instruction {
         Wgmma::F16Descriptor(F16Descriptor {
@@ -51,11 +44,11 @@ fn parses_f16_descriptor_variant() {
 
 #[test]
 fn parses_integer_register_variant() {
-    let instruction = parse_wgmma(
-        "wgmma.mma_async.sync.aligned.shape.m64n32k32.s32.atype.s8.btype.u8 \
-         %r0, {%r10, %r11}, %r12, %p2;",
-    )
-    .expect("expected integer register variant to parse");
+    let source = "wgmma.mma_async.sync.aligned.shape.m64n32k32.s32.atype.s8.btype.u8 \
+                  %r0, {%r10, %r11}, %r12, %p2;";
+    let instruction =
+        parse_result::<Wgmma>(source).expect("expected integer register variant to parse");
+    assert_roundtrip::<Wgmma>(source);
 
     match instruction {
         Wgmma::IntegerRegister(IntegerRegister {
@@ -86,7 +79,7 @@ fn parses_integer_register_variant() {
 
 #[test]
 fn rejects_unknown_dtype_modifier() {
-    let error = parse_wgmma(
+    let error = parse_result::<Wgmma>(
         "wgmma.mma_async.sync.aligned.shape.m64n16k16.dtype.f64.f16 \
          %rd0, %rd1, %rd2, %p0, -1, 1, 0, 1;",
     )

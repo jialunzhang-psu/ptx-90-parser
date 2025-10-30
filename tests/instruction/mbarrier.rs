@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -26,6 +26,7 @@ fn parses_mbarrier_init_with_shared_cta() {
             count: Operand::Immediate(Immediate("4".into())),
         })
     );
+    assert_roundtrip::<Mbarrier>("mbarrier.init.shared::cta.b64 [%rd1], 4;");
 }
 
 #[test]

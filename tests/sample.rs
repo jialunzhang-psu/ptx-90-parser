@@ -1,5 +1,8 @@
 mod util;
 
+use ptx_parser::parser::PtxParser;
+use ptx_parser::unparser::PtxUnparser;
+
 #[test]
 fn parses_sample_ptx_files() {
     let mut paths: Vec<_> = std::fs::read_dir("tests/sample")
@@ -49,6 +52,22 @@ fn parses_sample_ptx_files() {
         assert!(
             has_function,
             "module {} should contain at least one function/kernel directive",
+            path.display()
+        );
+
+        let module_tokens = module.to_tokens();
+        let token_pairs: Vec<_> = module_tokens
+            .iter()
+            .cloned()
+            .map(|token| (token, 0..0))
+            .collect();
+        let mut stream = ptx_parser::parser::PtxTokenStream::new(&token_pairs);
+        let reparsed = ptx_parser::r#type::module::Module::parse(&mut stream)
+            .expect("unparsed tokens should reparse");
+        assert_eq!(
+            module,
+            reparsed,
+            "module {:?} should round-trip",
             path.display()
         );
     }

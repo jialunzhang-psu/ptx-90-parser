@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -18,6 +18,7 @@ fn parses_tanh_instruction() {
             source: RegisterOperand::Single("%f1".into()),
         }
     );
+    assert_roundtrip::<Tanh>("tanh.approx.f32 %f0, %f1;");
 }
 
 #[test]

@@ -13,11 +13,30 @@ use crate::{
     },
 };
 
-fn consume_newlines(stream: &mut PtxTokenStream) {
-    while stream
-        .consume_if(|token| matches!(token, PtxToken::Newline))
-        .is_some()
-    {}
+fn is_module_directive_start(token: &PtxToken) -> bool {
+    matches!(
+        token,
+        PtxToken::Directive(name)
+            if matches!(
+                name.as_str(),
+                "version"
+                    | "target"
+                    | "address_size"
+                    | "file"
+                    | "section"
+                    | "entry"
+                    | "func"
+                    | "alias"
+                    | "global"
+                    | "const"
+                    | "shared"
+                    | "tex"
+                    | "visible"
+                    | "extern"
+                    | "weak"
+                    | "common"
+            )
+    )
 }
 
 fn parse_decimal_u32(
@@ -61,7 +80,6 @@ fn classify_next_directive(stream: &PtxTokenStream) -> Option<String> {
     let mut iter = stream.remaining().iter();
     while let Some((token, _)) = iter.next() {
         match token {
-            PtxToken::Newline => continue,
             PtxToken::Directive(name) => match name.as_str() {
                 "visible" | "extern" | "weak" | "common" => continue,
                 other => return Some(other.to_string()),
@@ -128,7 +146,6 @@ impl PtxParser for TargetDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let mut entries = Vec::new();
         loop {
-            consume_newlines(stream);
             let next = stream.peek();
             let Ok((token, _span)) = next else {
                 break;
@@ -144,7 +161,6 @@ impl PtxParser for TargetDirective {
                 }
                 _ => break,
             }
-            consume_newlines(stream);
             if stream
                 .consume_if(|token| matches!(token, PtxToken::Comma))
                 .is_none()
@@ -233,13 +249,11 @@ impl PtxParser for SectionDirective {
         loop {
             let next = stream.peek();
             let Ok((token, _)) = next else { break };
-            match token {
-                PtxToken::Newline => break,
-                _ => {
-                    let (tok, _) = stream.consume()?;
-                    attributes.push(token_to_string(tok));
-                }
+            if is_module_directive_start(token) || matches!(token, PtxToken::Semicolon) {
+                break;
             }
+            let (tok, _) = stream.consume()?;
+            attributes.push(token_to_string(tok));
         }
 
         Ok(SectionDirective { name, attributes })
@@ -270,12 +284,11 @@ impl PtxParser for LinkingDirective {
         loop {
             let next = stream.peek();
             let Ok((token, _span)) = next else { break };
+            if is_module_directive_start(token) {
+                break;
+            }
             match token {
                 PtxToken::Semicolon => {
-                    stream.consume()?;
-                    break;
-                }
-                PtxToken::Newline => {
                     stream.consume()?;
                     break;
                 }
@@ -322,7 +335,6 @@ fn parse_code_or_data_linkage(
 
 impl PtxParser for ModuleDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        consume_newlines(stream);
         let Some(name) = classify_next_directive(stream) else {
             let span = stream.peek()?.1.clone();
             return Err(unexpected_value(span, &["directive"], "".to_string()));
@@ -373,13 +385,11 @@ impl PtxParser for Module {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let mut directives = Vec::new();
         while !stream.is_at_end() {
-            consume_newlines(stream);
             if stream.is_at_end() {
                 break;
             }
             let directive = ModuleDirective::parse(stream)?;
             directives.push(directive);
-            consume_newlines(stream);
         }
         Ok(Module { directives })
     }

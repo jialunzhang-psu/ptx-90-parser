@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
@@ -7,6 +7,7 @@ use ptx_parser::{
 
 #[test]
 fn parses_max_atype_without_relu() {
+    assert_roundtrip::<Max>("max.u32 %r0, %r1, %r2;");
     assert_eq!(
         parse::<Max>("max.u32 %r0, %r1, %r2;"),
         Max::AType {
@@ -20,6 +21,7 @@ fn parses_max_atype_without_relu() {
 
 #[test]
 fn parses_max_btype_with_relu() {
+    assert_roundtrip::<Max>("max.relu.s32 %r3, %r4, %r5;");
     assert_eq!(
         parse::<Max>("max.relu.s32 %r3, %r4, %r5;"),
         Max::BType {
@@ -34,6 +36,7 @@ fn parses_max_btype_with_relu() {
 
 #[test]
 fn parses_max_btype_without_relu() {
+    assert_roundtrip::<Max>("max.s16x2 %r6, %r7, %r8;");
     assert_eq!(
         parse::<Max>("max.s16x2 %r6, %r7, %r8;"),
         Max::BType {

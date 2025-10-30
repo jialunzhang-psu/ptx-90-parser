@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::r#type::common::RegisterOperand;
 use ptx_parser::{
     parser::ParseErrorKind,
@@ -7,8 +7,9 @@ use ptx_parser::{
 
 #[test]
 fn parses_fma_f32_with_all_modifiers() {
+    let source = "fma.rn.ftz.sat.f32 %f0, %f1, %f2, %f3;";
     assert_eq!(
-        parse::<Fma>("fma.rn.ftz.sat.f32 %f0, %f1, %f2, %f3;"),
+        parse::<Fma>(source),
         Fma::F32 {
             rounding: Rounding::Rn,
             flush_to_zero: true,
@@ -19,12 +20,14 @@ fn parses_fma_f32_with_all_modifiers() {
             addend: RegisterOperand::Single("%f3".into()),
         }
     );
+    assert_roundtrip::<Fma>(source);
 }
 
 #[test]
 fn parses_fma_f64_without_optional_modifiers() {
+    let source = "fma.rp.f64 %fd1, %fd2, %fd3, %fd4;";
     assert_eq!(
-        parse::<Fma>("fma.rp.f64 %fd1, %fd2, %fd3, %fd4;"),
+        parse::<Fma>(source),
         Fma::F64 {
             rounding: Rounding::Rp,
             destination: RegisterOperand::Single("%fd1".into()),
@@ -33,6 +36,7 @@ fn parses_fma_f64_without_optional_modifiers() {
             addend: RegisterOperand::Single("%fd4".into()),
         }
     );
+    assert_roundtrip::<Fma>(source);
 }
 
 #[test]

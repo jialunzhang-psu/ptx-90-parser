@@ -33,13 +33,6 @@ struct ParsedVariableDirective {
     leading_span: Option<Span>,
 }
 
-fn consume_newlines(stream: &mut PtxTokenStream) {
-    while stream
-        .consume_if(|token| matches!(token, PtxToken::Newline))
-        .is_some()
-    {}
-}
-
 fn is_data_type_directive(name: &str) -> bool {
     DATA_TYPE_NAMES.iter().any(|candidate| candidate == &name)
 }
@@ -53,7 +46,6 @@ fn is_vector_modifier(name: &str) -> bool {
 }
 
 fn parse_alignment_value(stream: &mut PtxTokenStream) -> Result<u32, PtxParseError> {
-    consume_newlines(stream);
     let (value, value_span) = parse_u64_literal(stream)?;
     if value > u32::MAX as u64 {
         return Err(invalid_literal(
@@ -71,8 +63,6 @@ fn parse_numeric_string(text: &str, span: Span) -> Result<u128, PtxParseError> {
 
 impl PtxParser for NumericLiteral {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        consume_newlines(stream);
-
         let negative = stream
             .consume_if(|token| matches!(token, PtxToken::Minus))
             .is_some();
@@ -214,7 +204,6 @@ impl PtxParser for NumericLiteral {
 
 impl PtxParser for InitializerValue {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        consume_newlines(stream);
         if let Some((token, span)) = stream.peek().ok() {
             match token {
                 PtxToken::StringLiteral(value) => {
@@ -260,26 +249,21 @@ impl PtxParser for InitializerValue {
 
 impl PtxParser for GlobalInitializer {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        consume_newlines(stream);
         if stream
             .consume_if(|token| matches!(token, PtxToken::LBrace))
             .is_some()
         {
             let mut children = Vec::new();
-            consume_newlines(stream);
             if !stream.check(|token| matches!(token, PtxToken::RBrace)) {
                 loop {
                     let initializer = GlobalInitializer::parse(stream)?;
                     children.push(initializer);
-                    consume_newlines(stream);
-                    if stream
+                    if !(stream
                         .consume_if(|token| matches!(token, PtxToken::Comma))
-                        .is_some()
+                        .is_some())
                     {
-                        consume_newlines(stream);
-                        continue;
+                        break;
                     }
-                    break;
                 }
             }
             stream.expect(&PtxToken::RBrace)?;
@@ -339,7 +323,6 @@ fn parse_variable_directive_internal(
     let mut kind_span = None;
 
     loop {
-        consume_newlines(stream);
         let Some((directive, directive_span)) = peek_directive(stream)? else {
             break;
         };
@@ -401,19 +384,15 @@ fn parse_variable_directive_internal(
         }
     }
 
-    consume_newlines(stream);
     let (name, _) = stream.expect_identifier()?;
 
     loop {
-        consume_newlines(stream);
         if stream
             .consume_if(|token| matches!(token, PtxToken::LBracket))
             .is_none()
         {
             break;
         }
-
-        consume_newlines(stream);
 
         if stream
             .consume_if(|token| matches!(token, PtxToken::RBracket))
@@ -436,21 +415,17 @@ fn parse_variable_directive_internal(
             }
         };
 
-        consume_newlines(stream);
         stream.expect(&PtxToken::RBracket)?;
         array.push(Some(size));
     }
 
-    consume_newlines(stream);
     if stream
         .consume_if(|token| matches!(token, PtxToken::Equals))
         .is_some()
     {
-        consume_newlines(stream);
         initializer = Some(GlobalInitializer::parse(stream)?);
     }
 
-    consume_newlines(stream);
     stream.expect(&PtxToken::Semicolon)?;
 
     let mut final_kind = kind;

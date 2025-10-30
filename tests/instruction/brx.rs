@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -17,6 +17,7 @@ fn parses_brx_instruction() {
             targets: Label("target".into()),
         }
     );
+    assert_roundtrip::<Brx>("brx.idx %r3, target;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_uniform_brx_instruction() {
             targets: Label("L0".into()),
         }
     );
+    assert_roundtrip::<Brx>("brx.idx.uni %r5, L0;");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
@@ -18,6 +18,7 @@ fn parses_dp4a_with_unsigned_operands() {
             c: RegisterOperand::Single("%r3".into()),
         }
     );
+    assert_roundtrip::<Dp4a>("dp4a.u32.u32 %r0, %r1, %r2, %r3;");
 }
 
 #[test]
@@ -33,6 +34,7 @@ fn parses_dp4a_with_mixed_signedness() {
             c: RegisterOperand::Single("%rd3".into()),
         }
     );
+    assert_roundtrip::<Dp4a>("dp4a.s32.u32 %rd4, %rd1, %rd2, %rd3;");
 }
 
 #[test]

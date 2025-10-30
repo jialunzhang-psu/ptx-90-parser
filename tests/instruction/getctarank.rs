@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -17,6 +17,7 @@ fn parses_generic_register_source() {
             source: RegisterOperand::Single("%r2".into()),
         }
     );
+    assert_roundtrip::<Getctarank>("getctarank.u32 %r1, %r2;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_shared_register_source() {
             source: RegisterOperand::Single("%rd2".into()),
         }
     );
+    assert_roundtrip::<Getctarank>("getctarank.shared::cluster.u64 %rd1, %rd2;");
 }
 
 #[test]
@@ -41,6 +43,7 @@ fn parses_shared_variable_source() {
             symbol: VariableSymbol("foo".into()),
         }
     );
+    assert_roundtrip::<Getctarank>("getctarank.shared::cluster.u32 %r1, foo;");
 }
 
 #[test]
@@ -54,6 +57,7 @@ fn parses_shared_variable_with_immediate() {
             immediate: Immediate("8".into()),
         }
     );
+    assert_roundtrip::<Getctarank>("getctarank.shared::cluster.u64 %rd5, bar + 8;");
 }
 
 #[test]

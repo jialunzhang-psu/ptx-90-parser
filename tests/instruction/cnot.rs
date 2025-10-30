@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -7,12 +7,17 @@ use ptx_parser::{
     },
 };
 
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Cnot>(source);
+}
+
 fn reg(name: &str) -> RegisterOperand {
     RegisterOperand::Single(name.into())
 }
 
 #[test]
 fn parses_cnot_b16() {
+    assert_roundtrip("cnot.b16 %r1, %r2;");
     assert_eq!(
         parse::<Cnot>("cnot.b16 %r1, %r2;"),
         Cnot {
@@ -25,6 +30,7 @@ fn parses_cnot_b16() {
 
 #[test]
 fn parses_cnot_b64() {
+    assert_roundtrip("cnot.b64 %rd3, %rd4;");
     assert_eq!(
         parse::<Cnot>("cnot.b64 %rd3, %rd4;"),
         Cnot {

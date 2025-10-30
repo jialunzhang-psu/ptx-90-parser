@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -31,6 +31,7 @@ fn parses_scalar_vop_without_saturate() {
             },
         })
     );
+    assert_roundtrip::<Vop>("vadd.u32.u32.u32 %r0, %r1.b0, %r2.h1;");
 }
 
 #[test]
@@ -56,6 +57,7 @@ fn parses_scalar_with_secondary_opcode_and_saturate() {
             c: RegisterOperand::Single("%r6".into()),
         })
     );
+    assert_roundtrip::<Vop>("vsub.s32.s32.s32.sat.max %r3, %r4, %r5, %r6;");
 }
 
 #[test]
@@ -83,6 +85,7 @@ fn parses_data_merge_form() {
             c: RegisterOperand::Single("%r10".into()),
         })
     );
+    assert_roundtrip::<Vop>("vmax.s32.s32.s32 %r7.h0, %r8, %r9.b3, %r10;");
 }
 
 #[test]

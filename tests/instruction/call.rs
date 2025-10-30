@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -18,6 +18,7 @@ fn parses_direct_call_without_arguments() {
             }
         }
     );
+    assert_roundtrip::<Call>("call foo;");
 }
 
 #[test]
@@ -36,6 +37,7 @@ fn parses_uniform_direct_call_with_arguments() {
             }
         }
     );
+    assert_roundtrip::<Call>("call.uni bar, (%r1, 0x1, arg);");
 }
 
 #[test]
@@ -53,6 +55,7 @@ fn parses_direct_call_with_return_and_arguments() {
             }
         }
     );
+    assert_roundtrip::<Call>("call (%r2), foo, (%r3);");
 }
 
 #[test]
@@ -71,6 +74,7 @@ fn parses_indirect_call_with_target_table() {
             }
         }
     );
+    assert_roundtrip::<Call>("call %rd1, (%r1, param), jmptbl;");
 }
 
 #[test]
@@ -89,6 +93,7 @@ fn parses_uniform_indirect_call_with_prototype_and_return() {
             }
         }
     );
+    assert_roundtrip::<Call>("call.uni (%r0), %rd2, (%r3), Fproto;");
 }
 
 #[test]

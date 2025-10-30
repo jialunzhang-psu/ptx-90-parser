@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -20,6 +20,7 @@ fn parses_mad_lo_with_signed_type() {
             c: RegisterOperand::Single("%r3".into()),
         }
     );
+    assert_roundtrip::<Mad>("mad.lo.s32 %r0, %r1, %r2, %r3;");
 }
 
 #[test]
@@ -33,6 +34,7 @@ fn parses_mad_hi_sat_s32() {
             c: RegisterOperand::Single("%r7".into()),
         }
     );
+    assert_roundtrip::<Mad>("mad.hi.sat.s32 %r4, %r5, %r6, %r7;");
 }
 
 #[test]

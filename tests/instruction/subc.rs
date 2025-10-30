@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -7,10 +7,16 @@ use ptx_parser::{
     },
 };
 
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Subc>(source);
+}
+
 #[test]
 fn parses_basic_subc_instruction() {
+    let source = "subc.u32 %r0, %r1, %r2;";
+    assert_roundtrip(source);
     assert_eq!(
-        parse::<Subc>("subc.u32 %r0, %r1, %r2;"),
+        parse::<Subc>(source),
         Subc {
             condition_code: ConditionCode::None,
             data_type: DataType::U32,
@@ -23,8 +29,10 @@ fn parses_basic_subc_instruction() {
 
 #[test]
 fn parses_subc_with_condition_code() {
+    let source = "subc.cc.s64 %rd3, %rd1, %rd2;";
+    assert_roundtrip(source);
     assert_eq!(
-        parse::<Subc>("subc.cc.s64 %rd3, %rd1, %rd2;"),
+        parse::<Subc>(source),
         Subc {
             condition_code: ConditionCode::Cc,
             data_type: DataType::S64,

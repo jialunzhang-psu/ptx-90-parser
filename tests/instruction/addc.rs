@@ -1,9 +1,13 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::r#type::common::RegisterOperand;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::instruction::addc::{Addc, ConditionCode, DataType},
 };
+
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Addc>(source);
+}
 
 #[test]
 fn parses_addc_with_condition_code() {
@@ -17,6 +21,7 @@ fn parses_addc_with_condition_code() {
             addend: RegisterOperand::Single("%r2".into()),
         }
     );
+    assert_roundtrip("addc.cc.u32 %r0, %r1, %r2;");
 }
 
 #[test]
@@ -31,6 +36,7 @@ fn parses_addc_without_condition_code() {
             addend: RegisterOperand::Single("%rd2".into()),
         }
     );
+    assert_roundtrip("addc.s64 %rd0, %rd1, %rd2;");
 }
 
 #[test]

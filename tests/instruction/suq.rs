@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -25,6 +25,7 @@ fn parses_surface_operand() {
             address: Operand::Surface(var("surf_ref")),
         }
     );
+    assert_roundtrip::<Suq>("suq.width.b32 %r0, [surf_ref];");
 }
 
 #[test]
@@ -37,6 +38,7 @@ fn parses_register_operand() {
             address: Operand::Register(reg("%rd3")),
         }
     );
+    assert_roundtrip::<Suq>("suq.array_size.b32 %rd2, [%rd3];");
 }
 
 #[test]

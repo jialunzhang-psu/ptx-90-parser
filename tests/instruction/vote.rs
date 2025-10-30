@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -6,6 +6,10 @@ use ptx_parser::{
         instruction::vote::{Ballot, Mode, Predicate, PredicateOperand, Vote},
     },
 };
+
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Vote>(source);
+}
 
 #[test]
 fn parses_vote_predicate_instruction() {
@@ -20,6 +24,7 @@ fn parses_vote_predicate_instruction() {
             },
         })
     );
+    assert_roundtrip("vote.all.pred %p1, %p2;");
 }
 
 #[test]
@@ -34,6 +39,7 @@ fn parses_vote_ballot_instruction() {
             },
         })
     );
+    assert_roundtrip("vote.ballot.b32 %r2, !%p3;");
 }
 
 #[test]

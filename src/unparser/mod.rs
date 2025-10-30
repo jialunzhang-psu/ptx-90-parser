@@ -1,6 +1,15 @@
 pub mod common;
+pub mod function;
+pub mod instruction;
+pub mod module;
+pub mod variable;
 
 use crate::lexer::PtxToken;
+
+pub(crate) use common::{
+    push_decimal, push_directive, push_double_colon, push_flush_to_zero, push_identifier,
+    push_opcode,
+};
 
 /// Trait that mirrors [`crate::parser::PtxParser`] but for emitting PTX source
 /// text from the structured representation.

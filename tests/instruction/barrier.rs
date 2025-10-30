@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -21,6 +21,7 @@ fn parses_barrier_sync_with_scope_and_expected_count() {
             expected_count: Some(Operand::Immediate(Immediate("4".into()))),
         })
     );
+    assert_roundtrip::<Barrier>("barrier.cta.sync.aligned %r1, 4;");
 }
 
 #[test]
@@ -40,6 +41,7 @@ fn parses_barrier_reduction_popc_with_all_operands() {
             },
         })
     );
+    assert_roundtrip::<Barrier>("barrier.cta.red.popc.aligned.u32 %r3, %r4, 16, %p0;");
 }
 
 #[test]
@@ -58,6 +60,7 @@ fn parses_bar_reduction_logical_without_expected_count() {
             operation: LogicalOperation::Or,
         })
     );
+    assert_roundtrip::<Barrier>("bar.red.or.pred %p1, %r2, !%p3;");
 }
 
 #[test]

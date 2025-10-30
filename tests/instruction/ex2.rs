@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
@@ -16,6 +16,7 @@ fn parses_ex2_without_ftz_modifier() {
             source: RegisterOperand::Single("%f1".into()),
         }
     );
+    assert_roundtrip::<Ex2>("ex2.approx.f32 %f0, %f1;");
 }
 
 #[test]
@@ -29,16 +30,19 @@ fn parses_ex2_with_ftz_modifier() {
             source: RegisterOperand::Single("%f3".into()),
         }
     );
+    assert_roundtrip::<Ex2>("ex2.approx.ftz.f32 %f2, %f3;");
 }
 
 #[test]
 fn rejects_ex2_with_invalid_modifier() {
     let err = parse_result::<Ex2>("ex2.fast.f32 %f0, %f1;").expect_err("parse should fail");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip::<Ex2>("ex2.approx.f32 %f0, %f1;");
 }
 
 #[test]
 fn rejects_ex2_missing_approx_modifier() {
     let err = parse_result::<Ex2>("ex2.f32 %f0, %f1;").expect_err("parse should fail");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip::<Ex2>("ex2.approx.f32 %f0, %f1;");
 }

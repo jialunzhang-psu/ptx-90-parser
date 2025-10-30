@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -12,6 +12,7 @@ use ptx_parser::{
 
 #[test]
 fn parses_scalar_vsh_without_saturate() {
+    assert_roundtrip::<Vsh>("vshl.u32.s32.u32.clamp %r0, %r1.b0, %r2.h1;");
     assert_eq!(
         parse::<Vsh>("vshl.u32.s32.u32.clamp %r0, %r1.b0, %r2.h1;"),
         Vsh::Scalar(Scalar {
@@ -35,6 +36,7 @@ fn parses_scalar_vsh_without_saturate() {
 
 #[test]
 fn parses_scalar_with_secondary_and_saturate() {
+    assert_roundtrip::<Vsh>("vshr.s32.s32.u32.sat.wrap.add %r3, %r4, %r5, %r6;");
     assert_eq!(
         parse::<Vsh>("vshr.s32.s32.u32.sat.wrap.add %r3, %r4, %r5, %r6;"),
         Vsh::ScalarWithSecondary(ScalarWithSecondary {
@@ -60,6 +62,7 @@ fn parses_scalar_with_secondary_and_saturate() {
 
 #[test]
 fn parses_data_merge_vsh() {
+    assert_roundtrip::<Vsh>("vshl.s32.u32.u32.wrap %r7.h0, %r8, %r9.b3, %r10;");
     assert_eq!(
         parse::<Vsh>("vshl.s32.u32.u32.wrap %r7.h0, %r8, %r9.b3, %r10;"),
         Vsh::DataMerge(DataMerge {

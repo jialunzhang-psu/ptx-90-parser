@@ -1,9 +1,13 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::{Immediate, Operand, PredicateRegister, RegisterOperand},
     r#type::instruction::elect::{Destination as ElectDestination, Elect},
 };
+
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Elect>(source);
+}
 
 #[test]
 fn parses_elect_with_register_destination() {
@@ -15,6 +19,7 @@ fn parses_elect_with_register_destination() {
             member_mask: Operand::Immediate(Immediate("0xffffffff".into())),
         }
     );
+    assert_roundtrip("elect.sync %r0|%p0, 0xffffffff;");
 }
 
 #[test]
@@ -27,6 +32,7 @@ fn parses_elect_with_sink_destination() {
             member_mask: Operand::Register(RegisterOperand::Single("%r2".into())),
         }
     );
+    assert_roundtrip("elect.sync _|%p1, %r2;");
 }
 
 #[test]

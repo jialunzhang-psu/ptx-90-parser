@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -17,6 +17,7 @@ fn parses_istypep_texref() {
             address: RegisterOperand::Single("%rd1".into()),
         }
     );
+    assert_roundtrip::<Istypep>("istypep.texref %p0,%rd1;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_istypep_samplerref() {
             address: RegisterOperand::Single("%rd2".into()),
         }
     );
+    assert_roundtrip::<Istypep>("istypep.samplerref %p1,%rd2;");
 }
 
 #[test]

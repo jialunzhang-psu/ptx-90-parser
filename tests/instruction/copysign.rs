@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
@@ -16,6 +16,7 @@ fn parses_copysign_f32() {
             b: RegisterOperand::Single("%f3".into()),
         }
     );
+    assert_roundtrip::<Copysign>("copysign.f32 %f1,%f2,%f3;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_copysign_f64_with_spaces() {
             b: RegisterOperand::Single("%fd2".into()),
         }
     );
+    assert_roundtrip::<Copysign>("copysign.f64 %fd0, %fd1, %fd2;");
 }
 
 #[test]

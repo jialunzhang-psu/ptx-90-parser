@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -29,6 +29,7 @@ fn parses_byte_2d_sured_with_surface_reference() {
             source: reg("%r6"),
         }),
     );
+    assert_roundtrip::<Sured>("sured.b.add.2d.u32.clamp [surf_tex, {%r4, %r5}], %r6;");
 }
 
 #[test]
@@ -44,6 +45,7 @@ fn parses_sample_1d_without_coordinate_braces() {
             source: reg("%r2"),
         }),
     );
+    assert_roundtrip::<Sured>("sured.p.min.1d.b32.zero [%rd10, %r1], %r2;");
 }
 
 #[test]

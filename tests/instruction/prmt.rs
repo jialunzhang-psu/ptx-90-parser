@@ -1,13 +1,17 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
-    r#type::{common::RegisterOperand, instruction::prmt::{Mode, Prmt}},
+    r#type::{
+        common::RegisterOperand,
+        instruction::prmt::{Mode, Prmt},
+    },
 };
 
 #[test]
 fn parses_prmt_with_mode() {
+    let source = "prmt.b32.f4e %r1, %r2, %r3, %r4;";
     assert_eq!(
-        parse::<Prmt>("prmt.b32.f4e %r1, %r2, %r3, %r4;"),
+        parse::<Prmt>(source),
         Prmt {
             mode: Some(Mode::F4e),
             destination: RegisterOperand::Single("%r1".into()),
@@ -16,12 +20,14 @@ fn parses_prmt_with_mode() {
             c: RegisterOperand::Single("%r4".into()),
         }
     );
+    assert_roundtrip::<Prmt>(source);
 }
 
 #[test]
 fn parses_prmt_without_mode() {
+    let source = "prmt.b32 %r5, %r6, %r7, %r8;";
     assert_eq!(
-        parse::<Prmt>("prmt.b32 %r5, %r6, %r7, %r8;"),
+        parse::<Prmt>(source),
         Prmt {
             mode: None,
             destination: RegisterOperand::Single("%r5".into()),
@@ -30,6 +36,7 @@ fn parses_prmt_without_mode() {
             c: RegisterOperand::Single("%r8".into()),
         }
     );
+    assert_roundtrip::<Prmt>(source);
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -24,6 +24,7 @@ fn parses_basic_stmatrix_instruction() {
             source: Source::X1(RegisterOperand::Single("%r0".into())),
         }
     );
+    assert_roundtrip::<Stmatrix>("stmatrix.sync.aligned.m8n8.x1.shared.b16 [%rd1], {%r0};");
 }
 
 #[test]
@@ -47,6 +48,9 @@ fn parses_transposed_shared_cta_variant() {
                 RegisterOperand::Single("%r1".into()),
             ]),
         }
+    );
+    assert_roundtrip::<Stmatrix>(
+        "stmatrix.sync.aligned.m16n8.x2.trans.shared::cta.b8 [%rd2], {%r0, %r1};",
     );
 }
 

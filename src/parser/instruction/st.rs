@@ -58,11 +58,15 @@ fn parse_state_space(stream: &mut PtxTokenStream) -> Result<(StateSpace, Span), 
         "global" => StateSpace::Global,
         "local" => StateSpace::Local,
         "param" => {
-            stream.expect_double_colon()?;
-            let (target, target_span) = stream.expect_identifier()?;
-            match target.as_str() {
-                "func" => StateSpace::Param(ParamState::Func),
-                other => return Err(unexpected_value(target_span, &["func"], other)),
+            if stream.check(|token| matches!(token, PtxToken::Colon)) {
+                stream.expect_double_colon()?;
+                let (target, target_span) = stream.expect_identifier()?;
+                match target.as_str() {
+                    "func" => StateSpace::Param(ParamState::Func),
+                    other => return Err(unexpected_value(target_span, &["func"], other)),
+                }
+            } else {
+                StateSpace::Param(ParamState::Func)
             }
         }
         "shared" => {

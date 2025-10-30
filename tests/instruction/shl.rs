@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::*,
@@ -16,6 +16,7 @@ fn parses_shl_with_register_shift_amount() {
             b: Operand::Register(RegisterOperand::Single("%r3".into())),
         }
     );
+    assert_roundtrip::<Shl>("shl.b32 %r1, %r2, %r3;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_shl_with_immediate_shift_amount() {
             b: Operand::Immediate(Immediate("8".into())),
         }
     );
+    assert_roundtrip::<Shl>("shl.b64 %rd1, %rd2, 8;");
 }
 
 #[test]

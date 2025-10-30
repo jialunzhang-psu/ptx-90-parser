@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -17,6 +17,7 @@ fn parses_rcp_approx_f32_without_ftz() {
             source: RegisterOperand::Single("%f1".into()),
         })
     );
+    assert_roundtrip::<Rcp>("rcp.approx.f32 %f0, %f1;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_rcp_approx_f32_with_ftz() {
             source: RegisterOperand::Single("%f3".into()),
         })
     );
+    assert_roundtrip::<Rcp>("rcp.approx.ftz.f32 %f2, %f3;");
 }
 
 #[test]
@@ -42,6 +44,7 @@ fn parses_rcp_rnd_f32_without_ftz() {
             source: RegisterOperand::Single("%f5".into()),
         })
     );
+    assert_roundtrip::<Rcp>("rcp.rnd.rn.f32 %f4, %f5;");
 }
 
 #[test]
@@ -55,6 +58,7 @@ fn parses_rcp_rnd_f32_with_ftz() {
             source: RegisterOperand::Single("%f7".into()),
         })
     );
+    assert_roundtrip::<Rcp>("rcp.rnd.rm.ftz.f32 %f6, %f7;");
 }
 
 #[test]
@@ -67,6 +71,7 @@ fn parses_rcp_rnd_f64() {
             source: RegisterOperand::Single("%fd9".into()),
         })
     );
+    assert_roundtrip::<Rcp>("rcp.rnd.rp.f64 %fd8, %fd9;");
 }
 
 #[test]

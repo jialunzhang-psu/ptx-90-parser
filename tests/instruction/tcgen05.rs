@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -19,8 +19,9 @@ fn reg(name: &str) -> RegisterOperand {
 
 #[test]
 fn parses_alloc_with_shared_state_space() {
+    let source = "tcgen05.alloc.cta_group::1.sync.aligned.shared::cta.b32 [dst], %r1;";
     assert_eq!(
-        parse::<Tcgen05>("tcgen05.alloc.cta_group::1.sync.aligned.shared::cta.b32 [dst], %r1;",),
+        parse::<Tcgen05>(source),
         Tcgen05::Alloc(Alloc {
             cta_group: CtaGroup::One,
             state_space: Some(StateSpace::SharedCta),
@@ -28,28 +29,33 @@ fn parses_alloc_with_shared_state_space() {
             column_count: reg("%r1"),
         })
     );
+    assert_roundtrip::<Tcgen05>(source);
 }
 
 #[test]
 fn parses_dealloc_instruction() {
+    let source = "tcgen05.dealloc.cta_group::2.sync.aligned.b32 %rd5, %rd6;";
     assert_eq!(
-        parse::<Tcgen05>("tcgen05.dealloc.cta_group::2.sync.aligned.b32 %rd5, %rd6;"),
+        parse::<Tcgen05>(source),
         Tcgen05::Dealloc(Dealloc {
             cta_group: CtaGroup::Two,
             tensor_address: reg("%rd5"),
             column_count: reg("%rd6"),
         })
     );
+    assert_roundtrip::<Tcgen05>(source);
 }
 
 #[test]
 fn parses_relinquish_alloc_permit_instruction() {
+    let source = "tcgen05.relinquish_alloc_permit.cta_group::1.sync.aligned;";
     assert_eq!(
-        parse::<Tcgen05>("tcgen05.relinquish_alloc_permit.cta_group::1.sync.aligned;"),
+        parse::<Tcgen05>(source),
         Tcgen05::RelinquishAllocPermit(RelinquishAllocPermit {
             cta_group: CtaGroup::One,
         })
     );
+    assert_roundtrip::<Tcgen05>(source);
 }
 
 #[test]

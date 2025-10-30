@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -6,6 +6,10 @@ use ptx_parser::{
         instruction::tensormap::*,
     },
 };
+
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<TensormapOpcode>(source);
+}
 
 fn reg(name: &str) -> RegisterOperand {
     RegisterOperand::Single(name.into())
@@ -17,10 +21,10 @@ fn address_from_register(name: &str) -> AddressOperand {
 
 #[test]
 fn parses_field1_global_address_with_global_space() {
+    let source = "tensormap.replace.tile.global_address.global.b1024.b64 [%rd0], %rd1;";
+    assert_roundtrip(source);
     assert_eq!(
-        parse::<TensormapOpcode>(
-            "tensormap.replace.tile.global_address.global.b1024.b64 [%rd0], %rd1;"
-        ),
+        parse::<TensormapOpcode>(source),
         TensormapOpcode::Field1(Field1 {
             mode: Mode::Tile,
             state_space: Some(StateSpace::Global),
@@ -34,10 +38,10 @@ fn parses_field1_global_address_with_global_space() {
 
 #[test]
 fn parses_field2_global_stride_with_shared_space() {
+    let source = "tensormap.replace.tile.global_stride.shared::cta.b1024.b64 [%rd2], 3, %rd4;";
+    assert_roundtrip(source);
     assert_eq!(
-        parse::<TensormapOpcode>(
-            "tensormap.replace.tile.global_stride.shared::cta.b1024.b64 [%rd2], 3, %rd4;"
-        ),
+        parse::<TensormapOpcode>(source),
         TensormapOpcode::Field2(Field2 {
             mode: Mode::Tile,
             state_space: Some(StateSpace::SharedCta),
@@ -52,8 +56,10 @@ fn parses_field2_global_stride_with_shared_space() {
 
 #[test]
 fn parses_field3_interleave_layout() {
+    let source = "tensormap.replace.tile.interleave_layout.b1024.b32 [%rd5], 2;";
+    assert_roundtrip(source);
     assert_eq!(
-        parse::<TensormapOpcode>("tensormap.replace.tile.interleave_layout.b1024.b32 [%rd5], 2;"),
+        parse::<TensormapOpcode>(source),
         TensormapOpcode::Field3(Field3 {
             mode: Mode::Tile,
             state_space: None,
@@ -72,6 +78,7 @@ fn rejects_field1_with_incorrect_data_type() {
     )
     .expect_err("global_address must use .b64 data type");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip("tensormap.replace.tile.global_address.global.b1024.b64 [%rd0], %rd1;");
 }
 
 #[test]
@@ -80,4 +87,5 @@ fn rejects_field3_with_invalid_immediate() {
         parse_result::<TensormapOpcode>("tensormap.replace.tile.fill_mode.b1024.b32 [%rd0], 2;")
             .expect_err("fill_mode immediate must be 0 or 1");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip("tensormap.replace.tile.fill_mode.b1024.b32 [%rd0], 1;");
 }

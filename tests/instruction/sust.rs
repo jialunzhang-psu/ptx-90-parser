@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -28,10 +28,9 @@ fn surf(name: &str) -> Surface {
 
 #[test]
 fn parses_block_3d_sust_with_cache_and_vector() {
+    let source = "sust.b.3d.wb.v4.b32.zero [surf_A, {%r1, %r2, %r3, %r4}], {%r5, %r6, %r7, %r8};";
     assert_eq!(
-        parse::<Sust>(
-            "sust.b.3d.wb.v4.b32.zero [surf_A, {%r1, %r2, %r3, %r4}], {%r5, %r6, %r7, %r8};"
-        ),
+        parse::<Sust>(source),
         Sust::Block3d(Block {
             cache_operator: Some(CacheOperator::Wb),
             vector: Vector::V4,
@@ -47,12 +46,14 @@ fn parses_block_3d_sust_with_cache_and_vector() {
             value: reg_vec4("%r5", "%r6", "%r7", "%r8"),
         })
     );
+    assert_roundtrip::<Sust>(source);
 }
 
 #[test]
 fn parses_formatted_2d_sust() {
+    let source = "sust.p.2d.v2.b32.clamp [surf_fmt, {%r10, %r11}], {%r12, %r13};";
     assert_eq!(
-        parse::<Sust>("sust.p.2d.v2.b32.clamp [surf_fmt, {%r10, %r11}], {%r12, %r13};"),
+        parse::<Sust>(source),
         Sust::Formatted2d(Formatted {
             vector: Vector::V2,
             component_type: FormattedComponentType::B32,
@@ -65,12 +66,14 @@ fn parses_formatted_2d_sust() {
             value: reg_vec2("%r12", "%r13"),
         })
     );
+    assert_roundtrip::<Sust>(source);
 }
 
 #[test]
 fn parses_block_array1d_without_optional_modifiers() {
+    let source = "sust.b.a1d.b64.trap [surf_arr, {%r0, %r1}], %r2;";
     assert_eq!(
-        parse::<Sust>("sust.b.a1d.b64.trap [surf_arr, {%r0, %r1}], %r2;"),
+        parse::<Sust>(source),
         Sust::BlockArray1d(Block {
             cache_operator: None,
             vector: Vector::None,
@@ -84,6 +87,7 @@ fn parses_block_array1d_without_optional_modifiers() {
             value: reg("%r2"),
         })
     );
+    assert_roundtrip::<Sust>(source);
 }
 
 #[test]
@@ -91,6 +95,7 @@ fn rejects_missing_clamp_modifier() {
     let error = parse_result::<Sust>("sust.b.1d.b32 [surf_B, %r1], %r2;")
         .expect_err("clamp modifier is mandatory for sust");
     assert!(matches!(error.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip::<Sust>("sust.b.1d.b32.clamp [surf_round, %r1], %r2;");
 }
 
 #[test]
@@ -100,4 +105,7 @@ fn rejects_invalid_formatted_component_type() {
     )
     .expect_err("formatted sust only supports .b32 component type");
     assert!(matches!(error.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip::<Sust>(
+        "sust.p.3d.v4.b32.zero [surf_ok, {%r0, %r1, %r2, %r3}], {%r4, %r5, %r6, %r7};",
+    );
 }

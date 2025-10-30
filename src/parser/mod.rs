@@ -208,10 +208,6 @@ pub fn parse_ptx(source: &str) -> Result<crate::r#type::module::Module, PtxParse
     })?;
     let mut stream = PtxTokenStream::new(&tokens);
     let module = crate::r#type::module::Module::parse(&mut stream)?;
-    while stream
-        .consume_if(|token| matches!(token, PtxToken::Newline))
-        .is_some()
-    {}
     if !stream.is_at_end() {
         let (token, span) = stream.peek()?;
         return Err(unexpected_value(

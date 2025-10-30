@@ -1,9 +1,13 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
     r#type::instruction::abs::{Abs, DataType as AbsDataType},
 };
+
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Abs>(source);
+}
 
 #[test]
 fn parses_abs_instruction() {
@@ -15,6 +19,7 @@ fn parses_abs_instruction() {
             source: RegisterOperand::Single("%r2".into()),
         }
     );
+    assert_roundtrip("abs.s32 %r1,%r2;");
 }
 
 #[test]
@@ -27,18 +32,21 @@ fn parses_abs_instruction_with_spaces() {
             source: RegisterOperand::Single("%rd8".into()),
         }
     );
+    assert_roundtrip("abs.s64 %rd7, %rd8;");
 }
 
 #[test]
 fn rejects_invalid_data_type() {
     let err = parse_result::<Abs>("abs.u32 %r1,%r2;").expect_err("parse should fail");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip("abs.s16 %r1,%r2;");
 }
 
 #[test]
 fn rejects_wrong_opcode() {
     let err = parse_result::<Abs>("mov.s32 %r1,%r2;").expect_err("parse should fail");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip("abs.s32 %r1,%r2;");
 }
 
 #[test]
@@ -49,4 +57,5 @@ fn rejects_missing_semicolon() {
         err.kind,
         ParseErrorKind::UnexpectedToken { .. } | ParseErrorKind::UnexpectedEof
     ));
+    assert_roundtrip("abs.s16 %r1,%r2;");
 }

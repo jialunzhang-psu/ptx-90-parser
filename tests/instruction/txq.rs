@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -25,6 +25,7 @@ fn parses_texture_query_with_symbol_operand() {
             address: Operand::Texture(var("tex_A")),
         }
     );
+    assert_roundtrip::<Txq>("txq.width.b32 %r1, [tex_A];");
 }
 
 #[test]
@@ -37,6 +38,7 @@ fn parses_texture_query_with_register_operand() {
             address: Operand::Register(reg("%rd3")),
         }
     );
+    assert_roundtrip::<Txq>("txq.num_mipmap_levels.b32 %r2, [%rd3];");
 }
 
 #[test]
@@ -50,6 +52,7 @@ fn parses_texture_level_query() {
             lod: reg("%r5"),
         }
     );
+    assert_roundtrip::<Txq>("txq.level.height.b32 %r4, [tex_B], %r5;");
 }
 
 #[test]
@@ -62,6 +65,7 @@ fn parses_sampler_query() {
             address: Operand::Sampler(var("smpl_C")),
         }
     );
+    assert_roundtrip::<Txq>("txq.filter_mode.b32 %r6, [smpl_C];");
 }
 
 #[test]

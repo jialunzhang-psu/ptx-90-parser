@@ -1,14 +1,18 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{parser::ParseErrorKind, r#type::instruction::ret::Ret};
 
 #[test]
 fn parses_default_return_instruction() {
-    assert_eq!(parse::<Ret>("ret;"), Ret::Default);
+    let source = "ret;";
+    assert_eq!(parse::<Ret>(source), Ret::Default);
+    assert_roundtrip::<Ret>(source);
 }
 
 #[test]
 fn parses_uniform_return_instruction() {
-    assert_eq!(parse::<Ret>("ret.uni;"), Ret::Uniform);
+    let source = "ret.uni;";
+    assert_eq!(parse::<Ret>(source), Ret::Uniform);
+    assert_roundtrip::<Ret>(source);
 }
 
 #[test]

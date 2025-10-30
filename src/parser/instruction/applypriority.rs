@@ -55,16 +55,16 @@ impl PtxParser for Applypriority {
             })
             .is_some();
 
-        let (modifier, modifier_span) = stream.expect_directive()?;
-        if modifier != "level" {
-            return Err(unexpected_value(
-                modifier_span,
-                &[".level"],
-                format!(".{modifier}"),
-            ));
+        if let Ok((token, span)) = stream.peek() {
+            if matches!(token, PtxToken::Directive(name) if name == "level") {
+                return Err(unexpected_value(
+                    span.clone(),
+                    &[".L2"],
+                    ".level".to_string(),
+                ));
+            }
         }
 
-        stream.expect_double_colon()?;
         let eviction_priority = EvictionPriority::parse(stream)?;
         let address = AddressOperand::parse(stream)?;
         stream.expect(&PtxToken::Comma)?;

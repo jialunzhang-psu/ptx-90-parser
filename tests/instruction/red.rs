@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -12,6 +12,10 @@ use ptx_parser::{
     },
 };
 
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<RedOpcode>(source);
+}
+
 fn reg(name: &str) -> RegisterOperand {
     RegisterOperand::Single(name.into())
 }
@@ -22,10 +26,9 @@ fn address_from_register(name: &str) -> AddressOperand {
 
 #[test]
 fn parses_scalar_red_with_cache_policy() {
+    let source = "red.relaxed.sys.shared::cta.max.L2::cache_hint.s64 [%rd0], %rd1, %rd3;";
     assert_eq!(
-        parse::<RedOpcode>(
-            "red.relaxed.sys.shared::cta.max.L2::cache_hint.s64 [%rd0], %rd1, %rd3;",
-        ),
+        parse::<RedOpcode>(source),
         RedOpcode::Scalar(Scalar {
             semantics: Some(Semantics::Relaxed),
             scope: Some(Scope::Sys),
@@ -38,12 +41,14 @@ fn parses_scalar_red_with_cache_policy() {
             cache_policy: Some(reg("%rd3")),
         })
     );
+    assert_roundtrip(source);
 }
 
 #[test]
 fn parses_scalar_add_noftz_variant() {
+    let source = "red.release.shared.add.noftz.L2::cache_hint.bf16 [%rd5], %h2;";
     assert_eq!(
-        parse::<RedOpcode>("red.release.shared.add.noftz.L2::cache_hint.bf16 [%rd5], %h2;"),
+        parse::<RedOpcode>(source),
         RedOpcode::ScalarAddNoFtz(ScalarAddNoFtz {
             semantics: Some(Semantics::Release),
             scope: None,
@@ -55,12 +60,14 @@ fn parses_scalar_add_noftz_variant() {
             cache_policy: None,
         })
     );
+    assert_roundtrip(source);
 }
 
 #[test]
 fn parses_vector_add32_variant() {
+    let source = "red.global.add.vec_32_bit.f32 [%rd4], {%f0, %f1}, %rd6;";
     assert_eq!(
-        parse::<RedOpcode>("red.global.add.vec_32_bit.f32 [%rd4], {%f0, %f1}, %rd6;"),
+        parse::<RedOpcode>(source),
         RedOpcode::VectorAdd32(VectorAdd32 {
             semantics: None,
             scope: None,
@@ -72,14 +79,15 @@ fn parses_vector_add32_variant() {
             cache_policy: Some(reg("%rd6")),
         })
     );
+    assert_roundtrip(source);
 }
 
 #[test]
 fn parses_vector_half_min_noftz() {
+    let source =
+        "red.relaxed.global.min.noftz.L2::cache_hint.vec_16_bit.bf16 [%rd2], {%h0, %h1, %h2, %h3};";
     assert_eq!(
-        parse::<RedOpcode>(
-            "red.relaxed.global.min.noftz.L2::cache_hint.vec_16_bit.bf16 [%rd2], {%h0, %h1, %h2, %h3};",
-        ),
+        parse::<RedOpcode>(source),
         RedOpcode::VectorHalf(VectorHalf {
             semantics: Some(Semantics::Relaxed),
             scope: None,
@@ -92,12 +100,14 @@ fn parses_vector_half_min_noftz() {
             cache_policy: None,
         })
     );
+    assert_roundtrip(source);
 }
 
 #[test]
 fn parses_vector_packed_max_noftz() {
+    let source = "red.global.max.noftz.vec_32_bit.bf16x2 [%rd8], {%f0, %f1, %f2, %f3};";
     assert_eq!(
-        parse::<RedOpcode>("red.global.max.noftz.vec_32_bit.bf16x2 [%rd8], {%f0, %f1, %f2, %f3};",),
+        parse::<RedOpcode>(source),
         RedOpcode::VectorPacked(VectorPacked {
             semantics: None,
             scope: None,
@@ -110,6 +120,7 @@ fn parses_vector_packed_max_noftz() {
             cache_policy: None,
         })
     );
+    assert_roundtrip(source);
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
@@ -16,6 +16,7 @@ fn parses_rem_unsigned() {
             rhs: RegisterOperand::Single("%r3".into()),
         }
     );
+    assert_roundtrip::<Rem>("rem.u32 %r1, %r2, %r3;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_rem_signed() {
             rhs: RegisterOperand::Single("%rd6".into()),
         }
     );
+    assert_roundtrip::<Rem>("rem.s64 %rd4, %rd5, %rd6;");
 }
 
 #[test]

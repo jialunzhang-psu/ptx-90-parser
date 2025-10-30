@@ -1,9 +1,10 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{parser::ParseErrorKind, r#type::instruction::trap::Trap};
 
 #[test]
 fn parses_simple_trap_instruction() {
     assert_eq!(parse::<Trap>("trap;"), Trap);
+    assert_roundtrip::<Trap>("trap;");
 }
 
 #[test]

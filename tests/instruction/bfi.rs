@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -20,6 +20,7 @@ fn parses_bfi_b32() {
             length: RegisterOperand::Single("%r5".into()),
         }
     );
+    assert_roundtrip::<Bfi>("bfi.b32 %r1, %r2, %r3, %r4, %r5;");
 }
 
 #[test]
@@ -35,6 +36,7 @@ fn parses_bfi_b64() {
             length: RegisterOperand::Single("%rd5".into()),
         }
     );
+    assert_roundtrip::<Bfi>("bfi.b64 %rd1, %rd2, %rd3, %rd4, %rd5;");
 }
 
 #[test]

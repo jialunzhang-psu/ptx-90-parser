@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -16,6 +16,7 @@ fn parses_nanosleep_with_register_operand() {
             delay: Operand::Register(RegisterOperand::Single("%r3".into())),
         }
     );
+    assert_roundtrip::<Nanosleep>("nanosleep.u32 %r3;");
 }
 
 #[test]
@@ -27,6 +28,7 @@ fn parses_nanosleep_with_immediate_operand() {
             delay: Operand::Immediate(Immediate("128".into())),
         }
     );
+    assert_roundtrip::<Nanosleep>("nanosleep.u32 128;");
 }
 
 #[test]

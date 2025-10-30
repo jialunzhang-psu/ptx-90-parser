@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::r#type::common::RegisterOperand;
 use ptx_parser::r#type::instruction::xor::DataType;
 use ptx_parser::{parser::ParseErrorKind, r#type::instruction::xor::Xor};
@@ -14,6 +14,7 @@ fn parses_xor_pred() {
             b: RegisterOperand::Single("%p2".into()),
         }
     );
+    assert_roundtrip::<Xor>("xor.pred %p0, %p1, %p2;");
 }
 
 #[test]
@@ -27,6 +28,7 @@ fn parses_xor_bitwise() {
             b: RegisterOperand::Single("%r2".into()),
         }
     );
+    assert_roundtrip::<Xor>("xor.b32 %r3, %r1, %r2;");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -44,6 +44,7 @@ fn parses_async_ca_basic() {
             cache_policy: None,
         })
     );
+    assert_roundtrip::<CpOpcode>("cp.async.ca.shared.global [%rd0], [%rd1], 4;");
 }
 
 #[test]
@@ -61,6 +62,7 @@ fn parses_async_ca_with_source_size_immediate() {
             cache_policy: None,
         })
     );
+    assert_roundtrip::<CpOpcode>("cp.async.ca.shared.global [%rd2], [%rd3], 16, 8;");
 }
 
 #[test]
@@ -79,6 +81,9 @@ fn parses_async_cg_with_source_size_and_cache_policy() {
             cache_policy: Some(reg("%rd3")),
         })
     );
+    assert_roundtrip::<CpOpcode>(
+        "cp.async.cg.shared::cta.global.L2::cache_hint.L2::128B [%rd0], [%rd1], 16, %r2, %rd3;",
+    );
 }
 
 #[test]
@@ -96,6 +101,9 @@ fn parses_async_ca_ignore_src_with_cache_policy() {
             cache_policy: Some(reg("%rd6")),
         })
     );
+    assert_roundtrip::<CpOpcode>(
+        "cp.async.ca.shared.global.L2::cache_hint [%rd4], [%rd5], 8, %p0, %rd6;",
+    );
 }
 
 #[test]
@@ -112,6 +120,9 @@ fn parses_async_ca_cache_policy_without_source_size() {
             source_size: None,
             cache_policy: Some(reg("%rd9")),
         })
+    );
+    assert_roundtrip::<CpOpcode>(
+        "cp.async.ca.shared.global.L2::cache_hint [%rd7], [%rd8], 16, %rd9;",
     );
 }
 

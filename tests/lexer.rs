@@ -147,7 +147,13 @@ fn test_newlines() {
     let source = "mov.u32 %r0, 1;\nmov.u32 %r1, 2;";
     let tokens = tokenize(source).unwrap();
 
-    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::Newline)));
+    assert_eq!(
+        tokens
+            .iter()
+            .filter(|(t, _)| matches!(t, PtxToken::Semicolon))
+            .count(),
+        2
+    );
 }
 
 #[test]

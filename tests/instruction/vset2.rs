@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{common::RegisterOperand, instruction::vset2},
@@ -6,8 +6,9 @@ use ptx_parser::{
 
 #[test]
 fn parses_simd_merge_with_selectors() {
+    let source = "vset2.s32.u32.ne %r1.h0, %r2.h10, %r3.h32, %r4;";
     assert_eq!(
-        parse::<vset2::Vset2>("vset2.s32.u32.ne %r1.h0, %r2.h10, %r3.h32, %r4;"),
+        parse::<vset2::Vset2>(source),
         vset2::Vset2::SimdMerge(vset2::SimdMerge {
             a_type: vset2::DataType::S32,
             b_type: vset2::DataType::U32,
@@ -31,12 +32,14 @@ fn parses_simd_merge_with_selectors() {
             c: RegisterOperand::Single("%r4".into()),
         })
     );
+    assert_roundtrip::<vset2::Vset2>(source);
 }
 
 #[test]
 fn parses_accumulate_without_optional_modifiers() {
+    let source = "vset2.u32.s32.ge.add %r5, %r6, %r7, %r8;";
     assert_eq!(
-        parse::<vset2::Vset2>("vset2.u32.s32.ge.add %r5, %r6, %r7, %r8;"),
+        parse::<vset2::Vset2>(source),
         vset2::Vset2::Accumulate(vset2::Accumulate {
             a_type: vset2::DataType::U32,
             b_type: vset2::DataType::S32,
@@ -56,6 +59,7 @@ fn parses_accumulate_without_optional_modifiers() {
             c: RegisterOperand::Single("%r8".into()),
         })
     );
+    assert_roundtrip::<vset2::Vset2>(source);
 }
 
 #[test]

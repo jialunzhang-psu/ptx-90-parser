@@ -7,12 +7,33 @@ use crate::{
 fn parse_primary_and_secondary(
     stream: &mut PtxTokenStream,
 ) -> Result<(PrimaryPriority, Option<SecondaryPriority>), PtxParseError> {
-    expect_directive_value(stream, "level")?;
-    stream.expect_double_colon()?;
+    if stream.check(|token| {
+        matches!(
+            token,
+            PtxToken::Directive(name) if name == "level"
+        )
+    }) {
+        let span = stream.peek().map(|(_, span)| span.clone()).unwrap_or(0..0);
+        return Err(unexpected_value(span, &[".L2"], ".level".to_string()));
+    }
     let primary_priority = PrimaryPriority::parse(stream)?;
 
-    let secondary_priority = if consume_directive_if(stream, "level") {
-        stream.expect_double_colon()?;
+    if stream.check(|token| {
+        matches!(
+            token,
+            PtxToken::Directive(name) if name == "level"
+        )
+    }) {
+        let span = stream.peek().map(|(_, span)| span.clone()).unwrap_or(0..0);
+        return Err(unexpected_value(span, &[".L2"], ".level".to_string()));
+    }
+
+    let secondary_priority = if stream.check(|token| {
+        matches!(
+            token,
+            PtxToken::Directive(name) if name == "L2"
+        )
+    }) {
         Some(SecondaryPriority::parse(stream)?)
     } else {
         None

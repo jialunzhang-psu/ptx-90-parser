@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -20,6 +20,7 @@ fn parses_plain_lop3() {
             lut: Immediate("0xf0".into()),
         })
     );
+    assert_roundtrip::<lop3::Lop3>("lop3.b32 %r0, %r1, %r2, %r3, 0xf0;");
 }
 
 #[test]
@@ -38,6 +39,7 @@ fn parses_boolean_lop3() {
             predicate_input: PredicateRegister("%p1".into()),
         })
     );
+    assert_roundtrip::<lop3::Lop3>("lop3.or.b32 %r4|%p0, %r1, %r2, %r3, 0x1e, %p1;");
 }
 
 #[test]

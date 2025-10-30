@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{common::*, instruction::multimem::*},
@@ -14,8 +14,9 @@ fn addr_reg(name: &str) -> AddressOperand {
 
 #[test]
 fn parses_ld_reduce_int() {
+    let source = "multimem.ld_reduce.relaxed.cta.global.min.s32 %r1, [%rd1];";
     assert_eq!(
-        parse::<Instruction>("multimem.ld_reduce.relaxed.cta.global.min.s32 %r1, [%rd1];"),
+        parse::<Instruction>(source),
         Instruction::LdReduce(LdReduce::Int(LdReduceInt {
             semantics: Some(LoadSemantics::Relaxed),
             scope: Some(Scope::Cta),
@@ -26,14 +27,14 @@ fn parses_ld_reduce_int() {
             address: addr_reg("%rd1"),
         }))
     );
+    assert_roundtrip::<Instruction>(source);
 }
 
 #[test]
 fn parses_ld_reduce_float_vector() {
+    let source = "multimem.ld_reduce.acquire.sys.global.max.acc_f32.v2.f32 {%f0,%f1}, [%rd3];";
     assert_eq!(
-        parse::<Instruction>(
-            "multimem.ld_reduce.acquire.sys.global.max.acc_f32.v2.f32 {%f0,%f1}, [%rd3];"
-        ),
+        parse::<Instruction>(source),
         Instruction::LdReduce(LdReduce::Float(LdReduceFloat {
             semantics: Some(LoadSemantics::Acquire),
             scope: Some(Scope::Sys),
@@ -46,15 +47,15 @@ fn parses_ld_reduce_float_vector() {
             address: addr_reg("%rd3"),
         }))
     );
+    assert_roundtrip::<Instruction>(source);
 }
 
 #[test]
 fn parses_ld_reduce_weak_float_vector() {
+    let source = "multimem.ld_reduce.weak.global.add.acc_f16.v4.f16 \
+             {%f0,%f1,%f2,%f3}, [%rd0];";
     assert_eq!(
-        parse::<Instruction>(
-            "multimem.ld_reduce.weak.global.add.acc_f16.v4.f16 \
-             {%f0,%f1,%f2,%f3}, [%rd0];"
-        ),
+        parse::<Instruction>(source),
         Instruction::LdReduce(LdReduce::WeakFloat(LdReduceWeakFloat {
             state_space: Some(StateSpace::Global),
             operation: FloatOp::Add,
@@ -70,12 +71,14 @@ fn parses_ld_reduce_weak_float_vector() {
             address: addr_reg("%rd0"),
         }))
     );
+    assert_roundtrip::<Instruction>(source);
 }
 
 #[test]
 fn parses_store_int() {
+    let source = "multimem.st.release.cluster.global.s64 [%rd1], %rd2;";
     assert_eq!(
-        parse::<Instruction>("multimem.st.release.cluster.global.s64 [%rd1], %rd2;"),
+        parse::<Instruction>(source),
         Instruction::Store(Store::Int(StoreInt {
             semantics: Some(StoreSemantics::Release),
             scope: Some(Scope::Cluster),
@@ -85,12 +88,14 @@ fn parses_store_int() {
             value: reg("%rd2"),
         }))
     );
+    assert_roundtrip::<Instruction>(source);
 }
 
 #[test]
 fn parses_store_float_vector() {
+    let source = "multimem.st.relaxed.sys.global.v4.f16 [%rd4], {%f0,%f1,%f2,%f3};";
     assert_eq!(
-        parse::<Instruction>("multimem.st.relaxed.sys.global.v4.f16 [%rd4], {%f0,%f1,%f2,%f3};"),
+        parse::<Instruction>(source),
         Instruction::Store(Store::Float(StoreFloat {
             semantics: Some(StoreSemantics::Relaxed),
             scope: Some(Scope::Sys),
@@ -101,12 +106,14 @@ fn parses_store_float_vector() {
             value: VectorValue::Vector4([reg("%f0"), reg("%f1"), reg("%f2"), reg("%f3")]),
         }))
     );
+    assert_roundtrip::<Instruction>(source);
 }
 
 #[test]
 fn parses_store_weak_float_vector() {
+    let source = "multimem.st.weak.global.v2.f32 [%rd2], {%f4,%f5};";
     assert_eq!(
-        parse::<Instruction>("multimem.st.weak.global.v2.f32 [%rd2], {%f4,%f5};"),
+        parse::<Instruction>(source),
         Instruction::Store(Store::WeakFloat(StoreWeakFloat {
             state_space: Some(StateSpace::Global),
             vector: Some(VectorWidth::V2),
@@ -115,12 +122,14 @@ fn parses_store_weak_float_vector() {
             value: VectorValue::Vector2([reg("%f4"), reg("%f5")]),
         }))
     );
+    assert_roundtrip::<Instruction>(source);
 }
 
 #[test]
 fn parses_reduction_int() {
+    let source = "multimem.red.release.cta.global.xor.u64 [%rd3], %rd4;";
     assert_eq!(
-        parse::<Instruction>("multimem.red.release.cta.global.xor.u64 [%rd3], %rd4;"),
+        parse::<Instruction>(source),
         Instruction::Red(Red::Int(RedInt {
             semantics: Some(ReductionSemantics::Release),
             scope: Some(Scope::Cta),
@@ -131,12 +140,14 @@ fn parses_reduction_int() {
             value: reg("%rd4"),
         }))
     );
+    assert_roundtrip::<Instruction>(source);
 }
 
 #[test]
 fn parses_reduction_float_vector() {
+    let source = "multimem.red.relaxed.sys.global.add.v2.bf16 [%rd5], {%f0,%f1};";
     assert_eq!(
-        parse::<Instruction>("multimem.red.relaxed.sys.global.add.v2.bf16 [%rd5], {%f0,%f1};"),
+        parse::<Instruction>(source),
         Instruction::Red(Red::Float(RedFloat {
             semantics: Some(ReductionSemantics::Relaxed),
             scope: Some(Scope::Sys),
@@ -148,6 +159,7 @@ fn parses_reduction_float_vector() {
             value: VectorValue::Vector2([reg("%f0"), reg("%f1")]),
         }))
     );
+    assert_roundtrip::<Instruction>(source);
 }
 
 #[test]

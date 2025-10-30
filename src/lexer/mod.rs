@@ -4,15 +4,11 @@ pub(crate) use logos::Span;
 /// PTX Token types for lexical analysis
 #[derive(Logos, Debug, Clone, PartialEq)]
 #[logos(error = LexError)]
-#[logos(skip r"[ \t\r]+")] // Skip whitespace (but not newlines in some contexts)
+#[logos(skip r"[ \t\r\n]+")] // Skip whitespace, including newlines
 pub enum PtxToken {
     // Comments - skip both C++ and C style
     #[regex(r"//[^\n]*", logos::skip)]
     #[regex(r"/\*[^*]*\*+(?:[^/*][^*]*\*+)*/", logos::skip)]
-    // Whitespace and newlines
-    #[token("\n")]
-    Newline,
-
     // Punctuation and operators
     #[token(".")]
     Dot,
@@ -65,7 +61,7 @@ pub enum PtxToken {
 
     // Directives (start with dot followed by identifier)
     // This must come before Dot token to match properly
-    #[regex(r"\.[a-zA-Z_][a-zA-Z0-9_]*", |lex| lex.slice()[1..].to_string())]
+    #[regex(r"\.[a-zA-Z0-9][a-zA-Z0-9_]*", |lex| lex.slice()[1..].to_string())]
     Directive(String),
 
     // Numbers - order matters! More specific patterns first

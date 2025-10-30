@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -16,6 +16,7 @@ fn parses_stacksave_u32() {
             destination: RegisterOperand::Single("%r1".into()),
         }
     );
+    assert_roundtrip::<Stacksave>("stacksave.u32 %r1;");
 }
 
 #[test]
@@ -27,6 +28,7 @@ fn parses_stacksave_u64() {
             destination: RegisterOperand::Single("%rd2".into()),
         }
     );
+    assert_roundtrip::<Stacksave>("stacksave.u64 %rd2;");
 }
 
 #[test]
@@ -34,6 +36,7 @@ fn rejects_invalid_data_type() {
     let err = parse_result::<Stacksave>("stacksave.s32 %r1;")
         .expect_err("parsing should fail for unsupported data type");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip::<Stacksave>("stacksave.u32 %r1;");
 }
 
 #[test]
@@ -41,4 +44,5 @@ fn rejects_non_register_operand() {
     let err = parse_result::<Stacksave>("stacksave.u32 0;")
         .expect_err("parsing should fail for non-register operand");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip::<Stacksave>("stacksave.u32 %r1;");
 }

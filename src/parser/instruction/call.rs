@@ -4,13 +4,6 @@ use crate::{
     r#type::{common::*, instruction::call::*},
 };
 
-fn consume_newlines(stream: &mut PtxTokenStream) {
-    while stream
-        .consume_if(|token| matches!(token, PtxToken::Newline))
-        .is_some()
-    {}
-}
-
 fn is_numeric_token(token: &PtxToken) -> bool {
     matches!(
         token,
@@ -58,7 +51,6 @@ fn parse_argument(stream: &mut PtxTokenStream) -> Result<CallArgument, PtxParseE
 
 fn parse_argument_list(stream: &mut PtxTokenStream) -> Result<Vec<CallArgument>, PtxParseError> {
     stream.expect(&PtxToken::LParen)?;
-    consume_newlines(stream);
 
     if stream
         .consume_if(|token| matches!(token, PtxToken::RParen))
@@ -69,19 +61,14 @@ fn parse_argument_list(stream: &mut PtxTokenStream) -> Result<Vec<CallArgument>,
 
     let mut arguments = Vec::new();
     loop {
-        consume_newlines(stream);
         arguments.push(parse_argument(stream)?);
-        consume_newlines(stream);
 
         if stream
             .consume_if(|token| matches!(token, PtxToken::Comma))
-            .is_some()
+            .is_none()
         {
-            consume_newlines(stream);
-            continue;
+            break;
         }
-
-        break;
     }
 
     stream.expect(&PtxToken::RParen)?;
@@ -109,41 +96,30 @@ impl PtxParser for Call {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         expect_identifier_value(stream, "call")?;
         let uniform = consume_directive_if(stream, "uni");
-        consume_newlines(stream);
 
         let mut return_parameter = if stream
             .consume_if(|token| matches!(token, PtxToken::LParen))
             .is_some()
         {
-            consume_newlines(stream);
             let value = parse_return_parameter(stream)?;
-            consume_newlines(stream);
             stream.expect(&PtxToken::RParen)?;
-            consume_newlines(stream);
             stream.expect(&PtxToken::Comma)?;
-            consume_newlines(stream);
             Some(value)
         } else {
             None
         };
 
-        consume_newlines(stream);
-
         let kind = if stream
             .check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace))
         {
             let pointer = RegisterOperand::parse(stream)?;
-            consume_newlines(stream);
             stream.expect(&PtxToken::Comma)?;
-            consume_newlines(stream);
 
             let requires_arguments = return_parameter.is_some();
             let (arguments, has_arguments) =
                 if stream.check(|token| matches!(token, PtxToken::LParen)) {
                     let args = parse_argument_list(stream)?;
-                    consume_newlines(stream);
                     stream.expect(&PtxToken::Comma)?;
-                    consume_newlines(stream);
                     (args, true)
                 } else {
                     if requires_arguments {
@@ -157,7 +133,6 @@ impl PtxParser for Call {
             let is_prototype = looks_like_prototype(&target_name);
             let prototype = label_from_name(target_name.clone());
             let targets = classify_call_target(target_name);
-            consume_newlines(stream);
             stream.expect(&PtxToken::Semicolon)?;
 
             let ret_param = return_parameter.take();
@@ -197,15 +172,12 @@ impl PtxParser for Call {
             }
         } else {
             let callee = FunctionSymbol::parse(stream)?;
-            consume_newlines(stream);
 
             if stream
                 .consume_if(|token| matches!(token, PtxToken::Comma))
                 .is_some()
             {
-                consume_newlines(stream);
                 let arguments = parse_argument_list(stream)?;
-                consume_newlines(stream);
                 stream.expect(&PtxToken::Semicolon)?;
 
                 if let Some(ret) = return_parameter.take() {

@@ -1,19 +1,20 @@
 #[path = "instruction/mod.rs"]
 mod instruction;
 mod util;
-use util::{parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
-        common::{Immediate, Operand, RegisterOperand},
+        common::{Immediate, Operand, PredicateRegister, RegisterOperand},
         instruction::{
+            Instruction, InstructionOpcode,
             add::Add,
             barrier::{Barrier, BarrierSync, Scope},
             multimem::{Instruction as MultimemInstruction, Red},
-            InstructionOpcode,
         },
     },
+    unparser::PtxUnparser,
 };
+use util::{assert_roundtrip, parse, parse_result, tokenize_only};
 
 #[test]
 fn parses_add_opcode_dispatch() {
@@ -27,13 +28,14 @@ fn parses_add_opcode_dispatch() {
         panic!("expected add opcode");
     };
 
-    assert!(matches!(data_type, ptx_parser::r#type::instruction::add::DataType::S32 { .. }));
+    assert!(matches!(
+        data_type,
+        ptx_parser::r#type::instruction::add::DataType::S32 { .. }
+    ));
     assert_eq!(destination, RegisterOperand::Single("%r0".into()));
     assert_eq!(a, RegisterOperand::Single("%r1".into()));
-    assert_eq!(
-        b,
-        Operand::Register(RegisterOperand::Single("%r2".into()))
-    );
+    assert_eq!(b, Operand::Register(RegisterOperand::Single("%r2".into())));
+    assert_roundtrip::<InstructionOpcode>("add.s32 %r0, %r1, %r2;");
 }
 
 #[test]
@@ -58,6 +60,7 @@ fn parses_barrier_opcode_dispatch() {
         expected_count,
         Some(Operand::Immediate(Immediate("4".into())))
     );
+    assert_roundtrip::<InstructionOpcode>("barrier.cta.sync.aligned %r1, 4;");
 }
 
 #[test]
@@ -67,6 +70,33 @@ fn parses_multimem_opcode_dispatch() {
     else {
         panic!("expected multimem.red opcode");
     };
+    assert_roundtrip::<InstructionOpcode>("multimem.red.release.cta.global.add.u64 [%rd3], %rd4;");
+}
+
+#[test]
+fn instruction_without_predicate_unparses_add() {
+    let source = "add.s32 %r0, %r1, %r2;";
+    let opcode = parse::<InstructionOpcode>(source);
+    let instruction = Instruction {
+        predicate: None,
+        opcode,
+        comment: None,
+        raw: source.into(),
+    };
+    assert_eq!(instruction.to_tokens(), tokenize_only(source));
+}
+
+#[test]
+fn instruction_with_predicate_unparses_add() {
+    let opcode = parse::<InstructionOpcode>("add.s32 %r0, %r1, %r2;");
+    let source = "@%p1 add.s32 %r0, %r1, %r2;";
+    let instruction = Instruction {
+        predicate: Some(PredicateRegister("%p1".into())),
+        opcode,
+        comment: None,
+        raw: source.into(),
+    };
+    assert_eq!(instruction.to_tokens(), tokenize_only(source));
 }
 
 #[test]

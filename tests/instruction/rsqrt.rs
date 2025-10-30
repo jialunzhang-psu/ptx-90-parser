@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -17,6 +17,7 @@ fn parses_rsqrt_approx_f32_without_ftz() {
             source: RegisterOperand::Single("%f1".into()),
         })
     );
+    assert_roundtrip::<Rsqrt>("rsqrt.approx.f32 %f0, %f1;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_rsqrt_approx_f32_with_ftz() {
             source: RegisterOperand::Single("%f3".into()),
         })
     );
+    assert_roundtrip::<Rsqrt>("rsqrt.approx.ftz.f32 %f2, %f3;");
 }
 
 #[test]
@@ -40,6 +42,7 @@ fn parses_rsqrt_approx_f64() {
             source: RegisterOperand::Single("%fd5".into()),
         })
     );
+    assert_roundtrip::<Rsqrt>("rsqrt.approx.f64 %fd4, %fd5;");
 }
 
 #[test]

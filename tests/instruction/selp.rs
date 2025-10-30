@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -19,6 +19,7 @@ fn parses_selp_instruction() {
             predicate: PredicateRegister("%p3".into()),
         }
     );
+    assert_roundtrip::<Selp>("selp.u32 %r0, %r1, %r2, %p3;");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -9,6 +9,7 @@ use ptx_parser::{
 
 #[test]
 fn parses_discard_without_space_modifier() {
+    assert_roundtrip::<Discard>("discard.L2 [0], 128;");
     assert_eq!(
         parse::<Discard>("discard.L2 [0], 128;"),
         Discard {
@@ -22,6 +23,7 @@ fn parses_discard_without_space_modifier() {
 
 #[test]
 fn parses_discard_with_global_space() {
+    assert_roundtrip::<Discard>("discard.global.L2 [0], 128;");
     assert_eq!(
         parse::<Discard>("discard.global.L2 [0], 128;"),
         Discard {
@@ -35,6 +37,7 @@ fn parses_discard_with_global_space() {
 
 #[test]
 fn rejects_invalid_space_modifier() {
+    assert_roundtrip::<Discard>("discard.L2 [0], 128;");
     let err = parse_result::<Discard>("discard.shared.L2 [0], 128;")
         .expect_err("parse should fail when space modifier is invalid");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
@@ -42,6 +45,7 @@ fn rejects_invalid_space_modifier() {
 
 #[test]
 fn rejects_invalid_size_literal() {
+    assert_roundtrip::<Discard>("discard.L2 [0], 128;");
     let err = parse_result::<Discard>("discard.L2 [0], 64;")
         .expect_err("parse should fail when size literal is invalid");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));

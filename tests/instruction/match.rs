@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -9,6 +9,7 @@ use ptx_parser::{
 
 #[test]
 fn parses_match_any_instruction() {
+    assert_roundtrip::<Match>("match.any.sync.b32 %r0, %r1, %r2;");
     assert_eq!(
         parse::<Match>("match.any.sync.b32 %r0, %r1, %r2;"),
         Match::Any(Any {
@@ -22,6 +23,7 @@ fn parses_match_any_instruction() {
 
 #[test]
 fn parses_match_all_with_predicate_instruction() {
+    assert_roundtrip::<Match>("match.all.sync.b64 %r3|%p0, %r4, 0xff;");
     assert_eq!(
         parse::<Match>("match.all.sync.b64 %r3|%p0, %r4, 0xff;"),
         Match::All(All {

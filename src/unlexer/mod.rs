@@ -52,7 +52,6 @@ fn write_token<W: Write>(writer: &mut W, token: &PtxToken) -> fmt::Result {
             writer.write_str(name)?;
             writer.write_char('"')
         }
-        PtxToken::Newline => writer.write_char('\n'),
         PtxToken::Dot => writer.write_char('.'),
         PtxToken::Comma => writer.write_char(','),
         PtxToken::Semicolon => writer.write_char(';'),
@@ -81,9 +80,6 @@ fn write_token<W: Write>(writer: &mut W, token: &PtxToken) -> fmt::Result {
 }
 
 fn needs_space(prev: &PtxToken, curr: &PtxToken) -> bool {
-    if matches!(prev, PtxToken::Newline) || matches!(curr, PtxToken::Newline) {
-        return false;
-    }
     if no_space_after(prev) || no_space_before(curr) {
         return false;
     }

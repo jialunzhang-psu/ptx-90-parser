@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::{Immediate, Operand, RegisterOperand},
@@ -7,8 +7,9 @@ use ptx_parser::{
 
 #[test]
 fn parses_bmsk_clamp_register_operands() {
+    let source = "bmsk.clamp.b32 %r1, %r2, %r3;";
     assert_eq!(
-        parse::<Bmsk>("bmsk.clamp.b32 %r1, %r2, %r3;"),
+        parse::<Bmsk>(source),
         Bmsk {
             mode: Mode::Clamp,
             destination: RegisterOperand::Single("%r1".into()),
@@ -16,12 +17,14 @@ fn parses_bmsk_clamp_register_operands() {
             b: Operand::Register(RegisterOperand::Single("%r3".into())),
         }
     );
+    assert_roundtrip::<Bmsk>(source);
 }
 
 #[test]
 fn parses_bmsk_wrap_with_immediate() {
+    let source = "bmsk.wrap.b32 %r4, 0xff, %r5;";
     assert_eq!(
-        parse::<Bmsk>("bmsk.wrap.b32 %r4, 0xff, %r5;"),
+        parse::<Bmsk>(source),
         Bmsk {
             mode: Mode::Wrap,
             destination: RegisterOperand::Single("%r4".into()),
@@ -29,6 +32,7 @@ fn parses_bmsk_wrap_with_immediate() {
             b: Operand::Register(RegisterOperand::Single("%r5".into())),
         }
     );
+    assert_roundtrip::<Bmsk>(source);
 }
 
 #[test]

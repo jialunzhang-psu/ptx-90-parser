@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -30,6 +30,7 @@ fn parses_integer_add() {
             member_mask: immediate("0xff"),
         })
     );
+    assert_roundtrip::<Redux>("redux.sync.add.s32 %r0, %r1, 0xff;");
 }
 
 #[test]
@@ -43,6 +44,7 @@ fn parses_bitwise_and() {
             member_mask: Operand::Register(reg("%r4")),
         })
     );
+    assert_roundtrip::<Redux>("redux.sync.and.b32 %r2, %r3, %r4;");
 }
 
 #[test]
@@ -58,6 +60,7 @@ fn parses_float_min_with_modifiers() {
             member_mask: Operand::Register(reg("%r5")),
         })
     );
+    assert_roundtrip::<Redux>("redux.sync.min.abs.NaN.f32 %f0, %f1, %r5;");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::r#type::common::RegisterOperand;
 use ptx_parser::{
     parser::ParseErrorKind,
@@ -17,6 +17,7 @@ fn parses_slct_s32_variant() {
             selector: RegisterOperand::Single("%r3".into()),
         }
     );
+    assert_roundtrip::<Slct>("slct.u32.s32 %r0, %r1, %r2, %r3;");
 }
 
 #[test]
@@ -32,6 +33,7 @@ fn parses_slct_f32_variant_with_ftz() {
             selector: RegisterOperand::Single("%f3".into()),
         }
     );
+    assert_roundtrip::<Slct>("slct.ftz.u64.f32 %rd0, %rd1, %rd2, %f3;");
 }
 
 #[test]
@@ -39,6 +41,7 @@ fn rejects_slct_ftz_with_s32_selector() {
     let err = parse_result::<Slct>("slct.ftz.u32.s32 %r0, %r1, %r2, %r3;")
         .expect_err("parse should fail when .ftz is used with .s32 selector");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip::<Slct>("slct.u32.s32 %r0, %r1, %r2, %r3;");
 }
 
 #[test]
@@ -46,6 +49,7 @@ fn rejects_slct_with_invalid_selector_type() {
     let err = parse_result::<Slct>("slct.u32.u32 %r0, %r1, %r2, %r3;")
         .expect_err("parse should fail when selector type is not .s32 or .f32");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip::<Slct>("slct.u32.s32 %r0, %r1, %r2, %r3;");
 }
 
 #[test]
@@ -53,4 +57,5 @@ fn rejects_slct_with_invalid_data_type() {
     let err = parse_result::<Slct>("slct.p32.s32 %r0, %r1, %r2, %r3;")
         .expect_err("parse should fail when data type is unsupported");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip::<Slct>("slct.u32.s32 %r0, %r1, %r2, %r3;");
 }

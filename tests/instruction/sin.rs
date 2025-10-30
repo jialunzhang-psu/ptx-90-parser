@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::*,
@@ -16,6 +16,7 @@ fn parses_sin_without_ftz_modifier() {
             source: RegisterOperand::Single("%f1".into()),
         }
     );
+    assert_roundtrip::<Sin>("sin.approx.f32 %f0, %f1;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_sin_with_ftz_modifier() {
             source: RegisterOperand::Single("%f3".into()),
         }
     );
+    assert_roundtrip::<Sin>("sin.approx.ftz.f32 %f2, %f3;");
 }
 
 #[test]

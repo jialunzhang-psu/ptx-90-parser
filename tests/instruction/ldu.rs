@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -26,6 +26,7 @@ fn parses_scalar_ldu_with_state_space() {
             address: address_from_register("%rd1"),
         })
     );
+    assert_roundtrip::<Ldu>("ldu.global.f32 %f1, [%rd1];");
 }
 
 #[test]
@@ -39,6 +40,7 @@ fn parses_vector_ldu() {
             address: address_from_register("%rd0"),
         })
     );
+    assert_roundtrip::<Ldu>("ldu.v2.s32 {%r1, %r2}, [%rd0];");
 }
 
 #[test]

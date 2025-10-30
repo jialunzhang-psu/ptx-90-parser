@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
@@ -17,20 +17,7 @@ fn parses_mul_lo_with_unsigned_type() {
             rhs: RegisterOperand::Single("%r2".into()),
         }
     );
-}
-
-#[test]
-fn parses_mul_with_default_mode() {
-    assert_eq!(
-        parse::<Mul>("mul.u32 %r4, %r5, %r6;"),
-        Mul {
-            mode: MulMode::Lo,
-            data_type: MulDataType::U32,
-            destination: RegisterOperand::Single("%r4".into()),
-            lhs: RegisterOperand::Single("%r5".into()),
-            rhs: RegisterOperand::Single("%r6".into()),
-        }
-    );
+    assert_roundtrip::<Mul>("mul.lo.u32 %r0, %r1, %r2;");
 }
 
 #[test]
@@ -45,6 +32,7 @@ fn parses_mul_wide_with_signed_type() {
             rhs: RegisterOperand::Single("%rd2".into()),
         }
     );
+    assert_roundtrip::<Mul>("mul.wide.s64 %rd3, %rd1, %rd2;");
 }
 
 #[test]
@@ -68,4 +56,10 @@ fn rejects_mul_missing_trailing_semicolon() {
         err.kind,
         ParseErrorKind::UnexpectedToken { .. } | ParseErrorKind::UnexpectedEof
     ));
+}
+
+#[test]
+fn rejects_mul_without_mode() {
+    let _ = parse_result::<Mul>("mul.u32 %r4, %r5, %r6;")
+        .expect_err("parse should fail when mode is missing");
 }

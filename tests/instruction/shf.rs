@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
@@ -6,6 +6,10 @@ use ptx_parser::{
         DataType as ShfDataType, Direction as ShfDirection, Mode as ShfMode, Shf,
     },
 };
+
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Shf>(source);
+}
 
 #[test]
 fn parses_shf_left_clamp() {
@@ -21,6 +25,7 @@ fn parses_shf_left_clamp() {
             c: RegisterOperand::Single("%r4".into()),
         }
     );
+    assert_roundtrip("shf.l.clamp.b32 %r1, %r2, %r3, %r4;");
 }
 
 #[test]
@@ -37,6 +42,7 @@ fn parses_shf_right_wrap() {
             c: RegisterOperand::Single("%r8".into()),
         }
     );
+    assert_roundtrip("shf.r.wrap.b32 %r5, %r6, %r7, %r8;");
 }
 
 #[test]
@@ -44,6 +50,7 @@ fn rejects_shf_with_invalid_direction() {
     let err =
         parse_result::<Shf>("shf.t.clamp.b32 %r1, %r2, %r3, %r4;").expect_err("parse should fail");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip("shf.l.clamp.b32 %r1, %r2, %r3, %r4;");
 }
 
 #[test]
@@ -51,4 +58,5 @@ fn rejects_shf_missing_semicolon() {
     let err =
         parse_result::<Shf>("shf.l.wrap.b32 %r1, %r2, %r3, %r4").expect_err("parse should fail");
     assert!(matches!(err.kind, ParseErrorKind::UnexpectedEof));
+    assert_roundtrip("shf.r.wrap.b32 %r5, %r6, %r7, %r8;");
 }

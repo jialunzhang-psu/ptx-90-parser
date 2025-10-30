@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -13,6 +13,7 @@ fn immediate_address(value: &str) -> AddressOperand {
 
 #[test]
 fn parses_prefetch_without_space() {
+    assert_roundtrip::<Prefetch>("prefetch.L1 [0];");
     assert_eq!(
         parse::<Prefetch>("prefetch.L1 [0];"),
         Prefetch::DataCache {
@@ -25,6 +26,7 @@ fn parses_prefetch_without_space() {
 
 #[test]
 fn parses_prefetch_with_space() {
+    assert_roundtrip::<Prefetch>("prefetch.local.L2 [0];");
     assert_eq!(
         parse::<Prefetch>("prefetch.local.L2 [0];"),
         Prefetch::DataCache {
@@ -37,6 +39,7 @@ fn parses_prefetch_with_space() {
 
 #[test]
 fn parses_prefetch_global_eviction() {
+    assert_roundtrip::<Prefetch>("prefetch.global.L2::evict_last [0];");
     assert_eq!(
         parse::<Prefetch>("prefetch.global.L2::evict_last [0];"),
         Prefetch::GlobalEviction {
@@ -48,6 +51,7 @@ fn parses_prefetch_global_eviction() {
 
 #[test]
 fn parses_prefetch_uniform() {
+    assert_roundtrip::<Prefetch>("prefetchu.L1 [0];");
     assert_eq!(
         parse::<Prefetch>("prefetchu.L1 [0];"),
         Prefetch::Uniform {
@@ -58,6 +62,7 @@ fn parses_prefetch_uniform() {
 
 #[test]
 fn parses_prefetch_tensormap_without_space() {
+    assert_roundtrip::<Prefetch>("prefetch.tensormap [0];");
     assert_eq!(
         parse::<Prefetch>("prefetch.tensormap [0];"),
         Prefetch::TensorMap {
@@ -69,6 +74,7 @@ fn parses_prefetch_tensormap_without_space() {
 
 #[test]
 fn parses_prefetch_tensormap_with_space() {
+    assert_roundtrip::<Prefetch>("prefetch.const.tensormap [0];");
     assert_eq!(
         parse::<Prefetch>("prefetch.const.tensormap [0];"),
         Prefetch::TensorMap {

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -19,6 +19,7 @@ fn parses_sad_unsigned_type() {
             c: RegisterOperand::Single("%r3".into()),
         }
     );
+    assert_roundtrip::<Sad>("sad.u32 %r0, %r1, %r2, %r3;");
 }
 
 #[test]
@@ -33,6 +34,7 @@ fn parses_sad_signed_type() {
             c: RegisterOperand::Single("%rs3".into()),
         }
     );
+    assert_roundtrip::<Sad>("sad.s16 %rs0, %rs1, %rs2, %rs3;");
 }
 
 #[test]

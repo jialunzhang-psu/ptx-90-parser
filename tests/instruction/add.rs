@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::r#type::common::{Immediate, Operand, RegisterOperand};
 use ptx_parser::{
     parser::ParseErrorKind,
@@ -16,6 +16,7 @@ fn parses_add_with_unsigned_type() {
             b: Operand::Register(RegisterOperand::Single("%r2".into())),
         }
     );
+    assert_roundtrip::<Add>("add.u32 %r0, %r1, %r2;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_add_with_saturate_and_immediate_operand() {
             b: Operand::Immediate(Immediate("1".into())),
         }
     );
+    assert_roundtrip::<Add>("add.sat.s32 %r3, %r4, 1;");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -21,8 +21,9 @@ fn address_from_register(name: &str) -> AddressOperand {
 
 #[test]
 fn parses_generic_store_with_cache_policy() {
+    let source = "st.global.cg.L2::cache_hint.u32 [%rd1], %r2, %rd3;";
     assert_eq!(
-        parse::<St>("st.global.cg.L2::cache_hint.u32 [%rd1], %r2, %rd3;"),
+        parse::<St>(source),
         St::Generic(Generic {
             weak: false,
             state_space: Some(StateSpace::Global),
@@ -35,14 +36,14 @@ fn parses_generic_store_with_cache_policy() {
             cache_policy: Some(reg("%rd3")),
         })
     );
+    assert_roundtrip::<St>(source);
 }
 
 #[test]
 fn parses_eviction_store_with_vector() {
+    let source = "st.shared::cta.L1::evict_last.L2::evict_first.L2::cache_hint.v2.f32 [%rd1], {%f2, %f3}, %rd4;";
     assert_eq!(
-        parse::<St>(
-            "st.shared::cta.L1::evict_last.L2::evict_first.L2::cache_hint.v2.f32 [%rd1], {%f2, %f3}, %rd4;"
-        ),
+        parse::<St>(source),
         St::Eviction(Eviction {
             weak: false,
             state_space: Some(StateSpace::Shared(SharedState::Cta)),
@@ -59,12 +60,14 @@ fn parses_eviction_store_with_vector() {
             cache_policy: Some(reg("%rd4")),
         })
     );
+    assert_roundtrip::<St>(source);
 }
 
 #[test]
 fn parses_mmio_store() {
+    let source = "st.mmio.relaxed.sys.global.b32 [%rd0], %r1;";
     assert_eq!(
-        parse::<St>("st.mmio.relaxed.sys.global.b32 [%rd0], %r1;"),
+        parse::<St>(source),
         St::Mmio(Mmio {
             state_space: Some(MmioStateSpace::Global),
             data_type: DataType::B32,
@@ -72,6 +75,7 @@ fn parses_mmio_store() {
             source: reg("%r1"),
         })
     );
+    assert_roundtrip::<St>(source);
 }
 
 #[test]

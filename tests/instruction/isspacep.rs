@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -17,6 +17,7 @@ fn parses_isspacep_global() {
             address: RegisterOperand::Single("%rd2".into()),
         }
     );
+    assert_roundtrip::<Isspacep>("isspacep.global %p1, %rd2;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_isspacep_shared_cta() {
             address: RegisterOperand::Single("%rd3".into()),
         }
     );
+    assert_roundtrip::<Isspacep>("isspacep.shared::cta %p0, %rd3;");
 }
 
 #[test]

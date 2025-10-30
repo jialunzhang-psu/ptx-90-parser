@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -13,6 +13,7 @@ fn reg(name: &str) -> RegisterOperand {
 
 #[test]
 fn parses_not_predicate() {
+    assert_roundtrip::<Not>("not.pred %p1, %p0;");
     assert_eq!(
         parse::<Not>("not.pred %p1, %p0;"),
         Not {
@@ -25,6 +26,7 @@ fn parses_not_predicate() {
 
 #[test]
 fn parses_not_bitwise() {
+    assert_roundtrip::<Not>("not.b64 %rd3, %rd2;");
     assert_eq!(
         parse::<Not>("not.b64 %rd3, %rd2;"),
         Not {

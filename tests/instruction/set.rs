@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -23,6 +23,7 @@ fn parses_set_compare_without_ftz() {
             b: RegisterOperand::Single("%r3".into()),
         })
     );
+    assert_roundtrip::<Set>("set.eq.s32.s32 %r1, %r2, %r3;");
 }
 
 #[test]
@@ -44,6 +45,7 @@ fn parses_set_compare_bool_with_ftz_and_negated_predicate() {
             },
         })
     );
+    assert_roundtrip::<Set>("set.lt.and.ftz.u32.s32 %r0, %r1, %r2, !%p3;");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -17,6 +17,7 @@ fn parses_plain_bfind() {
             source: RegisterOperand::Single("%r2".into()),
         }
     );
+    assert_roundtrip::<Bfind>("bfind.u32 %r1, %r2;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_shift_amount_bfind() {
             source: RegisterOperand::Single("%rd4".into()),
         }
     );
+    assert_roundtrip::<Bfind>("bfind.shiftamt.s64 %rd3, %rd4;");
 }
 
 #[test]

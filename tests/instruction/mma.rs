@@ -1,6 +1,6 @@
+use crate::util::*;
 use ptx_parser::{
-    lexer::tokenize,
-    parser::{ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream},
+    parser::ParseErrorKind,
     r#type::common::RegisterOperand,
     r#type::instruction::mma::{
         BlockScaleOperands, DataType, F8Shape, Layout, MmaInstruction, MxF4ScaleVecSize,
@@ -8,19 +8,11 @@ use ptx_parser::{
     },
 };
 
-fn parse_mma(source: &str) -> Result<MmaInstruction, PtxParseError> {
-    let tokens = tokenize(source).expect("tokenization should succeed");
-    let mut stream = PtxTokenStream::new(&tokens);
-    MmaInstruction::parse(&mut stream)
-}
-
 #[test]
 fn parses_m8n8k4_half_precision_variant() {
-    let instruction = parse_mma(
-        "mma.sync.aligned.m8n8k4.alayout.row.blayout.col.dtype.f32.f16.f16.ctype.f32 \
-         %f0, %f1, %f2, %f3;",
-    )
-    .expect("mma.m8n8k4 should parse");
+    let source = "mma.sync.aligned.m8n8k4.alayout.row.blayout.col.dtype.f32.f16.f16.ctype.f32 \
+         %f0, %f1, %f2, %f3;";
+    let instruction = parse_result(source).expect("mma.m8n8k4 should parse");
 
     match instruction {
         MmaInstruction::SyncAlignedM8N8K4(SyncAlignedM8N8K4 {
@@ -44,15 +36,15 @@ fn parses_m8n8k4_half_precision_variant() {
         }
         other => panic!("unexpected instruction variant: {other:?}"),
     }
+
+    assert_roundtrip::<MmaInstruction>(source);
 }
 
 #[test]
 fn parses_block_scale_mxf4_variant() {
-    let instruction = parse_mma(
-        "mma.sync.aligned.m16n8k64.row.col.kind.mxf4.block_scale.scale_vec::2X.f32.e2m1.e2m1.f32.stype.ue8m0 \
-         %rd0, %rd1, %rd2, %rd3, %rd4, {1, 2}, %rd5, {3, 4};",
-    )
-    .expect("mma.m16n8k64 mxf4 should parse");
+    let source = "mma.sync.aligned.m16n8k64.row.col.kind.mxf4.block_scale.scale_vec::2X.f32.e2m1.e2m1.f32.stype.ue8m0 \
+         %rd0, %rd1, %rd2, %rd3, %rd4, {1, 2}, %rd5, {3, 4};";
+    let instruction = parse_result(source).expect("mma.m16n8k64 mxf4 should parse");
 
     match instruction {
         MmaInstruction::SyncAlignedBlockScaleM16N8K64MxF4(SyncAlignedBlockScaleM16N8K64MxF4 {
@@ -90,15 +82,15 @@ fn parses_block_scale_mxf4_variant() {
         }
         other => panic!("unexpected instruction variant: {other:?}"),
     }
+
+    assert_roundtrip::<MmaInstruction>(source);
 }
 
 #[test]
 fn parses_shape_f8_variant() {
-    let instruction = parse_mma(
-        "mma.sync.aligned.shape.m16n8k32.row.col.dtype.f16.f8type.e4m3.f8type.e5m2.ctype.f32 \
-         %f4, %f5, %f6, %f7;",
-    )
-    .expect("mma.shape F8 should parse");
+    let source = "mma.sync.aligned.shape.m16n8k32.row.col.dtype.f16.f8type.e4m3.f8type.e5m2.ctype.f32 \
+         %f4, %f5, %f6, %f7;";
+    let instruction = parse_result(source).expect("mma.shape F8 should parse");
 
     match instruction {
         MmaInstruction::SyncAlignedF8(SyncAlignedF8 {
@@ -122,11 +114,13 @@ fn parses_shape_f8_variant() {
         }
         other => panic!("unexpected instruction variant: {other:?}"),
     }
+
+    assert_roundtrip::<MmaInstruction>(source);
 }
 
 #[test]
 fn rejects_unknown_layout() {
-    let err = parse_mma(
+    let err = parse_result::<MmaInstruction>(
         "mma.sync.aligned.m8n8k4.alayout.diag.blayout.col.dtype.f16.f16.f16.ctype.f16 \
          %f0, %f1, %f2, %f3;",
     )
@@ -144,7 +138,7 @@ fn rejects_unknown_layout() {
 
 #[test]
 fn rejects_missing_scale_vec_size_for_mxf4nvf4() {
-    let err = parse_mma(
+    let err = parse_result::<MmaInstruction>(
         "mma.sync.aligned.m16n8k64.row.col.kind.mxf4nvf4.block_scale.f32.e2m1.e2m1.f32.stype.ue8m0 \
          %rd0, %rd1, %rd2, %rd3, %rd4, {1, 2}, %rd5, {3, 4};",
     )

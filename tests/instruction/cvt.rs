@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -12,8 +12,9 @@ use ptx_parser::{
 
 #[test]
 fn parses_basic_integer_rounding() {
+    let source = "cvt.rni.s32.f32 %r0, %f1;";
     assert_eq!(
-        parse::<Cvt>("cvt.rni.s32.f32 %r0, %f1;"),
+        parse::<Cvt>(source),
         Cvt::Basic(Basic {
             rounding: Some(Rounding::Integer(IntegerRounding::Rni)),
             flush_to_zero: false,
@@ -24,12 +25,14 @@ fn parses_basic_integer_rounding() {
             source: RegisterOperand::Single("%f1".into()),
         })
     );
+    assert_roundtrip::<Cvt>(source);
 }
 
 #[test]
 fn parses_frnd2_with_optional_flags() {
+    let source = "cvt.frnd2.rz.relu.satfinite.f16x2.f32 %f0, %f1, %f2;";
     assert_eq!(
-        parse::<Cvt>("cvt.frnd2.rz.relu.satfinite.f16x2.f32 %f0, %f1, %f2;"),
+        parse::<Cvt>(source),
         Cvt::Frnd2(Frnd2 {
             rounding: Frnd2Rounding::Rz,
             relu: true,
@@ -40,12 +43,14 @@ fn parses_frnd2_with_optional_flags() {
             b: Some(RegisterOperand::Single("%f2".into())),
         })
     );
+    assert_roundtrip::<Cvt>(source);
 }
 
 #[test]
 fn parses_rs_with_vector_sources() {
+    let source = "cvt.rs.relu.satfinite.f8x4type.e4m3x4.f32 %r0, {%f1, %f2, %f3, %f4}, %r1;";
     assert_eq!(
-        parse::<Cvt>("cvt.rs.relu.satfinite.f8x4type.e4m3x4.f32 %r0, {%f1, %f2, %f3, %f4}, %r1;"),
+        parse::<Cvt>(source),
         Cvt::Rs(Rs {
             relu: true,
             satfinite: true,
@@ -60,24 +65,28 @@ fn parses_rs_with_vector_sources() {
             rbits: RegisterOperand::Single("%r1".into()),
         })
     );
+    assert_roundtrip::<Cvt>(source);
 }
 
 #[test]
 fn parses_rna_variant() {
+    let source = "cvt.rna.satfinite.tf32.f32 %r0, %f1;";
     assert_eq!(
-        parse::<Cvt>("cvt.rna.satfinite.tf32.f32 %r0, %f1;"),
+        parse::<Cvt>(source),
         Cvt::Rna(Rna {
             satfinite: true,
             destination: RegisterOperand::Single("%r0".into()),
             source: RegisterOperand::Single("%f1".into()),
         })
     );
+    assert_roundtrip::<Cvt>(source);
 }
 
 #[test]
 fn parses_rn_f8x2_from_f32() {
+    let source = "cvt.rn.satfinite.e4m3x2.f32 %r0, %f1, %f2;";
     assert_eq!(
-        parse::<Cvt>("cvt.rn.satfinite.e4m3x2.f32 %r0, %f1, %f2;"),
+        parse::<Cvt>(source),
         Cvt::Rn(Rn {
             satfinite: true,
             relu: false,
@@ -89,12 +98,14 @@ fn parses_rn_f8x2_from_f32() {
             },
         })
     );
+    assert_roundtrip::<Cvt>(source);
 }
 
 #[test]
 fn parses_frnd3_with_two_sources() {
+    let source = "cvt.frnd3.rz.satfinite.ue8m0x2.f32 %r0, %r1, %r2;";
     assert_eq!(
-        parse::<Cvt>("cvt.frnd3.rz.satfinite.ue8m0x2.f32 %r0, %r1, %r2;"),
+        parse::<Cvt>(source),
         Cvt::Frnd3(Frnd3 {
             rounding: Frnd3Rounding::Rz,
             satfinite: true,
@@ -104,6 +115,7 @@ fn parses_frnd3_with_two_sources() {
             b: Some(RegisterOperand::Single("%r2".into())),
         })
     );
+    assert_roundtrip::<Cvt>(source);
 }
 
 #[test]

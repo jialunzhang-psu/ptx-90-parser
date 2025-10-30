@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -27,6 +27,10 @@ fn var(name: &str) -> VariableSymbol {
     VariableSymbol(name.into())
 }
 
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Tex>(source);
+}
+
 #[test]
 fn parses_vector4_implicit_with_offset_and_compare() {
     assert_eq!(
@@ -44,6 +48,9 @@ fn parses_vector4_implicit_with_offset_and_compare() {
             offset: Some(Offset::Pair(vec2("%r0", "%r1"))),
             depth_compare: Some(reg("%f6")),
         })
+    );
+    assert_roundtrip(
+        "tex.2d.v4.f32.f32 {%f0, %f1, %f2, %f3}, [tex_a, {%f4, %f5}], {%r0, %r1}, %f6;",
     );
 }
 
@@ -64,6 +71,7 @@ fn parses_vector4_explicit_sampler() {
             depth_compare: None,
         })
     );
+    assert_roundtrip("tex.a1d.v4.s32.s32 {%r0, %r1, %r2, %r3}|%p1, [tex_ref, smpl_x, %r4];");
 }
 
 #[test]
@@ -85,6 +93,9 @@ fn parses_vector4_mip_level_with_sampler_and_offset() {
             offset: Some(Offset::Pair(vec2("%r5", "%r6"))),
             depth_compare: None,
         })
+    );
+    assert_roundtrip(
+        "tex.level.2d.v4.s32.f32 {%r0, %r1, %r2, %r3}, [tex_l, %r4, {%f0, %f1}], %f2, {%r5, %r6};",
     );
 }
 
@@ -108,6 +119,7 @@ fn parses_vector2_mip_gradient() {
             depth_compare: None,
         })
     );
+    assert_roundtrip("tex.grad.1d.v2.f16x2.f32 {%h0, %h1}, [tex_g, %f2], %f3, %f4;");
 }
 
 #[test]

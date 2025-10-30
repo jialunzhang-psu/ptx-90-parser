@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -6,6 +6,10 @@ use ptx_parser::{
         instruction::bfe::{Bfe, DataType},
     },
 };
+
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Bfe>(source);
+}
 
 #[test]
 fn parses_bfe_u32() {
@@ -19,6 +23,7 @@ fn parses_bfe_u32() {
             field_length: RegisterOperand::Single("%r4".into()),
         }
     );
+    assert_roundtrip("bfe.u32 %r1, %r2, %r3, %r4;");
 }
 
 #[test]
@@ -33,6 +38,7 @@ fn parses_bfe_s64() {
             field_length: RegisterOperand::Single("%rd4".into()),
         }
     );
+    assert_roundtrip("bfe.s64 %rd1, %rd2, %rd3, %rd4;");
 }
 
 #[test]

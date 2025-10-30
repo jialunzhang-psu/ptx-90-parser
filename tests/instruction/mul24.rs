@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
@@ -17,22 +17,8 @@ fn parses_mul24_lo_with_unsigned_type() {
             b: RegisterOperand::Single("%r2".into()),
         }
     );
+    assert_roundtrip::<Mul24>("mul24.lo.u32 %r0, %r1, %r2;");
 }
-
-#[test]
-fn parses_mul24_with_default_mode() {
-    assert_eq!(
-        parse::<Mul24>("mul24.u32 %r3, %r4, %r5;"),
-        Mul24 {
-            mode: Mul24Mode::Lo,
-            data_type: Mul24DataType::U32,
-            destination: RegisterOperand::Single("%r3".into()),
-            a: RegisterOperand::Single("%r4".into()),
-            b: RegisterOperand::Single("%r5".into()),
-        }
-    );
-}
-
 #[test]
 fn parses_mul24_hi_with_signed_type() {
     assert_eq!(
@@ -45,6 +31,7 @@ fn parses_mul24_hi_with_signed_type() {
             b: RegisterOperand::Single("%r8".into()),
         }
     );
+    assert_roundtrip::<Mul24>("mul24.hi.s32 %r6, %r7, %r8;");
 }
 
 #[test]
@@ -69,4 +56,10 @@ fn rejects_mul24_missing_semicolon() {
         err.kind,
         ParseErrorKind::UnexpectedToken { .. } | ParseErrorKind::UnexpectedEof
     ));
+}
+
+#[test]
+fn rejects_mul24_without_mode() {
+    let _ = parse_result::<Mul24>("mul24.u32 %r3, %r4, %r5;")
+        .expect_err("parse should fail when mode is missing");
 }

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -29,6 +29,7 @@ fn parses_scalar_form_with_selectors_on_sources() {
             },
         })
     );
+    assert_roundtrip::<Vset>("vset.u32.s32.lt %r0, %r1.b0, %r2.h1;");
 }
 
 #[test]
@@ -52,6 +53,7 @@ fn parses_scalar_with_secondary_operation() {
             c: RegisterOperand::Single("%r6".into()),
         })
     );
+    assert_roundtrip::<Vset>("vset.s32.u32.ge.max %r3, %r4, %r5, %r6;");
 }
 
 #[test]
@@ -75,6 +77,7 @@ fn parses_data_merge_form() {
             c: RegisterOperand::Single("%r10".into()),
         })
     );
+    assert_roundtrip::<Vset>("vset.u32.u32.eq %r7.b3, %r8, %r9.h0, %r10;");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -22,8 +22,9 @@ fn address_from_register(name: &str) -> AddressOperand {
 
 #[test]
 fn parses_generic_load_with_unified_cache_policy() {
+    let source = "ld.global.ca.L2::cache_hint.L2::128B.u32 %r1, [%rd2].unified, %rd3;";
     assert_eq!(
-        parse::<Ld>("ld.global.ca.L2::cache_hint.L2::128B.u32 %r1, [%rd2].unified, %rd3;"),
+        parse::<Ld>(source),
         Ld::Generic(Generic {
             weak: false,
             state_space: Some(StateSpace::Global),
@@ -38,14 +39,14 @@ fn parses_generic_load_with_unified_cache_policy() {
             cache_policy: Some(reg("%rd3")),
         })
     );
+    assert_roundtrip::<Ld>(source);
 }
 
 #[test]
 fn parses_eviction_load_with_vector() {
+    let source = "ld.weak.shared::cluster.L1::evict_first.L2::evict_last.L2::cache_hint.L2::256B.v4.f32 {%f0, %f1, %f2, _}, [%rd4], %rd6;";
     assert_eq!(
-        parse::<Ld>(
-            "ld.weak.shared::cluster.L1::evict_first.L2::evict_last.L2::cache_hint.L2::256B.v4.f32 {%f0, %f1, %f2, _}, [%rd4], %rd6;"
-        ),
+        parse::<Ld>(source),
         Ld::Eviction(Eviction {
             weak: true,
             state_space: Some(StateSpace::Shared(SharedState::Cluster)),
@@ -66,12 +67,14 @@ fn parses_eviction_load_with_vector() {
             cache_policy: Some(reg("%rd6")),
         })
     );
+    assert_roundtrip::<Ld>(source);
 }
 
 #[test]
 fn parses_volatile_load_with_prefetch() {
+    let source = "ld.volatile.shared::cta.L2::64B.b32 %r2, [%rd1];";
     assert_eq!(
-        parse::<Ld>("ld.volatile.shared::cta.L2::64B.b32 %r2, [%rd1];"),
+        parse::<Ld>(source),
         Ld::Volatile(Volatile {
             state_space: Some(ScopedStateSpace::Shared(SharedState::Cta)),
             prefetch_size: Some(PrefetchSize::L264B),
@@ -81,14 +84,15 @@ fn parses_volatile_load_with_prefetch() {
             address: address_from_register("%rd1"),
         })
     );
+    assert_roundtrip::<Ld>(source);
 }
 
 #[test]
 fn parses_relaxed_scoped_load_with_cache_policy() {
+    let source =
+        "ld.relaxed.gpu.shared::cluster.L2::cache_hint.L2::128B.v2.f32 {%f0, %f1}, [%rd0], %rd2;";
     assert_eq!(
-        parse::<Ld>(
-            "ld.relaxed.gpu.shared::cluster.L2::cache_hint.L2::128B.v2.f32 {%f0, %f1}, [%rd0], %rd2;"
-        ),
+        parse::<Ld>(source),
         Ld::Relaxed(Scoped {
             scope: Scope::Gpu,
             state_space: Some(ScopedStateSpace::Shared(SharedState::Cluster)),
@@ -106,12 +110,14 @@ fn parses_relaxed_scoped_load_with_cache_policy() {
             cache_policy: Some(reg("%rd2")),
         })
     );
+    assert_roundtrip::<Ld>(source);
 }
 
 #[test]
 fn parses_acquire_scoped_load_without_cache_policy() {
+    let source = "ld.acquire.sys.global.s64 %rd1, [%rd2];";
     assert_eq!(
-        parse::<Ld>("ld.acquire.sys.global.s64 %rd1, [%rd2];"),
+        parse::<Ld>(source),
         Ld::Acquire(Scoped {
             scope: Scope::Sys,
             state_space: Some(ScopedStateSpace::Global),
@@ -126,12 +132,14 @@ fn parses_acquire_scoped_load_without_cache_policy() {
             cache_policy: None,
         })
     );
+    assert_roundtrip::<Ld>(source);
 }
 
 #[test]
 fn parses_mmio_load() {
+    let source = "ld.mmio.relaxed.sys.global.u32 %r4, [%rd3];";
     assert_eq!(
-        parse::<Ld>("ld.mmio.relaxed.sys.global.u32 %r4, [%rd3];"),
+        parse::<Ld>(source),
         Ld::Mmio(Mmio {
             state_space: Some(MmioStateSpace::Global),
             data_type: DataType::U32,
@@ -139,6 +147,7 @@ fn parses_mmio_load() {
             address: address_from_register("%rd3"),
         })
     );
+    assert_roundtrip::<Ld>(source);
 }
 
 #[test]

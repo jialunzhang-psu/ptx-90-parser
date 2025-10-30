@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -23,6 +23,7 @@ fn parses_clamp_u32() {
             b: reg("%r3"),
         }
     );
+    assert_roundtrip::<Szext>("szext.clamp.u32 %r1, %r2, %r3;");
 }
 
 #[test]
@@ -37,6 +38,7 @@ fn parses_wrap_s32() {
             b: reg("%rd6"),
         }
     );
+    assert_roundtrip::<Szext>("szext.wrap.s32 %rd4, %rd5, %rd6;");
 }
 
 #[test]

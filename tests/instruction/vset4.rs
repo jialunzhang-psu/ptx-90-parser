@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -42,6 +42,7 @@ fn parses_simd_merge_with_modifiers() {
             c: RegisterOperand::Single("%r4".into()),
         }
     );
+    assert_roundtrip::<Vset4>("vset4.u32.s32.eq %r1.b210, %r2.b0123, %r3.b7654, %r4;");
 }
 
 #[test]
@@ -67,6 +68,7 @@ fn parses_accumulate_without_optional_modifiers() {
             c: RegisterOperand::Single("%r8".into()),
         }
     );
+    assert_roundtrip::<Vset4>("vset4.s32.s32.ge.add %r5, %r6, %r7, %r8;");
 }
 
 #[test]

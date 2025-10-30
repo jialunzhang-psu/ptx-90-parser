@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -6,6 +6,10 @@ use ptx_parser::{
         instruction::testp::{DataType, PredicateTest, Testp},
     },
 };
+
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Testp>(source);
+}
 
 #[test]
 fn parses_testp_finite_f32() {
@@ -18,6 +22,7 @@ fn parses_testp_finite_f32() {
             source: RegisterOperand::Single("%f2".into()),
         }
     );
+    assert_roundtrip("testp.finite.f32 %p1, %f2;");
 }
 
 #[test]
@@ -31,6 +36,7 @@ fn parses_testp_notanumber_f64() {
             source: RegisterOperand::Vector2(["%f4".into(), "%f5".into()]),
         }
     );
+    assert_roundtrip("testp.notanumber.f64 %p0, {%f4, %f5};");
 }
 
 #[test]

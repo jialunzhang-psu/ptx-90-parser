@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::*,
@@ -37,6 +37,7 @@ fn parses_merge_with_explicit_selectors() {
             c: RegisterOperand::Single("%r4".into()),
         })
     );
+    assert_roundtrip::<Vop2>("vadd2.s32.s32.u32.sat %r1.h0, %r2.h10, %r3.h32, %r4;");
 }
 
 #[test]
@@ -65,6 +66,7 @@ fn parses_accumulate_without_modifiers() {
             c: RegisterOperand::Single("%r8".into()),
         })
     );
+    assert_roundtrip::<Vop2>("vmax2.u32.s32.u32.add %r5, %r6, %r7.h11, %r8;");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
@@ -19,6 +19,7 @@ fn parses_dp2a_lo_with_mixed_types() {
             c: RegisterOperand::Single("%r3".into()),
         }
     );
+    assert_roundtrip::<Dp2a>("dp2a.lo.u32.s32 %r0, %r1, %r2, %r3;");
 }
 
 #[test]
@@ -35,6 +36,7 @@ fn parses_dp2a_hi_with_signed_types() {
             c: RegisterOperand::Single("%rd3".into()),
         }
     );
+    assert_roundtrip::<Dp2a>("dp2a.hi.s32.s32 %rd4, %rd1, %rd2, %rd3;");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -9,6 +9,7 @@ use ptx_parser::{
 
 #[test]
 fn parses_neg_instruction() {
+    assert_roundtrip::<Neg>("neg.s32 %r4, %r5;");
     assert_eq!(
         parse::<Neg>("neg.s32 %r4, %r5;"),
         Neg {
@@ -21,6 +22,7 @@ fn parses_neg_instruction() {
 
 #[test]
 fn parses_neg_instruction_with_spaces() {
+    assert_roundtrip::<Neg>("neg.s64 %rd10 , %rd11 ;");
     assert_eq!(
         parse::<Neg>("neg.s64 %rd10 , %rd11 ;"),
         Neg {

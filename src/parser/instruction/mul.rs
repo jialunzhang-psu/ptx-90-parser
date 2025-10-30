@@ -9,16 +9,6 @@ use crate::{
 
 impl PtxParser for Mode {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        if !stream.check(|token| {
-            matches!(
-                token,
-                PtxToken::Directive(name) if matches!(name.as_str(), "hi" | "lo" | "wide")
-            )
-        }) {
-            // The mode is optional in PTX and defaults to `.lo` when omitted.
-            return Ok(Mode::Lo);
-        }
-
         let (directive, span) = stream.expect_directive()?;
 
         match directive.as_str() {

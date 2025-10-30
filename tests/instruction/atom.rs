@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -38,6 +38,9 @@ fn parses_scalar_atom_with_cache_policy() {
             cache_policy: Some(reg("%rd3")),
         })
     );
+    assert_roundtrip::<Atom>(
+        "atom.relaxed.sys.shared::cta.add.L2::cache_hint.s32 %r0, [%rd1], %r2, %rd3;",
+    );
 }
 
 #[test]
@@ -55,6 +58,7 @@ fn parses_compare_swap_typed_variant() {
             new_value: reg("%r3"),
         })
     );
+    assert_roundtrip::<Atom>("atom.global.cas.b32 %r1, [%rd0], %r2, %r3;");
 }
 
 #[test]
@@ -74,6 +78,9 @@ fn parses_vector_half_add_noftz() {
             cache_policy: None,
         })
     );
+    assert_roundtrip::<Atom>(
+        "atom.global.add.noftz.vec_16_bit.f16 {%h0, %h1}, [%rd0], {%h2, %h3};",
+    );
 }
 
 #[test]
@@ -92,6 +99,7 @@ fn parses_add_noftz_scalar_variant() {
             cache_policy: None,
         })
     );
+    assert_roundtrip::<Atom>("atom.add.noftz.bf16 %h0, [%rd0], %h1;");
 }
 
 #[test]

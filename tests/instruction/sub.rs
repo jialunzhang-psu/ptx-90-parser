@@ -1,11 +1,13 @@
-use crate::util::{parse, parse_result};
-use ptx_parser::{
-    parser::ParseErrorKind,
-    r#type::{
-        common::RegisterOperand,
-        instruction::sub::{DataType, Sub},
-    },
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
+use ptx_parser::parser::ParseErrorKind;
+use ptx_parser::r#type::{
+    common::RegisterOperand,
+    instruction::sub::{DataType, Sub},
 };
+
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Sub>(source);
+}
 
 #[test]
 fn parses_sub_with_unsigned_type() {
@@ -18,6 +20,7 @@ fn parses_sub_with_unsigned_type() {
             b: RegisterOperand::Single("%r2".into()),
         }
     );
+    assert_roundtrip("sub.u32 %r0, %r1, %r2;");
 }
 
 #[test]
@@ -31,6 +34,7 @@ fn parses_sub_with_saturate() {
             b: RegisterOperand::Single("%r5".into()),
         }
     );
+    assert_roundtrip("sub.sat.s32 %r3, %r4, %r5;");
 }
 
 #[test]

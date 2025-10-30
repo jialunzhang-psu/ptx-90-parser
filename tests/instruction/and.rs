@@ -1,7 +1,11 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::r#type::common::RegisterOperand;
 use ptx_parser::r#type::instruction::and::DataType as AndDataType;
 use ptx_parser::{parser::ParseErrorKind, r#type::instruction::and::And};
+
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<And>(source);
+}
 
 #[test]
 fn parses_and_predicate() {
@@ -14,6 +18,7 @@ fn parses_and_predicate() {
             b: RegisterOperand::Single("%p2".into()),
         }
     );
+    assert_roundtrip("and.pred %p0, %p1, %p2;");
 }
 
 #[test]
@@ -27,6 +32,7 @@ fn parses_and_bitwise() {
             b: RegisterOperand::Single("%r2".into()),
         }
     );
+    assert_roundtrip("and.b32 %r3, %r1, %r2;");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -7,10 +7,15 @@ use ptx_parser::{
     },
 };
 
+fn assert_roundtrip(source: &str) {
+    assert_roundtrip_generic::<Mad24>(source);
+}
+
 #[test]
 fn parses_mad24_lo_with_unsigned_type() {
+    let source = "mad24.lo.u32 %r0, %r1, %r2, %r3;";
     assert_eq!(
-        parse::<Mad24>("mad24.lo.u32 %r0, %r1, %r2, %r3;"),
+        parse::<Mad24>(source),
         Mad24::Mode {
             mode: Mode::Lo,
             data_type: DataType::U32,
@@ -20,12 +25,14 @@ fn parses_mad24_lo_with_unsigned_type() {
             c: RegisterOperand::Single("%r3".into()),
         }
     );
+    assert_roundtrip(source);
 }
 
 #[test]
 fn parses_mad24_hi_sat_s32() {
+    let source = "mad24.hi.sat.s32 %r4, %r5, %r6, %r7;";
     assert_eq!(
-        parse::<Mad24>("mad24.hi.sat.s32 %r4, %r5, %r6, %r7;"),
+        parse::<Mad24>(source),
         Mad24::HiSatS32 {
             destination: RegisterOperand::Single("%r4".into()),
             a: RegisterOperand::Single("%r5".into()),
@@ -33,6 +40,7 @@ fn parses_mad24_hi_sat_s32() {
             c: RegisterOperand::Single("%r7".into()),
         }
     );
+    assert_roundtrip(source);
 }
 
 #[test]

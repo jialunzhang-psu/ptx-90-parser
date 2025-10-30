@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::common::RegisterOperand,
@@ -16,6 +16,7 @@ fn parses_lg2_without_ftz_modifier() {
             source: RegisterOperand::Single("%f1".into()),
         }
     );
+    assert_roundtrip::<Lg2>("lg2.approx.f32 %f0, %f1;");
 }
 
 #[test]
@@ -29,6 +30,7 @@ fn parses_lg2_with_ftz_modifier() {
             source: RegisterOperand::Single("%f3".into()),
         }
     );
+    assert_roundtrip::<Lg2>("lg2.approx.ftz.f32 %f2, %f3;");
 }
 
 #[test]

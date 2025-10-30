@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{common::RegisterOperand, instruction::or::*},
@@ -15,6 +15,7 @@ fn parses_or_predicate() {
             b: RegisterOperand::Single("%p2".into()),
         }
     );
+    assert_roundtrip::<Or>("or.pred %p0, %p1, %p2;");
 }
 
 #[test]
@@ -28,6 +29,7 @@ fn parses_or_bitwise() {
             b: RegisterOperand::Single("%r2".into()),
         }
     );
+    assert_roundtrip::<Or>("or.b32 %r3, %r1, %r2;");
 }
 
 #[test]

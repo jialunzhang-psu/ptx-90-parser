@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -19,10 +19,10 @@ fn reg_vec4(a: &str, b: &str, c: &str, d: &str) -> RegisterOperand {
 
 #[test]
 fn parses_array2d_suld_with_cache_and_vector() {
+    let source =
+        "suld.b.a2d.cv.v4.b32.zero {%r0, %r1, %r2, %r3}, [surf_layer, {%r4, %r5, %r6, %r7}];";
     assert_eq!(
-        parse::<Suld>(
-            "suld.b.a2d.cv.v4.b32.zero {%r0, %r1, %r2, %r3}, [surf_layer, {%r4, %r5, %r6, %r7}];"
-        ),
+        parse::<Suld>(source),
         Suld::Array2D(Descriptor {
             cache_operator: Some(CacheOperator::Cv),
             vector: Vector::V4,
@@ -38,6 +38,7 @@ fn parses_array2d_suld_with_cache_and_vector() {
             },
         })
     );
+    assert_roundtrip::<Suld>(source);
 }
 
 #[test]
@@ -45,4 +46,5 @@ fn rejects_missing_clamp_modifier() {
     let error = parse_result::<Suld>("suld.b.1d.v2.b16 {%r0, %r1}, [surf_tex, %r2];")
         .expect_err("clamp modifier is required");
     assert!(matches!(error.kind, ParseErrorKind::UnexpectedToken { .. }));
+    assert_roundtrip::<Suld>("suld.b.a1d.v2.b16.clamp {%r0, %r1}, [%rd0, {%r2, %r3}];");
 }

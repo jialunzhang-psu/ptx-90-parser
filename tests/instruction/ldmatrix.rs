@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -27,6 +27,7 @@ fn parses_standard_m8n8_variant() {
             ),
         })
     );
+    assert_roundtrip::<Ldmatrix>("ldmatrix.sync.aligned.m8n8.x1.shared.b16 %r0, [%rd1];");
 }
 
 #[test]
@@ -51,6 +52,9 @@ fn parses_standard_m16n16_with_trans() {
             ),
         })
     );
+    assert_roundtrip::<Ldmatrix>(
+        "ldmatrix.sync.aligned.m16n16.x4.trans.b8 {%r0, %r1, %r2, %r3}, [%rd5];",
+    );
 }
 
 #[test]
@@ -71,6 +75,9 @@ fn parses_m8n16_variant_with_state_space() {
             ),
         })
     );
+    assert_roundtrip::<Ldmatrix>(
+        "ldmatrix.sync.aligned.m8n16.x2.shared::cta.b8x16.b6x16_p32 {%r0, %r1}, [%rd0];",
+    );
 }
 
 #[test]
@@ -90,6 +97,9 @@ fn parses_m16n16_special_variant() {
                 None
             ),
         })
+    );
+    assert_roundtrip::<Ldmatrix>(
+        "ldmatrix.sync.aligned.m16n16.x1.trans.shared.b8x16.b4x16_p64 %r2, [%rd3];",
     );
 }
 

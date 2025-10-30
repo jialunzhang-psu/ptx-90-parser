@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -22,6 +22,7 @@ fn parses_thread_fence_with_semantics() {
             scope: FenceScope::Cta,
         })
     );
+    assert_roundtrip::<FenceInstruction>("fence.sc.cta;");
 }
 
 #[test]
@@ -34,6 +35,7 @@ fn parses_thread_sync_restrict_variant() {
             scope: FenceScope::Cluster,
         })
     );
+    assert_roundtrip::<FenceInstruction>("fence.acquire.sync_restrict::shared::cluster.cluster;");
 }
 
 #[test]
@@ -46,6 +48,7 @@ fn parses_operation_restriction_variant() {
             scope: FenceScope::Cluster,
         })
     );
+    assert_roundtrip::<FenceInstruction>("fence.mbarrier_init.release.cluster;");
 }
 
 #[test]
@@ -57,6 +60,7 @@ fn parses_proxy_tensormap_release_variant() {
             scope: FenceScope::Gpu,
         })
     );
+    assert_roundtrip::<FenceInstruction>("fence.proxy.tensormap::generic.release.gpu;");
 }
 
 #[test]
@@ -73,6 +77,7 @@ fn parses_proxy_tensormap_acquire_variant() {
             size: FenceProxySize::N128,
         })
     );
+    assert_roundtrip::<FenceInstruction>("fence.proxy.tensormap::generic.acquire.gpu [tmap], 128;");
 }
 
 #[test]
@@ -87,6 +92,9 @@ fn parses_proxy_async_variant() {
             scope: FenceScope::Cluster,
         })
     );
+    assert_roundtrip::<FenceInstruction>(
+        "fence.proxy.async::generic.acquire.sync_restrict::shared::cluster.cluster;",
+    );
 }
 
 #[test]
@@ -95,10 +103,12 @@ fn parses_membar_variants() {
         parse::<FenceInstruction>("membar.gl;"),
         FenceInstruction::MembarScope(MembarLevel::Gl)
     );
+    assert_roundtrip::<FenceInstruction>("membar.gl;");
     assert_eq!(
         parse::<FenceInstruction>("membar.proxy.async.shared::cta;"),
         FenceInstruction::MembarProxy(MembarProxy::AsyncShared(FenceProxySharedScope::Cta))
     );
+    assert_roundtrip::<FenceInstruction>("membar.proxy.async.shared::cta;");
 }
 
 #[test]

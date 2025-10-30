@@ -1,4 +1,4 @@
-use crate::util::{parse, parse_result};
+use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
@@ -28,6 +28,7 @@ fn parses_standard_vmad_with_modifiers_and_negation() {
             c: RegisterOperand::Single("%r3".into()),
         })
     );
+    assert_roundtrip::<Vmad>("vmad.s32.s32.u32.sat.shr7 %r0, -%r1.b0, -%r2.h1, -%r3;");
 }
 
 #[test]
@@ -48,6 +49,7 @@ fn parses_plus_one_vmad_with_scale() {
             c: RegisterOperand::Single("%r7".into()),
         })
     );
+    assert_roundtrip::<Vmad>("vmad.u32.u32.s32.po.sat.shr15 %r4, %r5.h0, %r6.b3, %r7;");
 }
 
 #[test]

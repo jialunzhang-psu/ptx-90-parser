@@ -1,5 +1,4 @@
 mod util;
-use util::parse;
 use ptx_parser::r#type::{
     common::{AddressSpace, DataLinkage, DataType},
     variable::{
@@ -7,6 +6,7 @@ use ptx_parser::r#type::{
         VariableDirective, VariableModifier,
     },
 };
+use util::*;
 
 fn unwrap_numeric(value: &InitializerValue) -> &NumericLiteral {
     match value {
@@ -19,6 +19,7 @@ fn unwrap_numeric(value: &InitializerValue) -> &NumericLiteral {
 fn parses_module_global_with_initializer() {
     let directive =
         parse::<ModuleVariableDirective>(".visible .global .align 1 .b8 data[2] = {1, 2};");
+    assert_roundtrip::<ModuleVariableDirective>(".visible .global .align 1 .b8 data[2] = {1, 2};");
 
     let ModuleVariableDirective::Global(inner) = directive else {
         panic!("expected global module directive");
@@ -50,6 +51,7 @@ fn parses_module_global_with_initializer() {
 #[test]
 fn parses_local_variable_directive() {
     let directive = parse::<VariableDirective>(".local .align 8 .b8 __local_depot0[8];");
+    assert_roundtrip::<VariableDirective>(".local .align 8 .b8 __local_depot0[8];");
     assert_eq!(directive.address_space, Some(AddressSpace::Local));
     assert_eq!(directive.modifiers, vec![VariableModifier::Alignment(8)]);
     assert_eq!(directive.ty, Some(DataType::B8));
@@ -61,6 +63,7 @@ fn parses_local_variable_directive() {
 #[test]
 fn parses_param_without_initializer() {
     let directive = parse::<VariableDirective>(".param .b64 param0;");
+    assert_roundtrip::<VariableDirective>(".param .b64 param0;");
     assert_eq!(directive.address_space, Some(AddressSpace::Param));
     assert!(directive.modifiers.is_empty());
     assert_eq!(directive.ty, Some(DataType::B64));

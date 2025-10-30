@@ -1,9 +1,19 @@
 mod util;
-use util::{parse, parse_result};
 use ptx_parser::r#type::module::{
     AddressSizeDirective, FileDirective, Module, ModuleDebugDirective, ModuleDirective,
     ModuleInfoDirectiveKind, TargetDirective, VersionDirective,
 };
+use ptx_parser::unlexer::PtxUnlexer;
+use ptx_parser::unparser::PtxUnparser;
+use util::{assert_roundtrip, parse, parse_result};
+
+fn parse_and_roundtrip(source: &str) -> Module {
+    assert_roundtrip::<Module>(source);
+    let module = parse::<Module>(source);
+    let serialized = PtxUnlexer::to_string(&module.to_tokens()).expect("serializing module to PTX");
+    assert_roundtrip::<Module>(&serialized);
+    module
+}
 
 fn expect_version(directive: &ModuleDirective, major: u32, minor: u32) {
     match directive {
@@ -55,7 +65,7 @@ fn expect_file(directive: &ModuleDirective, index: u32, path: &str) {
 
 #[test]
 fn parses_basic_module() {
-    let module = parse::<Module>(
+    let module = parse_and_roundtrip(
         ".version 8.8\n\
          .target sm_80, texmode_independent\n\
          .address_size 64\n\
