@@ -6,11 +6,15 @@ parses NVIDIA PTX 9.0 assembly source into a structured abstract syntax tree. It
 also ships with a small companion CLI that prints module summaries and
 optionally emits a tree representation of the parsed PTX.
 
+## TODO
+
+- Currently we have a heavy AST that lists every PTX instruction, for the purpose of comprehensive analysis and transformation. Later we will add a feature option to bring back the lightweight AST.
+
 ## Features
 
-- Parses PTX source into rich Rust data types for downstream analysis or transformation
-- Distinguishes directives, statements, and instructions in kernel bodies
-- Provides a CLI (`ptx-parser-bin`) that reports module statistics and outputs a tree view
+- Parses PTX source into rich Rust data types for downstream analysis or transformation.
+- The types and parsers for PTX instructions are generated from the PTX specification under `crates/parser-gen/ptx_syntax`.
+- Provides a CLI (`ptx-parser-bin`) that reports module statistics and outputs a tree view.
 
 ## Library quick start
 
