@@ -1,100 +1,102 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{
-        common::{Immediate, Operand, RegisterOperand, VariableSymbol},
-        instruction::mapa::{DataType, Mapa},
-    },
-};
+//! Original PTX specification:
+//!
+//! mapa{.space}.type          d, a, b;
+//! // Maps shared memory address in register a into CTA b.
+//! // mapa.shared::cluster.type  d, a, b;
+//! // Maps shared memory variable into CTA b.
+//! // mapa.shared::cluster.type  d, sh, b;
+//! // Maps shared memory variable into CTA b.
+//! // mapa.shared::cluster.type  d, sh + imm, b;
+//! // Maps generic address in register a into CTA b.
+//! // mapa.type                  d, a, b;
+//! .space = { .shared::cluster };
+//! .type  = { .u32, .u64 };
 
-impl PtxParser for DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-        match modifier.as_str() {
-            "u32" => Ok(DataType::U32),
-            "u64" => Ok(DataType::U64),
-            other => Err(unexpected_value(
-                span,
-                &[".u32", ".u64"],
-                format!(".{other}"),
-            )),
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::mapa::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Space {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try SharedCluster
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared::cluster").is_ok() {
+                    return Ok(Space::SharedCluster);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".shared::cluster"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for Mapa {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "mapa" {
-            return Err(unexpected_value(span, &["mapa"], opcode));
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Type::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try U64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u64").is_ok() {
+                    return Ok(Type::U64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".u64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
-
-        let mut shared_cluster = false;
-        if consume_directive_if(stream, "shared") {
-            stream.expect_double_colon()?;
-            expect_identifier_value(stream, "cluster")?;
-            shared_cluster = true;
-        }
-
-        let data_type = DataType::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-
-        if !shared_cluster {
-            let address = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let cta = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Semicolon)?;
-
-            return Ok(Mapa::Generic {
-                data_type,
-                destination,
-                address,
-                cta,
-            });
-        }
-
-        if stream.check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace)) {
-            let address = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let cta = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Semicolon)?;
-
-            return Ok(Mapa::SharedRegister {
-                data_type,
-                destination,
-                address,
-                cta,
-            });
-        }
-
-        let variable = VariableSymbol::parse(stream)?;
-        let immediate = if stream
-            .consume_if(|token| matches!(token, PtxToken::Plus))
-            .is_some()
-        {
-            Some(Immediate::parse(stream)?)
-        } else {
-            None
-        };
-        stream.expect(&PtxToken::Comma)?;
-        let cta = Operand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(match immediate {
-            Some(immediate) => Mapa::SharedVariableWithImmediate {
-                data_type,
-                destination,
-                variable,
-                immediate,
-                cta,
-            },
-            None => Mapa::SharedVariable {
-                data_type,
-                destination,
-                variable,
-                cta,
-            },
-        })
     }
+
+    impl PtxParser for MapaSpaceType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("mapa")?;
+            let saved_pos = stream.position();
+            let space = match Space::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            let type_ = Type::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(MapaSpaceType {
+                space,
+                type_,
+                d,
+                a,
+                b,
+            })
+        }
+    }
+
+
 }
+

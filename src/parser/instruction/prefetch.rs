@@ -1,219 +1,210 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, Span, unexpected_value},
-    r#type::{common::AddressOperand, instruction::prefetch::*},
-};
+//! Original PTX specification:
+//!
+//! prefetch{.space}.level                    [a];   // prefetch to data cache
+//! prefetch.global.level::eviction_priority  [a];   // prefetch to data cache
+//! prefetchu.L1  [a];             // prefetch to uniform cache
+//! prefetch{.tensormap_space}.tensormap [a];  // prefetch the tensormap
+//! .space =                    { .global, .local };
+//! .level =                    { .L1, .L2 };
+//! .level::eviction_priority = { .L2::evict_last, .L2::evict_normal };
+//! .tensormap_space =          { .const, .param };
 
-fn space_from_directive(directive: &str, span: Span) -> Result<Space, PtxParseError> {
-    match directive {
-        "global" => Ok(Space::Global),
-        "local" => Ok(Space::Local),
-        other => Err(unexpected_value(
-            span,
-            &[".global", ".local"],
-            format!(".{other}"),
-        )),
-    }
-}
+#![allow(unused)]
 
-fn space_to_directive(space: Space) -> &'static str {
-    match space {
-        Space::Global => ".global",
-        Space::Local => ".local",
-    }
-}
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-fn level_from_directive(directive: &str, span: Span) -> Result<Level, PtxParseError> {
-    match directive {
-        "L1" => Ok(Level::L1),
-        "L2" => Ok(Level::L2),
-        other => Err(unexpected_value(span, &[".L1", ".L2"], format!(".{other}"))),
-    }
-}
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::prefetch::section_0::*;
 
-fn tensor_map_space_from_directive(
-    directive: &str,
-    span: Span,
-) -> Result<TensorMapSpace, PtxParseError> {
-    match directive {
-        "const" => Ok(TensorMapSpace::Const),
-        "param" => Ok(TensorMapSpace::Param),
-        other => Err(unexpected_value(
-            span,
-            &[".const", ".param"],
-            format!(".{other}"),
-        )),
-    }
-}
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
 
-impl PtxParser for Space {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        space_from_directive(&directive, span)
-    }
-}
-
-impl PtxParser for Level {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        level_from_directive(&directive, span)
-    }
-}
-
-impl PtxParser for Eviction {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (name, span) = stream.expect_identifier()?;
-        match name.as_str() {
-            "evict_last" => Ok(Eviction::L2EvictLast),
-            "evict_normal" => Ok(Eviction::L2EvictNormal),
-            other => Err(unexpected_value(
-                span,
-                &["evict_last", "evict_normal"],
-                other,
-            )),
-        }
-    }
-}
-
-impl PtxParser for TensorMapSpace {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        tensor_map_space_from_directive(&directive, span)
-    }
-}
-
-fn parse_prefetch_tensormap(stream: &mut PtxTokenStream) -> Result<Prefetch, PtxParseError> {
-    let space = if stream.check(|token| {
-        matches!(
-            token,
-            PtxToken::Directive(name) if name == "const" || name == "param"
-        )
-    }) {
-        Some(TensorMapSpace::parse(stream)?)
-    } else {
-        None
-    };
-
-    let (directive, span) = stream.expect_directive()?;
-    if directive != "tensormap" {
-        return Err(unexpected_value(
-            span,
-            &[".tensormap"],
-            format!(".{directive}"),
-        ));
-    }
-
-    let address = AddressOperand::parse(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
-
-    Ok(Prefetch::TensorMap { space, address })
-}
-
-fn parse_prefetch_datacache(stream: &mut PtxTokenStream) -> Result<Prefetch, PtxParseError> {
-    let (level_directive, level_span) = stream.expect_directive()?;
-    let level = level_from_directive(&level_directive, level_span.clone())?;
-
-    if stream.check(|token| matches!(token, PtxToken::Colon)) {
-        let (_, colon_span) = stream.peek()?;
-        return Err(unexpected_value(
-            colon_span.clone(),
-            &["["],
-            format!("{:?}", PtxToken::Colon),
-        ));
-    }
-
-    let address = AddressOperand::parse(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
-    Ok(Prefetch::DataCache {
-        space: None,
-        level,
-        address,
-    })
-}
-
-fn parse_prefetch_with_space(
-    stream: &mut PtxTokenStream,
-    space: Space,
-    space_span: Span,
-) -> Result<Prefetch, PtxParseError> {
-    let (level_directive, level_span) = stream.expect_directive()?;
-    let level = level_from_directive(&level_directive, level_span.clone())?;
-
-    if stream.check(|token| matches!(token, PtxToken::Colon)) {
-        stream.expect_double_colon()?;
-        if !matches!(space, Space::Global) {
-            return Err(unexpected_value(
-                space_span,
-                &[".global"],
-                space_to_directive(space).to_string(),
-            ));
-        }
-        let eviction = Eviction::parse(stream)?;
-        if level != Level::L2 {
-            return Err(unexpected_value(
-                level_span,
-                &[".L2"],
-                format!(".{level_directive}"),
-            ));
-        }
-        let address = AddressOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-        Ok(Prefetch::GlobalEviction { eviction, address })
-    } else {
-        let address = AddressOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-        Ok(Prefetch::DataCache {
-            space: Some(space),
-            level,
-            address,
-        })
-    }
-}
-
-impl PtxParser for Prefetch {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        match opcode.as_str() {
-            "prefetch" => {
-                if stream.check(|token| {
-                    matches!(
-                        token,
-                        PtxToken::Directive(name)
-                            if name == "const" || name == "param" || name == "tensormap"
-                    )
-                }) {
-                    return parse_prefetch_tensormap(stream);
+    impl PtxParser for Level {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try L1
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L1").is_ok() {
+                    return Ok(Level::L1);
                 }
-
-                if stream.check(|token| {
-                    matches!(
-                        token,
-                        PtxToken::Directive(name) if name == "global" || name == "local"
-                    )
-                }) {
-                    let (directive, space_span) = stream.expect_directive()?;
-                    let space = space_from_directive(&directive, space_span.clone())?;
-                    return parse_prefetch_with_space(stream, space, space_span);
-                }
-
-                parse_prefetch_datacache(stream)
+                stream.set_position(saved_pos);
             }
-            "prefetchu" => {
-                let (level_directive, level_span) = stream.expect_directive()?;
-                let level = level_from_directive(&level_directive, level_span.clone())?;
-                if level != Level::L1 {
-                    return Err(unexpected_value(
-                        level_span,
-                        &[".L1"],
-                        format!(".{level_directive}"),
-                    ));
+            let saved_pos = stream.position();
+            // Try L2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2").is_ok() {
+                    return Ok(Level::L2);
                 }
-
-                let address = AddressOperand::parse(stream)?;
-                stream.expect(&PtxToken::Semicolon)?;
-                Ok(Prefetch::Uniform { address })
+                stream.set_position(saved_pos);
             }
-            other => Err(unexpected_value(span, &["prefetch", "prefetchu"], other)),
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".L1", ".L2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
+
+    impl PtxParser for TensormapSpace {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Const
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".const").is_ok() {
+                    return Ok(TensormapSpace::Const);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Param
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".param").is_ok() {
+                    return Ok(TensormapSpace::Param);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".const", ".param"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for LevelEvictionPriority {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try L2EvictLast
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::evict_last").is_ok() {
+                    return Ok(LevelEvictionPriority::L2EvictLast);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try L2EvictNormal
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::evict_normal").is_ok() {
+                    return Ok(LevelEvictionPriority::L2EvictNormal);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".L2::evict_last", ".L2::evict_normal"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Space {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Global
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".global").is_ok() {
+                    return Ok(Space::Global);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Local
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".local").is_ok() {
+                    return Ok(Space::Local);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".global", ".local"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for PrefetchSpaceLevel {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("prefetch")?;
+            let saved_pos = stream.position();
+            let space = match Space::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            let level = Level::parse(stream)?;
+            let a = AddressOperand::parse(stream)?;
+            Ok(PrefetchSpaceLevel {
+                space,
+                level,
+                a,
+            })
+        }
+    }
+
+
+    impl PtxParser for PrefetchGlobalLevelEvictionPriority {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("prefetch")?;
+            stream.expect_string(".global")?;
+            let global = ();
+            let level_eviction_priority = LevelEvictionPriority::parse(stream)?;
+            let a = AddressOperand::parse(stream)?;
+            Ok(PrefetchGlobalLevelEvictionPriority {
+                global,
+                level_eviction_priority,
+                a,
+            })
+        }
+    }
+
+
+    impl PtxParser for PrefetchuL1 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("prefetchu")?;
+            stream.expect_string(".L1")?;
+            let l1 = ();
+            let a = AddressOperand::parse(stream)?;
+            Ok(PrefetchuL1 {
+                l1,
+                a,
+            })
+        }
+    }
+
+
+    impl PtxParser for PrefetchTensormapSpaceTensormap {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("prefetch")?;
+            let saved_pos = stream.position();
+            let tensormap_space = match TensormapSpace::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            stream.expect_string(".tensormap")?;
+            let tensormap = ();
+            let a = AddressOperand::parse(stream)?;
+            Ok(PrefetchTensormapSpaceTensormap {
+                tensormap_space,
+                tensormap,
+                a,
+            })
+        }
+    }
+
+
 }
+

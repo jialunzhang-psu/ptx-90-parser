@@ -1,233 +1,310 @@
-use crate::r#type::instruction::ldmatrix::DataType as LdmatrixDataType;
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::ldmatrix::*},
-};
+//! Original PTX specification:
+//!
+//! ldmatrix.sync.aligned.shape.num{.trans}{.ss}.type r, [p];
+//! ldmatrix.sync.aligned.m8n16.num{.ss}.dst_fmt.src_fmt        r, [p];
+//! ldmatrix.sync.aligned.m16n16.num.trans{.ss}.dst_fmt.src_fmt r, [p];
+//! .shape   = {.m8n8, .m16n16};
+//! .num     = {.x1, .x2, .x4};
+//! .ss      = {.shared, .shared::cta};
+//! .type    = {.b16, .b8};
+//! .dst_fmt = { .b8x16 };
+//! .src_fmt = { .b6x16_p32, .b4x16_p64 };
 
-impl PtxParser for Shape {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "m8n8" => Ok(Shape::M8N8),
-            "m16n16" => Ok(Shape::M16N16),
-            other => Err(unexpected_value(
-                span,
-                &[".m8n8", ".m16n16"],
-                format!(".{other}"),
-            )),
-        }
-    }
-}
+#![allow(unused)]
 
-impl PtxParser for Num {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "x1" => Ok(Num::X1),
-            "x2" => Ok(Num::X2),
-            "x4" => Ok(Num::X4),
-            other => Err(unexpected_value(
-                span,
-                &[".x1", ".x2", ".x4"],
-                format!(".{other}"),
-            )),
-        }
-    }
-}
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-impl PtxParser for StateSpace {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "shared" => {
-                if stream.check(|token| matches!(token, PtxToken::Colon)) {
-                    stream.expect_double_colon()?;
-                    let (modifier, modifier_span) = stream.expect_identifier()?;
-                    match modifier.as_str() {
-                        "cta" => Ok(StateSpace::SharedCta),
-                        other => Err(unexpected_value(modifier_span, &["cta"], other)),
-                    }
-                } else {
-                    Ok(StateSpace::Shared)
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::ldmatrix::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for SrcFmt {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try B6x16P32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b6x16_p32").is_ok() {
+                    return Ok(SrcFmt::B6x16P32);
                 }
+                stream.set_position(saved_pos);
             }
-            other => Err(unexpected_value(
-                span,
-                &[".shared", ".shared::cta"],
-                format!(".{other}"),
-            )),
-        }
-    }
-}
-
-impl PtxParser for LdmatrixDataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "b16" => Ok(LdmatrixDataType::B16),
-            "b8" => Ok(LdmatrixDataType::B8),
-            other => Err(unexpected_value(
-                span,
-                &[".b16", ".b8"],
-                format!(".{other}"),
-            )),
-        }
-    }
-}
-
-impl PtxParser for DestinationFormat {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "b8x16" => Ok(DestinationFormat::B8x16),
-            other => Err(unexpected_value(span, &[".b8x16"], format!(".{other}"))),
-        }
-    }
-}
-
-impl PtxParser for SourceFormat {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "b6x16_p32" => Ok(SourceFormat::B6x16P32),
-            "b4x16_p64" => Ok(SourceFormat::B4x16P64),
-            other => Err(unexpected_value(
-                span,
-                &[".b6x16_p32", ".b4x16_p64"],
-                format!(".{other}"),
-            )),
-        }
-    }
-}
-
-fn parse_optional_state_space(
-    stream: &mut PtxTokenStream,
-) -> Result<Option<StateSpace>, PtxParseError> {
-    if stream.check(|token| directive_matches(token, "shared")) {
-        StateSpace::parse(stream).map(Some)
-    } else {
-        Ok(None)
-    }
-}
-
-fn parse_standard_tail(
-    stream: &mut PtxTokenStream,
-    shape: Shape,
-) -> Result<Ldmatrix, PtxParseError> {
-    let num = Num::parse(stream)?;
-    let trans = consume_directive_if(stream, "trans");
-    let state_space = parse_optional_state_space(stream)?;
-    let data_type = LdmatrixDataType::parse(stream)?;
-    let destination = RegisterOperand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let address = AddressOperand::parse(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
-
-    Ok(Ldmatrix::Standard(Standard {
-        shape,
-        num,
-        trans,
-        state_space,
-        data_type,
-        destination,
-        address,
-    }))
-}
-
-fn parse_m8n16_tail(stream: &mut PtxTokenStream) -> Result<Ldmatrix, PtxParseError> {
-    let num = Num::parse(stream)?;
-    let state_space = parse_optional_state_space(stream)?;
-    let destination_format = DestinationFormat::parse(stream)?;
-    let source_format = SourceFormat::parse(stream)?;
-    let destination = RegisterOperand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let address = AddressOperand::parse(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
-
-    Ok(Ldmatrix::M8N16(M8N16 {
-        num,
-        state_space,
-        destination_format,
-        source_format,
-        destination,
-        address,
-    }))
-}
-
-fn parse_m16n16_special(stream: &mut PtxTokenStream) -> Result<Ldmatrix, PtxParseError> {
-    let num = Num::parse(stream)?;
-    expect_directive_value(stream, "trans")?;
-    let state_space = parse_optional_state_space(stream)?;
-    let destination_format = DestinationFormat::parse(stream)?;
-    let source_format = SourceFormat::parse(stream)?;
-    let destination = RegisterOperand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let address = AddressOperand::parse(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
-
-    Ok(Ldmatrix::M16N16(M16N16 {
-        num,
-        state_space,
-        destination_format,
-        source_format,
-        destination,
-        address,
-    }))
-}
-
-impl PtxParser for Ldmatrix {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "ldmatrix")?;
-        expect_directive_value(stream, "sync")?;
-        expect_directive_value(stream, "aligned")?;
-
-        let (modifier, span) = stream.expect_directive()?;
-        match modifier.as_str() {
-            "m8n8" => parse_standard_tail(stream, Shape::M8N8),
-            "m8n16" => parse_m8n16_tail(stream),
-            "m16n16" => {
-                let checkpoint = stream.position();
-                let num = Num::parse(stream)?;
-                let trans = consume_directive_if(stream, "trans");
-                let state_space = parse_optional_state_space(stream)?;
-                match peek_directive(stream)? {
-                    Some((next, _)) if next == "b16" || next == "b8" => {
-                        let data_type = LdmatrixDataType::parse(stream)?;
-                        let destination = RegisterOperand::parse(stream)?;
-                        stream.expect(&PtxToken::Comma)?;
-                        let address = AddressOperand::parse(stream)?;
-                        stream.expect(&PtxToken::Semicolon)?;
-                        Ok(Ldmatrix::Standard(Standard {
-                            shape: Shape::M16N16,
-                            num,
-                            trans,
-                            state_space,
-                            data_type,
-                            destination,
-                            address,
-                        }))
-                    }
-                    Some((next, _)) if next == "b8x16" => {
-                        stream.set_position(checkpoint);
-                        parse_m16n16_special(stream)
-                    }
-                    Some((next, span)) => Err(unexpected_value(
-                        span,
-                        &[".b16", ".b8", ".b8x16"],
-                        format!(".{next}"),
-                    )),
-                    None => Err(PtxParseError {
-                        kind: ParseErrorKind::UnexpectedEof,
-                        span,
-                    }),
+            let saved_pos = stream.position();
+            // Try B4x16P64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b4x16_p64").is_ok() {
+                    return Ok(SrcFmt::B4x16P64);
                 }
+                stream.set_position(saved_pos);
             }
-            other => Err(unexpected_value(
-                span,
-                &[".m8n8", ".m8n16", ".m16n16"],
-                format!(".{other}"),
-            )),
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".b6x16_p32", ".b4x16_p64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
+
+    impl PtxParser for DstFmt {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try B8x16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b8x16").is_ok() {
+                    return Ok(DstFmt::B8x16);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".b8x16"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Ss {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Shared
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared").is_ok() {
+                    return Ok(Ss::Shared);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try SharedCta
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared::cta").is_ok() {
+                    return Ok(Ss::SharedCta);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".shared", ".shared::cta"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Num {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try X1
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".x1").is_ok() {
+                    return Ok(Num::X1);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try X2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".x2").is_ok() {
+                    return Ok(Num::X2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try X4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".x4").is_ok() {
+                    return Ok(Num::X4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".x1", ".x2", ".x4"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Shape {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try M8n8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".m8n8").is_ok() {
+                    return Ok(Shape::M8n8);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try M16n16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".m16n16").is_ok() {
+                    return Ok(Shape::M16n16);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".m8n8", ".m16n16"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try B16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b16").is_ok() {
+                    return Ok(Type::B16);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try B8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b8").is_ok() {
+                    return Ok(Type::B8);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".b16", ".b8"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for LdmatrixSyncAlignedShapeNumTransSsType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("ldmatrix")?;
+            stream.expect_string(".sync")?;
+            let sync = ();
+            stream.expect_string(".aligned")?;
+            let aligned = ();
+            let shape = Shape::parse(stream)?;
+            let num = Num::parse(stream)?;
+            let saved_pos = stream.position();
+            let trans = stream.expect_string(".trans").is_ok();
+            if !trans {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let ss = match Ss::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            let type_ = Type::parse(stream)?;
+            let r = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let p = AddressOperand::parse(stream)?;
+            Ok(LdmatrixSyncAlignedShapeNumTransSsType {
+                sync,
+                aligned,
+                shape,
+                num,
+                trans,
+                ss,
+                type_,
+                r,
+                p,
+            })
+        }
+    }
+
+
+    impl PtxParser for LdmatrixSyncAlignedM8n16NumSsDstFmtSrcFmt {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("ldmatrix")?;
+            stream.expect_string(".sync")?;
+            let sync = ();
+            stream.expect_string(".aligned")?;
+            let aligned = ();
+            stream.expect_string(".m8n16")?;
+            let m8n16 = ();
+            let num = Num::parse(stream)?;
+            let saved_pos = stream.position();
+            let ss = match Ss::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            let dst_fmt = DstFmt::parse(stream)?;
+            let src_fmt = SrcFmt::parse(stream)?;
+            let r = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let p = AddressOperand::parse(stream)?;
+            Ok(LdmatrixSyncAlignedM8n16NumSsDstFmtSrcFmt {
+                sync,
+                aligned,
+                m8n16,
+                num,
+                ss,
+                dst_fmt,
+                src_fmt,
+                r,
+                p,
+            })
+        }
+    }
+
+
+    impl PtxParser for LdmatrixSyncAlignedM16n16NumTransSsDstFmtSrcFmt {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("ldmatrix")?;
+            stream.expect_string(".sync")?;
+            let sync = ();
+            stream.expect_string(".aligned")?;
+            let aligned = ();
+            stream.expect_string(".m16n16")?;
+            let m16n16 = ();
+            let num = Num::parse(stream)?;
+            stream.expect_string(".trans")?;
+            let trans = ();
+            let saved_pos = stream.position();
+            let ss = match Ss::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            let dst_fmt = DstFmt::parse(stream)?;
+            let src_fmt = SrcFmt::parse(stream)?;
+            let r = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let p = AddressOperand::parse(stream)?;
+            Ok(LdmatrixSyncAlignedM16n16NumTransSsDstFmtSrcFmt {
+                sync,
+                aligned,
+                m16n16,
+                num,
+                trans,
+                ss,
+                dst_fmt,
+                src_fmt,
+                r,
+                p,
+            })
+        }
+    }
+
+
 }
+

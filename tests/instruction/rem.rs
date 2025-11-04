@@ -1,8 +1,8 @@
 use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
-    r#type::common::RegisterOperand,
-    r#type::instruction::rem::{DataType as RemDataType, Rem},
+    r#type::common::{Operand, RegisterOperand},
+    r#type::instruction::rem::{Type, Rem},
 };
 
 #[test]
@@ -10,10 +10,10 @@ fn parses_rem_unsigned() {
     assert_eq!(
         parse::<Rem>("rem.u32 %r1, %r2, %r3;"),
         Rem {
-            data_type: RemDataType::U32,
-            destination: RegisterOperand::Single("%r1".into()),
-            lhs: RegisterOperand::Single("%r2".into()),
-            rhs: RegisterOperand::Single("%r3".into()),
+            type_: Type::U32,
+            d: Operand::Register(RegisterOperand::Single("%r1".into())),
+            a: Operand::Register(RegisterOperand::Single("%r2".into())),
+            b: Operand::Register(RegisterOperand::Single("%r3".into())),
         }
     );
     assert_roundtrip::<Rem>("rem.u32 %r1, %r2, %r3;");
@@ -24,10 +24,10 @@ fn parses_rem_signed() {
     assert_eq!(
         parse::<Rem>("rem.s64 %rd4, %rd5, %rd6;"),
         Rem {
-            data_type: RemDataType::S64,
-            destination: RegisterOperand::Single("%rd4".into()),
-            lhs: RegisterOperand::Single("%rd5".into()),
-            rhs: RegisterOperand::Single("%rd6".into()),
+            type_: Type::S64,
+            d: Operand::Register(RegisterOperand::Single("%rd4".into())),
+            a: Operand::Register(RegisterOperand::Single("%rd5".into())),
+            b: Operand::Register(RegisterOperand::Single("%rd6".into())),
         }
     );
     assert_roundtrip::<Rem>("rem.s64 %rd4, %rd5, %rd6;");

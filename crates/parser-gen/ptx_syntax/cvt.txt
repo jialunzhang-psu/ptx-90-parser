@@ -1,0 +1,36 @@
+cvt{.irnd}{.ftz}{.sat}.dtype.atype         d, a;  // integer rounding
+cvt{.frnd}{.ftz}{.sat}.dtype.atype         d, a;  // fp rounding
+cvt.frnd2{.relu}{.satfinite}.f16.f32       d, a;
+cvt.frnd2{.relu}{.satfinite}.f16x2.f32     d, a, b;
+cvt.rs{.relu}{.satfinite}.f16x2.f32        d, a, b, rbits;
+cvt.frnd2{.relu}{.satfinite}.bf16.f32      d, a;
+cvt.frnd2{.relu}{.satfinite}.bf16x2.f32    d, a, b;
+cvt.rs{.relu}{.satfinite}.bf16x2.f32       d, a, b, rbits;
+cvt.rna{.satfinite}.tf32.f32               d, a;
+cvt.frnd2{.satfinite}{.relu}.tf32.f32      d, a;
+cvt.rn.satfinite{.relu}.f8x2type.f32       d, a, b;
+cvt.rn.satfinite{.relu}.f8x2type.f16x2     d, a;
+cvt.rn{.relu}.f16x2.f8x2type              d, a;
+cvt.rs{.relu}.satfinite.f8x4type.f32       d, {a, b, e, f}, rbits;
+cvt.rn.satfinite{.relu}.f4x2type.f32       d, a, b;
+cvt.rn{.relu}.f16x2.f4x2type               d, a;
+cvt.rs{.relu}.satfinite.f4x4type.f32       d, {a, b, e, f}, rbits;
+cvt.rn.satfinite{.relu}.f6x2type.f32       d, a, b;
+cvt.rn{.relu}.f16x2.f6x2type               d, a;
+cvt.rs{.relu}.satfinite.f6x4type.f32       d, {a, b, e, f}, rbits;
+cvt.frnd3{.satfinite}.ue8m0x2.f32          d, a, b;
+cvt.frnd3{.satfinite}.ue8m0x2.bf16x2       d, a;
+cvt.rn.bf16x2.ue8m0x2                      d, a;
+.irnd   = { .rni, .rzi, .rmi, .rpi };
+.frnd   = { .rn,  .rz,  .rm,  .rp  };
+.frnd2  = { .rn,  .rz };
+.frnd3  = { .rz,  .rp };
+.dtype = .atype = { .u8,   .u16, .u32, .u64,
+.s8,   .s16, .s32, .s64,
+.bf16, .f16, .f32, .f64 };
+.f8x2type = { .e4m3x2, .e5m2x2 };
+.f4x2type = { .e2m1x2 };
+.f6x2type = { .e2m3x2, .e3m2x2 };
+.f4x4type = { .e2m1x4 };
+.f8x4type = { .e4m3x4, .e5m2x4 };
+.f6x4type = { .e2m3x4, .e3m2x4 };

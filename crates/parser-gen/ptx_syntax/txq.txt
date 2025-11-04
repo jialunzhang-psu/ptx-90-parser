@@ -1,0 +1,10 @@
+txq.tquery.b32         d, [a];       // texture attributes
+txq.level.tlquery.b32  d, [a], lod;  // texture attributes
+txq.squery.b32         d, [a];       // sampler attributes
+.tquery  = { .width, .height, .depth,
+.channel_data_type, .channel_order,
+.normalized_coords, .array_size,
+.num_mipmap_levels, .num_samples};
+.tlquery = { .width, .height, .depth };
+.squery  = { .force_unnormalized_coords, .filter_mode,
+.addr_mode_0, addr_mode_1, addr_mode_2 };

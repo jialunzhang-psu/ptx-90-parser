@@ -1,0 +1,20 @@
+add.type       d, a, b;
+add{.sat}.s32  d, a, b;     // .sat applies only to .s32
+.type = { .u16, .u32, .u64,
+.s16, .s32, .s64,
+.u16x2, .s16x2 };
+-------------------------------------------
+add{.rnd}{.ftz}{.sat}.f32  d, a, b;
+add{.rnd}{.ftz}.f32x2      d, a, b;
+add{.rnd}.f64              d, a, b;
+.rnd = { .rn, .rz, .rm, .rp };
+--------------------------------------------
+add{.rnd}{.ftz}{.sat}.f16   d, a, b;
+add{.rnd}{.ftz}{.sat}.f16x2 d, a, b;
+add{.rnd}.bf16   d, a, b;
+add{.rnd}.bf16x2 d, a, b;
+.rnd = { .rn };
+--------------------------------------------
+add{.rnd}{.sat}.f32.atype  d, a, c;
+.atype = { .f16, .bf16};
+.rnd   = { .rn, .rz, .rm, .rp };

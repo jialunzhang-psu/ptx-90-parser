@@ -1,0 +1,2 @@
+tcgen05.shift.cta_group.down  [taddr];
+.cta_group = { .cta_group::1, .cta_group::2 }

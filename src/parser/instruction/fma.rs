@@ -1,138 +1,558 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::RegisterOperand,
-        instruction::fma::{Fma, Rounding},
-    },
-};
+//! Original PTX specification:
+//!
+//! fma.rnd{.ftz}{.sat}.f32  d, a, b, c;
+//! fma.rnd{.ftz}.f32x2      d, a, b, c;
+//! fma.rnd.f64              d, a, b, c;
+//! .rnd = { .rn, .rz, .rm, .rp };
+//! ---------------------------------------------
+//! fma.rnd{.ftz}{.sat}.f16     d, a, b, c;
+//! fma.rnd{.ftz}{.sat}.f16x2   d, a, b, c;
+//! fma.rnd{.ftz}.relu.f16      d, a, b, c;
+//! fma.rnd{.ftz}.relu.f16x2    d, a, b, c;
+//! fma.rnd{.relu}.bf16         d, a, b, c;
+//! fma.rnd{.relu}.bf16x2       d, a, b, c;
+//! fma.rnd.oob{.relu}.type     d, a, b, c;
+//! .rnd = { .rn };
+//! ---------------------------------------------
+//! fma.rnd{.sat}.f32.abtype  d, a, b, c;
+//! .abtype = { .f16, .bf16};
+//! .rnd    = { .rn, .rz, .rm, .rp };
 
-impl PtxParser for Rounding {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "rn" => Ok(Rounding::Rn),
-            "rz" => Ok(Rounding::Rz),
-            "rm" => Ok(Rounding::Rm),
-            "rp" => Ok(Rounding::Rp),
-            other => Err(unexpected_value(
-                span,
-                &[".rn", ".rz", ".rm", ".rp"],
-                format!(".{other}"),
-            )),
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::fma::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Rnd {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Rn
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rn").is_ok() {
+                    return Ok(Rnd::Rn);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Rz
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rz").is_ok() {
+                    return Ok(Rnd::Rz);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rm
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rm").is_ok() {
+                    return Ok(Rnd::Rm);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rp
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rp").is_ok() {
+                    return Ok(Rnd::Rp);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".rn", ".rz", ".rm", ".rp"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for Fma {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, opcode_span) = stream.expect_identifier()?;
-        if opcode != "fma" {
-            return Err(unexpected_value(opcode_span, &["fma"], opcode));
-        }
-
-        let rounding = Rounding::parse(stream)?;
-
-        let mut flush_to_zero = false;
-        let mut flush_span = None;
-        let mut saturate = false;
-        let mut saturate_span = None;
-
-        loop {
-            if !flush_to_zero {
-                if let Some((_, span)) = stream
-                    .consume_if(|token| matches!(token, PtxToken::Directive(name) if name == "ftz"))
-                {
-                    flush_to_zero = true;
-                    flush_span = Some(span.clone());
-                    continue;
-                }
+    impl PtxParser for FmaRndFtzSatF32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
             }
-
-            if !saturate {
-                if let Some((_, span)) = stream
-                    .consume_if(|token| matches!(token, PtxToken::Directive(name) if name == "sat"))
-                {
-                    saturate = true;
-                    saturate_span = Some(span.clone());
-                    continue;
-                }
+            let saved_pos = stream.position();
+            let sat = stream.expect_string(".sat").is_ok();
+            if !sat {
+                stream.set_position(saved_pos);
             }
-
-            break;
-        }
-
-        let (data_type, data_span) = stream.expect_directive()?;
-
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let multiplicand_a = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let multiplicand_b = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let addend = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        match data_type.as_str() {
-            "f32" => Ok(Fma::F32 {
-                rounding,
-                flush_to_zero,
-                saturate,
-                destination,
-                multiplicand_a,
-                multiplicand_b,
-                addend,
-            }),
-            "f32x2" => {
-                if saturate {
-                    let span = saturate_span.unwrap_or_else(|| data_span.clone());
-                    return Err(unexpected_value(
-                        span,
-                        &["omit .sat when using .f32x2"],
-                        ".sat",
-                    ));
-                }
-
-                Ok(Fma::F32x2 {
-                    rounding,
-                    flush_to_zero,
-                    destination,
-                    multiplicand_a,
-                    multiplicand_b,
-                    addend,
-                })
-            }
-            "f64" => {
-                if flush_to_zero {
-                    let span = flush_span.unwrap_or_else(|| data_span.clone());
-                    return Err(unexpected_value(
-                        span,
-                        &["omit .ftz when using .f64"],
-                        ".ftz",
-                    ));
-                }
-                if saturate {
-                    let span = saturate_span.unwrap_or_else(|| data_span.clone());
-                    return Err(unexpected_value(
-                        span,
-                        &["omit .sat when using .f64"],
-                        ".sat",
-                    ));
-                }
-
-                Ok(Fma::F64 {
-                    rounding,
-                    destination,
-                    multiplicand_a,
-                    multiplicand_b,
-                    addend,
-                })
-            }
-            other => Err(unexpected_value(
-                data_span,
-                &[".f32", ".f32x2", ".f64"],
-                format!(".{other}"),
-            )),
+            stream.expect_string(".f32")?;
+            let f32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndFtzSatF32 {
+                rnd,
+                ftz,
+                sat,
+                f32,
+                d,
+                a,
+                b,
+                c,
+            })
         }
     }
+
+
+    impl PtxParser for FmaRndFtzF32x2 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f32x2")?;
+            let f32x2 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndFtzF32x2 {
+                rnd,
+                ftz,
+                f32x2,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+    impl PtxParser for FmaRndF64 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            stream.expect_string(".f64")?;
+            let f64 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndF64 {
+                rnd,
+                f64,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
 }
+
+pub mod section_1 {
+    use super::*;
+    use crate::r#type::instruction::fma::section_1::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Rnd {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Rn
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rn").is_ok() {
+                    return Ok(Rnd::Rn);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".rn"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for FmaRndFtzSatF16 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let sat = stream.expect_string(".sat").is_ok();
+            if !sat {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f16")?;
+            let f16 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndFtzSatF16 {
+                rnd,
+                ftz,
+                sat,
+                f16,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+    impl PtxParser for FmaRndFtzSatF16x2 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let sat = stream.expect_string(".sat").is_ok();
+            if !sat {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f16x2")?;
+            let f16x2 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndFtzSatF16x2 {
+                rnd,
+                ftz,
+                sat,
+                f16x2,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+    impl PtxParser for FmaRndFtzReluF16 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".relu")?;
+            let relu = ();
+            stream.expect_string(".f16")?;
+            let f16 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndFtzReluF16 {
+                rnd,
+                ftz,
+                relu,
+                f16,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+    impl PtxParser for FmaRndFtzReluF16x2 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".relu")?;
+            let relu = ();
+            stream.expect_string(".f16x2")?;
+            let f16x2 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndFtzReluF16x2 {
+                rnd,
+                ftz,
+                relu,
+                f16x2,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+    impl PtxParser for FmaRndReluBf16 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            let saved_pos = stream.position();
+            let relu = stream.expect_string(".relu").is_ok();
+            if !relu {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".bf16")?;
+            let bf16 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndReluBf16 {
+                rnd,
+                relu,
+                bf16,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+    impl PtxParser for FmaRndReluBf16x2 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            let saved_pos = stream.position();
+            let relu = stream.expect_string(".relu").is_ok();
+            if !relu {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".bf16x2")?;
+            let bf16x2 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndReluBf16x2 {
+                rnd,
+                relu,
+                bf16x2,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+    impl PtxParser for FmaRndOobReluType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            stream.expect_string(".oob")?;
+            let oob = ();
+            let saved_pos = stream.position();
+            let relu = stream.expect_string(".relu").is_ok();
+            if !relu {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".type")?;
+            let type_ = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndOobReluType {
+                rnd,
+                oob,
+                relu,
+                type_,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+}
+
+pub mod section_2 {
+    use super::*;
+    use crate::r#type::instruction::fma::section_2::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Rnd {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Rn
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rn").is_ok() {
+                    return Ok(Rnd::Rn);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Rz
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rz").is_ok() {
+                    return Ok(Rnd::Rz);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rm
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rm").is_ok() {
+                    return Ok(Rnd::Rm);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rp
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rp").is_ok() {
+                    return Ok(Rnd::Rp);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".rn", ".rz", ".rm", ".rp"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Abtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try F16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f16").is_ok() {
+                    return Ok(Abtype::F16);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Bf16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".bf16").is_ok() {
+                    return Ok(Abtype::Bf16);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".f16", ".bf16"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for FmaRndSatF32Abtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("fma")?;
+            let rnd = Rnd::parse(stream)?;
+            let saved_pos = stream.position();
+            let sat = stream.expect_string(".sat").is_ok();
+            if !sat {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f32")?;
+            let f32 = ();
+            let abtype = Abtype::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(FmaRndSatF32Abtype {
+                rnd,
+                sat,
+                f32,
+                abtype,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+}
+

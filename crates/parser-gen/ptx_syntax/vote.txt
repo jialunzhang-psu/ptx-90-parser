@@ -1,0 +1,3 @@
+vote.mode.pred  d, {!}a;
+vote.ballot.b32 d, {!}a;  // 'ballot' form, returns bitmask
+.mode = { .all, .any, .uni };

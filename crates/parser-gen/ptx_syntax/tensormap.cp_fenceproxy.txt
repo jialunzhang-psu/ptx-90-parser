@@ -1,0 +1,5 @@
+tensormap.cp_fenceproxy.cp_qualifiers.fence_qualifiers.sync.aligned  [dst], [src], size;
+.cp_qualifiers    = { .global.shared::cta };
+.fence_qualifiers = { .to_proxy::from_proxy.release.scope };
+.to_proxy::from_proxy  = { .tensormap::generic };
+.scope            = { .cta, .cluster, .gpu , .sys };

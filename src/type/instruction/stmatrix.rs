@@ -1,62 +1,53 @@
-use crate::r#type::common::{AddressOperand, RegisterOperand};
+//! Original PTX specification:
+//!
+//! stmatrix.sync.aligned.shape.num{.trans}{.ss}.type [p], r;
+//! .shape  = {.m8n8, .m16n8};
+//! .num    = {.x1, .x2, .x4};
+//! .ss     = {.shared, .shared::cta};
+//! .type   = {.b16, .b8};
 
-/// `stmatrix.sync.aligned.shape.num{.trans}{.ss}.type [p], r;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Stmatrix {
-    pub shape: Shape,
-    pub num: Num,
-    pub trans: bool,
-    pub state_space: Option<StateSpace>,
-    pub data_type: DataType,
-    pub address: AddressOperand,
-    pub source: Source,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.shape = {.m8n8, .m16n8};`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Shape {
-    /// `.m8n8`
-    M8N8,
-    /// `.m16n8`
-    M16N8,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.num = {.x1, .x2, .x4};`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Num {
-    /// `.x1`
-    X1,
-    /// `.x2`
-    X2,
-    /// `.x4`
-    X4,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Shape {
+        M8n8, // .m8n8
+        M16n8, // .m16n8
+    }
 
-/// `{r}`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Source {
-    /// `{r}`
-    X1(RegisterOperand),
-    /// `{r0, r1}`
-    X2([RegisterOperand; 2]),
-    /// `{r0, r1, r2, r3}`
-    X4([RegisterOperand; 4]),
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Num {
+        X1, // .x1
+        X2, // .x2
+        X4, // .x4
+    }
 
-/// `.ss = {.shared{::cta}};`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum StateSpace {
-    /// `.shared`
-    Shared,
-    /// `.shared::cta`
-    SharedCta,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Ss {
+        Shared, // .shared
+        SharedCta, // .shared::cta
+    }
 
-/// `.type = {.b16, .b8};`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b16`
-    B16,
-    /// `.b8`
-    B8,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        B16, // .b16
+        B8, // .b8
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct StmatrixSyncAlignedShapeNumTransSsType {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub shape: Shape, // .shape
+        pub num: Num, // .num
+        pub trans: bool, // {.trans}
+        pub ss: Option<Ss>, // {.ss}
+        pub type_: Type, // .type
+        pub p: AddressOperand, // [p]
+        pub r: Operand, // r
+    }
+
 }

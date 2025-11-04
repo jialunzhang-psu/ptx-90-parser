@@ -1,50 +1,73 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::RegisterOperand, instruction::bfi::*},
-};
+//! Original PTX specification:
+//!
+//! bfi.type  f, a, b, c, d;
+//! .type = { .b32, .b64 };
 
-impl PtxParser for DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-        match modifier.as_str() {
-            "b32" => Ok(DataType::B32),
-            "b64" => Ok(DataType::B64),
-            other => Err(unexpected_value(
-                span,
-                &[".b32", ".b64"],
-                format!(".{other}"),
-            )),
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::bfi::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try B32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b32").is_ok() {
+                    return Ok(Type::B32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try B64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b64").is_ok() {
+                    return Ok(Type::B64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".b32", ".b64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for Bfi {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "bfi" {
-            return Err(unexpected_value(span, &["bfi"], opcode));
+    impl PtxParser for BfiType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("bfi")?;
+            let type_ = Type::parse(stream)?;
+            let f = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let d = Operand::parse(stream)?;
+            Ok(BfiType {
+                type_,
+                f,
+                a,
+                b,
+                c,
+                d,
+            })
         }
-
-        let data_type = DataType::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let source = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let base = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let position = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let length = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Bfi {
-            data_type,
-            destination,
-            source,
-            base,
-            position,
-            length,
-        })
     }
+
+
 }
+

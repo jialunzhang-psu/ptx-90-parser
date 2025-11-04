@@ -1,37 +1,29 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! subc{.cc}.type  d, a, b;
+//! .type = { .u32, .s32, .u64, .s64 };
 
-/// `subc{.cc}.type d, a, b;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Subc {
-    /// `.cc`
-    pub condition_code: ConditionCode,
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub minuend: RegisterOperand,
-    /// `b`
-    pub subtrahend: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.cc`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ConditionCode {
-    None,
-    /// `.cc`
-    Cc,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.type = { .u32, .s32, .u64, .s64 }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-    /// `.s32`
-    S32,
-    /// `.u64`
-    U64,
-    /// `.s64`
-    S64,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U32, // .u32
+        S32, // .s32
+        U64, // .u64
+        S64, // .s64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SubcCcType {
+        pub cc: bool, // {.cc}
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
 }

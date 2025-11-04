@@ -1,85 +1,100 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::{Operand, PredicateRegister, RegisterOperand},
-        instruction::shfl::{DataType, Destination, Mode, Shfl},
-    },
-};
+//! Original PTX specification:
+//!
+//! shfl.mode.b32  d{|p}, a, b, c;
+//! .mode = { .up, .down, .bfly, .idx };
 
-impl PtxParser for Mode {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
+#![allow(unused)]
 
-        match modifier.as_str() {
-            "up" => Ok(Mode::Up),
-            "down" => Ok(Mode::Down),
-            "bfly" => Ok(Mode::Bfly),
-            "idx" => Ok(Mode::Idx),
-            other => Err(unexpected_value(
-                span,
-                &[".up", ".down", ".bfly", ".idx"],
-                format!(".{other}"),
-            )),
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::shfl::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Mode {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Up
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".up").is_ok() {
+                    return Ok(Mode::Up);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Down
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".down").is_ok() {
+                    return Ok(Mode::Down);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Bfly
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".bfly").is_ok() {
+                    return Ok(Mode::Bfly);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Idx
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".idx").is_ok() {
+                    return Ok(Mode::Idx);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".up", ".down", ".bfly", ".idx"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-
-        match modifier.as_str() {
-            "b32" => Ok(DataType::B32),
-            other => Err(unexpected_value(span, &[".b32"], format!(".{other}"))),
+    impl PtxParser for ShflModeB32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("shfl")?;
+            let mode = Mode::parse(stream)?;
+            stream.expect_string(".b32")?;
+            let b32 = ();
+            let d = Operand::parse(stream)?;
+            let saved_pos = stream.position();
+            let p = if stream.consume_if(|t| matches!(t, PtxToken::Pipe)).is_some() {
+                Some(Operand::parse(stream)?)
+            } else {
+                stream.set_position(saved_pos);
+                None
+            };
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(ShflModeB32 {
+                mode,
+                b32,
+                d,
+                a,
+                b,
+                c,
+            })
         }
     }
+
+
 }
 
-impl PtxParser for Destination {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let register = RegisterOperand::parse(stream)?;
-        let predicate = if stream
-            .consume_if(|token| matches!(token, PtxToken::Pipe))
-            .is_some()
-        {
-            Some(PredicateRegister::parse(stream)?)
-        } else {
-            None
-        };
-
-        Ok(Destination {
-            register,
-            predicate,
-        })
-    }
-}
-
-impl PtxParser for Shfl {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "shfl" {
-            return Err(unexpected_value(span, &["shfl"], opcode));
-        }
-
-        let mode = Mode::parse(stream)?;
-        let data_type = DataType::parse(stream)?;
-        let destination = Destination::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let source = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let lane = Operand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let clamp = Operand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Shfl {
-            mode,
-            data_type,
-            destination,
-            source,
-            lane,
-            clamp,
-        })
-    }
-}

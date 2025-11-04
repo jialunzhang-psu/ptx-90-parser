@@ -1,47 +1,30 @@
+//! Original PTX specification:
+//!
+//! shfl.mode.b32  d{|p}, a, b, c;
+//! .mode = { .up, .down, .bfly, .idx };
+
+#![allow(unused)]
 use crate::r#type::common::*;
 
-/// `shfl.mode.b32  d[|p], a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Shfl {
-    /// `.mode`
-    pub mode: Mode,
-    /// `.b32`
-    pub data_type: DataType,
-    /// `d[|p]`
-    pub destination: Destination,
-    /// `a`
-    pub source: RegisterOperand,
-    /// `b`
-    pub lane: Operand,
-    /// `c`
-    pub clamp: Operand,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.mode = { .up, .down, .bfly, .idx };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mode {
-    /// `.up`
-    Up,
-    /// `.down`
-    Down,
-    /// `.bfly`
-    Bfly,
-    /// `.idx`
-    Idx,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        Up, // .up
+        Down, // .down
+        Bfly, // .bfly
+        Idx, // .idx
+    }
 
-/// `.b32`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b32`
-    B32,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ShflModeB32 {
+        pub mode: Mode, // .mode
+        pub b32: (), // .b32
+        pub d: Operand, // d{|p}
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
 
-/// `d[|p]`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Destination {
-    /// `d`
-    pub register: RegisterOperand,
-    /// `|p`
-    pub predicate: Option<PredicateRegister>,
 }

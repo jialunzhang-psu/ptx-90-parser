@@ -1,81 +1,60 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::AddressOperand,
-        instruction::applypriority::{Applypriority, EvictionPriority, Size},
-    },
-};
+//! Original PTX specification:
+//!
+//! applypriority{.global}.level::eviction_priority  [a], size;
+//! .level::eviction_priority = { .L2::evict_normal };
 
-impl PtxParser for EvictionPriority {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "L2" => {
-                stream.expect_double_colon()?;
-                let (identifier, identifier_span) = stream.expect_identifier()?;
-                match identifier.as_str() {
-                    "evict_normal" => Ok(EvictionPriority::L2EvictNormal),
-                    other => Err(unexpected_value(identifier_span, &["evict_normal"], other)),
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::applypriority::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for LevelEvictionPriority {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try L2EvictNormal
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::evict_normal").is_ok() {
+                    return Ok(LevelEvictionPriority::L2EvictNormal);
                 }
+                stream.set_position(saved_pos);
             }
-            other => Err(unexpected_value(span, &[".L2"], format!(".{other}"))),
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".L2::evict_normal"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for Size {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (token, span) = stream.consume()?;
-        match token {
-            PtxToken::DecimalInteger(value) if value == "128" => Ok(Size::B128),
-            other => Err(unexpected_value(
-                span.clone(),
-                &["128"],
-                format!("{other:?}"),
-            )),
-        }
-    }
-}
-
-impl PtxParser for Applypriority {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "applypriority" {
-            return Err(unexpected_value(span, &["applypriority"], opcode));
-        }
-
-        let global = stream
-            .consume_if(|token| {
-                if let PtxToken::Directive(name) = token {
-                    name == "global"
-                } else {
-                    false
-                }
+    impl PtxParser for ApplypriorityGlobalLevelEvictionPriority {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("applypriority")?;
+            let saved_pos = stream.position();
+            let global = stream.expect_string(".global").is_ok();
+            if !global {
+                stream.set_position(saved_pos);
+            }
+            let level_eviction_priority = LevelEvictionPriority::parse(stream)?;
+            let a = AddressOperand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let size = Operand::parse(stream)?;
+            Ok(ApplypriorityGlobalLevelEvictionPriority {
+                global,
+                level_eviction_priority,
+                a,
+                size,
             })
-            .is_some();
-
-        if let Ok((token, span)) = stream.peek() {
-            if matches!(token, PtxToken::Directive(name) if name == "level") {
-                return Err(unexpected_value(
-                    span.clone(),
-                    &[".L2"],
-                    ".level".to_string(),
-                ));
-            }
         }
-
-        let eviction_priority = EvictionPriority::parse(stream)?;
-        let address = AddressOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let size = Size::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Applypriority {
-            global,
-            eviction_priority,
-            address,
-            size,
-        })
     }
+
+
 }
+

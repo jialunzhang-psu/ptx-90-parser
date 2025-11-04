@@ -1,0 +1,7 @@
+// 32-bit scalar operation
+vmad.dtype.atype.btype{.sat}{.scale}     d, {-}a{.asel}, {-}b{.bsel},
+{-}c;
+vmad.dtype.atype.btype.po{.sat}{.scale}  d, a{.asel}, b{.bsel}, c;
+.dtype = .atype = .btype = { .u32, .s32 };
+.asel  = .bsel  = { .b0, .b1, .b2, .b3, .h0, .h1 };
+.scale = { .shr7, .shr15 };

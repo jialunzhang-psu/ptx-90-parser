@@ -1,0 +1,2 @@
+dp4a.atype.btype  d, a, b, c;
+.atype = .btype = { .u32, .s32 };

@@ -1,267 +1,197 @@
-use crate::r#type::common::{AddressOperand, RegisterOperand};
+//! Original PTX specification:
+//!
+//! ld{.weak}{.ss}{.cop}{.level::cache_hint}{.level::prefetch_size}{.vec}.type  d, [a]{.unified}{, cache-policy};
+//! ld{.weak}{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}{.vec}.type  d, [a]{.unified}{, cache-policy};
+//! ld.volatile{.ss}{.level::prefetch_size}{.vec}.type  d, [a];
+//! ld.relaxed.scope{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}{.vec}.type  d, [a]{, cache-policy};
+//! ld.acquire.scope{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}{.vec}.type  d, [a]{, cache-policy};
+//! ld.mmio.relaxed.sys{.global}.type  d, [a];
+//! .ss =                       { .const, .global, .local, .param::entry, .param::func, .param, .shared, .shared::cta, .shared::cluster};
+//! .cop =                      { .ca, .cg, .cs, .lu, .cv };
+//! .level1::eviction_priority = { .L1::evict_normal, .L1::evict_unchanged, .L1::evict_first, .L1::evict_last, .L1::no_allocate };
+//! .level2::eviction_priority = {.L2::evict_normal, .L2::evict_first, .L2::evict_last};
+//! .level::cache_hint =        { .L2::cache_hint };
+//! .level::prefetch_size =     { .L2::64B, .L2::128B, .L2::256B };
+//! .scope =                    { .cta, .cluster, .gpu, .sys };
+//! .vec =                      { .v2, .v4, .v8 };
+//! .type =                     { .b8, .b16, .b32, .b64, .b128,
+//! .u8, .u16, .u32, .u64,
+//! .s8, .s16, .s32, .s64,
+//! .f32, .f64 };
 
-/// `ld{.weak}{.ss}{.cop}{.level::cache_hint}{.level::prefetch_size}{.vec}.type d, [a]{.unified}{, cache-policy};`
-/// `ld{.weak}{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}{.vec}.type d, [a]{.unified}{, cache-policy};`
-/// `ld.volatile{.ss}{.level::prefetch_size}{.vec}.type d, [a];`
-/// `ld.relaxed.scope{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}{.vec}.type d, [a]{, cache-policy};`
-/// `ld.acquire.scope{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}{.vec}.type d, [a]{, cache-policy};`
-/// `ld.mmio.relaxed.sys{.global}.type d, [a];`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Ld {
-    /// `ld{.weak}{.ss}{.cop}{.level::cache_hint}{.level::prefetch_size}{.vec}.type d, [a]{.unified}{, cache-policy};`
-    Generic(Generic),
-    /// `ld{.weak}{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}{.vec}.type d, [a]{.unified}{, cache-policy};`
-    Eviction(Eviction),
-    /// `ld.volatile{.ss}{.level::prefetch_size}{.vec}.type d, [a];`
-    Volatile(Volatile),
-    /// `ld.relaxed.scope{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}{.vec}.type d, [a]{, cache-policy};`
-    Relaxed(Scoped),
-    /// `ld.acquire.scope{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}{.vec}.type d, [a]{, cache-policy};`
-    Acquire(Scoped),
-    /// `ld.mmio.relaxed.sys{.global}.type d, [a];`
-    Mmio(Mmio),
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Generic {
-    pub weak: bool,
-    pub state_space: Option<StateSpace>,
-    pub cache_operator: Option<CacheOperator>,
-    pub cache_hint: Option<CacheHint>,
-    pub prefetch_size: Option<PrefetchSize>,
-    pub vector: Option<Vector>,
-    pub data_type: DataType,
-    pub destination: Destination,
-    pub address: AddressOperand,
-    pub unified: bool,
-    pub cache_policy: Option<RegisterOperand>,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Eviction {
-    pub weak: bool,
-    pub state_space: Option<StateSpace>,
-    pub level1: Option<Level1EvictionPriority>,
-    pub level2: Option<Level2EvictionPriority>,
-    pub cache_hint: Option<CacheHint>,
-    pub prefetch_size: Option<PrefetchSize>,
-    pub vector: Option<Vector>,
-    pub data_type: DataType,
-    pub destination: Destination,
-    pub address: AddressOperand,
-    pub unified: bool,
-    pub cache_policy: Option<RegisterOperand>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Ss {
+        Const, // .const
+        Global, // .global
+        Local, // .local
+        ParamEntry, // .param::entry
+        ParamFunc, // .param::func
+        Param, // .param
+        Shared, // .shared
+        SharedCta, // .shared::cta
+        SharedCluster, // .shared::cluster
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Volatile {
-    pub state_space: Option<ScopedStateSpace>,
-    pub prefetch_size: Option<PrefetchSize>,
-    pub vector: Option<Vector>,
-    pub data_type: DataType,
-    pub destination: Destination,
-    pub address: AddressOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Cop {
+        Ca, // .ca
+        Cg, // .cg
+        Cs, // .cs
+        Lu, // .lu
+        Cv, // .cv
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Scoped {
-    pub scope: Scope,
-    pub state_space: Option<ScopedStateSpace>,
-    pub level1: Option<Level1EvictionPriority>,
-    pub level2: Option<Level2EvictionPriority>,
-    pub cache_hint: Option<CacheHint>,
-    pub prefetch_size: Option<PrefetchSize>,
-    pub vector: Option<Vector>,
-    pub data_type: DataType,
-    pub destination: Destination,
-    pub address: AddressOperand,
-    pub cache_policy: Option<RegisterOperand>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum LevelCacheHint {
+        L2CacheHint, // .L2::cache_hint
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Mmio {
-    pub state_space: Option<MmioStateSpace>,
-    pub data_type: DataType,
-    pub destination: Destination,
-    pub address: AddressOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum LevelPrefetchSize {
+        L264b, // .L2::64B
+        L2128b, // .L2::128B
+        L2256b, // .L2::256B
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Scope {
-    /// `.cta`
-    Cta,
-    /// `.cluster`
-    Cluster,
-    /// `.gpu`
-    Gpu,
-    /// `.sys`
-    Sys,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Vec {
+        V2, // .v2
+        V4, // .v4
+        V8, // .v8
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Vector {
-    /// `.v2`
-    V2,
-    /// `.v4`
-    V4,
-    /// `.v8`
-    V8,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        B8, // .b8
+        B16, // .b16
+        B32, // .b32
+        B64, // .b64
+        B128, // .b128
+        U8, // .u8
+        U16, // .u16
+        U32, // .u32
+        U64, // .u64
+        S8, // .s8
+        S16, // .s16
+        S32, // .s32
+        S64, // .s64
+        F32, // .f32
+        F64, // .f64
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b8`
-    B8,
-    /// `.b16`
-    B16,
-    /// `.b32`
-    B32,
-    /// `.b64`
-    B64,
-    /// `.b128`
-    B128,
-    /// `.u8`
-    U8,
-    /// `.u16`
-    U16,
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
-    /// `.s8`
-    S8,
-    /// `.s16`
-    S16,
-    /// `.s32`
-    S32,
-    /// `.s64`
-    S64,
-    /// `.f32`
-    F32,
-    /// `.f64`
-    F64,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Level1EvictionPriority {
+        L1EvictNormal, // .L1::evict_normal
+        L1EvictUnchanged, // .L1::evict_unchanged
+        L1EvictFirst, // .L1::evict_first
+        L1EvictLast, // .L1::evict_last
+        L1NoAllocate, // .L1::no_allocate
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum StateSpace {
-    /// `.const`
-    Const,
-    /// `.global`
-    Global,
-    /// `.local`
-    Local,
-    /// `.param{::entry, ::func}`
-    Param(ParamState),
-    /// `.shared{::cta, ::cluster}`
-    Shared(SharedState),
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Level2EvictionPriority {
+        L2EvictNormal, // .L2::evict_normal
+        L2EvictFirst, // .L2::evict_first
+        L2EvictLast, // .L2::evict_last
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ParamState {
-    /// `.param::entry`
-    Entry,
-    /// `.param::func`
-    Func,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Scope {
+        Cta, // .cta
+        Cluster, // .cluster
+        Gpu, // .gpu
+        Sys, // .sys
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SharedState {
-    /// `.shared::cta`
-    Cta,
-    /// `.shared::cluster`
-    Cluster,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct LdWeakSsCopLevelCacheHintLevelPrefetchSizeVecType {
+        pub weak: bool, // {.weak}
+        pub ss: Option<Ss>, // {.ss}
+        pub cop: Option<Cop>, // {.cop}
+        pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
+        pub level_prefetch_size: Option<LevelPrefetchSize>, // {.level::prefetch_size}
+        pub vec: Option<Vec>, // {.vec}
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: AddressOperand, // [a]
+        pub unified: bool, // {.unified}
+        pub cache_policy: Option<Operand>, // {, cache-policy}
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ScopedStateSpace {
-    /// `.global`
-    Global,
-    /// `.shared{::cta, ::cluster}`
-    Shared(SharedState),
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct LdWeakSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType {
+        pub weak: bool, // {.weak}
+        pub ss: Option<Ss>, // {.ss}
+        pub level1_eviction_priority: Option<Level1EvictionPriority>, // {.level1::eviction_priority}
+        pub level2_eviction_priority: Option<Level2EvictionPriority>, // {.level2::eviction_priority}
+        pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
+        pub level_prefetch_size: Option<LevelPrefetchSize>, // {.level::prefetch_size}
+        pub vec: Option<Vec>, // {.vec}
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: AddressOperand, // [a]
+        pub unified: bool, // {.unified}
+        pub cache_policy: Option<Operand>, // {, cache-policy}
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MmioStateSpace {
-    /// `.global`
-    Global,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct LdVolatileSsLevelPrefetchSizeVecType {
+        pub volatile: (), // .volatile
+        pub ss: Option<Ss>, // {.ss}
+        pub level_prefetch_size: Option<LevelPrefetchSize>, // {.level::prefetch_size}
+        pub vec: Option<Vec>, // {.vec}
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: AddressOperand, // [a]
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CacheHint {
-    /// `.L2::cache_hint`
-    L2CacheHint,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct LdRelaxedScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType {
+        pub relaxed: (), // .relaxed
+        pub scope: Scope, // .scope
+        pub ss: Option<Ss>, // {.ss}
+        pub level1_eviction_priority: Option<Level1EvictionPriority>, // {.level1::eviction_priority}
+        pub level2_eviction_priority: Option<Level2EvictionPriority>, // {.level2::eviction_priority}
+        pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
+        pub level_prefetch_size: Option<LevelPrefetchSize>, // {.level::prefetch_size}
+        pub vec: Option<Vec>, // {.vec}
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: AddressOperand, // [a]
+        pub cache_policy: Option<Operand>, // {, cache-policy}
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PrefetchSize {
-    /// `.L2::64B`
-    L264B,
-    /// `.L2::128B`
-    L2128B,
-    /// `.L2::256B`
-    L2256B,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct LdAcquireScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType {
+        pub acquire: (), // .acquire
+        pub scope: Scope, // .scope
+        pub ss: Option<Ss>, // {.ss}
+        pub level1_eviction_priority: Option<Level1EvictionPriority>, // {.level1::eviction_priority}
+        pub level2_eviction_priority: Option<Level2EvictionPriority>, // {.level2::eviction_priority}
+        pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
+        pub level_prefetch_size: Option<LevelPrefetchSize>, // {.level::prefetch_size}
+        pub vec: Option<Vec>, // {.vec}
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: AddressOperand, // [a]
+        pub cache_policy: Option<Operand>, // {, cache-policy}
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Level1EvictionPriority {
-    /// `.L1::evict_normal`
-    EvictNormal,
-    /// `.L1::evict_unchanged`
-    EvictUnchanged,
-    /// `.L1::evict_first`
-    EvictFirst,
-    /// `.L1::evict_last`
-    EvictLast,
-    /// `.L1::no_allocate`
-    NoAllocate,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct LdMmioRelaxedSysGlobalType {
+        pub mmio: (), // .mmio
+        pub relaxed: (), // .relaxed
+        pub sys: (), // .sys
+        pub global: bool, // {.global}
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: AddressOperand, // [a]
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Level2EvictionPriority {
-    /// `.L2::evict_normal`
-    EvictNormal,
-    /// `.L2::evict_first`
-    EvictFirst,
-    /// `.L2::evict_last`
-    EvictLast,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Destination {
-    /// `d`
-    Scalar(RegisterOperand),
-    /// `{ %reg, _, ... }`
-    Vector(DestinationElements),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum DestinationElements {
-    /// `.v2`
-    V2([DestinationElement; 2]),
-    /// `.v4`
-    V4([DestinationElement; 4]),
-    /// `.v8`
-    V8([DestinationElement; 8]),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum DestinationElement {
-    /// `%reg`
-    Register(RegisterOperand),
-    /// `_`
-    Sink,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CacheOperator {
-    /// `.ca`
-    Ca,
-    /// `.cg`
-    Cg,
-    /// `.cs`
-    Cs,
-    /// `.lu`
-    Lu,
-    /// `.cv`
-    Cv,
 }

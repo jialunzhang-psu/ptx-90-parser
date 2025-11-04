@@ -1,204 +1,351 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::call::*},
-};
+//! Original PTX specification:
+//!
+//! // direct call to named function, func is a symbol
+//! call{.uni} (ret-param), func, (param-list);
+//! call{.uni} func, (param-list);
+//! call{.uni} func;
+//! // indirect call via pointer, with full list of call targets
+//! call{.uni} (ret-param), fptr, (param-list), flist;
+//! call{.uni} fptr, (param-list), flist;
+//! call{.uni} fptr, flist;
+//! // indirect call via pointer, with no knowledge of call targets
+//! call{.uni} (ret-param), fptr, (param-list), fproto;
+//! call{.uni} fptr, (param-list), fproto;
+//! call{.uni} fptr, fproto;
 
-fn is_numeric_token(token: &PtxToken) -> bool {
-    matches!(
-        token,
-        PtxToken::DecimalInteger(_)
-            | PtxToken::HexInteger(_)
-            | PtxToken::BinaryInteger(_)
-            | PtxToken::OctalInteger(_)
-            | PtxToken::FloatExponent(_)
-            | PtxToken::Float(_)
-            | PtxToken::HexFloat(_)
-    )
-}
+#![allow(unused)]
 
-fn parse_return_parameter(stream: &mut PtxTokenStream) -> Result<CallReturn, PtxParseError> {
-    if stream.check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace)) {
-        Ok(CallReturn::Register(RegisterOperand::parse(stream)?))
-    } else if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
-        Ok(CallReturn::Param(VariableSymbol::parse(stream)?))
-    } else {
-        let (token, span) = stream.peek()?;
-        Err(unexpected_value(
-            span.clone(),
-            &["register operand", "identifier"],
-            format!("{token:?}"),
-        ))
-    }
-}
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-fn parse_argument(stream: &mut PtxTokenStream) -> Result<CallArgument, PtxParseError> {
-    if stream.check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace)) {
-        Ok(CallArgument::Register(RegisterOperand::parse(stream)?))
-    } else if stream.check(is_numeric_token) {
-        Ok(CallArgument::Immediate(Immediate::parse(stream)?))
-    } else if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
-        Ok(CallArgument::Param(VariableSymbol::parse(stream)?))
-    } else {
-        let (token, span) = stream.peek()?;
-        Err(unexpected_value(
-            span.clone(),
-            &["register operand", "numeric literal", "identifier"],
-            format!("{token:?}"),
-        ))
-    }
-}
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::call::section_0::*;
 
-fn parse_argument_list(stream: &mut PtxTokenStream) -> Result<Vec<CallArgument>, PtxParseError> {
-    stream.expect(&PtxToken::LParen)?;
-
-    if stream
-        .consume_if(|token| matches!(token, PtxToken::RParen))
-        .is_some()
-    {
-        return Ok(Vec::new());
-    }
-
-    let mut arguments = Vec::new();
-    loop {
-        arguments.push(parse_argument(stream)?);
-
-        if stream
-            .consume_if(|token| matches!(token, PtxToken::Comma))
-            .is_none()
-        {
-            break;
-        }
-    }
-
-    stream.expect(&PtxToken::RParen)?;
-    Ok(arguments)
-}
-
-fn classify_call_target(name: String) -> CallTargetList {
-    match name.chars().next() {
-        Some(c) if c.is_ascii_uppercase() || c == '_' || c == '$' => {
-            CallTargetList::Label(Label(name))
-        }
-        _ => CallTargetList::Table(VariableSymbol(name)),
-    }
-}
-
-fn label_from_name(name: String) -> Label {
-    Label(name)
-}
-
-fn looks_like_prototype(name: &str) -> bool {
-    name.to_ascii_lowercase().contains("proto")
-}
-
-impl PtxParser for Call {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "call")?;
-        let uniform = consume_directive_if(stream, "uni");
-
-        let mut return_parameter = if stream
-            .consume_if(|token| matches!(token, PtxToken::LParen))
-            .is_some()
-        {
-            let value = parse_return_parameter(stream)?;
+    impl PtxParser for CallUni {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("call")?;
+            let saved_pos = stream.position();
+            let uni = stream.expect_string(".uni").is_ok();
+            if !uni {
+                stream.set_position(saved_pos);
+            }
+            stream.expect(&PtxToken::LParen)?;
+            let ret_param = Operand::parse(stream)?;
             stream.expect(&PtxToken::RParen)?;
             stream.expect(&PtxToken::Comma)?;
-            Some(value)
-        } else {
-            None
-        };
-
-        let kind = if stream
-            .check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace))
-        {
-            let pointer = RegisterOperand::parse(stream)?;
+            let func = Operand::parse(stream)?;
             stream.expect(&PtxToken::Comma)?;
-
-            let requires_arguments = return_parameter.is_some();
-            let (arguments, has_arguments) =
-                if stream.check(|token| matches!(token, PtxToken::LParen)) {
-                    let args = parse_argument_list(stream)?;
-                    stream.expect(&PtxToken::Comma)?;
-                    (args, true)
-                } else {
-                    if requires_arguments {
-                        let (token, span) = stream.peek()?;
-                        return Err(unexpected_value(span.clone(), &["("], format!("{token:?}")));
+            stream.expect(&PtxToken::LParen)?;
+            let mut param_list = Vec::new();
+            // Parse comma-separated operands
+            loop {
+                // Try to parse an operand
+                let saved_pos = stream.position();
+                match Operand::parse(stream) {
+                    Ok(operand) => {
+                        param_list.push(operand);
+                        // Check for comma
+                        if stream.expect(&PtxToken::Comma).is_err() {
+                            break;
+                        }
                     }
-                    (Vec::new(), false)
-                };
-
-            let (target_name, _) = stream.expect_identifier()?;
-            let is_prototype = looks_like_prototype(&target_name);
-            let prototype = label_from_name(target_name.clone());
-            let targets = classify_call_target(target_name);
-            stream.expect(&PtxToken::Semicolon)?;
-
-            let ret_param = return_parameter.take();
-
-            if is_prototype {
-                if let Some(ret) = ret_param {
-                    CallKind::IndirectPrototypeReturnAndArguments {
-                        return_parameter: ret,
-                        pointer,
-                        arguments,
-                        prototype,
+                    Err(_) => {
+                        stream.set_position(saved_pos);
+                        break;
                     }
-                } else if has_arguments {
-                    CallKind::IndirectPrototypeArguments {
-                        pointer,
-                        arguments,
-                        prototype,
-                    }
-                } else {
-                    CallKind::IndirectPrototype { pointer, prototype }
                 }
-            } else if let Some(ret) = ret_param {
-                CallKind::IndirectTargetsReturnAndArguments {
-                    return_parameter: ret,
-                    pointer,
-                    arguments,
-                    targets,
-                }
-            } else if has_arguments {
-                CallKind::IndirectTargetsArguments {
-                    pointer,
-                    arguments,
-                    targets,
-                }
-            } else {
-                CallKind::IndirectTargets { pointer, targets }
             }
-        } else {
-            let callee = FunctionSymbol::parse(stream)?;
-
-            if stream
-                .consume_if(|token| matches!(token, PtxToken::Comma))
-                .is_some()
-            {
-                let arguments = parse_argument_list(stream)?;
-                stream.expect(&PtxToken::Semicolon)?;
-
-                if let Some(ret) = return_parameter.take() {
-                    CallKind::DirectReturnAndArguments {
-                        return_parameter: ret,
-                        callee,
-                        arguments,
-                    }
-                } else {
-                    CallKind::DirectArguments { callee, arguments }
-                }
-            } else {
-                if return_parameter.is_some() {
-                    let (token, span) = stream.peek()?;
-                    return Err(unexpected_value(span.clone(), &[","], format!("{token:?}")));
-                }
-                stream.expect(&PtxToken::Semicolon)?;
-                CallKind::Direct { callee }
-            }
-        };
-
-        Ok(Call { uniform, kind })
+            stream.expect(&PtxToken::RParen)?;
+            Ok(CallUni {
+                uni,
+                ret_param,
+                func,
+                param_list,
+            })
+        }
     }
+
+
+    impl PtxParser for CallUni1 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("call")?;
+            let saved_pos = stream.position();
+            let uni = stream.expect_string(".uni").is_ok();
+            if !uni {
+                stream.set_position(saved_pos);
+            }
+            let func = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            stream.expect(&PtxToken::LParen)?;
+            let mut param_list = Vec::new();
+            // Parse comma-separated operands
+            loop {
+                // Try to parse an operand
+                let saved_pos = stream.position();
+                match Operand::parse(stream) {
+                    Ok(operand) => {
+                        param_list.push(operand);
+                        // Check for comma
+                        if stream.expect(&PtxToken::Comma).is_err() {
+                            break;
+                        }
+                    }
+                    Err(_) => {
+                        stream.set_position(saved_pos);
+                        break;
+                    }
+                }
+            }
+            stream.expect(&PtxToken::RParen)?;
+            Ok(CallUni1 {
+                uni,
+                func,
+                param_list,
+            })
+        }
+    }
+
+
+    impl PtxParser for CallUni2 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("call")?;
+            let saved_pos = stream.position();
+            let uni = stream.expect_string(".uni").is_ok();
+            if !uni {
+                stream.set_position(saved_pos);
+            }
+            let func = Operand::parse(stream)?;
+            Ok(CallUni2 {
+                uni,
+                func,
+            })
+        }
+    }
+
+
+    impl PtxParser for CallUni3 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("call")?;
+            let saved_pos = stream.position();
+            let uni = stream.expect_string(".uni").is_ok();
+            if !uni {
+                stream.set_position(saved_pos);
+            }
+            stream.expect(&PtxToken::LParen)?;
+            let ret_param = Operand::parse(stream)?;
+            stream.expect(&PtxToken::RParen)?;
+            stream.expect(&PtxToken::Comma)?;
+            let fptr = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            stream.expect(&PtxToken::LParen)?;
+            let mut param_list = Vec::new();
+            // Parse comma-separated operands
+            loop {
+                // Try to parse an operand
+                let saved_pos = stream.position();
+                match Operand::parse(stream) {
+                    Ok(operand) => {
+                        param_list.push(operand);
+                        // Check for comma
+                        if stream.expect(&PtxToken::Comma).is_err() {
+                            break;
+                        }
+                    }
+                    Err(_) => {
+                        stream.set_position(saved_pos);
+                        break;
+                    }
+                }
+            }
+            stream.expect(&PtxToken::RParen)?;
+            stream.expect(&PtxToken::Comma)?;
+            let flist = Operand::parse(stream)?;
+            Ok(CallUni3 {
+                uni,
+                ret_param,
+                fptr,
+                param_list,
+                flist,
+            })
+        }
+    }
+
+
+    impl PtxParser for CallUni4 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("call")?;
+            let saved_pos = stream.position();
+            let uni = stream.expect_string(".uni").is_ok();
+            if !uni {
+                stream.set_position(saved_pos);
+            }
+            let fptr = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            stream.expect(&PtxToken::LParen)?;
+            let mut param_list = Vec::new();
+            // Parse comma-separated operands
+            loop {
+                // Try to parse an operand
+                let saved_pos = stream.position();
+                match Operand::parse(stream) {
+                    Ok(operand) => {
+                        param_list.push(operand);
+                        // Check for comma
+                        if stream.expect(&PtxToken::Comma).is_err() {
+                            break;
+                        }
+                    }
+                    Err(_) => {
+                        stream.set_position(saved_pos);
+                        break;
+                    }
+                }
+            }
+            stream.expect(&PtxToken::RParen)?;
+            stream.expect(&PtxToken::Comma)?;
+            let flist = Operand::parse(stream)?;
+            Ok(CallUni4 {
+                uni,
+                fptr,
+                param_list,
+                flist,
+            })
+        }
+    }
+
+
+    impl PtxParser for CallUni5 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("call")?;
+            let saved_pos = stream.position();
+            let uni = stream.expect_string(".uni").is_ok();
+            if !uni {
+                stream.set_position(saved_pos);
+            }
+            let fptr = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let flist = Operand::parse(stream)?;
+            Ok(CallUni5 {
+                uni,
+                fptr,
+                flist,
+            })
+        }
+    }
+
+
+    impl PtxParser for CallUni6 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("call")?;
+            let saved_pos = stream.position();
+            let uni = stream.expect_string(".uni").is_ok();
+            if !uni {
+                stream.set_position(saved_pos);
+            }
+            stream.expect(&PtxToken::LParen)?;
+            let ret_param = Operand::parse(stream)?;
+            stream.expect(&PtxToken::RParen)?;
+            stream.expect(&PtxToken::Comma)?;
+            let fptr = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            stream.expect(&PtxToken::LParen)?;
+            let mut param_list = Vec::new();
+            // Parse comma-separated operands
+            loop {
+                // Try to parse an operand
+                let saved_pos = stream.position();
+                match Operand::parse(stream) {
+                    Ok(operand) => {
+                        param_list.push(operand);
+                        // Check for comma
+                        if stream.expect(&PtxToken::Comma).is_err() {
+                            break;
+                        }
+                    }
+                    Err(_) => {
+                        stream.set_position(saved_pos);
+                        break;
+                    }
+                }
+            }
+            stream.expect(&PtxToken::RParen)?;
+            stream.expect(&PtxToken::Comma)?;
+            let fproto = Operand::parse(stream)?;
+            Ok(CallUni6 {
+                uni,
+                ret_param,
+                fptr,
+                param_list,
+                fproto,
+            })
+        }
+    }
+
+
+    impl PtxParser for CallUni7 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("call")?;
+            let saved_pos = stream.position();
+            let uni = stream.expect_string(".uni").is_ok();
+            if !uni {
+                stream.set_position(saved_pos);
+            }
+            let fptr = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            stream.expect(&PtxToken::LParen)?;
+            let mut param_list = Vec::new();
+            // Parse comma-separated operands
+            loop {
+                // Try to parse an operand
+                let saved_pos = stream.position();
+                match Operand::parse(stream) {
+                    Ok(operand) => {
+                        param_list.push(operand);
+                        // Check for comma
+                        if stream.expect(&PtxToken::Comma).is_err() {
+                            break;
+                        }
+                    }
+                    Err(_) => {
+                        stream.set_position(saved_pos);
+                        break;
+                    }
+                }
+            }
+            stream.expect(&PtxToken::RParen)?;
+            stream.expect(&PtxToken::Comma)?;
+            let fproto = Operand::parse(stream)?;
+            Ok(CallUni7 {
+                uni,
+                fptr,
+                param_list,
+                fproto,
+            })
+        }
+    }
+
+
+    impl PtxParser for CallUni8 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("call")?;
+            let saved_pos = stream.position();
+            let uni = stream.expect_string(".uni").is_ok();
+            if !uni {
+                stream.set_position(saved_pos);
+            }
+            let fptr = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let fproto = Operand::parse(stream)?;
+            Ok(CallUni8 {
+                uni,
+                fptr,
+                fproto,
+            })
+        }
+    }
+
+
 }
+

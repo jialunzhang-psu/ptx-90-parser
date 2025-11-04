@@ -1,175 +1,97 @@
-use crate::r#type::common::{RegisterOperand, VariableSymbol};
+//! Original PTX specification:
+//!
+//! sust.b.dim{.cop}.vec.ctype.mode [a, b], c;  // unformatted
+//! sust.p.dim.vec.b32.mode       [a, b], c;  // formatted
+//! sust.b.adim{.cop}.vec.ctype.mode   [a, b], c;  // unformatted
+//! .cop   = { .wb, .cg, .cs, .wt };                     // cache operation
+//! .vec   = { none, .v2, .v4 };
+//! .ctype = { .b8 , .b16, .b32, .b64 };
+//! .mode  = { .trap, .clamp, .zero };
+//! .dim   = { .1d, .2d, .3d };
+//! .adim  = { .a1d, .a2d };
 
-/// `sust.b.{1d,2d,3d}{.cop}.vec.ctype.clamp [a, b], c;`
-/// `sust.p.{1d,2d,3d}.vec.b32.clamp [a, b], c;`
-/// `sust.b.{a1d,a2d}{.cop}.vec.ctype.clamp [a, b], c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Sust {
-    /// `sust.b.1d{.cop}.vec.ctype.clamp [a, b], c;`
-    Block1d(Block<Coordinate1d>),
-    /// `sust.b.2d{.cop}.vec.ctype.clamp [a, b], c;`
-    Block2d(Block<Coordinate2d>),
-    /// `sust.b.3d{.cop}.vec.ctype.clamp [a, b], c;`
-    Block3d(Block<Coordinate3d>),
-    /// `sust.b.a1d{.cop}.vec.ctype.clamp [a, b], c;`
-    BlockArray1d(Block<Array1dCoordinates>),
-    /// `sust.b.a2d{.cop}.vec.ctype.clamp [a, b], c;`
-    BlockArray2d(Block<Array2dCoordinates>),
-    /// `sust.p.1d.vec.b32.clamp [a, b], c;`
-    Formatted1d(Formatted<Coordinate1d>),
-    /// `sust.p.2d.vec.b32.clamp [a, b], c;`
-    Formatted2d(Formatted<Coordinate2d>),
-    /// `sust.p.3d.vec.b32.clamp [a, b], c;`
-    Formatted3d(Formatted<Coordinate3d>),
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `[a, b], c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Block<TCoordinates> {
-    /// `.cop`
-    pub cache_operator: Option<CacheOperator>,
-    /// `.vec`
-    pub vector: Vector,
-    /// `.ctype`
-    pub component_type: ComponentType,
-    /// `.clamp`
-    pub clamp: Clamp,
-    /// `a`
-    pub surface: Surface,
-    /// `b`
-    pub coordinates: TCoordinates,
-    /// `c`
-    pub value: RegisterOperand,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `[a, b], c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Formatted<TCoordinates> {
-    /// `.vec`
-    pub vector: Vector,
-    /// `.b32`
-    pub component_type: FormattedComponentType,
-    /// `.clamp`
-    pub clamp: Clamp,
-    /// `a`
-    pub surface: Surface,
-    /// `b`
-    pub coordinates: TCoordinates,
-    /// `c`
-    pub value: RegisterOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Dim {
+        _1d, // .1d
+        _2d, // .2d
+        _3d, // .3d
+    }
 
-/// `.vec`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Vector {
-    /// `none`
-    None,
-    /// `.v2`
-    V2,
-    /// `.v4`
-    V4,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Cop {
+        Wb, // .wb
+        Cg, // .cg
+        Cs, // .cs
+        Wt, // .wt
+    }
 
-/// `.ctype`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ComponentType {
-    /// `.b8`
-    B8,
-    /// `.b16`
-    B16,
-    /// `.b32`
-    B32,
-    /// `.b64`
-    B64,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Vec {
+        None, // none
+        V2, // .v2
+        V4, // .v4
+    }
 
-/// `.b32`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FormattedComponentType {
-    /// `.b32`
-    B32,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Ctype {
+        B8, // .b8
+        B16, // .b16
+        B32, // .b32
+        B64, // .b64
+    }
 
-/// `.clamp`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Clamp {
-    /// `.trap`
-    Trap,
-    /// `.clamp`
-    Clamp,
-    /// `.zero`
-    Zero,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        Trap, // .trap
+        Clamp, // .clamp
+        Zero, // .zero
+    }
 
-/// `.cop`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CacheOperator {
-    /// `.wb`
-    Wb,
-    /// `.cg`
-    Cg,
-    /// `.cs`
-    Cs,
-    /// `.wt`
-    Wt,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Adim {
+        A1d, // .a1d
+        A2d, // .a2d
+    }
 
-/// `a`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Surface {
-    /// `.surfref`
-    Reference(VariableSymbol),
-    /// `.u64`
-    Register(RegisterOperand),
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SustBDimCopVecCtypeMode {
+        pub b: (), // .b
+        pub dim: Dim, // .dim
+        pub cop: Option<Cop>, // {.cop}
+        pub vec: Vec, // .vec
+        pub ctype: Ctype, // .ctype
+        pub mode: Mode, // .mode
+        pub a: (Operand, Operand), // [a, b]
+        pub c: Operand, // c
+    }
 
-/// `.1d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Coordinate1d {
-    /// `x`
-    pub x: RegisterOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SustPDimVecB32Mode {
+        pub p: (), // .p
+        pub dim: Dim, // .dim
+        pub vec: Vec, // .vec
+        pub b32: (), // .b32
+        pub mode: Mode, // .mode
+        pub a: (Operand, Operand), // [a, b]
+        pub c: Operand, // c
+    }
 
-/// `.2d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Coordinate2d {
-    /// `x`
-    pub x: RegisterOperand,
-    /// `y`
-    pub y: RegisterOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SustBAdimCopVecCtypeMode {
+        pub b: (), // .b
+        pub adim: Adim, // .adim
+        pub cop: Option<Cop>, // {.cop}
+        pub vec: Vec, // .vec
+        pub ctype: Ctype, // .ctype
+        pub mode: Mode, // .mode
+        pub a: (Operand, Operand), // [a, b]
+        pub c: Operand, // c
+    }
 
-/// `.3d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Coordinate3d {
-    /// `x`
-    pub x: RegisterOperand,
-    /// `y`
-    pub y: RegisterOperand,
-    /// `z`
-    pub z: RegisterOperand,
-    /// `w` ignored
-    pub w: RegisterOperand,
-}
-
-/// `.a1d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Array1dCoordinates {
-    /// `idx`
-    pub index: RegisterOperand,
-    /// `x`
-    pub x: RegisterOperand,
-}
-
-/// `.a2d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Array2dCoordinates {
-    /// `idx`
-    pub index: RegisterOperand,
-    /// `x`
-    pub x: RegisterOperand,
-    /// `y`
-    pub y: RegisterOperand,
-    /// `z` ignored
-    pub z: RegisterOperand,
 }

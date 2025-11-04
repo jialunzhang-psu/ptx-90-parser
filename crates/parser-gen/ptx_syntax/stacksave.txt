@@ -1,0 +1,2 @@
+stacksave.type  d;
+.type = { .u32, .u64 };

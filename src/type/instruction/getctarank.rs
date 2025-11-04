@@ -1,53 +1,55 @@
-use crate::r#type::common::{Immediate, RegisterOperand, VariableSymbol};
+//! Original PTX specification:
+//!
+//! getctarank{.space}.type d, a;
+//! // Get cta rank from source shared memory address in register a.
+//! getctarank.shared::cluster.type d, a;
+//! // // Get cta rank from shared memory variable.
+//! // getctarank.shared::cluster.type d, var;
+//! // // Get cta rank from shared memory variable+offset.
+//! // getctarank.shared::cluster.type d, var + imm;
+//! // Get cta rank from generic address of shared memory variable in register a.
+//! getctarank.type d, a;
+//! .space = { .shared::cluster };
+//! .type  = { .u32, .u64 };
 
-/// `getctarank{.space}.type d, a;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Getctarank {
-    /// `getctarank.type d, a;`
-    Generic {
-        /// `.type`
-        data_type: DataType,
-        /// `d`
-        destination: RegisterOperand,
-        /// `a`
-        source: RegisterOperand,
-    },
-    /// `getctarank.shared::cluster.type d, a;`
-    SharedRegister {
-        /// `.type`
-        data_type: DataType,
-        /// `d`
-        destination: RegisterOperand,
-        /// `a`
-        source: RegisterOperand,
-    },
-    /// `getctarank.shared::cluster.type d, var;`
-    SharedVariable {
-        /// `.type`
-        data_type: DataType,
-        /// `d`
-        destination: RegisterOperand,
-        /// `var`
-        symbol: VariableSymbol,
-    },
-    /// `getctarank.shared::cluster.type d, var + imm;`
-    SharedVariableWithImmediate {
-        /// `.type`
-        data_type: DataType,
-        /// `d`
-        destination: RegisterOperand,
-        /// `var`
-        symbol: VariableSymbol,
-        /// `imm`
-        immediate: Immediate,
-    },
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.type  = { .u32, .u64 }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Space {
+        SharedCluster, // .shared::cluster
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U32, // .u32
+        U64, // .u64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct GetctarankSpaceType {
+        pub space: Option<Space>, // {.space}
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct GetctarankSharedClusterType {
+        pub shared_cluster: (), // .shared::cluster
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct GetctarankType {
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
 }

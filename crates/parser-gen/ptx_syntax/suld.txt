@@ -1,0 +1,6 @@
+suld.b.geom{.cop}.vec.dtype.mode [a, b];  // unformatted
+.geom  = { .1d, .2d, .3d, .a1d, .a2d };
+.cop   = { .ca, .cg, .cs, .cv };               // cache operation
+.vec   = { none, .v2, .v4 };
+.dtype = { .b8 , .b16, .b32, .b64 };
+.mode = { .trap, .clamp, .zero };

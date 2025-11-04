@@ -41,21 +41,19 @@ pub(crate) fn parse_register_name(
 
         match next {
             PtxToken::Dot => {
-                // consume the dot and expect an identifier component
-                stream.consume()?;
-                let (component, component_span) = stream.expect_identifier()?;
+                // Peek ahead to see if this is a component like .x, .y, .z or a regular component
+                if let Some((PtxToken::Identifier(_component_name), _)) = stream.tokens.get(stream.index + 1) {
+                    // consume the dot and identifier
+                    stream.consume()?;
+                    let (component, component_span) = stream.expect_identifier()?;
 
-                name.push('.');
-                name.push_str(&component);
+                    name.push('.');
+                    name.push_str(&component);
 
-                span.end = component_span.end;
-            }
-            PtxToken::Directive(s) if s == "x" || s == "y" || s == "z" => {
-                // Treat directive ".x/.y/.z" as a lightweight component for special registers
-                let (component, component_span) = stream.expect_directive()?;
-                name.push('.');
-                name.push_str(&component);
-                span.end = component_span.end;
+                    span.end = component_span.end;
+                } else {
+                    break;
+                }
             }
             _ => break,
         }
@@ -289,19 +287,35 @@ impl PtxParser for Sign {
 
 impl PtxParser for Immediate {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        // Check for optional minus sign
+        let has_minus = stream
+            .consume_if(|token| matches!(token, PtxToken::Minus))
+            .is_some();
+
         let (token, span) = stream.peek()?;
         let value = numeric_literal(token).cloned();
         match value {
             Some(value) => {
-                let literal = value.clone();
+                let literal = if has_minus {
+                    format!("-{}", value)
+                } else {
+                    value.clone()
+                };
                 stream.consume()?;
                 Ok(Immediate(literal))
             }
-            None => Err(unexpected_value(
-                span.clone(),
-                &["numeric literal"],
-                format!("{token:?}"),
-            )),
+            None => {
+                // If we consumed a minus, we need to restore position
+                if has_minus {
+                    let current_pos = stream.position();
+                    stream.set_position(current_pos - 1);
+                }
+                Err(unexpected_value(
+                    span.clone(),
+                    &["numeric literal"],
+                    format!("{token:?}"),
+                ))
+            }
         }
     }
 }
@@ -591,6 +605,9 @@ impl PtxParser for Operand {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         if stream.check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace)) {
             Ok(Operand::Register(RegisterOperand::parse(stream)?))
+        } else if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
+            let (identifier, _) = stream.expect_identifier()?;
+            Ok(Operand::Symbol(identifier))
         } else {
             Ok(Operand::Immediate(Immediate::parse(stream)?))
         }
@@ -686,11 +703,12 @@ impl PtxParser for AddressOperand {
         }
 
         let base = AddressBase::parse(stream)?;
-        let offset = if stream.check(|token| matches!(token, PtxToken::Plus | PtxToken::Minus)) {
-            Some(AddressOffset::parse(stream)?)
-        } else {
-            None
-        };
+        let offset =
+            if stream.check(|token| matches!(token, PtxToken::Plus | PtxToken::Minus)) {
+                Some(AddressOffset::parse(stream)?)
+            } else {
+                None
+            };
         stream.expect(&PtxToken::RBracket)?;
 
         Ok(AddressOperand::Offset(base, offset))

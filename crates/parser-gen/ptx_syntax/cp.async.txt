@@ -1,0 +1,8 @@
+cp.async.ca.state.global{.level::cache_hint}{.level::prefetch_size} [dst], [src], cp-size{, src-size}{, cache-policy};
+cp.async.cg.state.global{.level::cache_hint}{.level::prefetch_size} [dst], [src], 16{, src-size}{, cache-policy};
+cp.async.ca.state.global{.level::cache_hint}{.level::prefetch_size} [dst], [src], cp-size{, ignore-src}{, cache-policy} ;
+cp.async.cg.state.global{.level::cache_hint}{.level::prefetch_size} [dst], [src], 16{, ignore-src}{, cache-policy} ;
+.level::cache_hint =     { .L2::cache_hint };
+.level::prefetch_size =  { .L2::64B, .L2::128B, .L2::256B };
+cp-size = { 4, 8, 16 };
+.state = { .shared, .shared::cta}

@@ -1,83 +1,126 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{common::RegisterOperand, instruction::madc::*},
-};
+//! Original PTX specification:
+//!
+//! madc.hilo{.cc}.type  d, a, b, c;
+//! .type = { .u32, .s32, .u64, .s64 };
+//! .hilo = { .hi, .lo };
 
-impl PtxParser for ResultPart {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
+#![allow(unused)]
 
-        match directive.as_str() {
-            "hi" => Ok(ResultPart::Hi),
-            "lo" => Ok(ResultPart::Lo),
-            other => Err(unexpected_value(span, &[".hi", ".lo"], format!(".{other}"))),
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::madc::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Type::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Type::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u64").is_ok() {
+                    return Ok(Type::U64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s64").is_ok() {
+                    return Ok(Type::S64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".s32", ".u64", ".s64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-
-        match directive.as_str() {
-            "u32" => Ok(DataType::U32),
-            "s32" => Ok(DataType::S32),
-            "u64" => Ok(DataType::U64),
-            "s64" => Ok(DataType::S64),
-            other => Err(unexpected_value(
-                span,
-                &[".u32", ".s32", ".u64", ".s64"],
-                format!(".{other}"),
-            )),
+    impl PtxParser for Hilo {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Hi
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".hi").is_ok() {
+                    return Ok(Hilo::Hi);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Lo
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".lo").is_ok() {
+                    return Ok(Hilo::Lo);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".hi", ".lo"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for Madc {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "madc" {
-            return Err(unexpected_value(span, &["madc"], opcode));
+    impl PtxParser for MadcHiloCcType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("madc")?;
+            let hilo = Hilo::parse(stream)?;
+            let saved_pos = stream.position();
+            let cc = stream.expect_string(".cc").is_ok();
+            if !cc {
+                stream.set_position(saved_pos);
+            }
+            let type_ = Type::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(MadcHiloCcType {
+                hilo,
+                cc,
+                type_,
+                d,
+                a,
+                b,
+                c,
+            })
         }
-
-        let result_part = if stream.check(|token| {
-            matches!(
-                token,
-                PtxToken::Directive(name) if matches!(name.as_str(), "hi" | "lo")
-            )
-        }) {
-            Some(ResultPart::parse(stream)?)
-        } else {
-            None
-        };
-
-        let condition_code =
-            if stream.check(|token| matches!(token, PtxToken::Directive(name) if name == "cc")) {
-                stream.consume()?;
-                true
-            } else {
-                false
-            };
-
-        let data_type = DataType::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let multiplicand = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let multiplier = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let addend = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Madc {
-            result_part,
-            condition_code,
-            data_type,
-            destination,
-            multiplicand,
-            multiplier,
-            addend,
-        })
     }
+
+
 }
+

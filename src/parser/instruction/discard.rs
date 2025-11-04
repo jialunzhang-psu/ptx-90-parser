@@ -1,69 +1,60 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::AddressOperand,
-        instruction::discard::{Discard, Level, Size, Space},
-    },
-};
+//! Original PTX specification:
+//!
+//! discard{.global}.level  [a], size;
+//! .level = { .L2 };
 
-impl PtxParser for Space {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "global" => Ok(Space::Global),
-            other => Err(unexpected_value(span, &[".global"], format!(".{other}"))),
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::discard::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Level {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try L2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2").is_ok() {
+                    return Ok(Level::L2);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".L2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for Level {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "L2" => Ok(Level::L2),
-            other => Err(unexpected_value(span, &[".L2"], format!(".{other}"))),
+    impl PtxParser for DiscardGlobalLevel {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("discard")?;
+            let saved_pos = stream.position();
+            let global = stream.expect_string(".global").is_ok();
+            if !global {
+                stream.set_position(saved_pos);
+            }
+            let level = Level::parse(stream)?;
+            let a = AddressOperand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let size = Operand::parse(stream)?;
+            Ok(DiscardGlobalLevel {
+                global,
+                level,
+                a,
+                size,
+            })
         }
     }
+
+
 }
 
-impl PtxParser for Size {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (token, span) = stream.consume()?;
-        let span = span.clone();
-        match token {
-            PtxToken::DecimalInteger(value) if value == "128" => Ok(Size::Bytes128),
-            other => Err(unexpected_value(span, &["128"], format!("{other:?}"))),
-        }
-    }
-}
-
-impl PtxParser for Discard {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "discard" {
-            return Err(unexpected_value(span, &["discard"], opcode));
-        }
-
-        let space = if stream
-            .check(|token| matches!(token, PtxToken::Directive(name) if name == "global"))
-        {
-            Some(Space::parse(stream)?)
-        } else {
-            None
-        };
-
-        let level = Level::parse(stream)?;
-        let address = AddressOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let size = Size::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Discard {
-            space,
-            level,
-            address,
-            size,
-        })
-    }
-}

@@ -1,88 +1,65 @@
-use crate::r#type::common::{AddressOperand, RegisterOperand};
+//! Original PTX specification:
+//!
+//! ldu{.ss}.type      d, [a];       // load from address
+//! ldu{.ss}.vec.type  d, [a];       // vec load from address
+//! .ss   = { .global };             // state space
+//! .vec  = { .v2, .v4 };
+//! .type = { .b8, .b16, .b32, .b64, .b128,
+//! .u8, .u16, .u32, .u64,
+//! .s8, .s16, .s32, .s64,
+//! .f32, .f64 };
 
-/// `ldu{.ss}.type d, [a];`
-/// `ldu{.ss}.vec.type d, [a];`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Ldu {
-    /// `ldu{.ss}.type d, [a];`
-    Scalar(Scalar),
-    /// `ldu{.ss}.vec.type d, [a];`
-    Vector(Vector),
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `ldu{.ss}.type d, [a];`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Scalar {
-    /// `.ss`
-    pub state_space: Option<StateSpace>,
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `[a]`
-    pub address: AddressOperand,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `ldu{.ss}.vec.type d, [a];`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Vector {
-    /// `.ss`
-    pub state_space: Option<StateSpace>,
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: VectorDestination,
-    /// `[a]`
-    pub address: AddressOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Ss {
+        Global, // .global
+    }
 
-/// `.ss = { .global };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum StateSpace {
-    /// `.global`
-    Global,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        B8, // .b8
+        B16, // .b16
+        B32, // .b32
+        B64, // .b64
+        B128, // .b128
+        U8, // .u8
+        U16, // .u16
+        U32, // .u32
+        U64, // .u64
+        S8, // .s8
+        S16, // .s16
+        S32, // .s32
+        S64, // .s64
+        F32, // .f32
+        F64, // .f64
+    }
 
-/// `.type = { .b8, .b16, .b32, .b64, .b128, .u8, .u16, .u32, .u64, .s8, .s16, .s32, .s64, .f32, .f64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b8`
-    B8,
-    /// `.b16`
-    B16,
-    /// `.b32`
-    B32,
-    /// `.b64`
-    B64,
-    /// `.b128`
-    B128,
-    /// `.u8`
-    U8,
-    /// `.u16`
-    U16,
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
-    /// `.s8`
-    S8,
-    /// `.s16`
-    S16,
-    /// `.s32`
-    S32,
-    /// `.s64`
-    S64,
-    /// `.f32`
-    F32,
-    /// `.f64`
-    F64,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Vec {
+        V2, // .v2
+        V4, // .v4
+    }
 
-/// `.vec = { .v2, .v4 };`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum VectorDestination {
-    /// `.v2`
-    V2([RegisterOperand; 2]),
-    /// `.v4`
-    V4([RegisterOperand; 4]),
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct LduSsType {
+        pub ss: Option<Ss>, // {.ss}
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: AddressOperand, // [a]
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct LduSsVecType {
+        pub ss: Option<Ss>, // {.ss}
+        pub vec: Vec, // .vec
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: AddressOperand, // [a]
+    }
+
 }

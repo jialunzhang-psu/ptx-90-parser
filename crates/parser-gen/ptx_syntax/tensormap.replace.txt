@@ -1,0 +1,9 @@
+tensormap.replace.mode.field1{.ss}.b1024.type  [addr], new_val;
+tensormap.replace.mode.field2{.ss}.b1024.type  [addr], ord, new_val;
+tensormap.replace.mode.field3{.ss}.b1024.type  [addr], new_val;
+.mode    = { .tile };
+.field1  = { .global_address, .rank };
+.field2  = { .box_dim, .global_dim, .global_stride, .element_stride  };
+.field3  = { .elemtype,  .interleave_layout, .swizzle_mode, .swizzle_atomicity, .fill_mode };
+.ss      = { .global, .shared::cta };
+.type    = { .b32, .b64 };

@@ -1,0 +1,68 @@
+// Half precision floating point type:
+mma.sync.aligned.m8n8k4.alayout.blayout.dtype.f16.f16.ctype  d, a, b, c;
+mma.sync.aligned.m16n8k8.row.col.dtype.f16.f16.ctype  d, a, b, c;
+mma.sync.aligned.m16n8k16.row.col.dtype.f16.f16.ctype d, a, b, c;
+.alayout = {.row, .col};
+.blayout = {.row, .col};
+.ctype   = {.f16, .f32};
+.dtype   = {.f16, .f32};
+----------------------------------------------------
+// Alternate floating point type:
+// Alternate floating point type:
+mma.sync.aligned.m16n8k4.row.col.f32.tf32.tf32.f32        d, a, b, c;
+mma.sync.aligned.m16n8k8.row.col.f32.atype.btype.f32      d, a, b, c;
+mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32       d, a, b, c;
+mma.sync.aligned.shape.row.col.dtype.f8type.f8type.ctype  d, a, b, c;
+mma.sync.aligned.m16n8k32.row.col.kind.dtype.f8f6f4type.f8f6f4type.ctype d, a, b, c;
+.atype      = {.bf16, .tf32};
+.btype      = {.bf16, .tf32};
+.f8type     = {.e4m3, .e5m2};
+.f8f6f4type = {.e4m3, .e5m2, .e3m2, .e2m3, .e2m1};
+.ctype      = {.f16, .f32};
+.dtype      = {.f16, .f32};
+.shape      = {.m16n8k16, .m16n8k32};
+.kind       = {.kind::f8f6f4};
+----------------------------------------------------
+// Alternate floating point type:
+// Alternate floating point type with block scaling:
+mma.sync.aligned.m16n8k64.row.col.kind.block_scale{.scale_vec_size}.f32.e2m1.e2m1.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};
+.kind           = {.kind::mxf4};
+.scale_vec_size = {.scale_vec::2X};
+.stype          = {.ue8m0};
+----------------------------------------------------
+// Alternate floating point type:
+mma.sync.aligned.m16n8k64.row.col.kind.block_scale.scale_vec_size.f32.e2m1.e2m1.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};
+.kind           = {.kind::mxf4nvf4};
+.scale_vec_size = {.scale_vec::2X, .scale_vec::4X};
+.stype          = {.ue8m0, .ue4m3};
+----------------------------------------------------
+// Alternate floating point type:
+mma.sync.aligned.m16n8k32.row.col.kind.block_scale{.scale_vec_size}.f32.f8f6f4type.f8f6f4type.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};
+.kind           = {.kind::mxf8f6f4};
+.scale_vec_size = {.scale_vec::1X};
+.f8f6f4type     = {.e4m3, .e5m2, .e3m2, .e2m3, .e2m1};
+.stype          = {.ue8m0};
+----------------------------------------------------
+// Alternate floating point type:
+// Double precision floating point type:
+mma.sync.aligned.shape.row.col.f64.f64.f64.f64 d, a, b, c;
+.shape   = {.m8n84, .m16n8k4, .m16n8k8, .m16n8k16};
+----------------------------------------------------
+// Alternate floating point type:
+// Integer type:
+mma.sync.aligned.shape.row.col{.satfinite}.s32.atype.btype.s32 d, a, b, c;
+.shape   = {.m8n8k16, .m16n8k16, .m16n8k32};
+.atype   = {.u8, .s8};
+.btype   = {.u8, .s8};
+----------------------------------------------------
+// Alternate floating point type:
+mma.sync.aligned.shape.row.col{.satfinite}.s32.atype.btype.s32 d, a, b, c;
+.shape   = {.m8n8k32, .m16n8k32, .m16n8k64};
+.atype   = {.u4, .s4};
+.btype   = {.u4, .s4};
+----------------------------------------------------
+// Alternate floating point type:
+// Single bit:
+mma.sync.aligned.shape.row.col.s32.b1.b1.s32.bitOp.popc d, a, b, c;
+.bitOp = {.xor, .and};
+.shape = {.m8n8k128, .m16n8k128, .m16n8k256};

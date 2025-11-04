@@ -1,18 +1,20 @@
 use crate::parser::common::{invalid_literal, parse_register_name, parse_u64_literal};
-use crate::r#type::common::{CodeLinkage, PredicateRegister};
+use crate::r#type::common::CodeLinkage;
+use crate::unlexer::PtxUnlexer;
 use crate::{
-    lexer::PtxToken,
+    lexer::{PtxToken, tokenize},
     parser::{
-        ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, expect_directive_value,
+        ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, Span, expect_directive_value,
         peek_directive, unexpected_value,
     },
     r#type::{
         function::{
-            EntryFunction, ExternCallBlock, ExternCallSetup, FuncFunction, FunctionAlias,
-            FunctionBody, FunctionDim3, FunctionEntryDirective, FunctionHeaderDirective,
-            FunctionKernelDirective, FunctionStatement, RegisterDirective,
+            DwarfDirective, EntryFunction, ExternCallBlock, ExternCallSetup, FuncFunction,
+            FunctionAlias, FunctionBody, FunctionDim3, FunctionEntryDirective,
+            FunctionHeaderDirective, FunctionKernelDirective, FunctionStatement, LocationDirective,
+            PragmaDirective, RegisterDirective, StatementDirective, StatementSectionDirective,
         },
-        instruction::{Instruction, InstructionOpcode},
+        instruction::Instruction,
         variable::VariableDirective,
     },
 };
@@ -62,12 +64,324 @@ fn parse_register_range(stream: &mut PtxTokenStream) -> Result<Option<u32>, PtxP
     Ok(Some(value as u32))
 }
 
+fn tokens_to_string(tokens: &[PtxToken], span: &Span) -> Result<String, PtxParseError> {
+    PtxUnlexer::to_string(tokens)
+        .map_err(|_| invalid_literal(span.clone(), "failed to serialize token sequence"))
+}
+
+fn parse_parameter_tokens(
+    tokens: &[PtxToken],
+    span: &Span,
+) -> Result<VariableDirective, PtxParseError> {
+    let serialized = tokens_to_string(tokens, span)?;
+    let source = format!("{};", serialized);
+    let tokenized = tokenize(&source)
+        .map_err(|_| invalid_literal(span.clone(), "failed to tokenize function parameter"))?;
+    let mut temp_stream = PtxTokenStream::new(&tokenized);
+    let mut directive = VariableDirective::parse(&mut temp_stream)?;
+    directive.raw = serialized;
+    Ok(directive)
+}
+
+fn collect_parameter_tokens(
+    stream: &mut PtxTokenStream,
+) -> Result<(Vec<PtxToken>, Span), PtxParseError> {
+    let (first_token, first_span) = stream.peek()?;
+    if matches!(first_token, PtxToken::Comma | PtxToken::RParen) {
+        return Err(unexpected_value(
+            first_span.clone(),
+            &["function parameter"],
+            format!("{first_token:?}"),
+        ));
+    }
+
+    let mut tokens = Vec::new();
+    let mut paren_depth = 0usize;
+    let mut bracket_depth = 0usize;
+
+    loop {
+        let (next_token, _) = stream.peek()?;
+        if paren_depth == 0 && bracket_depth == 0 {
+            if matches!(next_token, PtxToken::Comma | PtxToken::RParen) {
+                break;
+            }
+        }
+
+        let (token, _) = stream.consume()?;
+        match token {
+            PtxToken::LParen => paren_depth += 1,
+            PtxToken::RParen => paren_depth = paren_depth.saturating_sub(1),
+            PtxToken::LBracket => bracket_depth += 1,
+            PtxToken::RBracket => bracket_depth = bracket_depth.saturating_sub(1),
+            _ => {}
+        }
+        tokens.push(token.clone());
+    }
+
+    Ok((tokens, first_span.clone()))
+}
+
+fn parse_parameter(stream: &mut PtxTokenStream) -> Result<VariableDirective, PtxParseError> {
+    let (tokens, span) = collect_parameter_tokens(stream)?;
+    if tokens.is_empty() {
+        return Err(unexpected_value(
+            span.clone(),
+            &["function parameter"],
+            "".to_string(),
+        ));
+    }
+    parse_parameter_tokens(&tokens, &span)
+}
+
+fn parse_parameter_list(
+    stream: &mut PtxTokenStream,
+) -> Result<Vec<VariableDirective>, PtxParseError> {
+    stream.expect(&PtxToken::LParen)?;
+    if stream
+        .consume_if(|token| matches!(token, PtxToken::RParen))
+        .is_some()
+    {
+        return Ok(Vec::new());
+    }
+
+    let mut params = Vec::new();
+    loop {
+        let param = parse_parameter(stream)?;
+        params.push(param);
+        if stream
+            .consume_if(|token| matches!(token, PtxToken::Comma))
+            .is_none()
+        {
+            break;
+        }
+    }
+    stream.expect(&PtxToken::RParen)?;
+    Ok(params)
+}
+
+fn parse_return_parameter(
+    stream: &mut PtxTokenStream,
+) -> Result<Option<VariableDirective>, PtxParseError> {
+    if stream
+        .consume_if(|token| matches!(token, PtxToken::LParen))
+        .is_none()
+    {
+        return Ok(None);
+    }
+
+    if stream
+        .consume_if(|token| matches!(token, PtxToken::RParen))
+        .is_some()
+    {
+        return Ok(None);
+    }
+
+    let param = parse_parameter(stream)?;
+    stream.expect(&PtxToken::RParen)?;
+    Ok(Some(param))
+}
+
+fn parse_optional_noreturn(
+    stream: &mut PtxTokenStream,
+    directives: &mut Vec<FunctionHeaderDirective>,
+)-> Result<bool, PtxParseError> {
+    if let Some((token, _)) = stream.peek().ok() {
+        if let PtxToken::Dot = token {
+            // Check if it's a directive
+            let saved_pos = stream.position();
+            stream.consume()?; // consume dot
+            if let Ok((name, _)) = stream.expect_identifier() {
+                if name == "noreturn" {
+                    if !directives
+                        .iter()
+                        .any(|directive| matches!(directive, FunctionHeaderDirective::NoReturn))
+                    {
+                        directives.push(FunctionHeaderDirective::NoReturn);
+                    }
+                    if stream
+                        .consume_if(|token| matches!(token, PtxToken::Semicolon))
+                        .is_some()
+                    {
+                        return Ok(true);
+                    }
+                } else {
+                    stream.set_position(saved_pos);
+                }
+            } else {
+                stream.set_position(saved_pos);
+            }
+        }
+    }
+    Ok(false)
+}
+
+fn parse_argument_strings(
+    stream: &mut PtxTokenStream,
+    base_span: &Span,
+    raw_tokens: &mut Vec<PtxToken>,
+) -> Result<Vec<String>, PtxParseError> {
+    let mut arguments = Vec::new();
+    let mut current_tokens: Vec<PtxToken> = Vec::new();
+    let mut current_span = base_span.clone();
+
+    while !stream.check(|token| matches!(token, PtxToken::Semicolon)) {
+        let (token, span) = stream.consume()?;
+        raw_tokens.push(token.clone());
+        if matches!(token, PtxToken::Comma) {
+            if !current_tokens.is_empty() {
+                let text = tokens_to_string(&current_tokens, &current_span)?;
+                arguments.push(text);
+                current_tokens.clear();
+            } else {
+                arguments.push(String::new());
+            }
+        } else {
+            if current_tokens.is_empty() {
+                current_span = span.clone();
+            }
+            current_tokens.push(token.clone());
+        }
+    }
+
+    if !current_tokens.is_empty() {
+        let text = tokens_to_string(&current_tokens, &current_span)?;
+        arguments.push(text);
+    }
+
+    stream.expect(&PtxToken::Semicolon)?;
+    raw_tokens.push(PtxToken::Semicolon);
+    Ok(arguments)
+}
+
+fn parse_statement_directive(
+    name: &str,
+    stream: &mut PtxTokenStream,
+    span: Span,
+) -> Result<StatementDirective, PtxParseError> {
+    let mut raw_tokens = vec![PtxToken::Dot, PtxToken::Identifier(name.to_string())];
+    match name {
+        "loc" => {
+            let (file_token, file_span) = stream.consume()?;
+            raw_tokens.push(file_token.clone());
+            let file_index = match file_token {
+                PtxToken::DecimalInteger(value) => value.parse::<u32>().map_err(|_| {
+                    invalid_literal(
+                        file_span.clone(),
+                        "expected 32-bit unsigned integer literal",
+                    )
+                })?,
+                ref other => {
+                    return Err(unexpected_value(
+                        file_span.clone(),
+                        &["decimal literal"],
+                        format!("{other:?}"),
+                    ));
+                }
+            };
+
+            let (line_token, line_span) = stream.consume()?;
+            raw_tokens.push(line_token.clone());
+            let line = match line_token {
+                PtxToken::DecimalInteger(value) => value.parse::<u32>().map_err(|_| {
+                    invalid_literal(
+                        line_span.clone(),
+                        "expected 32-bit unsigned integer literal",
+                    )
+                })?,
+                ref other => {
+                    return Err(unexpected_value(
+                        line_span.clone(),
+                        &["decimal literal"],
+                        format!("{other:?}"),
+                    ));
+                }
+            };
+
+            let (column_token, column_span) = stream.consume()?;
+            raw_tokens.push(column_token.clone());
+            let column = match column_token {
+                PtxToken::DecimalInteger(value) => value.parse::<u32>().map_err(|_| {
+                    invalid_literal(
+                        column_span.clone(),
+                        "expected 32-bit unsigned integer literal",
+                    )
+                })?,
+                ref other => {
+                    return Err(unexpected_value(
+                        column_span.clone(),
+                        &["decimal literal"],
+                        format!("{other:?}"),
+                    ));
+                }
+            };
+
+            let options = Vec::new();
+            if stream
+                .consume_if(|token| matches!(token, PtxToken::Semicolon))
+                .is_some()
+            {
+                raw_tokens.push(PtxToken::Semicolon);
+            }
+
+            let raw = tokens_to_string(&raw_tokens, &span)?;
+            Ok(StatementDirective::Loc(LocationDirective {
+                file_index,
+                line,
+                column,
+                options,
+                comment: None,
+                raw,
+            }))
+        }
+        "pragma" => {
+            let arguments = parse_argument_strings(stream, &span, &mut raw_tokens)?;
+            let raw = tokens_to_string(&raw_tokens, &span)?;
+            Ok(StatementDirective::Pragma(PragmaDirective {
+                arguments,
+                comment: None,
+                raw,
+            }))
+        }
+        "dwarf" => {
+            let (keyword, keyword_span) = stream.expect_identifier()?;
+            raw_tokens.push(PtxToken::Identifier(keyword.clone()));
+            let arguments = parse_argument_strings(stream, &keyword_span, &mut raw_tokens)?;
+            let raw = tokens_to_string(&raw_tokens, &span)?;
+            Ok(StatementDirective::Dwarf(DwarfDirective {
+                keyword,
+                arguments,
+                comment: None,
+                raw,
+            }))
+        }
+        "section" => {
+            let arguments = parse_argument_strings(stream, &span, &mut raw_tokens)?;
+            let mut iter = arguments.into_iter();
+            let name_str = iter
+                .next()
+                .ok_or_else(|| unexpected_value(span.clone(), &["section name"], "".to_string()))?;
+            let raw = tokens_to_string(&raw_tokens, &span)?;
+            Ok(StatementDirective::Section(StatementSectionDirective {
+                name: name_str,
+                arguments: iter.collect(),
+                comment: None,
+                raw,
+            }))
+        }
+        other => Err(unexpected_value(
+            span,
+            &[".loc", ".pragma", ".dwarf", ".section"],
+            format!(".{other}"),
+        )),
+    }
+}
+
 fn parse_register_directive(
     stream: &mut PtxTokenStream,
 ) -> Result<RegisterDirective, PtxParseError> {
     expect_directive_value(stream, "reg")?;
 
-    let ty = if stream.check(|token| matches!(token, PtxToken::Directive(_))) {
+    let ty = if stream.check(|token| matches!(token, PtxToken::Dot)) {
         let (directive, _) = stream.expect_directive()?;
         Some(directive)
     } else {
@@ -131,9 +445,26 @@ fn parse_function_entry_directive_internal(
         "local" => parse_variable_entry(stream, "local"),
         "shared" => parse_variable_entry(stream, "shared"),
         "param" => parse_variable_entry(stream, "param"),
+        "pragma" | "loc" | "dwarf" => {
+            let (directive_name, directive_span) = stream.expect_directive()?;
+            let statement =
+                parse_statement_directive(&directive_name, stream, directive_span.clone())?;
+            match statement {
+                StatementDirective::Pragma(pragma) => Ok(FunctionEntryDirective::Pragma(pragma)),
+                StatementDirective::Loc(loc) => Ok(FunctionEntryDirective::Loc(loc)),
+                StatementDirective::Dwarf(dwarf) => Ok(FunctionEntryDirective::Dwarf(dwarf)),
+                _ => Err(unexpected_value(
+                    directive_span,
+                    &[".pragma", ".loc", ".dwarf"],
+                    format!(".{directive_name}"),
+                )),
+            }
+        }
         other => Err(unexpected_value(
             span,
-            &[".reg", ".local", ".shared", ".param"],
+            &[
+                ".reg", ".local", ".shared", ".param", ".pragma", ".loc", ".dwarf",
+            ],
             format!(".{other}"),
         )),
     }
@@ -158,33 +489,8 @@ fn try_parse_label(stream: &mut PtxTokenStream) -> Result<Option<String>, PtxPar
 }
 
 fn parse_instruction_statement(stream: &mut PtxTokenStream) -> Result<Instruction, PtxParseError> {
-    let predicate = if stream
-        .consume_if(|token| matches!(token, PtxToken::At))
-        .is_some()
-    {
-        if stream
-            .consume_if(|token| matches!(token, PtxToken::Exclaim))
-            .is_some()
-        {
-            let (_, span) = stream.peek()?;
-            return Err(unexpected_value(
-                span.clone(),
-                &["predicate register"],
-                "!".to_string(),
-            ));
-        }
-        Some(PredicateRegister::parse(stream)?)
-    } else {
-        None
-    };
-
-    let opcode = InstructionOpcode::parse(stream)?;
-    Ok(Instruction {
-        predicate,
-        opcode,
-        comment: None,
-        raw: String::new(),
-    })
+    // The generated Instruction parser handles predicates, labels, etc.
+    Instruction::parse(stream)
 }
 
 fn parse_extern_call_block(stream: &mut PtxTokenStream) -> Result<ExternCallBlock, PtxParseError> {
@@ -232,7 +538,18 @@ fn parse_extern_call_block(stream: &mut PtxTokenStream) -> Result<ExternCallBloc
 
         let instruction = parse_instruction_statement(stream)?;
         if call.is_none() {
-            if matches!(instruction.opcode, InstructionOpcode::Call(_)) {
+            if matches!(
+                instruction,
+                Instruction::CallUni(_)
+                    | Instruction::CallUni1(_)
+                    | Instruction::CallUni2(_)
+                    | Instruction::CallUni3(_)
+                    | Instruction::CallUni4(_)
+                    | Instruction::CallUni5(_)
+                    | Instruction::CallUni6(_)
+                    | Instruction::CallUni7(_)
+                    | Instruction::CallUni8(_)
+            ) {
                 call = Some(instruction);
             } else {
                 setup.push(ExternCallSetup::Store(instruction));
@@ -250,11 +567,22 @@ fn parse_extern_call_block(stream: &mut PtxTokenStream) -> Result<ExternCallBloc
     })
 }
 
-fn parse_function_statement_internal(
+fn parse_function_statement(
     stream: &mut PtxTokenStream,
 ) -> Result<FunctionStatement, PtxParseError> {
     if let Some(label) = try_parse_label(stream)? {
         return Ok(FunctionStatement::Label(label));
+    }
+
+    if let Some((name, _)) = peek_directive(stream)? {
+        match name.as_str() {
+            "loc" | "pragma" | "dwarf" | "section" => {
+                let (directive_name, span) = stream.expect_directive()?;
+                let directive = parse_statement_directive(&directive_name, stream, span.clone())?;
+                return Ok(FunctionStatement::Directive(directive));
+            }
+            _ => {}
+        }
     }
 
     if stream.check(|token| matches!(token, PtxToken::LBrace)) {
@@ -266,118 +594,35 @@ fn parse_function_statement_internal(
     Ok(FunctionStatement::Instruction(instruction))
 }
 
-fn skip_loc_directive(stream: &mut PtxTokenStream) -> Result<(), PtxParseError> {
-    expect_directive_value(stream, "loc")?;
-    for _ in 0..3 {
-        let (token, span) = stream.consume()?;
-        match token {
-            PtxToken::DecimalInteger(_) => {}
-            other => {
-                return Err(unexpected_value(
-                    span.clone(),
-                    &["decimal literal"],
-                    format!("{other:?}"),
-                ));
-            }
-        }
-    }
-    Ok(())
-}
-
-fn skip_semicolon_directive(stream: &mut PtxTokenStream, name: &str) -> Result<(), PtxParseError> {
-    expect_directive_value(stream, name)?;
-    loop {
-        let (token, span) = stream.consume()?;
-        if matches!(token, PtxToken::Semicolon) {
-            break;
-        }
-        if matches!(token, PtxToken::RBrace) {
-            return Err(unexpected_value(span.clone(), &[";"], "}".to_string()));
-        }
-    }
-    Ok(())
-}
-
-fn skip_to_matching_rbrace(stream: &mut PtxTokenStream) -> Result<(), PtxParseError> {
+fn collect_body_tokens(
+    stream: &mut PtxTokenStream,
+) -> Result<(Vec<PtxToken>, Span), PtxParseError> {
+    let mut tokens = Vec::new();
     let mut depth = 1usize;
+    let mut first_span: Option<Span> = None;
+
     while depth > 0 {
         let (token, span) = stream.consume()?;
+        if first_span.is_none() {
+            first_span = Some(span.clone());
+        }
         match token {
-            PtxToken::LBrace => depth += 1,
-            PtxToken::RBrace => {
-                depth -= 1;
+            PtxToken::LBrace => {
+                depth += 1;
+                tokens.push(token.clone());
             }
-            _ => {}
-        }
-        if depth == 0 {
-            break;
-        }
-        if stream.is_at_end() {
-            return Err(unexpected_value(
-                span.clone(),
-                &["}"],
-                "unterminated function body".to_string(),
-            ));
-        }
-    }
-    Ok(())
-}
-
-fn skip_parenthesized(stream: &mut PtxTokenStream) -> Result<(), PtxParseError> {
-    stream.expect(&PtxToken::LParen)?;
-    let mut depth = 1usize;
-    while depth > 0 {
-        let (token, span) = stream.consume()?;
-        match token {
-            PtxToken::LParen => depth += 1,
-            PtxToken::RParen => {
-                depth -= 1;
-                if depth == 0 {
-                    break;
-                }
-            }
-            _ => {}
-        }
-        if depth == 0 {
-            break;
-        }
-        if stream.is_at_end() {
-            return Err(unexpected_value(
-                span.clone(),
-                &["("],
-                "unterminated parenthesis".to_string(),
-            ));
-        }
-    }
-    Ok(())
-}
-
-fn skip_braced_block(stream: &mut PtxTokenStream) -> Result<(), PtxParseError> {
-    let mut depth = 1usize;
-    while depth > 0 {
-        let (token, span) = stream.consume()?;
-        match token {
-            PtxToken::LBrace => depth += 1,
             PtxToken::RBrace => {
                 depth -= 1;
                 if depth == 0 {
                     break;
                 }
+                tokens.push(token.clone());
             }
-            _ => {}
-        }
-        if depth == 0 {
-            break;
-        }
-        if stream.is_at_end() {
-            return Err(unexpected_value(
-                span.clone(),
-                &["{"],
-                "unterminated function body".to_string(),
-            ));
+            _ => tokens.push(token.clone()),
         }
     }
-    Ok(())
+
+    Ok((tokens, first_span.unwrap_or(0..0)))
 }
 
 fn parse_function_body(stream: &mut PtxTokenStream) -> Result<FunctionBody, PtxParseError> {
@@ -385,18 +630,6 @@ fn parse_function_body(stream: &mut PtxTokenStream) -> Result<FunctionBody, PtxP
         match token {
             PtxToken::Semicolon => {
                 stream.consume()?;
-                return Ok(FunctionBody::default());
-            }
-            PtxToken::Directive(name) if name == "noreturn" => {
-                stream.consume()?;
-                if stream
-                    .consume_if(|token| matches!(token, PtxToken::Semicolon))
-                    .is_some()
-                {
-                    return Ok(FunctionBody::default());
-                }
-                stream.expect(&PtxToken::LBrace)?;
-                skip_braced_block(stream)?;
                 return Ok(FunctionBody::default());
             }
             PtxToken::LBrace => {
@@ -418,47 +651,42 @@ fn parse_function_body(stream: &mut PtxTokenStream) -> Result<FunctionBody, PtxP
 
                     if parsing_entry_directives {
                         if let Some((name, _)) = peek_directive(stream)? {
-                            if matches!(name.as_str(), "reg" | "local" | "shared" | "param") {
-                                body.entry_directives
-                                    .push(parse_function_entry_directive_internal(stream)?);
-                                continue;
-                            } else {
-                                parsing_entry_directives = false;
+                            match name.as_str() {
+                                "reg" | "local" | "shared" | "param" | "pragma" | "loc"
+                                | "dwarf" => {
+                                    let directive =
+                                        parse_function_entry_directive_internal(stream)?;
+                                    body.entry_directives.push(directive);
+                                    continue;
+                                }
+                                _ => parsing_entry_directives = false,
                             }
                         } else {
                             parsing_entry_directives = false;
                         }
                     }
 
-                    if let Some((name, _)) = peek_directive(stream)? {
-                        match name.as_str() {
-                            "loc" => {
-                                skip_loc_directive(stream)?;
-                                continue;
-                            }
-                            "pragma" => {
-                                skip_semicolon_directive(stream, "pragma")?;
-                                continue;
-                            }
-                            "dwarf" => {
-                                skip_semicolon_directive(stream, "dwarf")?;
-                                continue;
-                            }
-                            _ => {}
-                        }
-                    }
-
-                    let statement_position = stream.position();
-                    match parse_function_statement_internal(stream) {
+                    let position = stream.position();
+                    match parse_function_statement(stream) {
                         Ok(statement) => body.statements.push(statement),
                         Err(_err) => {
-                            stream.set_position(statement_position);
-                            skip_to_matching_rbrace(stream)?;
-                            body.statements.clear();
+                            stream.set_position(position);
+                            let (tokens, span) = collect_body_tokens(stream)?;
+                            if !tokens.is_empty() {
+                                let raw = tokens_to_string(&tokens, &span)?;
+                                body.statements.push(FunctionStatement::Directive(
+                                    StatementDirective::Pragma(PragmaDirective {
+                                        arguments: Vec::new(),
+                                        comment: None,
+                                        raw,
+                                    }),
+                                ));
+                            }
                             return Ok(body);
                         }
                     }
                 }
+
                 return Ok(body);
             }
             _ => {
@@ -486,15 +714,19 @@ impl PtxParser for FunctionBody {
 
 impl PtxParser for EntryFunction {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let directives = parse_header_directives(stream)?;
+        let mut directives = parse_header_directives(stream)?;
         expect_directive_value(stream, "entry")?;
         let (name, _) = stream.expect_identifier()?;
-        skip_parenthesized(stream)?;
-        let body = parse_function_body(stream)?;
+        let params = parse_parameter_list(stream)?;
+        let body = if parse_optional_noreturn(stream, &mut directives)? {
+            FunctionBody::default()
+        } else {
+            parse_function_body(stream)?
+        };
         Ok(EntryFunction {
             name,
             directives,
-            params: Vec::new(),
+            params,
             body,
         })
     }
@@ -502,21 +734,23 @@ impl PtxParser for EntryFunction {
 
 impl PtxParser for FuncFunction {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let directives = parse_header_directives(stream)?;
+        let mut directives = parse_header_directives(stream)?;
         expect_directive_value(stream, "func")?;
 
-        if stream.check(|token| matches!(token, PtxToken::LParen)) {
-            skip_parenthesized(stream)?;
-        }
+        let return_param = parse_return_parameter(stream)?;
 
         let (name, _) = stream.expect_identifier()?;
-        skip_parenthesized(stream)?;
-        let body = parse_function_body(stream)?;
+        let params = parse_parameter_list(stream)?;
+        let body = if parse_optional_noreturn(stream, &mut directives)? {
+            FunctionBody::default()
+        } else {
+            parse_function_body(stream)?
+        };
         Ok(FuncFunction {
             name,
             directives,
-            return_param: None,
-            params: Vec::new(),
+            return_param,
+            params,
             body,
         })
     }
@@ -562,7 +796,7 @@ impl PtxParser for FunctionEntryDirective {
 
 impl PtxParser for FunctionStatement {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        parse_function_statement_internal(stream)
+        parse_function_statement(stream)
     }
 }
 

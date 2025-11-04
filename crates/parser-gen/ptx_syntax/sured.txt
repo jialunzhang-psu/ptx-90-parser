@@ -1,0 +1,11 @@
+sured.b.op.geom.ctype.mode [a,b],c; // byte addressing
+.op    = { .add, .min, .max, .and, .or };
+.geom  = { .1d, .2d, .3d };
+.ctype = { .u32, .u64, .s32, .b32, .s64 };  // for sured.b
+.mode  = { .trap, .clamp, .zero };
+----------------------------------------------------
+sured.p.op.geom.ctype.mode [a,b],c; // sample addressing
+.op    = { .add, .min, .max, .and, .or };
+.geom  = { .1d, .2d, .3d };
+.ctype = { .b32, .b64 };                    // for sured.p
+.mode  = { .trap, .clamp, .zero };

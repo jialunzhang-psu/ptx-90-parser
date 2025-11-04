@@ -1,0 +1,9 @@
+// 32-bit scalar operation, with optional secondary operation
+vop.dtype.atype.btype{.sat}       d, a{.asel}, b{.bsel};
+vop.dtype.atype.btype{.sat}.op2   d, a{.asel}, b{.bsel}, c;
+// 32-bit scalar operation, with optional data merge
+vop.dtype.atype.btype{.sat}  d.dsel, a{.asel}, b{.bsel}, c;
+vop   = { vadd, vsub, vabsdiff, vmin, vmax };
+.dtype = .atype = .btype = { .u32, .s32 };
+.dsel  = .asel  = .bsel  = { .b0, .b1, .b2, .b3, .h0, .h1 };
+.op2   = { .add, .min, .max };

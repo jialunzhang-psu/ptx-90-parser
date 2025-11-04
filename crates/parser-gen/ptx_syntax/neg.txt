@@ -1,0 +1,10 @@
+neg.type  d, a;
+.type = { .s16, .s32, .s64 };
+
+neg{.ftz}.f32  d, a;
+neg.f64        d, a;
+
+neg{.ftz}.f16    d, a;
+neg{.ftz}.f16x2  d, a;
+neg.bf16         d, a;
+neg.bf16x2       d, a;

@@ -1,340 +1,446 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::sured::*},
-};
+//! Original PTX specification:
+//!
+//! sured.b.op.geom.ctype.mode [a,b],c; // byte addressing
+//! .op    = { .add, .min, .max, .and, .or };
+//! .geom  = { .1d, .2d, .3d };
+//! .ctype = { .u32, .u64, .s32, .b32, .s64 };  // for sured.b
+//! .mode  = { .trap, .clamp, .zero };
+//! ----------------------------------------------------
+//! sured.p.op.geom.ctype.mode [a,b],c; // sample addressing
+//! .op    = { .add, .min, .max, .and, .or };
+//! .geom  = { .1d, .2d, .3d };
+//! .ctype = { .b32, .b64 };                    // for sured.p
+//! .mode  = { .trap, .clamp, .zero };
 
-enum AddressingKind {
-    Byte,
-    Sample,
-}
+#![allow(unused)]
 
-enum CoordinatesData {
-    Byte(ByteDataType),
-    Sample(SampleDataType),
-}
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-enum Geometry {
-    OneD,
-    TwoD,
-    ThreeD,
-}
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::sured::section_0::*;
 
-enum Coordinates {
-    OneD(Coordinate1d),
-    TwoD(Coordinate2d),
-    ThreeD(Coordinate3d),
-}
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
 
-fn parse_addressing_kind(stream: &mut PtxTokenStream) -> Result<AddressingKind, PtxParseError> {
-    let (modifier, span) = stream.expect_directive()?;
-    match modifier.as_str() {
-        "b" => Ok(AddressingKind::Byte),
-        "p" => Ok(AddressingKind::Sample),
-        other => Err(unexpected_value(span, &[".b", ".p"], format!(".{other}"))),
-    }
-}
-
-fn parse_operator(stream: &mut PtxTokenStream) -> Result<Operator, PtxParseError> {
-    let (modifier, span) = stream.expect_directive()?;
-    match modifier.as_str() {
-        "add" => Ok(Operator::Add),
-        "min" => Ok(Operator::Min),
-        "max" => Ok(Operator::Max),
-        "and" => Ok(Operator::And),
-        "or" => Ok(Operator::Or),
-        other => Err(unexpected_value(
-            span,
-            &[".add", ".min", ".max", ".and", ".or"],
-            format!(".{other}"),
-        )),
-    }
-}
-
-fn parse_geometry(stream: &mut PtxTokenStream) -> Result<Geometry, PtxParseError> {
-    if let Some((modifier, span)) = peek_directive(stream)? {
-        stream.expect_directive()?;
-        return match modifier.as_str() {
-            "1d" => Ok(Geometry::OneD),
-            "2d" => Ok(Geometry::TwoD),
-            "3d" => Ok(Geometry::ThreeD),
-            other => Err(unexpected_value(
-                span,
-                &[".1d", ".2d", ".3d"],
-                format!(".{other}"),
-            )),
-        };
-    }
-
-    if stream.check(|token| matches!(token, PtxToken::Dot)) {
-        let (_, dot_span) = stream.consume()?;
-        let mut span = dot_span.clone();
-
-        let (number_token, number_span) = stream.consume()?;
-        let number_span = number_span.clone();
-        let number = match number_token {
-            PtxToken::DecimalInteger(value) => value.clone(),
-            other => {
-                return Err(unexpected_value(
-                    number_span.clone(),
-                    &["geometry specifier"],
-                    format!("{other:?}"),
-                ));
+    impl PtxParser for Mode {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Trap
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".trap").is_ok() {
+                    return Ok(Mode::Trap);
+                }
+                stream.set_position(saved_pos);
             }
-        };
-
-        let (suffix_token, suffix_span) = stream.consume()?;
-        let suffix_span = suffix_span.clone();
-        let suffix = match suffix_token {
-            PtxToken::Identifier(value) => value.clone(),
-            other => {
-                return Err(unexpected_value(
-                    suffix_span.clone(),
-                    &["geometry suffix"],
-                    format!("{other:?}"),
-                ));
+            let saved_pos = stream.position();
+            // Try Clamp
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".clamp").is_ok() {
+                    return Ok(Mode::Clamp);
+                }
+                stream.set_position(saved_pos);
             }
-        };
-
-        span.end = suffix_span.end;
-
-        let modifier = format!("{number}{suffix}");
-        return match modifier.as_str() {
-            "1d" => Ok(Geometry::OneD),
-            "2d" => Ok(Geometry::TwoD),
-            "3d" => Ok(Geometry::ThreeD),
-            other => Err(unexpected_value(
-                span,
-                &[".1d", ".2d", ".3d"],
-                format!(".{other}"),
-            )),
-        };
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Zero
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".zero").is_ok() {
+                    return Ok(Mode::Zero);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".trap", ".clamp", ".zero"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
     }
 
-    let (token, span) = stream.peek()?;
-    Err(unexpected_value(
-        span.clone(),
-        &[".1d", ".2d", ".3d"],
-        format!("{token:?}"),
-    ))
-}
-
-fn parse_byte_data_type(stream: &mut PtxTokenStream) -> Result<ByteDataType, PtxParseError> {
-    let (modifier, span) = stream.expect_directive()?;
-    match modifier.as_str() {
-        "u32" => Ok(ByteDataType::U32),
-        "u64" => Ok(ByteDataType::U64),
-        "s32" => Ok(ByteDataType::S32),
-        "b32" => Ok(ByteDataType::B32),
-        "s64" => Ok(ByteDataType::S64),
-        other => Err(unexpected_value(
-            span,
-            &[".u32", ".u64", ".s32", ".b32", ".s64"],
-            format!(".{other}"),
-        )),
-    }
-}
-
-fn parse_sample_data_type(stream: &mut PtxTokenStream) -> Result<SampleDataType, PtxParseError> {
-    let (modifier, span) = stream.expect_directive()?;
-    match modifier.as_str() {
-        "b32" => Ok(SampleDataType::B32),
-        "b64" => Ok(SampleDataType::B64),
-        other => Err(unexpected_value(
-            span,
-            &[".b32", ".b64"],
-            format!(".{other}"),
-        )),
-    }
-}
-
-fn parse_clamp(stream: &mut PtxTokenStream) -> Result<Clamp, PtxParseError> {
-    let (modifier, span) = stream.expect_directive()?;
-    match modifier.as_str() {
-        "trap" => Ok(Clamp::Trap),
-        "clamp" => Ok(Clamp::Clamp),
-        "zero" => Ok(Clamp::Zero),
-        other => Err(unexpected_value(
-            span,
-            &[".trap", ".clamp", ".zero"],
-            format!(".{other}"),
-        )),
-    }
-}
-
-fn parse_surface(stream: &mut PtxTokenStream) -> Result<Surface, PtxParseError> {
-    if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
-        Ok(Surface::Reference(VariableSymbol::parse(stream)?))
-    } else if stream.check(|token| matches!(token, PtxToken::Register(_))) {
-        Ok(Surface::Indirect(RegisterOperand::parse(stream)?))
-    } else {
-        let (token, span) = stream.peek()?;
-        Err(unexpected_value(
-            span.clone(),
-            &["surface identifier", "register"],
-            format!("{token:?}"),
-        ))
-    }
-}
-
-fn parse_coordinate_component(
-    stream: &mut PtxTokenStream,
-) -> Result<RegisterOperand, PtxParseError> {
-    if stream.check(|token| matches!(token, PtxToken::LBrace)) {
-        let (_, span) = stream.peek()?;
-        return Err(unexpected_value(
-            span.clone(),
-            &["register operand"],
-            "{".to_string(),
-        ));
+    impl PtxParser for Ctype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Ctype::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try U64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u64").is_ok() {
+                    return Ok(Ctype::U64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Ctype::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b32").is_ok() {
+                    return Ok(Ctype::B32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s64").is_ok() {
+                    return Ok(Ctype::S64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".u64", ".s32", ".b32", ".s64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
     }
 
-    RegisterOperand::parse(stream)
-}
+    impl PtxParser for Op {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Add
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".add").is_ok() {
+                    return Ok(Op::Add);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Min
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".min").is_ok() {
+                    return Ok(Op::Min);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Max
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".max").is_ok() {
+                    return Ok(Op::Max);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try And
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".and").is_ok() {
+                    return Ok(Op::And);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Or
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Op::Or);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".add", ".min", ".max", ".and", ".or"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
-fn parse_coordinate_components(
-    stream: &mut PtxTokenStream,
-    count: usize,
-) -> Result<Vec<RegisterOperand>, PtxParseError> {
-    let in_braces = stream
-        .consume_if(|token| matches!(token, PtxToken::LBrace))
-        .is_some();
+    impl PtxParser for Geom {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try _1d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".1d").is_ok() {
+                    return Ok(Geom::_1d);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try _2d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".2d").is_ok() {
+                    return Ok(Geom::_2d);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try _3d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".3d").is_ok() {
+                    return Ok(Geom::_3d);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".1d", ".2d", ".3d"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
-    let mut components = Vec::with_capacity(count);
-    for index in 0..count {
-        components.push(parse_coordinate_component(stream)?);
-        if index + 1 < count {
+    impl PtxParser for SuredBOpGeomCtypeMode {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("sured")?;
+            stream.expect_string(".b")?;
+            let b = ();
+            let op = Op::parse(stream)?;
+            let geom = Geom::parse(stream)?;
+            let ctype = Ctype::parse(stream)?;
+            let mode = Mode::parse(stream)?;
+            stream.expect(&PtxToken::LBracket)?;
+            let a = Operand::parse(stream)?;
             stream.expect(&PtxToken::Comma)?;
+            let b2 = Operand::parse(stream)?;
+            stream.expect(&PtxToken::RBracket)?;
+            let a = (a, b2);
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(SuredBOpGeomCtypeMode {
+                b,
+                op,
+                geom,
+                ctype,
+                mode,
+                a,
+                c,
+            })
         }
     }
 
-    if in_braces {
-        stream.expect(&PtxToken::RBrace)?;
-    }
 
-    Ok(components)
 }
 
-fn parse_coordinate_1d(stream: &mut PtxTokenStream) -> Result<Coordinate1d, PtxParseError> {
-    let mut components = parse_coordinate_components(stream, 1)?;
-    Ok(components.remove(0))
-}
+pub mod section_1 {
+    use super::*;
+    use crate::r#type::instruction::sured::section_1::*;
 
-fn parse_coordinate_2d(stream: &mut PtxTokenStream) -> Result<Coordinate2d, PtxParseError> {
-    let mut components = parse_coordinate_components(stream, 2)?;
-    Ok(Coordinate2d {
-        x: components.remove(0),
-        y: components.remove(0),
-    })
-}
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
 
-fn parse_coordinate_3d(stream: &mut PtxTokenStream) -> Result<Coordinate3d, PtxParseError> {
-    let mut components = parse_coordinate_components(stream, 4)?;
-    Ok(Coordinate3d {
-        x: components.remove(0),
-        y: components.remove(0),
-        z: components.remove(0),
-        w: components.remove(0),
-    })
-}
-
-impl PtxParser for Sured {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "sured")?;
-
-        let addressing_kind = parse_addressing_kind(stream)?;
-        let operator = parse_operator(stream)?;
-        let geometry = parse_geometry(stream)?;
-
-        let data = match addressing_kind {
-            AddressingKind::Byte => {
-                let ty = parse_byte_data_type(stream)?;
-                CoordinatesData::Byte(ty)
+    impl PtxParser for Mode {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Trap
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".trap").is_ok() {
+                    return Ok(Mode::Trap);
+                }
+                stream.set_position(saved_pos);
             }
-            AddressingKind::Sample => {
-                let ty = parse_sample_data_type(stream)?;
-                CoordinatesData::Sample(ty)
+            let saved_pos = stream.position();
+            // Try Clamp
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".clamp").is_ok() {
+                    return Ok(Mode::Clamp);
+                }
+                stream.set_position(saved_pos);
             }
-        };
-
-        let clamp = parse_clamp(stream)?;
-
-        stream.expect(&PtxToken::LBracket)?;
-        let surface = parse_surface(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-
-        let coordinates = match geometry {
-            Geometry::OneD => Coordinates::OneD(parse_coordinate_1d(stream)?),
-            Geometry::TwoD => Coordinates::TwoD(parse_coordinate_2d(stream)?),
-            Geometry::ThreeD => Coordinates::ThreeD(parse_coordinate_3d(stream)?),
-        };
-
-        stream.expect(&PtxToken::RBracket)?;
-        stream.expect(&PtxToken::Comma)?;
-        let source = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        match (data, coordinates) {
-            (CoordinatesData::Byte(data_type), Coordinates::OneD(coord)) => {
-                Ok(Sured::Byte1d(Reduction {
-                    operator,
-                    data_type,
-                    clamp,
-                    surface,
-                    coordinates: coord,
-                    source,
-                }))
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Zero
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".zero").is_ok() {
+                    return Ok(Mode::Zero);
+                }
+                stream.set_position(saved_pos);
             }
-            (CoordinatesData::Byte(data_type), Coordinates::TwoD(coord)) => {
-                Ok(Sured::Byte2d(Reduction {
-                    operator,
-                    data_type,
-                    clamp,
-                    surface,
-                    coordinates: coord,
-                    source,
-                }))
-            }
-            (CoordinatesData::Byte(data_type), Coordinates::ThreeD(coord)) => {
-                Ok(Sured::Byte3d(Reduction {
-                    operator,
-                    data_type,
-                    clamp,
-                    surface,
-                    coordinates: coord,
-                    source,
-                }))
-            }
-            (CoordinatesData::Sample(data_type), Coordinates::OneD(coord)) => {
-                Ok(Sured::Sample1d(Reduction {
-                    operator,
-                    data_type,
-                    clamp,
-                    surface,
-                    coordinates: coord,
-                    source,
-                }))
-            }
-            (CoordinatesData::Sample(data_type), Coordinates::TwoD(coord)) => {
-                Ok(Sured::Sample2d(Reduction {
-                    operator,
-                    data_type,
-                    clamp,
-                    surface,
-                    coordinates: coord,
-                    source,
-                }))
-            }
-            (CoordinatesData::Sample(data_type), Coordinates::ThreeD(coord)) => {
-                Ok(Sured::Sample3d(Reduction {
-                    operator,
-                    data_type,
-                    clamp,
-                    surface,
-                    coordinates: coord,
-                    source,
-                }))
-            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".trap", ".clamp", ".zero"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
+
+    impl PtxParser for Ctype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try B32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b32").is_ok() {
+                    return Ok(Ctype::B32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try B64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b64").is_ok() {
+                    return Ok(Ctype::B64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".b32", ".b64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Op {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Add
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".add").is_ok() {
+                    return Ok(Op::Add);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Min
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".min").is_ok() {
+                    return Ok(Op::Min);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Max
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".max").is_ok() {
+                    return Ok(Op::Max);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try And
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".and").is_ok() {
+                    return Ok(Op::And);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Or
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Op::Or);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".add", ".min", ".max", ".and", ".or"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Geom {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try _1d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".1d").is_ok() {
+                    return Ok(Geom::_1d);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try _2d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".2d").is_ok() {
+                    return Ok(Geom::_2d);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try _3d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".3d").is_ok() {
+                    return Ok(Geom::_3d);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".1d", ".2d", ".3d"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for SuredPOpGeomCtypeMode {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("sured")?;
+            stream.expect_string(".p")?;
+            let p = ();
+            let op = Op::parse(stream)?;
+            let geom = Geom::parse(stream)?;
+            let ctype = Ctype::parse(stream)?;
+            let mode = Mode::parse(stream)?;
+            stream.expect(&PtxToken::LBracket)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::RBracket)?;
+            let a = (a, b);
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(SuredPOpGeomCtypeMode {
+                p,
+                op,
+                geom,
+                ctype,
+                mode,
+                a,
+                c,
+            })
+        }
+    }
+
+
 }
+

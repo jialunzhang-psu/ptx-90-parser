@@ -1,0 +1,3 @@
+mul24.mode.type  d, a, b;
+.mode = { .hi, .lo };
+.type = { .u32, .s32 };

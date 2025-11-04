@@ -1,0 +1,5 @@
+tld4.comp.2d.v4.dtype.f32    d{|p}, [a, c] {, e} {, f};
+tld4.comp.geom.v4.dtype.f32  d{|p}, [a, b, c] {, e} {, f};  // explicit sampler
+.comp  = { .r, .g, .b, .a };
+.geom  = { .2d, .a2d, .cube, .acube };
+.dtype = { .u32, .s32, .f32 };

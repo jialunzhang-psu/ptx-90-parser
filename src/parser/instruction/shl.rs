@@ -1,49 +1,77 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::{Operand, RegisterOperand},
-        instruction::shl::{DataType as ShlDataType, Shl},
-    },
-};
+//! Original PTX specification:
+//!
+//! shl.type d, a, b;
+//! .type = { .b16, .b32, .b64 };
 
-impl PtxParser for ShlDataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
+#![allow(unused)]
 
-        match directive.as_str() {
-            "b16" => Ok(ShlDataType::B16),
-            "b32" => Ok(ShlDataType::B32),
-            "b64" => Ok(ShlDataType::B64),
-            other => Err(unexpected_value(
-                span,
-                &[".b16", ".b32", ".b64"],
-                format!(".{other}"),
-            )),
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::shl::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try B16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b16").is_ok() {
+                    return Ok(Type::B16);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try B32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b32").is_ok() {
+                    return Ok(Type::B32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b64").is_ok() {
+                    return Ok(Type::B64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".b16", ".b32", ".b64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for Shl {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "shl" {
-            return Err(unexpected_value(span, &["shl"], opcode));
+    impl PtxParser for ShlType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("shl")?;
+            let type_ = Type::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(ShlType {
+                type_,
+                d,
+                a,
+                b,
+            })
         }
-
-        let data_type = ShlDataType::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let a = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let b = Operand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Shl {
-            data_type,
-            destination,
-            a,
-            b,
-        })
     }
+
+
 }
+

@@ -1,6 +1,6 @@
 use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
 use ptx_parser::parser::ParseErrorKind;
-use ptx_parser::r#type::{common::RegisterOperand, instruction::activemask::Activemask};
+use ptx_parser::r#type::{common::{Operand, RegisterOperand}, instruction::activemask::Activemask};
 
 fn assert_roundtrip(source: &str) {
     assert_roundtrip_generic::<Activemask>(source);
@@ -11,7 +11,8 @@ fn parses_activemask_instruction() {
     assert_eq!(
         parse::<Activemask>("activemask.b32 %r1;"),
         Activemask {
-            destination: RegisterOperand::Single("%r1".into()),
+            b32: (),
+            d: Operand::Register(RegisterOperand::Single("%r1".into())),
         }
     );
     assert_roundtrip("activemask.b32 %r1;");

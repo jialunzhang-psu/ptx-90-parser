@@ -1,0 +1,17 @@
+fma.rnd{.ftz}{.sat}.f32  d, a, b, c;
+fma.rnd{.ftz}.f32x2      d, a, b, c;
+fma.rnd.f64              d, a, b, c;
+.rnd = { .rn, .rz, .rm, .rp };
+---------------------------------------------
+fma.rnd{.ftz}{.sat}.f16     d, a, b, c;
+fma.rnd{.ftz}{.sat}.f16x2   d, a, b, c;
+fma.rnd{.ftz}.relu.f16      d, a, b, c;
+fma.rnd{.ftz}.relu.f16x2    d, a, b, c;
+fma.rnd{.relu}.bf16         d, a, b, c;
+fma.rnd{.relu}.bf16x2       d, a, b, c;
+fma.rnd.oob{.relu}.type     d, a, b, c;
+.rnd = { .rn };
+---------------------------------------------
+fma.rnd{.sat}.f32.abtype  d, a, b, c;
+.abtype = { .f16, .bf16};
+.rnd    = { .rn, .rz, .rm, .rp };

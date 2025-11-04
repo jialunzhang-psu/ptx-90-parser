@@ -1,0 +1,5 @@
+tcgen05.commit.cta_group.completion_mechanism{.shared::cluster}{.multicast}.b64
+[mbar] {, ctaMask};
+.completion_mechanism = { .mbarrier::arrive::one };
+.cta_group            = { .cta_group::1, .cta_group::2 };
+.multicast            = { .multicast::cluster };

@@ -1,51 +1,99 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! mad.mode.type  d, a, b, c;
+//! mad.hi.sat.s32 d, a, b, c;
+//! .mode = { .hi, .lo, .wide };
+//! .type = { .u16, .u32, .u64,
+//! .s16, .s32, .s64 };
+//! 
+//! mad{.ftz}{.sat}.f32      d, a, b, c;    // .target sm_1x
+//! mad.rnd{.ftz}{.sat}.f32  d, a, b, c;    // .target sm_20
+//! mad.rnd.f64              d, a, b, c;    // .target sm_13 and higher
+//! .rnd = { .rn, .rz, .rm, .rp };
 
-/// `mad.mode.type  d, a, b, c;`
-/// `mad.hi.sat.s32 d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Mad {
-    /// `mad.mode.type  d, a, b, c;`
-    Mode {
-        mode: Mode,
-        data_type: DataType,
-        destination: RegisterOperand,
-        a: RegisterOperand,
-        b: RegisterOperand,
-        c: RegisterOperand,
-    },
-    /// `mad.hi.sat.s32 d, a, b, c;`
-    HiSatS32 {
-        destination: RegisterOperand,
-        a: RegisterOperand,
-        b: RegisterOperand,
-        c: RegisterOperand,
-    },
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.mode = { .hi, .lo, .wide };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mode {
-    /// `.hi`
-    Hi,
-    /// `.lo`
-    Lo,
-    /// `.wide`
-    Wide,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.type = { .u16, .u32, .u64, .s16, .s32, .s64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u16`
-    U16,
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
-    /// `.s16`
-    S16,
-    /// `.s32`
-    S32,
-    /// `.s64`
-    S64,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        Hi, // .hi
+        Lo, // .lo
+        Wide, // .wide
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U16, // .u16
+        U32, // .u32
+        U64, // .u64
+        S16, // .s16
+        S32, // .s32
+        S64, // .s64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Rnd {
+        Rn, // .rn
+        Rz, // .rz
+        Rm, // .rm
+        Rp, // .rp
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MadModeType {
+        pub mode: Mode, // .mode
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MadHiSatS32 {
+        pub hi: (), // .hi
+        pub sat: (), // .sat
+        pub s32: (), // .s32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MadFtzSatF32 {
+        pub ftz: bool, // {.ftz}
+        pub sat: bool, // {.sat}
+        pub f32: (), // .f32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MadRndFtzSatF32 {
+        pub rnd: Rnd, // .rnd
+        pub ftz: bool, // {.ftz}
+        pub sat: bool, // {.sat}
+        pub f32: (), // .f32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MadRndF64 {
+        pub rnd: Rnd, // .rnd
+        pub f64: (), // .f64
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }

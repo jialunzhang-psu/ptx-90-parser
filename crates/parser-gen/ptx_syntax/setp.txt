@@ -1,0 +1,16 @@
+setp.CmpOp{.ftz}.type         p{|q}, a, b;
+setp.CmpOp.BoolOp{.ftz}.type  p{|q}, a, b, {!}c;
+.CmpOp  = { .eq, .ne, .lt, .le, .gt, .ge, .lo, .ls, .hi, .hs, .equ, .neu, .ltu, .leu, .gtu, .geu, .num, .nan };
+.BoolOp = { .and, .or, .xor };
+.type   = { .b16, .b32, .b64, .u16, .u32, .u64, .s16, .s32, .s64, .f32, .f64 };
+--------------------------------------------------------------
+setp.CmpOp{.ftz}.f16           p, a, b;
+setp.CmpOp.BoolOp{.ftz}.f16    p, a, b, {!}c;
+setp.CmpOp{.ftz}.f16x2         p|q, a, b;
+setp.CmpOp.BoolOp{.ftz}.f16x2  p|q, a, b, {!}c;
+setp.CmpOp.bf16                p, a, b;
+setp.CmpOp.BoolOp.bf16         p, a, b, {!}c;
+setp.CmpOp.bf16x2              p|q, a, b;
+setp.CmpOp.BoolOp.bf16x2       p|q, a, b, {!}c;
+.CmpOp  = { .eq, .ne, .lt, .le, .gt, .ge, .equ, .neu, .ltu, .leu, .gtu, .geu, .num, .nan };
+.BoolOp = { .and, .or, .xor };

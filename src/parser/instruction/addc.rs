@@ -1,63 +1,93 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::RegisterOperand,
-        instruction::addc::{Addc, ConditionCode, DataType},
-    },
-};
+//! Original PTX specification:
+//!
+//! addc{.cc}.type  d, a, b;
+//! .type = { .u32, .s32, .u64, .s64 };
 
-impl PtxParser for ConditionCode {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        if stream.check(|token| matches!(token, PtxToken::Directive(name) if name == "cc")) {
-            stream.consume()?;
-            Ok(ConditionCode::Cc)
-        } else {
-            Ok(ConditionCode::None)
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::addc::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Type::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Type::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u64").is_ok() {
+                    return Ok(Type::U64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s64").is_ok() {
+                    return Ok(Type::S64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".s32", ".u64", ".s64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-
-        match directive.as_str() {
-            "u32" => Ok(DataType::U32),
-            "s32" => Ok(DataType::S32),
-            "u64" => Ok(DataType::U64),
-            "s64" => Ok(DataType::S64),
-            other => Err(unexpected_value(
-                span,
-                &[".u32", ".s32", ".u64", ".s64"],
-                format!(".{other}"),
-            )),
+    impl PtxParser for AddcCcType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("addc")?;
+            let saved_pos = stream.position();
+            let cc = stream.expect_string(".cc").is_ok();
+            if !cc {
+                stream.set_position(saved_pos);
+            }
+            let type_ = Type::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(AddcCcType {
+                cc,
+                type_,
+                d,
+                a,
+                b,
+            })
         }
     }
+
+
 }
 
-impl PtxParser for Addc {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "addc" {
-            return Err(unexpected_value(span, &["addc"], opcode));
-        }
-
-        let condition_code = ConditionCode::parse(stream)?;
-        let data_type = DataType::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let augend = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let addend = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Addc {
-            condition_code,
-            data_type,
-            destination,
-            augend,
-            addend,
-        })
-    }
-}

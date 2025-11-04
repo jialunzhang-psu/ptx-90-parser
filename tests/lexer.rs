@@ -39,12 +39,17 @@ fn test_directives() {
     let source = ".version .target .address_size .func .entry";
     let tokens = tokenize(source).unwrap();
 
-    assert_eq!(tokens.len(), 5);
-    assert_eq!(tokens[0].0, PtxToken::Directive("version".to_string()));
-    assert_eq!(tokens[1].0, PtxToken::Directive("target".to_string()));
-    assert_eq!(tokens[2].0, PtxToken::Directive("address_size".to_string()));
-    assert_eq!(tokens[3].0, PtxToken::Directive("func".to_string()));
-    assert_eq!(tokens[4].0, PtxToken::Directive("entry".to_string()));
+    assert_eq!(tokens.len(), 10); // Each directive is now 2 tokens: Dot + Identifier
+    assert_eq!(tokens[0].0, PtxToken::Dot);
+    assert_eq!(tokens[1].0, PtxToken::Identifier("version".to_string()));
+    assert_eq!(tokens[2].0, PtxToken::Dot);
+    assert_eq!(tokens[3].0, PtxToken::Identifier("target".to_string()));
+    assert_eq!(tokens[4].0, PtxToken::Dot);
+    assert_eq!(tokens[5].0, PtxToken::Identifier("address_size".to_string()));
+    assert_eq!(tokens[6].0, PtxToken::Dot);
+    assert_eq!(tokens[7].0, PtxToken::Identifier("func".to_string()));
+    assert_eq!(tokens[8].0, PtxToken::Dot);
+    assert_eq!(tokens[9].0, PtxToken::Identifier("entry".to_string()));
 }
 
 #[test]
@@ -55,7 +60,10 @@ fn test_integers() {
     assert_eq!(tokens.len(), 4);
     assert_eq!(tokens[0].0, PtxToken::DecimalInteger("42".to_string()));
     assert_eq!(tokens[1].0, PtxToken::HexInteger("0x2A".to_string()));
-    assert_eq!(tokens[2].0, PtxToken::BinaryInteger("0b101010".to_string()));
+    assert_eq!(
+        tokens[2].0,
+        PtxToken::BinaryInteger("0b101010".to_string())
+    );
     assert_eq!(tokens[3].0, PtxToken::OctalInteger("052".to_string()));
 }
 
@@ -66,9 +74,15 @@ fn test_floats() {
 
     assert_eq!(tokens.len(), 5);
     assert_eq!(tokens[0].0, PtxToken::Float("3.14".to_string()));
-    assert_eq!(tokens[1].0, PtxToken::FloatExponent("2.5e10".to_string()));
+    assert_eq!(
+        tokens[1].0,
+        PtxToken::FloatExponent("2.5e10".to_string())
+    );
     assert_eq!(tokens[2].0, PtxToken::FloatExponent("1e-5".to_string()));
-    assert_eq!(tokens[3].0, PtxToken::HexFloat("0F40490000".to_string()));
+    assert_eq!(
+        tokens[3].0,
+        PtxToken::HexFloat("0F40490000".to_string())
+    );
     assert_eq!(
         tokens[4].0,
         PtxToken::HexFloat("0D4009000000000000".to_string())
@@ -95,10 +109,16 @@ fn test_identifiers() {
     let tokens = tokenize(source).unwrap();
 
     assert_eq!(tokens.len(), 4);
-    assert_eq!(tokens[0].0, PtxToken::Identifier("kernel_main".to_string()));
+    assert_eq!(
+        tokens[0].0,
+        PtxToken::Identifier("kernel_main".to_string())
+    );
     assert_eq!(tokens[1].0, PtxToken::Identifier("my_var".to_string()));
     assert_eq!(tokens[2].0, PtxToken::Identifier("_temp".to_string()));
-    assert_eq!(tokens[3].0, PtxToken::Identifier("$special".to_string()));
+    assert_eq!(
+        tokens[3].0,
+        PtxToken::Identifier("$special".to_string())
+    );
 }
 
 #[test]
@@ -129,16 +149,17 @@ fn test_comments() {
     "#;
     let tokens = tokenize(source).unwrap();
 
-    // Should only have directives and numbers, comments are skipped
+    // Should only have identifiers and numbers, comments are skipped
+    // Directives are now Dot + Identifier
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "version"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "version"))
     );
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "target"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "target"))
     );
 }
 
@@ -174,13 +195,14 @@ fn test_ptx_instruction() {
     let source = "mov.u32 %r0, 42;";
     let tokens = tokenize(source).unwrap();
 
-    assert_eq!(tokens.len(), 6);
+    assert_eq!(tokens.len(), 7);  // mov + . + u32 + %r0 + , + 42 + ;
     assert_eq!(tokens[0].0, PtxToken::Identifier("mov".to_string()));
-    assert_eq!(tokens[1].0, PtxToken::Directive("u32".to_string()));
-    assert_eq!(tokens[2].0, PtxToken::Register("%r0".to_string()));
-    assert_eq!(tokens[3].0, PtxToken::Comma);
-    assert_eq!(tokens[4].0, PtxToken::DecimalInteger("42".to_string()));
-    assert_eq!(tokens[5].0, PtxToken::Semicolon);
+    assert_eq!(tokens[1].0, PtxToken::Dot);
+    assert_eq!(tokens[2].0, PtxToken::Identifier("u32".to_string()));
+    assert_eq!(tokens[3].0, PtxToken::Register("%r0".to_string()));
+    assert_eq!(tokens[4].0, PtxToken::Comma);
+    assert_eq!(tokens[5].0, PtxToken::DecimalInteger("42".to_string()));
+    assert_eq!(tokens[6].0, PtxToken::Semicolon);
 }
 
 #[test]
@@ -188,15 +210,16 @@ fn test_ptx_function_declaration() {
     let source = ".visible .entry kernel_name(.param .u64 ptr)";
     let tokens = tokenize(source).unwrap();
 
+    // Directives are now Dot + Identifier
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "visible"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "visible"))
     );
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "entry"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "entry"))
     );
     assert!(
         tokens
@@ -206,12 +229,12 @@ fn test_ptx_function_declaration() {
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "param"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "param"))
     );
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "u64"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "u64"))
     );
 }
 
@@ -235,8 +258,16 @@ fn test_memory_access() {
             .iter()
             .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "ld"))
     );
-    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::LBracket)));
-    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::RBracket)));
+    assert!(
+        tokens
+            .iter()
+            .any(|(t, _)| matches!(t, PtxToken::LBracket))
+    );
+    assert!(
+        tokens
+            .iter()
+            .any(|(t, _)| matches!(t, PtxToken::RBracket))
+    );
     assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::Plus)));
 }
 
@@ -278,26 +309,26 @@ fn test_complex_ptx_snippet() {
     assert!(result.is_ok());
     let tokens = result.unwrap();
 
-    // Verify we have the key tokens
+    // Verify we have the key tokens (directives are now Dot + Identifier)
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "version"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "version"))
     );
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "target"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "target"))
     );
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "entry"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "entry"))
     );
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "reg"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "reg"))
     );
     assert!(
         tokens
@@ -378,26 +409,26 @@ DONE:
 
     let tokens = result.unwrap();
 
-    // Verify key elements are present
+    // Verify key elements are present (directives are now Dot + Identifier)
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "version"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "version"))
     );
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "target"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "target"))
     );
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "visible"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "visible"))
     );
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Directive(s) if s == "entry"))
+            .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "entry"))
     );
     assert!(
         tokens
@@ -528,7 +559,11 @@ fn test_predicated_instructions() {
             .iter()
             .any(|(t, _)| matches!(t, PtxToken::Register(s) if s == "%p0"))
     );
-    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::Exclaim)));
+    assert!(
+        tokens
+            .iter()
+            .any(|(t, _)| matches!(t, PtxToken::Exclaim))
+    );
 }
 
 #[test]
@@ -559,8 +594,16 @@ fn test_vector_operations() {
     let tokens = result.unwrap();
 
     // Verify vector syntax elements
-    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::LBrace)));
-    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::RBrace)));
+    assert!(
+        tokens
+            .iter()
+            .any(|(t, _)| matches!(t, PtxToken::LBrace))
+    );
+    assert!(
+        tokens
+            .iter()
+            .any(|(t, _)| matches!(t, PtxToken::RBrace))
+    );
     assert!(
         tokens
             .iter()
@@ -675,12 +718,12 @@ fn test_all_directives() {
 
     let tokens = result.unwrap();
 
-    // Just verify we got a bunch of directives
-    let directive_count = tokens
+    // Just verify we got a bunch of identifiers (directives are now Dot + Identifier)
+    let identifier_count = tokens
         .iter()
-        .filter(|(t, _)| matches!(t, PtxToken::Directive(_)))
+        .filter(|(t, _)| matches!(t, PtxToken::Identifier(_)))
         .count();
-    assert!(directive_count > 20);
+    assert!(identifier_count > 20);
 }
 
 #[test]

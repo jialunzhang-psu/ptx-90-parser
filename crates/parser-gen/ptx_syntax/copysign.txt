@@ -1,0 +1,2 @@
+copysign.type  d, a, b;
+.type = { .f32, .f64 };

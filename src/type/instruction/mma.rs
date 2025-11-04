@@ -1,413 +1,615 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! // Half precision floating point type:
+//! mma.sync.aligned.m8n8k4.alayout.blayout.dtype.f16.f16.ctype  d, a, b, c;
+//! mma.sync.aligned.m16n8k8.row.col.dtype.f16.f16.ctype  d, a, b, c;
+//! mma.sync.aligned.m16n8k16.row.col.dtype.f16.f16.ctype d, a, b, c;
+//! .alayout = {.row, .col};
+//! .blayout = {.row, .col};
+//! .ctype   = {.f16, .f32};
+//! .dtype   = {.f16, .f32};
+//! ----------------------------------------------------
+//! // Alternate floating point type:
+//! // Alternate floating point type:
+//! mma.sync.aligned.m16n8k4.row.col.f32.tf32.tf32.f32        d, a, b, c;
+//! mma.sync.aligned.m16n8k8.row.col.f32.atype.btype.f32      d, a, b, c;
+//! mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32       d, a, b, c;
+//! mma.sync.aligned.shape.row.col.dtype.f8type.f8type.ctype  d, a, b, c;
+//! mma.sync.aligned.m16n8k32.row.col.kind.dtype.f8f6f4type.f8f6f4type.ctype d, a, b, c;
+//! .atype      = {.bf16, .tf32};
+//! .btype      = {.bf16, .tf32};
+//! .f8type     = {.e4m3, .e5m2};
+//! .f8f6f4type = {.e4m3, .e5m2, .e3m2, .e2m3, .e2m1};
+//! .ctype      = {.f16, .f32};
+//! .dtype      = {.f16, .f32};
+//! .shape      = {.m16n8k16, .m16n8k32};
+//! .kind       = {.kind::f8f6f4};
+//! ----------------------------------------------------
+//! // Alternate floating point type:
+//! // Alternate floating point type with block scaling:
+//! mma.sync.aligned.m16n8k64.row.col.kind.block_scale{.scale_vec_size}.f32.e2m1.e2m1.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};
+//! .kind           = {.kind::mxf4};
+//! .scale_vec_size = {.scale_vec::2X};
+//! .stype          = {.ue8m0};
+//! ----------------------------------------------------
+//! // Alternate floating point type:
+//! mma.sync.aligned.m16n8k64.row.col.kind.block_scale.scale_vec_size.f32.e2m1.e2m1.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};
+//! .kind           = {.kind::mxf4nvf4};
+//! .scale_vec_size = {.scale_vec::2X, .scale_vec::4X};
+//! .stype          = {.ue8m0, .ue4m3};
+//! ----------------------------------------------------
+//! // Alternate floating point type:
+//! mma.sync.aligned.m16n8k32.row.col.kind.block_scale{.scale_vec_size}.f32.f8f6f4type.f8f6f4type.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};
+//! .kind           = {.kind::mxf8f6f4};
+//! .scale_vec_size = {.scale_vec::1X};
+//! .f8f6f4type     = {.e4m3, .e5m2, .e3m2, .e2m3, .e2m1};
+//! .stype          = {.ue8m0};
+//! ----------------------------------------------------
+//! // Alternate floating point type:
+//! // Double precision floating point type:
+//! mma.sync.aligned.shape.row.col.f64.f64.f64.f64 d, a, b, c;
+//! .shape   = {.m8n84, .m16n8k4, .m16n8k8, .m16n8k16};
+//! ----------------------------------------------------
+//! // Alternate floating point type:
+//! // Integer type:
+//! mma.sync.aligned.shape.row.col{.satfinite}.s32.atype.btype.s32 d, a, b, c;
+//! .shape   = {.m8n8k16, .m16n8k16, .m16n8k32};
+//! .atype   = {.u8, .s8};
+//! .btype   = {.u8, .s8};
+//! ----------------------------------------------------
+//! // Alternate floating point type:
+//! mma.sync.aligned.shape.row.col{.satfinite}.s32.atype.btype.s32 d, a, b, c;
+//! .shape   = {.m8n8k32, .m16n8k32, .m16n8k64};
+//! .atype   = {.u4, .s4};
+//! .btype   = {.u4, .s4};
+//! ----------------------------------------------------
+//! // Alternate floating point type:
+//! // Single bit:
+//! mma.sync.aligned.shape.row.col.s32.b1.b1.s32.bitOp.popc d, a, b, c;
+//! .bitOp = {.xor, .and};
+//! .shape = {.m8n8k128, .m16n8k128, .m16n8k256};
 
-/// Type-safe representation of every `mma` syntax variant described in the cache specification.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum MmaInstruction {
-    /// `mma.sync.aligned.m8n8k4.alayout.blayout.dtype.f16.f16.ctype d, a, b, c;`
-    SyncAlignedM8N8K4(SyncAlignedM8N8K4),
-    /// `mma.sync.aligned.m16n8k8.row.col.dtype.f16.f16.ctype d, a, b, c;`
-    SyncAlignedM16N8K8(SyncAlignedM16N8K8),
-    /// `mma.sync.aligned.m16n8k16.row.col.dtype.f16.f16.ctype d, a, b, c;`
-    SyncAlignedM16N8K16(SyncAlignedM16N8K16),
-    /// `mma.sync.aligned.m16n8k4.row.col.f32.tf32.tf32.f32 d, a, b, c;`
-    SyncAlignedM16N8K4Tf32(SyncAlignedM16N8K4Tf32),
-    /// `mma.sync.aligned.m16n8k8.row.col.f32.atype.btype.f32 d, a, b, c;`
-    SyncAlignedM16N8K8Mixed(SyncAlignedM16N8K8Mixed),
-    /// `mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32 d, a, b, c;`
-    SyncAlignedM16N8K16Bf16(SyncAlignedM16N8K16Bf16),
-    /// `mma.sync.aligned.shape.row.col.dtype.f8type.f8type.ctype d, a, b, c;`
-    SyncAlignedF8(SyncAlignedF8),
-    /// `mma.sync.aligned.m16n8k32.row.col.kind.dtype.f8f6f4type.f8f6f4type.ctype d, a, b, c;`
-    SyncAlignedM16N8K32F8F6F4(SyncAlignedM16N8K32F8F6F4),
-    /// `mma.sync.aligned.m16n8k64.row.col.kind.block_scale{.scale_vec_size}.f32.e2m1.e2m1.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};`
-    SyncAlignedBlockScaleM16N8K64MxF4(SyncAlignedBlockScaleM16N8K64MxF4),
-    /// `mma.sync.aligned.m16n8k64.row.col.kind.block_scale.scale_vec_size.f32.e2m1.e2m1.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};`
-    SyncAlignedBlockScaleM16N8K64MxF4NvF4(SyncAlignedBlockScaleM16N8K64MxF4NvF4),
-    /// `mma.sync.aligned.m16n8k32.row.col.kind.block_scale{.scale_vec_size}.f32.f8f6f4type.f8f6f4type.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};`
-    SyncAlignedBlockScaleM16N8K32MxF8F6F4(SyncAlignedBlockScaleM16N8K32MxF8F6F4),
-    /// `mma.sync.aligned.shape.row.col.f64.f64.f64.f64 d, a, b, c;`
-    SyncAlignedF64(SyncAlignedF64),
-    /// `mma.sync.aligned.shape.row.col{.satfinite}.s32.atype.btype.s32 d, a, b, c;` with `.atype`/`.btype` in `{.u8, .s8}`
-    SyncAlignedInteger8Bit(SyncAlignedInteger8Bit),
-    /// `mma.sync.aligned.shape.row.col{.satfinite}.s32.atype.btype.s32 d, a, b, c;` with `.atype`/`.btype` in `{.u4, .s4}`
-    SyncAlignedInteger4Bit(SyncAlignedInteger4Bit),
-    /// `mma.sync.aligned.shape.row.col.s32.b1.b1.s32.bitOp.popc d, a, b, c;`
-    SyncAlignedSingleBit(SyncAlignedSingleBit),
+#![allow(unused)]
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Alayout {
+        Row, // .row
+        Col, // .col
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Blayout {
+        Row, // .row
+        Col, // .col
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Dtype {
+        F16, // .f16
+        F32, // .f32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Ctype {
+        F16, // .f16
+        F32, // .f32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedM8n8k4AlayoutBlayoutDtypeF16F16Ctype {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub m8n8k4: (), // .m8n8k4
+        pub alayout: Alayout, // .alayout
+        pub blayout: Blayout, // .blayout
+        pub dtype: Dtype, // .dtype
+        pub f16: (), // .f16
+        pub f162: (), // .f16
+        pub ctype: Ctype, // .ctype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedM16n8k8RowColDtypeF16F16Ctype {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub m16n8k8: (), // .m16n8k8
+        pub row: (), // .row
+        pub col: (), // .col
+        pub dtype: Dtype, // .dtype
+        pub f16: (), // .f16
+        pub f162: (), // .f16
+        pub ctype: Ctype, // .ctype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedM16n8k16RowColDtypeF16F16Ctype {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub m16n8k16: (), // .m16n8k16
+        pub row: (), // .row
+        pub col: (), // .col
+        pub dtype: Dtype, // .dtype
+        pub f16: (), // .f16
+        pub f162: (), // .f16
+        pub ctype: Ctype, // .ctype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }
 
-/// `mma.sync.aligned.m8n8k4.alayout.blayout.dtype.f16.f16.ctype d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedM8N8K4 {
-    pub a_layout: Layout,
-    pub b_layout: Layout,
-    pub d_type: DataType,
-    pub c_type: DataType,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
+pub mod section_1 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Atype {
+        Bf16, // .bf16
+        Tf32, // .tf32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Btype {
+        Bf16, // .bf16
+        Tf32, // .tf32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Shape {
+        M16n8k16, // .m16n8k16
+        M16n8k32, // .m16n8k32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Dtype {
+        F16, // .f16
+        F32, // .f32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum F8type {
+        E4m3, // .e4m3
+        E5m2, // .e5m2
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum F8type1 {
+        E4m3, // .e4m3
+        E5m2, // .e5m2
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Ctype {
+        F16, // .f16
+        F32, // .f32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Kind {
+        KindF8f6f4, // .kind::f8f6f4
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum F8f6f4type {
+        E4m3, // .e4m3
+        E5m2, // .e5m2
+        E3m2, // .e3m2
+        E2m3, // .e2m3
+        E2m1, // .e2m1
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum F8f6f4type1 {
+        E4m3, // .e4m3
+        E5m2, // .e5m2
+        E3m2, // .e3m2
+        E2m3, // .e2m3
+        E2m1, // .e2m1
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedM16n8k4RowColF32Tf32Tf32F32 {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub m16n8k4: (), // .m16n8k4
+        pub row: (), // .row
+        pub col: (), // .col
+        pub f32: (), // .f32
+        pub tf32: (), // .tf32
+        pub tf322: (), // .tf32
+        pub f322: (), // .f32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedM16n8k8RowColF32AtypeBtypeF32 {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub m16n8k8: (), // .m16n8k8
+        pub row: (), // .row
+        pub col: (), // .col
+        pub f32: (), // .f32
+        pub atype: Atype, // .atype
+        pub btype: Btype, // .btype
+        pub f322: (), // .f32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedM16n8k16RowColF32Bf16Bf16F32 {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub m16n8k16: (), // .m16n8k16
+        pub row: (), // .row
+        pub col: (), // .col
+        pub f32: (), // .f32
+        pub bf16: (), // .bf16
+        pub bf162: (), // .bf16
+        pub f322: (), // .f32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedShapeRowColDtypeF8typeF8typeCtype {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub shape: Shape, // .shape
+        pub row: (), // .row
+        pub col: (), // .col
+        pub dtype: Dtype, // .dtype
+        pub f8type: F8type, // .f8type
+        pub f8type1: F8type1, // .f8type
+        pub ctype: Ctype, // .ctype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedM16n8k32RowColKindDtypeF8f6f4typeF8f6f4typeCtype {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub m16n8k32: (), // .m16n8k32
+        pub row: (), // .row
+        pub col: (), // .col
+        pub kind: Kind, // .kind
+        pub dtype: Dtype, // .dtype
+        pub f8f6f4type: F8f6f4type, // .f8f6f4type
+        pub f8f6f4type1: F8f6f4type1, // .f8f6f4type
+        pub ctype: Ctype, // .ctype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }
 
-/// `mma.sync.aligned.m16n8k8.row.col.dtype.f16.f16.ctype d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedM16N8K8 {
-    pub d_type: DataType,
-    pub c_type: DataType,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
+pub mod section_2 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Kind {
+        KindMxf4, // .kind::mxf4
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum ScaleVecSize {
+        ScaleVec2x, // .scale_vec::2X
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Stype {
+        Ue8m0, // .ue8m0
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub m16n8k64: (), // .m16n8k64
+        pub row: (), // .row
+        pub col: (), // .col
+        pub kind: Kind, // .kind
+        pub block_scale: (), // .block_scale
+        pub scale_vec_size: Option<ScaleVecSize>, // {.scale_vec_size}
+        pub f32: (), // .f32
+        pub e2m1: (), // .e2m1
+        pub e2m12: (), // .e2m1
+        pub f322: (), // .f32
+        pub stype: Stype, // .stype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+        pub scale_a_data: Operand, // scale-a-data
+        pub byte_id_a: (Operand, Operand), // {byte-id-a, thread-id-a}
+        pub scale_b_data: Operand, // scale-b-data
+        pub byte_id_b: (Operand, Operand), // {byte-id-b, thread-id-b}
+    }
+
 }
 
-/// `mma.sync.aligned.m16n8k16.row.col.dtype.f16.f16.ctype d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedM16N8K16 {
-    pub d_type: DataType,
-    pub c_type: DataType,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
+pub mod section_3 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Kind {
+        KindMxf4nvf4, // .kind::mxf4nvf4
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum ScaleVecSize {
+        ScaleVec2x, // .scale_vec::2X
+        ScaleVec4x, // .scale_vec::4X
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Stype {
+        Ue8m0, // .ue8m0
+        Ue4m3, // .ue4m3
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype1 {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub m16n8k64: (), // .m16n8k64
+        pub row: (), // .row
+        pub col: (), // .col
+        pub kind: Kind, // .kind
+        pub block_scale: (), // .block_scale
+        pub scale_vec_size: ScaleVecSize, // .scale_vec_size
+        pub f32: (), // .f32
+        pub e2m1: (), // .e2m1
+        pub e2m12: (), // .e2m1
+        pub f322: (), // .f32
+        pub stype: Stype, // .stype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+        pub scale_a_data: Operand, // scale-a-data
+        pub byte_id_a: (Operand, Operand), // {byte-id-a, thread-id-a}
+        pub scale_b_data: Operand, // scale-b-data
+        pub byte_id_b: (Operand, Operand), // {byte-id-b, thread-id-b}
+    }
+
 }
 
-/// `mma.sync.aligned.m16n8k4.row.col.f32.tf32.tf32.f32 d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedM16N8K4Tf32 {
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
+pub mod section_4 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Kind {
+        KindMxf8f6f4, // .kind::mxf8f6f4
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum ScaleVecSize {
+        ScaleVec1x, // .scale_vec::1X
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum F8f6f4type {
+        E4m3, // .e4m3
+        E5m2, // .e5m2
+        E3m2, // .e3m2
+        E2m3, // .e2m3
+        E2m1, // .e2m1
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum F8f6f4type1 {
+        E4m3, // .e4m3
+        E5m2, // .e5m2
+        E3m2, // .e3m2
+        E2m3, // .e2m3
+        E2m1, // .e2m1
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Stype {
+        Ue8m0, // .ue8m0
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedM16n8k32RowColKindBlockScaleScaleVecSizeF32F8f6f4typeF8f6f4typeF32Stype {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub m16n8k32: (), // .m16n8k32
+        pub row: (), // .row
+        pub col: (), // .col
+        pub kind: Kind, // .kind
+        pub block_scale: (), // .block_scale
+        pub scale_vec_size: Option<ScaleVecSize>, // {.scale_vec_size}
+        pub f32: (), // .f32
+        pub f8f6f4type: F8f6f4type, // .f8f6f4type
+        pub f8f6f4type1: F8f6f4type1, // .f8f6f4type
+        pub f322: (), // .f32
+        pub stype: Stype, // .stype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+        pub scale_a_data: Operand, // scale-a-data
+        pub byte_id_a: (Operand, Operand), // {byte-id-a, thread-id-a}
+        pub scale_b_data: Operand, // scale-b-data
+        pub byte_id_b: (Operand, Operand), // {byte-id-b, thread-id-b}
+    }
+
 }
 
-/// `mma.sync.aligned.m16n8k8.row.col.f32.atype.btype.f32 d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedM16N8K8Mixed {
-    pub a_type: AlternateMatrixType,
-    pub b_type: AlternateMatrixType,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
+pub mod section_5 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Shape {
+        M8n84, // .m8n84
+        M16n8k4, // .m16n8k4
+        M16n8k8, // .m16n8k8
+        M16n8k16, // .m16n8k16
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedShapeRowColF64F64F64F64 {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub shape: Shape, // .shape
+        pub row: (), // .row
+        pub col: (), // .col
+        pub f64: (), // .f64
+        pub f642: (), // .f64
+        pub f644: (), // .f64
+        pub f646: (), // .f64
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }
 
-/// `mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32 d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedM16N8K16Bf16 {
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
+pub mod section_6 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Shape {
+        M8n8k16, // .m8n8k16
+        M16n8k16, // .m16n8k16
+        M16n8k32, // .m16n8k32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Atype {
+        U8, // .u8
+        S8, // .s8
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Btype {
+        U8, // .u8
+        S8, // .s8
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS32 {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub shape: Shape, // .shape
+        pub row: (), // .row
+        pub col: (), // .col
+        pub satfinite: bool, // {.satfinite}
+        pub s32: (), // .s32
+        pub atype: Atype, // .atype
+        pub btype: Btype, // .btype
+        pub s322: (), // .s32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }
 
-/// `mma.sync.aligned.shape.row.col.dtype.f8type.f8type.ctype d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedF8 {
-    pub shape: F8Shape,
-    pub d_type: DataType,
-    pub a_type: F8Type,
-    pub b_type: F8Type,
-    pub c_type: DataType,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
+pub mod section_7 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Shape {
+        M8n8k32, // .m8n8k32
+        M16n8k32, // .m16n8k32
+        M16n8k64, // .m16n8k64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Atype {
+        U4, // .u4
+        S4, // .s4
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Btype {
+        U4, // .u4
+        S4, // .s4
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS321 {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub shape: Shape, // .shape
+        pub row: (), // .row
+        pub col: (), // .col
+        pub satfinite: bool, // {.satfinite}
+        pub s32: (), // .s32
+        pub atype: Atype, // .atype
+        pub btype: Btype, // .btype
+        pub s322: (), // .s32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }
 
-/// `mma.sync.aligned.m16n8k32.row.col.kind.dtype.f8f6f4type.f8f6f4type.ctype d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedM16N8K32F8F6F4 {
-    pub d_type: DataType,
-    pub a_type: F8F6F4Type,
-    pub b_type: F8F6F4Type,
-    pub c_type: DataType,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
-}
+pub mod section_8 {
+    use crate::r#type::common::*;
 
-/// `mma.sync.aligned.m16n8k64.row.col.kind.block_scale{.scale_vec_size}.f32.e2m1.e2m1.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedBlockScaleM16N8K64MxF4 {
-    /// `.scale_vec_size`
-    pub scale_vec_size: Option<MxF4ScaleVecSize>,
-    /// `.stype`
-    pub stype: MxF4ScaleDataType,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
-    pub block_scale: BlockScaleOperands,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Shape {
+        M8n8k128, // .m8n8k128
+        M16n8k128, // .m16n8k128
+        M16n8k256, // .m16n8k256
+    }
 
-/// `mma.sync.aligned.m16n8k64.row.col.kind.block_scale.scale_vec_size.f32.e2m1.e2m1.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedBlockScaleM16N8K64MxF4NvF4 {
-    /// `.scale_vec_size`
-    pub scale_vec_size: MxF4NvF4ScaleVecSize,
-    pub stype: MxF4NvF4ScaleDataType,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
-    pub block_scale: BlockScaleOperands,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Bitop {
+        Xor, // .xor
+        And, // .and
+    }
 
-/// `mma.sync.aligned.m16n8k32.row.col.kind.block_scale{.scale_vec_size}.f32.f8f6f4type.f8f6f4type.f32.stype d, a, b, c, scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b};`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedBlockScaleM16N8K32MxF8F6F4 {
-    /// `.scale_vec_size`
-    pub scale_vec_size: Option<MxF8F6F4ScaleVecSize>,
-    pub a_type: F8F6F4Type,
-    pub b_type: F8F6F4Type,
-    /// `.stype`
-    pub stype: MxF8F6F4ScaleDataType,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
-    pub block_scale: BlockScaleOperands,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MmaSyncAlignedShapeRowColS32B1B1S32BitopPopc {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub shape: Shape, // .shape
+        pub row: (), // .row
+        pub col: (), // .col
+        pub s32: (), // .s32
+        pub b1: (), // .b1
+        pub b12: (), // .b1
+        pub s322: (), // .s32
+        pub bitop: Bitop, // .bitOp
+        pub popc: (), // .popc
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
 
-/// `mma.sync.aligned.shape.row.col.f64.f64.f64.f64 d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedF64 {
-    pub shape: F64Shape,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
-}
-
-/// `mma.sync.aligned.shape.row.col{.satfinite}.s32.atype.btype.s32 d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedInteger8Bit {
-    pub shape: Integer8Shape,
-    /// `true` when `.satfinite` is present
-    pub satfinite: bool,
-    pub a_type: Integer8Type,
-    pub b_type: Integer8Type,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
-}
-
-/// `mma.sync.aligned.shape.row.col{.satfinite}.s32.atype.btype.s32 d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedInteger4Bit {
-    pub shape: Integer4Shape,
-    /// `true` when `.satfinite` is present
-    pub satfinite: bool,
-    pub a_type: Integer4Type,
-    pub b_type: Integer4Type,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
-}
-
-/// `mma.sync.aligned.shape.row.col.s32.b1.b1.s32.bitOp.popc d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyncAlignedSingleBit {
-    pub shape: SingleBitShape,
-    pub bit_op: BitOp,
-    pub destination: RegisterOperand,
-    pub operand_a: RegisterOperand,
-    pub operand_b: RegisterOperand,
-    pub operand_c: RegisterOperand,
-}
-
-/// `.alayout` / `.blayout`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Layout {
-    /// `.row`
-    Row,
-    /// `.col`
-    Col,
-}
-
-/// `.dtype` / `.ctype`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.f16`
-    F16,
-    /// `.f32`
-    F32,
-}
-
-/// `.atype` / `.btype` with alternate floating point inputs
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AlternateMatrixType {
-    /// `.bf16`
-    Bf16,
-    /// `.tf32`
-    Tf32,
-}
-
-/// `.f8type`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum F8Type {
-    /// `.e4m3`
-    E4M3,
-    /// `.e5m2`
-    E5M2,
-}
-
-/// `.f8f6f4type`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum F8F6F4Type {
-    /// `.e4m3`
-    E4M3,
-    /// `.e5m2`
-    E5M2,
-    /// `.e3m2`
-    E3M2,
-    /// `.e2m3`
-    E2M3,
-    /// `.e2m1`
-    E2M1,
-}
-
-/// `.shape`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum F8Shape {
-    /// `.m16n8k16`
-    M16N8K16,
-    /// `.m16n8k32`
-    M16N8K32,
-}
-
-/// `.shape`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum F64Shape {
-    /// `.m8n8k4`
-    M8N8K4,
-    /// `.m16n8k4`
-    M16N8K4,
-    /// `.m16n8k8`
-    M16N8K8,
-    /// `.m16n8k16`
-    M16N8K16,
-}
-
-/// `.shape`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Integer8Shape {
-    /// `.m8n8k16`
-    M8N8K16,
-    /// `.m16n8k16`
-    M16N8K16,
-    /// `.m16n8k32`
-    M16N8K32,
-}
-
-/// `.shape`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Integer4Shape {
-    /// `.m8n8k32`
-    M8N8K32,
-    /// `.m16n8k32`
-    M16N8K32,
-    /// `.m16n8k64`
-    M16N8K64,
-}
-
-/// `.atype` / `.btype`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Integer8Type {
-    /// `.u8`
-    U8,
-    /// `.s8`
-    S8,
-}
-
-/// `.atype` / `.btype`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Integer4Type {
-    /// `.u4`
-    U4,
-    /// `.s4`
-    S4,
-}
-
-/// `.shape`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SingleBitShape {
-    /// `.m8n8k128`
-    M8N8K128,
-    /// `.m16n8k128`
-    M16N8K128,
-    /// `.m16n8k256`
-    M16N8K256,
-}
-
-/// `.bitOp`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum BitOp {
-    /// `.xor`
-    Xor,
-    /// `.and`
-    And,
-}
-
-/// `scale-a-data, {byte-id-a, thread-id-a}, scale-b-data, {byte-id-b, thread-id-b}`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BlockScaleOperands {
-    pub scale_a_data: RegisterOperand,
-    /// `byte-id-a`
-    pub scale_a_byte_id: u16,
-    /// `thread-id-a`
-    pub scale_a_thread_id: u16,
-    pub scale_b_data: RegisterOperand,
-    /// `byte-id-b`
-    pub scale_b_byte_id: u16,
-    /// `thread-id-b`
-    pub scale_b_thread_id: u16,
-}
-
-/// `.scale_vec_size`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MxF4ScaleVecSize {
-    /// `.scale_vec::2X`
-    TwoX,
-}
-
-/// `.scale_vec_size`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MxF4NvF4ScaleVecSize {
-    /// `.scale_vec::2X`
-    TwoX,
-    /// `.scale_vec::4X`
-    FourX,
-}
-
-/// `.scale_vec_size`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MxF8F6F4ScaleVecSize {
-    /// `.scale_vec::1X`
-    OneX,
-}
-
-/// `.stype = {.ue8m0}`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MxF4ScaleDataType {
-    /// `.ue8m0`
-    UE8M0,
-}
-
-/// `.stype = {.ue8m0, .ue4m3}`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MxF4NvF4ScaleDataType {
-    /// `.ue8m0`
-    UE8M0,
-    /// `.ue4m3`
-    UE4M3,
-}
-
-/// `.stype = {.ue8m0}`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MxF8F6F4ScaleDataType {
-    /// `.ue8m0`
-    UE8M0,
 }

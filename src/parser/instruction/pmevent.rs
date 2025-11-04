@@ -1,39 +1,42 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::pmevent::*},
-};
+//! Original PTX specification:
+//!
+//! pmevent       a;    // trigger a single performance monitor event
+//! pmevent.mask  a;    // trigger one or more performance monitor events
 
-impl PtxParser for Pmevent {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "pmevent")?;
+#![allow(unused)]
 
-        let is_mask = if stream.check(|token| matches!(token, PtxToken::Directive(_))) {
-            let (modifier, span) = stream.expect_directive()?;
-            if modifier != "mask" {
-                return Err(unexpected_value(span, &[".mask"], format!(".{modifier}")));
-            }
-            true
-        } else if stream
-            .consume_if(|token| matches!(token, PtxToken::Dot))
-            .is_some()
-        {
-            let (modifier, span) = stream.expect_identifier()?;
-            if modifier != "mask" {
-                return Err(unexpected_value(span, &["mask"], modifier));
-            }
-            true
-        } else {
-            false
-        };
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-        let immediate = Immediate::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::pmevent::section_0::*;
 
-        Ok(if is_mask {
-            Pmevent::Mask { mask: immediate }
-        } else {
-            Pmevent::Single { event: immediate }
-        })
+    impl PtxParser for Pmevent {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("pmevent")?;
+            let a = Operand::parse(stream)?;
+            Ok(Pmevent {
+                a,
+            })
+        }
     }
+
+
+    impl PtxParser for PmeventMask {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("pmevent")?;
+            stream.expect_string(".mask")?;
+            let mask = ();
+            let a = Operand::parse(stream)?;
+            Ok(PmeventMask {
+                mask,
+                a,
+            })
+        }
+    }
+
+
 }
+

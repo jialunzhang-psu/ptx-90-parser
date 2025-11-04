@@ -1,0 +1,2 @@
+pmevent       a;    // trigger a single performance monitor event
+pmevent.mask  a;    // trigger one or more performance monitor events

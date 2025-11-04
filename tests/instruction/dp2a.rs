@@ -1,8 +1,8 @@
 use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
-    r#type::common::RegisterOperand,
-    r#type::instruction::dp2a::{DataType as Dp2aDataType, Dp2a, Mode as Dp2aMode},
+    r#type::common::{Operand, RegisterOperand},
+    r#type::instruction::dp2a::{Atype, Btype, Dp2a, Mode as Dp2aMode},
 };
 
 #[test]
@@ -11,12 +11,12 @@ fn parses_dp2a_lo_with_mixed_types() {
         parse::<Dp2a>("dp2a.lo.u32.s32 %r0, %r1, %r2, %r3;"),
         Dp2a {
             mode: Dp2aMode::Lo,
-            atype: Dp2aDataType::U32,
-            btype: Dp2aDataType::S32,
-            destination: RegisterOperand::Single("%r0".into()),
-            a: RegisterOperand::Single("%r1".into()),
-            b: RegisterOperand::Single("%r2".into()),
-            c: RegisterOperand::Single("%r3".into()),
+            atype: Atype::U32,
+            btype: Btype::S32,
+            d: Operand::Register(RegisterOperand::Single("%r0".into())),
+            a: Operand::Register(RegisterOperand::Single("%r1".into())),
+            b: Operand::Register(RegisterOperand::Single("%r2".into())),
+            c: Operand::Register(RegisterOperand::Single("%r3".into())),
         }
     );
     assert_roundtrip::<Dp2a>("dp2a.lo.u32.s32 %r0, %r1, %r2, %r3;");
@@ -28,12 +28,12 @@ fn parses_dp2a_hi_with_signed_types() {
         parse::<Dp2a>("dp2a.hi.s32.s32 %rd4, %rd1, %rd2, %rd3;"),
         Dp2a {
             mode: Dp2aMode::Hi,
-            atype: Dp2aDataType::S32,
-            btype: Dp2aDataType::S32,
-            destination: RegisterOperand::Single("%rd4".into()),
-            a: RegisterOperand::Single("%rd1".into()),
-            b: RegisterOperand::Single("%rd2".into()),
-            c: RegisterOperand::Single("%rd3".into()),
+            atype: Atype::S32,
+            btype: Btype::S32,
+            d: Operand::Register(RegisterOperand::Single("%rd4".into())),
+            a: Operand::Register(RegisterOperand::Single("%rd1".into())),
+            b: Operand::Register(RegisterOperand::Single("%rd2".into())),
+            c: Operand::Register(RegisterOperand::Single("%rd3".into())),
         }
     );
     assert_roundtrip::<Dp2a>("dp2a.hi.s32.s32 %rd4, %rd1, %rd2, %rd3;");

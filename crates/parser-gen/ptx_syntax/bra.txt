@@ -1,0 +1,2 @@
+bra{.uni}  tgt;           // tgt is a label
+bra{.uni}  tgt;           // unconditional branch

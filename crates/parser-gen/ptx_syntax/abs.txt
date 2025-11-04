@@ -1,0 +1,10 @@
+abs.type  d, a;
+.type = { .s16, .s32, .s64 };
+
+abs{.ftz}.f32  d, a;
+abs.f64        d, a;
+
+abs{.ftz}.f16    d, a;
+abs{.ftz}.f16x2  d, a;
+abs.bf16         d, a;
+abs.bf16x2       d, a;

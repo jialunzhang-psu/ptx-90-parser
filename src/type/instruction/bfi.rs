@@ -1,27 +1,28 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! bfi.type  f, a, b, c, d;
+//! .type = { .b32, .b64 };
 
-/// `bfi.type f, a, b, c, d;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Bfi {
-    /// `.type`
-    pub data_type: DataType,
-    /// `f`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub source: RegisterOperand,
-    /// `b`
-    pub base: RegisterOperand,
-    /// `c`
-    pub position: RegisterOperand,
-    /// `d`
-    pub length: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.type = { .b32, .b64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b32`
-    B32,
-    /// `.b64`
-    B64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        B32, // .b32
+        B64, // .b64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BfiType {
+        pub type_: Type, // .type
+        pub f: Operand, // f
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+        pub d: Operand, // d
+    }
+
 }

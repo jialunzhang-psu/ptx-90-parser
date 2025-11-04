@@ -7,7 +7,7 @@ fn assert_roundtrip(source: &str) {
 
 #[test]
 fn parses_simple_exit_instruction() {
-    assert_eq!(parse::<Exit>("exit;"), Exit);
+    assert_eq!(parse::<Exit>("exit;"), Exit {});
     assert_roundtrip("exit;");
 }
 

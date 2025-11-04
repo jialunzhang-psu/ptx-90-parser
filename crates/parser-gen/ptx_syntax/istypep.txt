@@ -1,0 +1,2 @@
+istypep.type   p, a;  // result is .pred
+.type = { .texref, .samplerref, .surfref };

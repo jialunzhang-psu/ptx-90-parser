@@ -1,0 +1,8 @@
+cvt.pack.sat.convertType.abType  d, a, b;
+.convertType  = { .u16, .s16 };
+.abType       = { .s32 };
+----------------------------------------------------------------
+cvt.pack.sat.convertType.abType.cType  d, a, b, c;
+.convertType  = { .u2, .s2, .u4, .s4, .u8, .s8 };
+.abType       = { .s32 };
+.cType        = { .b32 };

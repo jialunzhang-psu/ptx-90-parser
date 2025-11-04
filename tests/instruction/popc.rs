@@ -2,8 +2,8 @@ use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
-        common::RegisterOperand,
-        instruction::popc::{DataType, Popc},
+        common::{Operand, RegisterOperand},
+        instruction::popc::{Type, Popc},
     },
 };
 
@@ -13,9 +13,9 @@ fn parses_popc_instruction() {
     assert_eq!(
         parse::<Popc>("popc.b32 %r1, %r2;"),
         Popc {
-            data_type: DataType::B32,
-            destination: RegisterOperand::Single("%r1".into()),
-            source: RegisterOperand::Single("%r2".into()),
+            type_: Type::B32,
+            d: Operand::Register(RegisterOperand::Single("%r1".into())),
+            a: Operand::Register(RegisterOperand::Single("%r2".into())),
         }
     );
 }

@@ -1,0 +1,15 @@
+// 1. Floating-point type without block scaling:
+tcgen05.mma.ws.cta_group::1.kind{.collector_usage}    [d-tmem],  a-desc,  b-desc,  idesc,
+enable-input-d {, zero-column-mask-desc };
+tcgen05.mma.ws.cta_group::1.kind{.collector_usage}    [d-tmem], [a-tmem], b-desc, idesc,
+enable-input-d {, zero-column-mask-desc };
+.kind = { .kind::f16, .kind::tf32, .kind::f8f6f4 };
+----------------------------------------------------------------------------------
+// 2. Integer type:
+tcgen05.mma.ws.cta_group::1.kind::i8{.collector_usage} [d-tmem],  a-desc,  b-desc, idesc,
+enable-input-d {, zero-column-mask-desc};
+tcgen05.mma.ws.cta_group::1.kind::i8{.collector_usage} [d-tmem], [a-tmem], b-desc, idesc,
+enable-input-d {, zero-column-mask-desc};
+.collector_usage = { .collector::buffer::op };
+::buffer = { ::b0, ::b1, ::b2, ::b3 };
+::op   = { ::fill, ::use, ::lastuse, ::discard};

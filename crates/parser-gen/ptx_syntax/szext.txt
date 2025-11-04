@@ -1,0 +1,3 @@
+szext.mode.type  d, a, b;
+.mode = { .clamp, .wrap };
+.type = { .u32, .s32 };

@@ -1,0 +1,8 @@
+prefetch{.space}.level                    [a];   // prefetch to data cache
+prefetch.global.level::eviction_priority  [a];   // prefetch to data cache
+prefetchu.L1  [a];             // prefetch to uniform cache
+prefetch{.tensormap_space}.tensormap [a];  // prefetch the tensormap
+.space =                    { .global, .local };
+.level =                    { .L1, .L2 };
+.level::eviction_priority = { .L2::evict_last, .L2::evict_normal };
+.tensormap_space =          { .const, .param };

@@ -1,0 +1,2 @@
+shfl.mode.b32  d{|p}, a, b, c;
+.mode = { .up, .down, .bfly, .idx };

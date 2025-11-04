@@ -1,35 +1,26 @@
+//! Original PTX specification:
+//!
+//! alloca.type  ptr, size{, immAlign};
+//! .type = { .u32, .u64 };
+
+#![allow(unused)]
 use crate::r#type::common::*;
 
-/// `alloca.type  ptr, size{, immAlign};`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Alloca {
-    /// `alloca.type  ptr, size;`
-    Default {
-        /// `.type`
-        data_type: DataType,
-        /// `ptr`
-        pointer: RegisterOperand,
-        /// `size`
-        size: RegisterOperand,
-    },
-    /// `alloca.type  ptr, size, immAlign;`
-    Aligned {
-        /// `.type`
-        data_type: DataType,
-        /// `ptr`
-        pointer: RegisterOperand,
-        /// `size`
-        size: RegisterOperand,
-        /// `immAlign`
-        alignment: Immediate,
-    },
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.type = { .u32, .u64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U32, // .u32
+        U64, // .u64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct AllocaType {
+        pub type_: Type, // .type
+        pub ptr: Operand, // ptr
+        pub size: Operand, // size
+        pub immalign: Option<Operand>, // {, immAlign}
+    }
+
 }

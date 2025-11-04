@@ -1,0 +1,2 @@
+discard{.global}.level  [a], size;
+.level = { .L2 };

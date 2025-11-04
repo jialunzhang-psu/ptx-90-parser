@@ -1,0 +1,3 @@
+movmatrix.sync.aligned.shape.trans.type d, a;
+.shape  = {.m8n8};
+.type   = {.b16};

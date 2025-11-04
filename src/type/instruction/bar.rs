@@ -1,123 +1,113 @@
+//! Original PTX specification:
+//!
+//! barrier{.cta}.sync{.aligned}      a{, b};
+//! barrier{.cta}.arrive{.aligned}    a, b;
+//! barrier{.cta}.red.popc{.aligned}.u32  d, a{, b}, {!}c;
+//! barrier{.cta}.red.op{.aligned}.pred   p, a{, b}, {!}c;
+//! bar{.cta}.sync      a{, b};
+//! bar{.cta}.arrive    a, b;
+//! bar{.cta}.red.popc.u32  d, a{, b}, {!}c;
+//! bar{.cta}.red.op.pred   p, a{, b}, {!}c;
+//! .op = { .and, .or };
+
+#![allow(unused)]
 use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Bar {
-    /// `barrier{.cta}.sync{.aligned} a{, b};`
-    BarrierSync(BarrierSync),
-    /// `barrier{.cta}.arrive{.aligned} a, b;`
-    BarrierArrive(BarrierArrive),
-    /// `barrier{.cta}.red.popc{.aligned}.u32 d, a{, b}, {!}c;`
-    BarrierReductionPopc(BarrierReductionPopc),
-    /// `barrier{.cta}.red.op{.aligned}.pred p, a{, b}, {!}c;`
-    BarrierReductionLogical(BarrierReductionLogical),
-    /// `bar{.cta}.sync a{, b};`
-    BarSync(BarSync),
-    /// `bar{.cta}.arrive a, b;`
-    BarArrive(BarArrive),
-    /// `bar{.cta}.red.popc.u32 d, a{, b}, {!}c;`
-    BarReductionPopc(BarReductionPopc),
-    /// `bar{.cta}.red.op.pred p, a{, b}, {!}c;`
-    BarReductionLogical(BarReductionLogical),
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BarrierSync {
-    pub scope: Scope,
-    pub aligned: bool,
-    pub barrier: Operand,
-    pub expected_count: Option<Operand>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Op {
+        And, // .and
+        Or, // .or
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BarrierArrive {
-    pub scope: Scope,
-    pub aligned: bool,
-    pub barrier: Operand,
-    pub expected_count: Operand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BarrierCtaSyncAligned {
+        pub cta: bool, // {.cta}
+        pub sync: (), // .sync
+        pub aligned: bool, // {.aligned}
+        pub a: Operand, // a
+        pub b: Option<Operand>, // {, b}
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BarrierReductionPopc {
-    pub scope: Scope,
-    pub aligned: bool,
-    pub data_type: DataType,
-    pub destination: RegisterOperand,
-    pub barrier: Operand,
-    pub expected_count: Option<Operand>,
-    pub predicate: PredicateInput,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BarrierCtaArriveAligned {
+        pub cta: bool, // {.cta}
+        pub arrive: (), // .arrive
+        pub aligned: bool, // {.aligned}
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BarrierReductionLogical {
-    pub scope: Scope,
-    pub aligned: bool,
-    pub destination: PredicateRegister,
-    pub barrier: Operand,
-    pub expected_count: Option<Operand>,
-    pub predicate: PredicateInput,
-    pub operation: LogicalOperation,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BarrierCtaRedPopcAlignedU32 {
+        pub cta: bool, // {.cta}
+        pub red: (), // .red
+        pub popc: (), // .popc
+        pub aligned: bool, // {.aligned}
+        pub u32: (), // .u32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Option<Operand>, // {, b}
+        pub c_op: bool, // {!} operator
+        pub c: Operand, // {!}c
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BarSync {
-    pub scope: Scope,
-    pub barrier: Operand,
-    pub expected_count: Option<Operand>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BarrierCtaRedOpAlignedPred {
+        pub cta: bool, // {.cta}
+        pub red: (), // .red
+        pub op: Op, // .op
+        pub aligned: bool, // {.aligned}
+        pub pred: (), // .pred
+        pub p: Operand, // p
+        pub a: Operand, // a
+        pub b: Option<Operand>, // {, b}
+        pub c_op: bool, // {!} operator
+        pub c: Operand, // {!}c
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BarArrive {
-    pub scope: Scope,
-    pub barrier: Operand,
-    pub expected_count: Operand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BarCtaSync {
+        pub cta: bool, // {.cta}
+        pub sync: (), // .sync
+        pub a: Operand, // a
+        pub b: Option<Operand>, // {, b}
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BarReductionPopc {
-    pub scope: Scope,
-    pub data_type: DataType,
-    pub destination: RegisterOperand,
-    pub barrier: Operand,
-    pub expected_count: Option<Operand>,
-    pub predicate: PredicateInput,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BarCtaArrive {
+        pub cta: bool, // {.cta}
+        pub arrive: (), // .arrive
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BarReductionLogical {
-    pub scope: Scope,
-    pub destination: PredicateRegister,
-    pub barrier: Operand,
-    pub expected_count: Option<Operand>,
-    pub predicate: PredicateInput,
-    pub operation: LogicalOperation,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BarCtaRedPopcU32 {
+        pub cta: bool, // {.cta}
+        pub red: (), // .red
+        pub popc: (), // .popc
+        pub u32: (), // .u32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Option<Operand>, // {, b}
+        pub c_op: bool, // {!} operator
+        pub c: Operand, // {!}c
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Scope {
-    /// (absent)
-    None,
-    /// `.cta`
-    Cta,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BarCtaRedOpPred {
+        pub cta: bool, // {.cta}
+        pub red: (), // .red
+        pub op: Op, // .op
+        pub pred: (), // .pred
+        pub p: Operand, // p
+        pub a: Operand, // a
+        pub b: Option<Operand>, // {, b}
+        pub c_op: bool, // {!} operator
+        pub c: Operand, // {!}c
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-}
-
-/// `.op = { .and, .or };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LogicalOperation {
-    /// `.and`
-    And,
-    /// `.or`
-    Or,
-}
-
-/// `{!}c`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PredicateInput {
-    pub negated: bool,
-    pub predicate: PredicateRegister,
 }

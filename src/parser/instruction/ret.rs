@@ -1,19 +1,31 @@
-#[allow(unused_imports)]
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::ret::*},
-};
+//! Original PTX specification:
+//!
+//! ret{.uni};
 
-impl PtxParser for Ret {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "ret")?;
-        let instruction = if consume_directive_if(stream, "uni") {
-            Ret::Uniform
-        } else {
-            Ret::Default
-        };
-        stream.expect(&PtxToken::Semicolon)?;
-        Ok(instruction)
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::ret::section_0::*;
+
+    impl PtxParser for RetUni {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("ret")?;
+            let saved_pos = stream.position();
+            let uni = stream.expect_string(".uni").is_ok();
+            if !uni {
+                stream.set_position(saved_pos);
+            }
+            Ok(RetUni {
+                uni,
+            })
+        }
     }
+
+
 }
+

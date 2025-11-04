@@ -1,0 +1,8 @@
+// convert const, global, local, or shared address to generic address
+cvta.space.size  p, a;        // source address in register a
+// cvta.space.size  p, var;      // get generic address of var
+// cvta.space.size  p, var+imm;  // generic address of var+offset
+// convert generic address to const, global, local, or shared address
+cvta.to.space.size  p, a;
+.space = { .const, .global, .local, .shared, .shared::cta, .shared::cluster, .param, .param::entry };
+.size  = { .u32, .u64 };

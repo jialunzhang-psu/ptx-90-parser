@@ -1,0 +1,7 @@
+mbarrier.test_wait{.sem}{.scope}{.state}.b64        waitComplete, [addr], state;
+mbarrier.test_wait.parity{.sem}{.scope}{.state}.b64 waitComplete, [addr], phaseParity;
+mbarrier.try_wait{.sem}{.scope}{.state}.b64         waitComplete, [addr], state {, suspendTimeHint};
+mbarrier.try_wait.parity{.sem}{.scope}{.state}.b64  waitComplete, [addr], phaseParity {, suspendTimeHint};
+.sem   = { .acquire, .relaxed };
+.scope = { .cta, .cluster };
+.state = { .shared, .shared::cta}

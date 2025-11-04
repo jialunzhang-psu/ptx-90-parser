@@ -1,0 +1,2 @@
+mbarrier.init{.state}.b64 [addr], count;
+.state = { .shared, .shared::cta}

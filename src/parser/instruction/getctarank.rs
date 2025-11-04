@@ -1,86 +1,134 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::getctarank::*},
-};
+//! Original PTX specification:
+//!
+//! getctarank{.space}.type d, a;
+//! // Get cta rank from source shared memory address in register a.
+//! getctarank.shared::cluster.type d, a;
+//! // // Get cta rank from shared memory variable.
+//! // getctarank.shared::cluster.type d, var;
+//! // // Get cta rank from shared memory variable+offset.
+//! // getctarank.shared::cluster.type d, var + imm;
+//! // Get cta rank from generic address of shared memory variable in register a.
+//! getctarank.type d, a;
+//! .space = { .shared::cluster };
+//! .type  = { .u32, .u64 };
 
-impl PtxParser for crate::r#type::instruction::getctarank::DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "u32" => Ok(crate::r#type::instruction::getctarank::DataType::U32),
-            "u64" => Ok(crate::r#type::instruction::getctarank::DataType::U64),
-            other => Err(unexpected_value(
-                span,
-                &[".u32", ".u64"],
-                format!(".{other}"),
-            )),
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::getctarank::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Type::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try U64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u64").is_ok() {
+                    return Ok(Type::U64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".u64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for Getctarank {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "getctarank" {
-            return Err(unexpected_value(span, &["getctarank"], opcode));
-        }
-
-        let shared_cluster = if consume_directive_if(stream, "shared") {
-            stream.expect_double_colon()?;
-            let (modifier, modifier_span) = stream.expect_identifier()?;
-            if modifier != "cluster" {
-                return Err(unexpected_value(modifier_span, &["cluster"], modifier));
-            }
-            true
-        } else {
-            false
-        };
-
-        let data_type = crate::r#type::instruction::getctarank::DataType::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-
-        if shared_cluster {
-            if stream.check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace)) {
-                let source = RegisterOperand::parse(stream)?;
-                stream.expect(&PtxToken::Semicolon)?;
-                return Ok(Getctarank::SharedRegister {
-                    data_type,
-                    destination,
-                    source,
-                });
-            }
-
-            let symbol = VariableSymbol::parse(stream)?;
-            if stream
-                .consume_if(|token| matches!(token, PtxToken::Plus))
-                .is_some()
+    impl PtxParser for Space {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try SharedCluster
             {
-                let immediate = Immediate::parse(stream)?;
-                stream.expect(&PtxToken::Semicolon)?;
-                Ok(Getctarank::SharedVariableWithImmediate {
-                    data_type,
-                    destination,
-                    symbol,
-                    immediate,
-                })
-            } else {
-                stream.expect(&PtxToken::Semicolon)?;
-                Ok(Getctarank::SharedVariable {
-                    data_type,
-                    destination,
-                    symbol,
-                })
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared::cluster").is_ok() {
+                    return Ok(Space::SharedCluster);
+                }
+                stream.set_position(saved_pos);
             }
-        } else {
-            let source = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(Getctarank::Generic {
-                data_type,
-                destination,
-                source,
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".shared::cluster"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for GetctarankSpaceType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("getctarank")?;
+            let saved_pos = stream.position();
+            let space = match Space::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            let type_ = Type::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            Ok(GetctarankSpaceType {
+                space,
+                type_,
+                d,
+                a,
             })
         }
     }
+
+
+    impl PtxParser for GetctarankSharedClusterType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("getctarank")?;
+            stream.expect_string(".shared::cluster")?;
+            let shared_cluster = ();
+            let type_ = Type::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            Ok(GetctarankSharedClusterType {
+                shared_cluster,
+                type_,
+                d,
+                a,
+            })
+        }
+    }
+
+
+    impl PtxParser for GetctarankType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("getctarank")?;
+            let type_ = Type::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            Ok(GetctarankType {
+                type_,
+                d,
+                a,
+            })
+        }
+    }
+
+
 }
+

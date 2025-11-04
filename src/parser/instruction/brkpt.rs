@@ -1,14 +1,25 @@
-#[allow(unused_imports)]
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::brkpt::*},
-};
+//! Original PTX specification:
+//!
+//! brkpt;
 
-impl PtxParser for Brkpt {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "brkpt")?;
-        stream.expect(&PtxToken::Semicolon)?;
-        Ok(Brkpt)
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::brkpt::section_0::*;
+
+    impl PtxParser for Brkpt {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("brkpt")?;
+            Ok(Brkpt {
+            })
+        }
     }
+
+
 }
+

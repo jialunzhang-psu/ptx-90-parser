@@ -1,237 +1,283 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{
-        common::{RegisterOperand, VariableSymbol},
-        instruction::txq::{Operand, SamplerQuery, TextureLevelQuery, TextureQuery, Txq},
-    },
-};
+//! Original PTX specification:
+//!
+//! txq.tquery.b32         d, [a];       // texture attributes
+//! txq.level.tlquery.b32  d, [a], lod;  // texture attributes
+//! txq.squery.b32         d, [a];       // sampler attributes
+//! .tquery  = { .width, .height, .depth,
+//! .channel_data_type, .channel_order,
+//! .normalized_coords, .array_size,
+//! .num_mipmap_levels, .num_samples};
+//! .tlquery = { .width, .height, .depth };
+//! .squery  = { .force_unnormalized_coords, .filter_mode,
+//! .addr_mode_0, addr_mode_1, addr_mode_2 };
 
-fn texture_query_expected() -> [&'static str; 9] {
-    [
-        ".width",
-        ".height",
-        ".depth",
-        ".channel_data_type",
-        ".channel_order",
-        ".normalized_coords",
-        ".array_size",
-        ".num_mipmap_levels",
-        ".num_samples",
-    ]
-}
+#![allow(unused)]
 
-fn texture_level_query_expected() -> [&'static str; 3] {
-    [".width", ".height", ".depth"]
-}
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-fn sampler_query_expected() -> [&'static str; 5] {
-    [
-        ".force_unnormalized_coords",
-        ".filter_mode",
-        ".addr_mode_0",
-        ".addr_mode_1",
-        ".addr_mode_2",
-    ]
-}
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::txq::section_0::*;
 
-fn first_modifier_expected() -> [&'static str; 15] {
-    [
-        ".level",
-        ".width",
-        ".height",
-        ".depth",
-        ".channel_data_type",
-        ".channel_order",
-        ".normalized_coords",
-        ".array_size",
-        ".num_mipmap_levels",
-        ".num_samples",
-        ".force_unnormalized_coords",
-        ".filter_mode",
-        ".addr_mode_0",
-        ".addr_mode_1",
-        ".addr_mode_2",
-    ]
-}
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
 
-fn parse_b32(stream: &mut PtxTokenStream) -> Result<(), PtxParseError> {
-    let (data_type, span) = stream.expect_directive()?;
-    if data_type == "b32" {
-        Ok(())
-    } else {
-        Err(unexpected_value(span, &[".b32"], format!(".{data_type}")))
-    }
-}
-
-fn parse_address_operand<F>(
-    stream: &mut PtxTokenStream,
-    mapper: F,
-) -> Result<Operand, PtxParseError>
-where
-    F: FnOnce(VariableSymbol) -> Operand,
-{
-    stream.expect(&PtxToken::LBracket)?;
-
-    let operand = if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
-        let symbol = VariableSymbol::parse(stream)?;
-        mapper(symbol)
-    } else if stream.check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace)) {
-        Operand::Register(RegisterOperand::parse(stream)?)
-    } else {
-        let (token, span) = stream.peek()?;
-        return Err(unexpected_value(
-            span.clone(),
-            &["identifier", "register"],
-            format!("{token:?}"),
-        ));
-    };
-
-    stream.expect(&PtxToken::RBracket)?;
-    Ok(operand)
-}
-
-impl TextureQuery {
-    fn from_directive(value: &str, span: Span) -> Result<Self, PtxParseError> {
-        match value {
-            "width" => Ok(TextureQuery::Width),
-            "height" => Ok(TextureQuery::Height),
-            "depth" => Ok(TextureQuery::Depth),
-            "channel_data_type" => Ok(TextureQuery::ChannelDataType),
-            "channel_order" => Ok(TextureQuery::ChannelOrder),
-            "normalized_coords" => Ok(TextureQuery::NormalizedCoords),
-            "array_size" => Ok(TextureQuery::ArraySize),
-            "num_mipmap_levels" => Ok(TextureQuery::NumMipmapLevels),
-            "num_samples" => Ok(TextureQuery::NumSamples),
-            other => Err(unexpected_value(
-                span,
-                &texture_query_expected(),
-                format!(".{other}"),
-            )),
-        }
-    }
-}
-
-impl PtxParser for TextureQuery {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-        TextureQuery::from_directive(&modifier, span)
-    }
-}
-
-impl TextureLevelQuery {
-    fn from_directive(value: &str, span: Span) -> Result<Self, PtxParseError> {
-        match value {
-            "width" => Ok(TextureLevelQuery::Width),
-            "height" => Ok(TextureLevelQuery::Height),
-            "depth" => Ok(TextureLevelQuery::Depth),
-            other => Err(unexpected_value(
-                span,
-                &texture_level_query_expected(),
-                format!(".{other}"),
-            )),
-        }
-    }
-}
-
-impl PtxParser for TextureLevelQuery {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-        TextureLevelQuery::from_directive(&modifier, span)
-    }
-}
-
-impl SamplerQuery {
-    fn from_directive(value: &str, span: Span) -> Result<Self, PtxParseError> {
-        match value {
-            "force_unnormalized_coords" => Ok(SamplerQuery::ForceUnnormalizedCoords),
-            "filter_mode" => Ok(SamplerQuery::FilterMode),
-            "addr_mode_0" => Ok(SamplerQuery::AddrMode0),
-            "addr_mode_1" => Ok(SamplerQuery::AddrMode1),
-            "addr_mode_2" => Ok(SamplerQuery::AddrMode2),
-            other => Err(unexpected_value(
-                span,
-                &sampler_query_expected(),
-                format!(".{other}"),
-            )),
-        }
-    }
-}
-
-impl PtxParser for SamplerQuery {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-        SamplerQuery::from_directive(&modifier, span)
-    }
-}
-
-impl PtxParser for Txq {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "txq")?;
-
-        let (modifier, modifier_span) = stream.expect_directive()?;
-        match modifier.as_str() {
-            "level" => {
-                let query = TextureLevelQuery::parse(stream)?;
-                parse_b32(stream)?;
-
-                let destination = RegisterOperand::parse(stream)?;
-                stream.expect(&PtxToken::Comma)?;
-
-                let address = parse_address_operand(stream, Operand::Texture)?;
-                stream.expect(&PtxToken::Comma)?;
-
-                let lod = RegisterOperand::parse(stream)?;
-                stream.expect(&PtxToken::Semicolon)?;
-
-                Ok(Txq::TextureLevel {
-                    query,
-                    destination,
-                    address,
-                    lod,
-                })
-            }
-            _ => {
-                if let Ok(query) =
-                    TextureQuery::from_directive(modifier.as_str(), modifier_span.clone())
-                {
-                    parse_b32(stream)?;
-
-                    let destination = RegisterOperand::parse(stream)?;
-                    stream.expect(&PtxToken::Comma)?;
-
-                    let address = parse_address_operand(stream, Operand::Texture)?;
-                    stream.expect(&PtxToken::Semicolon)?;
-
-                    Ok(Txq::Texture {
-                        query,
-                        destination,
-                        address,
-                    })
-                } else if let Ok(query) =
-                    SamplerQuery::from_directive(modifier.as_str(), modifier_span.clone())
-                {
-                    parse_b32(stream)?;
-
-                    let destination = RegisterOperand::parse(stream)?;
-                    stream.expect(&PtxToken::Comma)?;
-
-                    let address = parse_address_operand(stream, Operand::Sampler)?;
-                    stream.expect(&PtxToken::Semicolon)?;
-
-                    Ok(Txq::Sampler {
-                        query,
-                        destination,
-                        address,
-                    })
-                } else {
-                    Err(unexpected_value(
-                        modifier_span,
-                        &first_modifier_expected(),
-                        format!(".{modifier}"),
-                    ))
+    impl PtxParser for Squery {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try ForceUnnormalizedCoords
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".force_unnormalized_coords").is_ok() {
+                    return Ok(Squery::ForceUnnormalizedCoords);
                 }
+                stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try FilterMode
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".filter_mode").is_ok() {
+                    return Ok(Squery::FilterMode);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try AddrMode0
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".addr_mode_0").is_ok() {
+                    return Ok(Squery::AddrMode0);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try AddrMode1
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("addr_mode_1").is_ok() {
+                    return Ok(Squery::AddrMode1);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try AddrMode2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("addr_mode_2").is_ok() {
+                    return Ok(Squery::AddrMode2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".force_unnormalized_coords", ".filter_mode", ".addr_mode_0", "addr_mode_1", "addr_mode_2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
+
+    impl PtxParser for Tquery {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Width
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".width").is_ok() {
+                    return Ok(Tquery::Width);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Height
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".height").is_ok() {
+                    return Ok(Tquery::Height);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Depth
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".depth").is_ok() {
+                    return Ok(Tquery::Depth);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try ChannelDataType
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".channel_data_type").is_ok() {
+                    return Ok(Tquery::ChannelDataType);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try ChannelOrder
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".channel_order").is_ok() {
+                    return Ok(Tquery::ChannelOrder);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try NormalizedCoords
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".normalized_coords").is_ok() {
+                    return Ok(Tquery::NormalizedCoords);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try ArraySize
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".array_size").is_ok() {
+                    return Ok(Tquery::ArraySize);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try NumMipmapLevels
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".num_mipmap_levels").is_ok() {
+                    return Ok(Tquery::NumMipmapLevels);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try NumSamples
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".num_samples").is_ok() {
+                    return Ok(Tquery::NumSamples);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".width", ".height", ".depth", ".channel_data_type", ".channel_order", ".normalized_coords", ".array_size", ".num_mipmap_levels", ".num_samples"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Tlquery {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Width
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".width").is_ok() {
+                    return Ok(Tlquery::Width);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Height
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".height").is_ok() {
+                    return Ok(Tlquery::Height);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Depth
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".depth").is_ok() {
+                    return Ok(Tlquery::Depth);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".width", ".height", ".depth"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for TxqTqueryB32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("txq")?;
+            let tquery = Tquery::parse(stream)?;
+            stream.expect_string(".b32")?;
+            let b32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = AddressOperand::parse(stream)?;
+            Ok(TxqTqueryB32 {
+                tquery,
+                b32,
+                d,
+                a,
+            })
+        }
+    }
+
+
+    impl PtxParser for TxqLevelTlqueryB32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("txq")?;
+            stream.expect_string(".level")?;
+            let level = ();
+            let tlquery = Tlquery::parse(stream)?;
+            stream.expect_string(".b32")?;
+            let b32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = AddressOperand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let lod = Operand::parse(stream)?;
+            Ok(TxqLevelTlqueryB32 {
+                level,
+                tlquery,
+                b32,
+                d,
+                a,
+                lod,
+            })
+        }
+    }
+
+
+    impl PtxParser for TxqSqueryB32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("txq")?;
+            let squery = Squery::parse(stream)?;
+            stream.expect_string(".b32")?;
+            let b32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = AddressOperand::parse(stream)?;
+            Ok(TxqSqueryB32 {
+                squery,
+                b32,
+                d,
+                a,
+            })
+        }
+    }
+
+
 }
+

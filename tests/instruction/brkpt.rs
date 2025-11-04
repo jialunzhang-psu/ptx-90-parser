@@ -3,7 +3,7 @@ use ptx_parser::{parser::ParseErrorKind, r#type::instruction::brkpt::Brkpt};
 
 #[test]
 fn parses_brkpt_instruction() {
-    assert_eq!(parse::<Brkpt>("brkpt;"), Brkpt);
+    assert_eq!(parse::<Brkpt>("brkpt;"), Brkpt {});
     assert_roundtrip::<Brkpt>("brkpt;");
 }
 

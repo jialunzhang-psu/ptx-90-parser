@@ -1,134 +1,115 @@
-//! vop2 instructions, the SIMD video instructions operate on pairs of 16-bit values
-//! This is a meta-instruction that includes vadd2, vsub2, vavrg2, vabsdiff2, vmin2, vmax2
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! // SIMD instruction with secondary SIMD merge operation
+//! vop2.dtype.atype.btype{.sat}  d{.mask}, a{.asel}, b{.bsel}, c;
+//! // SIMD instruction with secondary accumulate operation
+//! vop2.dtype.atype.btype.add  d{.mask}, a{.asel}, b{.bsel}, c;
+//! vop2  = { vadd2, vsub2, vavrg2, vabsdiff2, vmin2, vmax2 };
+//! .dtype = .atype = .btype = { .u32, .s32 };
+//! .mask  = { .h0, .h1, .h10 };  // defaults to .h10
+//! .asel  = .bsel  = { .h00, .h01, .h02, .h03, .h10, .h11, .h12, .h13, .h20, .h21, .h22, .h23, .h30, .h31, .h32, .h33 }; 
+//! // .asel defaults to .h10
+//! // .bsel defaults to .h32
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Vop2 {
-    /// `vop2.dtype.atype.btype{.sat} d{.mask}, a{.asel}, b{.bsel}, c;`
-    Merge(Merge),
-    /// `vop2.dtype.atype.btype.add d{.mask}, a{.asel}, b{.bsel}, c;`
-    Accumulate(Accumulate),
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Merge {
-    /// `vop2 = { vadd2, vsub2, vavrg2, vabsdiff2, vmin2, vmax2 }`
-    pub operation: Operation,
-    /// `.dtype = { .u32, .s32 }`
-    pub dtype: DataType,
-    /// `.atype = { .u32, .s32 }`
-    pub atype: DataType,
-    /// `.btype = { .u32, .s32 }`
-    pub btype: DataType,
-    /// `.sat`
-    pub saturate: bool,
-    /// `d{.mask}`
-    pub destination: Destination,
-    /// `a{.asel}`
-    pub a: ASource,
-    /// `b{.bsel}`
-    pub b: BSource,
-    /// `c`
-    pub c: RegisterOperand,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Accumulate {
-    /// `vop2 = { vadd2, vsub2, vavrg2, vabsdiff2, vmin2, vmax2 }`
-    pub operation: Operation,
-    /// `.dtype = { .u32, .s32 }`
-    pub dtype: DataType,
-    /// `.atype = { .u32, .s32 }`
-    pub atype: DataType,
-    /// `.btype = { .u32, .s32 }`
-    pub btype: DataType,
-    /// `d{.mask}`
-    pub destination: Destination,
-    /// `a{.asel}`
-    pub a: ASource,
-    /// `b{.bsel}`
-    pub b: BSource,
-    /// `c`
-    pub c: RegisterOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Dtype {
+        U32, // .u32
+        S32, // .s32
+    }
 
-/// `d{.mask}` default `.h10`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Destination {
-    /// `d`
-    pub register: RegisterOperand,
-    /// `{.mask}`
-    pub mask: Option<Mask>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Atype {
+        U32, // .u32
+        S32, // .s32
+    }
 
-/// `a{.asel}` default `.h10`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ASource {
-    /// `a`
-    pub register: RegisterOperand,
-    /// `{.asel}`
-    pub selector: Option<Selector>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Btype {
+        U32, // .u32
+        S32, // .s32
+    }
 
-/// `b{.bsel}` default `.h32`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BSource {
-    /// `b`
-    pub register: RegisterOperand,
-    /// `{.bsel}`
-    pub selector: Option<Selector>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mask {
+        H0, // .h0
+        H1, // .h1
+        H10, // .h10
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Operation {
-    /// `vadd2`
-    Vadd2,
-    /// `vsub2`
-    Vsub2,
-    /// `vavrg2`
-    Vavrg2,
-    /// `vabsdiff2`
-    Vabsdiff2,
-    /// `vmin2`
-    Vmin2,
-    /// `vmax2`
-    Vmax2,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Asel {
+        H00, // .h00
+        H01, // .h01
+        H02, // .h02
+        H03, // .h03
+        H10, // .h10
+        H11, // .h11
+        H12, // .h12
+        H13, // .h13
+        H20, // .h20
+        H21, // .h21
+        H22, // .h22
+        H23, // .h23
+        H30, // .h30
+        H31, // .h31
+        H32, // .h32
+        H33, // .h33
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-    /// `.s32`
-    S32,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Bsel {
+        H00, // .h00
+        H01, // .h01
+        H02, // .h02
+        H03, // .h03
+        H10, // .h10
+        H11, // .h11
+        H12, // .h12
+        H13, // .h13
+        H20, // .h20
+        H21, // .h21
+        H22, // .h22
+        H23, // .h23
+        H30, // .h30
+        H31, // .h31
+        H32, // .h32
+        H33, // .h33
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mask {
-    /// `.h0`
-    H0,
-    /// `.h1`
-    H1,
-    /// `.h10`
-    H10,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Vop2DtypeAtypeBtypeSat {
+        pub dtype: Dtype, // .dtype
+        pub atype: Atype, // .atype
+        pub btype: Btype, // .btype
+        pub sat: bool, // {.sat}
+        pub d: Operand, // d
+        pub mask: Option<Mask>, // {.mask}
+        pub a: Operand, // a
+        pub asel: Option<Asel>, // {.asel}
+        pub b: Operand, // b
+        pub bsel: Option<Bsel>, // {.bsel}
+        pub c: Operand, // c
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Selector {
-    /// `.asel = .bsel = { .hxy, where x,y are from { 0, 1, 2, 3 } }`
-    ///
-    /// `xy`
-    pub halves: [Half; 2],
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Vop2DtypeAtypeBtypeAdd {
+        pub dtype: Dtype, // .dtype
+        pub atype: Atype, // .atype
+        pub btype: Btype, // .btype
+        pub add: (), // .add
+        pub d: Operand, // d
+        pub mask: Option<Mask>, // {.mask}
+        pub a: Operand, // a
+        pub asel: Option<Asel>, // {.asel}
+        pub b: Operand, // b
+        pub bsel: Option<Bsel>, // {.bsel}
+        pub c: Operand, // c
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Half {
-    /// `x`, `y` can be `0`
-    H0,
-    /// `x`, `y` can be `1`
-    H1,
-    /// `x`, `y` can be `2`
-    H2,
-    /// `x`, `y` can be `3`
-    H3,
 }

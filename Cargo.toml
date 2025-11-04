@@ -1,3 +1,7 @@
+# [workspace]
+# members = ["crates/parser-gen"]
+# resolver = "2"
+
 [package]
 name = "ptx-90-parser"
 version = "0.1.0"

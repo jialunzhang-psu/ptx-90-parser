@@ -1,0 +1,8 @@
+ldu{.ss}.type      d, [a];       // load from address
+ldu{.ss}.vec.type  d, [a];       // vec load from address
+.ss   = { .global };             // state space
+.vec  = { .v2, .v4 };
+.type = { .b8, .b16, .b32, .b64, .b128,
+.u8, .u16, .u32, .u64,
+.s8, .s16, .s32, .s64,
+.f32, .f64 };

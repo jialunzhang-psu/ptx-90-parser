@@ -1,0 +1,65 @@
+// Floating point format .f16 loads:
+wmma.load.a.sync.aligned.layout.shape{.ss}.atype r, [p] {, stride};
+wmma.load.b.sync.aligned.layout.shape{.ss}.btype r, [p] {, stride};
+wmma.load.c.sync.aligned.layout.shape{.ss}.ctype r, [p] {, stride};
+.layout = {.row, .col};
+.shape  = {.m16n16k16, .m8n32k16, .m32n8k16};
+.ss     = {.global, .shared, .shared::cta};
+.atype  = {.f16, .s8, .u8};
+.btype  = {.f16, .s8, .u8};
+.ctype  = {.f16, .f32, .s32};
+----------------------------------------------------------------
+// Alternate floating point format .bf16 loads:
+wmma.load.a.sync.aligned.layout.shape{.ss}.atype r, [p] {, stride};
+wmma.load.b.sync.aligned.layout.shape{.ss}.btype r, [p] {, stride};
+wmma.load.c.sync.aligned.layout.shape{.ss}.ctype r, [p] {, stride};
+.layout = {.row, .col};
+.shape  = {.m16n16k16, .m8n32k16, .m32n8k16};
+.ss     = {.global, .shared, .shared::cta};
+.atype  = {.bf16 };
+.btype  = {.bf16 };
+.ctype  = {.f32 };
+----------------------------------------------------------------
+// Alternate floating point format .tf32 loads:
+wmma.load.a.sync.aligned.layout.shape{.ss}.atype r, [p] {, stride};
+wmma.load.b.sync.aligned.layout.shape{.ss}.btype r, [p] {, stride};
+wmma.load.c.sync.aligned.layout.shape{.ss}.ctype r, [p] {, stride};
+.layout = {.row, .col};
+.shape  = {.m16n16k8 };
+.ss     = {.global, .shared, .shared::cta};
+.atype  = {.tf32 };
+.btype  = {.tf32 };
+.ctype  = {.f32 };
+----------------------------------------------------------------
+// Double precision Floating point .f64 loads:
+wmma.load.a.sync.aligned.layout.shape{.ss}.atype r, [p] {, stride};
+wmma.load.b.sync.aligned.layout.shape{.ss}.btype r, [p] {, stride};
+wmma.load.c.sync.aligned.layout.shape{.ss}.ctype r, [p] {, stride};
+.layout = {.row, .col};
+.shape  = {.m8n8k4 };
+.ss     = {.global, .shared, .shared::cta};
+.atype  = {.f64 };
+.btype  = {.f64 };
+.ctype  = {.f64 };
+----------------------------------------------------------------
+// Sub-byte loads:
+wmma.load.a.sync.aligned.row.shape{.ss}.atype r, [p] {, stride};
+wmma.load.b.sync.aligned.col.shape{.ss}.btype r, [p] {, stride};
+wmma.load.c.sync.aligned.layout.shape{.ss}.ctype r, [p] {, stride};
+.layout = {.row, .col};
+.shape  = {.m8n8k32};
+.ss     = {.global, .shared, .shared::cta};
+.atype  = {.s4, .u4};
+.btype  = {.s4, .u4};
+.ctype  = {.s32};
+----------------------------------------------------------------
+// Single-bit loads:
+wmma.load.a.sync.aligned.row.shape{.ss}.atype r, [p] {, stride};
+wmma.load.b.sync.aligned.col.shape{.ss}.btype r, [p] {, stride};
+wmma.load.c.sync.aligned.layout.shape{.ss}.ctype r, [p] {, stride};
+.layout = {.row, .col};
+.shape  = {.m8n8k128};
+.ss     = {.global, .shared, .shared::cta};
+.atype  = {.b1};
+.btype  = {.b1};
+.ctype  = {.s32};

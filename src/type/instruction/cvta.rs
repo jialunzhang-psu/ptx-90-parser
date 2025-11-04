@@ -1,82 +1,53 @@
+//! Original PTX specification:
+//!
+//! // convert const, global, local, or shared address to generic address
+//! cvta.space.size  p, a;        // source address in register a
+//! // cvta.space.size  p, var;      // get generic address of var
+//! // cvta.space.size  p, var+imm;  // generic address of var+offset
+//! // convert generic address to const, global, local, or shared address
+//! cvta.to.space.size  p, a;
+//! .space = { .const, .global, .local, .shared, .shared::cta, .shared::cluster, .param, .param::entry };
+//! .size  = { .u32, .u64 };
+
+#![allow(unused)]
 use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Cvta {
-    /// `cvta.space.size  p, a;`
-    /// `cvta.space.size  p, var;`
-    /// `cvta.space.size  p, var+imm;`
-    ToGeneric(ToGeneric),
-    /// `cvta.to.space.size  p, a;`
-    ToAddressSpace(ToAddressSpace),
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `cvta.space.size  p, {a | var | var+imm};`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ToGeneric {
-    /// `.space`
-    pub space: Space,
-    /// `.size`
-    pub size: Size,
-    /// `p`
-    pub destination: RegisterOperand,
-    /// `{a | var | var+imm}`
-    pub source: GenericSource,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Space {
+        Const, // .const
+        Global, // .global
+        Local, // .local
+        Shared, // .shared
+        SharedCta, // .shared::cta
+        SharedCluster, // .shared::cluster
+        Param, // .param
+        ParamEntry, // .param::entry
+    }
 
-/// `cvta.to.space.size  p, a;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ToAddressSpace {
-    /// `.space`
-    pub space: Space,
-    /// `.size`
-    pub size: Size,
-    /// `p`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub source: RegisterOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Size {
+        U32, // .u32
+        U64, // .u64
+    }
 
-/// `.space = { .const, .global, .local, .shared{::cta, ::cluster}, .param{::entry} };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Space {
-    /// `.const`
-    Const,
-    /// `.global`
-    Global,
-    /// `.local`
-    Local,
-    /// `.shared`
-    Shared,
-    /// `.shared::cta`
-    SharedCta,
-    /// `.shared::cluster`
-    SharedCluster,
-    /// `.param`
-    Param,
-    /// `.param::entry`
-    ParamEntry,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CvtaSpaceSize {
+        pub space: Space, // .space
+        pub size: Size, // .size
+        pub p: Operand, // p
+        pub a: Operand, // a
+    }
 
-/// `.size  = { .u32, .u64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Size {
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CvtaToSpaceSize {
+        pub to: (), // .to
+        pub space: Space, // .space
+        pub size: Size, // .size
+        pub p: Operand, // p
+        pub a: Operand, // a
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum GenericSource {
-    /// `a`
-    Register(RegisterOperand),
-    /// `var`
-    Variable(VariableSymbol),
-    /// `var+imm`
-    VariableWithImmediate {
-        /// `var`
-        variable: VariableSymbol,
-        /// `imm`
-        immediate: Immediate,
-    },
 }

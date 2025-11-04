@@ -1,0 +1,11 @@
+// Range-based policy
+createpolicy.range{.global}.level::primary_priority{.level::secondary_priority}.b64
+cache-policy, [a], primary-size, total-size;
+// Fraction-based policy
+createpolicy.fractional.level::primary_priority{.level::secondary_priority}.b64
+cache-policy{, fraction};
+// Converting the access property from CUDA APIs
+createpolicy.cvt.L2.b64            cache-policy, access-property;
+.level::primary_priority =   { .L2::evict_last, .L2::evict_normal,
+.L2::evict_first, .L2::evict_unchanged };
+.level::secondary_priority = { .L2::evict_first, .L2::evict_unchanged };

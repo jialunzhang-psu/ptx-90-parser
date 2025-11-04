@@ -1,29 +1,34 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! mul24.mode.type  d, a, b;
+//! .mode = { .hi, .lo };
+//! .type = { .u32, .s32 };
 
-/// `mul24.mode.type d, a, b;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Mul24 {
-    pub mode: Mode,
-    pub data_type: DataType,
-    pub destination: RegisterOperand,
-    pub a: RegisterOperand,
-    pub b: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.mode = { .hi, .lo };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mode {
-    /// `.hi`
-    Hi,
-    /// `.lo`
-    Lo,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.type = { .u32, .s32 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-    /// `.s32`
-    S32,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        Hi, // .hi
+        Lo, // .lo
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U32, // .u32
+        S32, // .s32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Mul24ModeType {
+        pub mode: Mode, // .mode
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
 }

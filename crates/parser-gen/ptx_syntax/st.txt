@@ -1,0 +1,19 @@
+st{.weak}{.ss}{.cop}{.level::cache_hint}{.vec}.type   [a], b{, cache-policy};
+st{.weak}{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.vec}.type [a], b{, cache-policy};
+st.volatile{.ss}{.vec}.type                           [a], b;
+st.relaxed.scope{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.vec}.type [a], b{, cache-policy};
+st.release.scope{.ss}{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.vec}.type [a], b{, cache-policy};
+st.mmio.relaxed.sys{.global}.type         [a], b;
+.ss =                       { .global, .local, .param, .param::func, .shared, .shared::cta, .shared::cluster};
+.level1::eviction_priority = { .L1::evict_normal, .L1::evict_unchanged,
+.L1::evict_first, .L1::evict_last, .L1::no_allocate };
+.level2::eviction_priority = { .L2::evict_normal, .L2::evict_first, .L2::evict_last };
+.level::cache_hint =        { .L2::cache_hint };
+.cop =                      { .wb, .cg, .cs, .wt };
+.sem =                      { .relaxed, .release };
+.scope =                    { .cta, .cluster, .gpu, .sys };
+.vec =                      { .v2, .v4, .v8 };
+.type =                     { .b8, .b16, .b32, .b64, .b128,
+.u8, .u16, .u32, .u64,
+.s8, .s16, .s32, .s64,
+.f32, .f64 };

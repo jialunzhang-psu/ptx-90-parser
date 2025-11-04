@@ -1,20 +1,20 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! sin.approx{.ftz}.f32  d, a;
 
-/// `sin.approx{.ftz}.f32 d, a;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Sin {
-    /// `.ftz`
-    pub flush_to_zero: bool,
-    /// `.f32`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub source: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.f32`
-    F32,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SinApproxFtzF32 {
+        pub approx: (), // .approx
+        pub ftz: bool, // {.ftz}
+        pub f32: (), // .f32
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
 }

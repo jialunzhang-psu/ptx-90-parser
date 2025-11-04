@@ -1,15 +1,24 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! stacksave.type  d;
+//! .type = { .u32, .u64 };
 
-/// `stacksave.type d;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Stacksave {
-    pub data_type: DataType,
-    pub destination: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.type = { .u32, .u64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    U32,
-    U64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U32, // .u32
+        U64, // .u64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct StacksaveType {
+        pub type_: Type, // .type
+        pub d: Operand, // d
+    }
+
 }

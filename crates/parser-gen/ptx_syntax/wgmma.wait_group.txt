@@ -1,0 +1,1 @@
+wgmma.wait_group.sync.aligned N;

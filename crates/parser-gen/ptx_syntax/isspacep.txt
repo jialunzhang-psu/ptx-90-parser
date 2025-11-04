@@ -1,0 +1,2 @@
+isspacep.space  p, a;    // result is .pred
+.space = { .const, .global, .local, .shared, .shared::cta, .shared::cluster, .param, .param::entry };

@@ -272,6 +272,7 @@ pub enum SpecialRegister {
 pub enum Operand {
     Register(RegisterOperand),
     Immediate(Immediate),
+    Symbol(String),
 }
 
 /* --------------------------------------------------- */

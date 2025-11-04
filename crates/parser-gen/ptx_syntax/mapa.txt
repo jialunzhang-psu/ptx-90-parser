@@ -1,0 +1,11 @@
+mapa{.space}.type          d, a, b;
+// Maps shared memory address in register a into CTA b.
+// mapa.shared::cluster.type  d, a, b;
+// Maps shared memory variable into CTA b.
+// mapa.shared::cluster.type  d, sh, b;
+// Maps shared memory variable into CTA b.
+// mapa.shared::cluster.type  d, sh + imm, b;
+// Maps generic address in register a into CTA b.
+// mapa.type                  d, a, b;
+.space = { .shared::cluster };
+.type  = { .u32, .u64 };

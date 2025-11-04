@@ -1,143 +1,66 @@
-use crate::r#type::common::{RegisterOperand, VariableSymbol};
+//! Original PTX specification:
+//!
+//! suld.b.geom{.cop}.vec.dtype.mode [a, b];  // unformatted
+//! .geom  = { .1d, .2d, .3d, .a1d, .a2d };
+//! .cop   = { .ca, .cg, .cs, .cv };               // cache operation
+//! .vec   = { none, .v2, .v4 };
+//! .dtype = { .b8 , .b16, .b32, .b64 };
+//! .mode = { .trap, .clamp, .zero };
 
-/// `suld.b.geom{.cop}.vec.dtype.clamp  d, [a, b];`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Suld {
-    /// `suld.b.1d{.cop}.vec.dtype.clamp  d, [a, b];`
-    OneD(Descriptor<Coordinate1d>),
-    /// `suld.b.2d{.cop}.vec.dtype.clamp  d, [a, b];`
-    TwoD(Descriptor<Coordinate2d>),
-    /// `suld.b.3d{.cop}.vec.dtype.clamp  d, [a, b];`
-    ThreeD(Descriptor<Coordinate3d>),
-    /// `suld.b.a1d{.cop}.vec.dtype.clamp  d, [a, b];`
-    Array1D(Descriptor<Array1dCoordinates>),
-    /// `suld.b.a2d{.cop}.vec.dtype.clamp  d, [a, b];`
-    Array2D(Descriptor<Array2dCoordinates>),
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `d, [a, b];`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Descriptor<TCoordinates> {
-    /// `.cop`
-    pub cache_operator: Option<CacheOperator>,
-    /// `.vec`
-    pub vector: Vector,
-    /// `.dtype`
-    pub data_type: DataType,
-    /// `.clamp`
-    pub clamp: Clamp,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub surface: Surface,
-    /// `b`
-    pub coordinates: TCoordinates,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.vec`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Vector {
-    /// `none`
-    None,
-    /// `.v2`
-    V2,
-    /// `.v4`
-    V4,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Geom {
+        _1d, // .1d
+        _2d, // .2d
+        _3d, // .3d
+        A1d, // .a1d
+        A2d, // .a2d
+    }
 
-/// `.dtype`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b8`
-    B8,
-    /// `.b16`
-    B16,
-    /// `.b32`
-    B32,
-    /// `.b64`
-    B64,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Cop {
+        Ca, // .ca
+        Cg, // .cg
+        Cs, // .cs
+        Cv, // .cv
+    }
 
-/// `.clamp`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Clamp {
-    /// `.trap`
-    Trap,
-    /// `.clamp`
-    Clamp,
-    /// `.zero`
-    Zero,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Vec {
+        None, // none
+        V2, // .v2
+        V4, // .v4
+    }
 
-/// `.cop`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CacheOperator {
-    /// `.ca`
-    Ca,
-    /// `.cg`
-    Cg,
-    /// `.cs`
-    Cs,
-    /// `.cv`
-    Cv,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Dtype {
+        B8, // .b8
+        B16, // .b16
+        B32, // .b32
+        B64, // .b64
+    }
 
-/// `a`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Surface {
-    /// `.surfref`
-    Reference(VariableSymbol),
-    /// `.u64`
-    Register(RegisterOperand),
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        Trap, // .trap
+        Clamp, // .clamp
+        Zero, // .zero
+    }
 
-/// `.1d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Coordinate1d {
-    /// `x`
-    pub x: RegisterOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SuldBGeomCopVecDtypeMode {
+        pub b: (), // .b
+        pub geom: Geom, // .geom
+        pub cop: Option<Cop>, // {.cop}
+        pub vec: Vec, // .vec
+        pub dtype: Dtype, // .dtype
+        pub mode: Mode, // .mode
+        pub a: (Operand, Operand), // [a, b]
+    }
 
-/// `.2d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Coordinate2d {
-    /// `x`
-    pub x: RegisterOperand,
-    /// `y`
-    pub y: RegisterOperand,
-}
-
-/// `.3d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Coordinate3d {
-    /// `x`
-    pub x: RegisterOperand,
-    /// `y`
-    pub y: RegisterOperand,
-    /// `z`
-    pub z: RegisterOperand,
-    /// `w` ignored
-    pub w: RegisterOperand,
-}
-
-/// `.a1d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Array1dCoordinates {
-    /// `idx`
-    pub index: RegisterOperand,
-    /// `x`
-    pub x: RegisterOperand,
-}
-
-/// `.a2d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Array2dCoordinates {
-    /// `idx`
-    pub index: RegisterOperand,
-    /// `x`
-    pub x: RegisterOperand,
-    /// `y`
-    pub y: RegisterOperand,
-    /// `z` ignored
-    pub z: RegisterOperand,
 }

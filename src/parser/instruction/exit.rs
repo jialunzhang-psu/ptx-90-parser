@@ -1,14 +1,25 @@
-#[allow(unused_imports)]
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::exit::*},
-};
+//! Original PTX specification:
+//!
+//! exit;
 
-impl PtxParser for Exit {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "exit")?;
-        stream.expect(&PtxToken::Semicolon)?;
-        Ok(Exit)
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::exit::section_0::*;
+
+    impl PtxParser for Exit {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("exit")?;
+            Ok(Exit {
+            })
+        }
     }
+
+
 }
+

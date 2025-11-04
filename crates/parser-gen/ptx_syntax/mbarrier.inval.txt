@@ -1,0 +1,2 @@
+mbarrier.inval{.state}.b64 [addr];
+.state = { .shared, .shared::cta}

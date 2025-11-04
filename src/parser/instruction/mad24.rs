@@ -1,100 +1,130 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::mad24::*},
-};
+//! Original PTX specification:
+//!
+//! mad24.mode.type  d, a, b, c;
+//! mad24.hi.sat.s32 d, a, b, c;
+//! .mode = { .hi, .lo };
+//! .type = { .u32, .s32 };
 
-impl PtxParser for crate::r#type::instruction::mad24::Mode {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        if !stream.check(|token| {
-            matches!(
-                token,
-                PtxToken::Directive(name) if matches!(name.as_str(), "hi" | "lo")
-            )
-        }) {
-            return Ok(Mode::Lo);
-        }
+#![allow(unused)]
 
-        let (directive, span) = stream.expect_directive()?;
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-        match directive.as_str() {
-            "hi" => Ok(Mode::Hi),
-            "lo" => Ok(Mode::Lo),
-            other => Err(unexpected_value(span, &[".hi", ".lo"], format!(".{other}"))),
-        }
-    }
-}
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::mad24::section_0::*;
 
-impl PtxParser for crate::r#type::instruction::mad24::DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
 
-        match directive.as_str() {
-            "u32" => Ok(Self::U32),
-            "s32" => Ok(Self::S32),
-            other => Err(unexpected_value(
-                span,
-                &[".u32", ".s32"],
-                format!(".{other}"),
-            )),
-        }
-    }
-}
-
-impl PtxParser for crate::r#type::instruction::mad24::Mad24 {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "mad24")?;
-
-        let mode = crate::r#type::instruction::mad24::Mode::parse(stream)?;
-
-        if matches!(mode, Mode::Hi)
-            && stream.check(|token| matches!(token, PtxToken::Directive(name) if name == "sat"))
-        {
-            stream.expect_directive()?; // consume .sat
-
-            let (data_type, data_span) = stream.expect_directive()?;
-            if data_type.as_str() != "s32" {
-                return Err(unexpected_value(
-                    data_span,
-                    &[".s32"],
-                    format!(".{data_type}"),
-                ));
+    impl PtxParser for Mode {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Hi
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".hi").is_ok() {
+                    return Ok(Mode::Hi);
+                }
+                stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try Lo
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".lo").is_ok() {
+                    return Ok(Mode::Lo);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".hi", ".lo"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
-            let destination = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Semicolon)?;
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Type::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Type::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".s32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
-            return Ok(Mad24::HiSatS32 {
-                destination,
+    impl PtxParser for Mad24ModeType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("mad24")?;
+            let mode = Mode::parse(stream)?;
+            let type_ = Type::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(Mad24ModeType {
+                mode,
+                type_,
+                d,
                 a,
                 b,
                 c,
-            });
+            })
         }
-
-        let data_type = crate::r#type::instruction::mad24::DataType::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let a = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let b = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let c = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Mad24::Mode {
-            mode,
-            data_type,
-            destination,
-            a,
-            b,
-            c,
-        })
     }
+
+
+    impl PtxParser for Mad24HiSatS32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("mad24")?;
+            stream.expect_string(".hi")?;
+            let hi = ();
+            stream.expect_string(".sat")?;
+            let sat = ();
+            stream.expect_string(".s32")?;
+            let s32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(Mad24HiSatS32 {
+                hi,
+                sat,
+                s32,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
 }
+

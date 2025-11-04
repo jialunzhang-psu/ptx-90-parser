@@ -1,0 +1,29 @@
+// Atomic operation with scalar type:
+atom{.sem}{.scope}{.space}.op{.level::cache_hint}.type d, [a], b{, cache-policy};
+atom{.sem}{.scope}{.space}.op.type d, [a], b, c;
+atom{.sem}{.scope}{.space}.cas.b16 d, [a], b, c;
+atom{.sem}{.scope}{.space}.cas.b128 d, [a], b, c;
+atom{.sem}{.scope}{.space}.exch{.level::cache_hint}.b128 d, [a], b {, cache-policy};
+atom{.sem}{.scope}{.space}.add.noftz{.level::cache_hint}.f16     d, [a], b{, cache-policy};
+atom{.sem}{.scope}{.space}.add.noftz{.level::cache_hint}.f16x2   d, [a], b{, cache-policy};
+atom{.sem}{.scope}{.space}.add.noftz{.level::cache_hint}.bf16    d, [a], b{, cache-policy};
+atom{.sem}{.scope}{.space}.add.noftz{.level::cache_hint}.bf16x2  d, [a], b{, cache-policy};
+.space =              { .global, .shared, .shared::cta, .shared::cluster};
+.sem =                { .relaxed, .acquire, .release, .acq_rel };
+.scope =              { .cta, .cluster, .gpu, .sys };
+.op =                 { .and, .or, .xor, .cas, .exch, .add, .inc, .dec, .min, .max };
+.level::cache_hint =  { .L2::cache_hint };
+.type =               { .b32, .b64, .u32, .u64, .s32, .s64, .f32, .f64 };
+-------------------------------------------------------------
+// Atomic operation with vector type:
+atom{.sem}{.scope}{.global}.add{.level::cache_hint}.vec_32_bit.f32                  d, [a], b{, cache-policy};
+atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_16_bit.half_word_type  d, [a], b{, cache-policy};
+atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type     d, [a], b{, cache-policy};
+.sem =               { .relaxed, .acquire, .release, .acq_rel };
+.scope =             { .cta, .cluster, .gpu, .sys };
+.op =                { .add, .min, .max };
+.half_word_type =    { .f16, .bf16 };
+.packed_type =       { .f16x2, .bf16x2 };
+.vec_16_bit =        { .v2, .v4, .v8 };
+.vec_32_bit =        { .v2, .v4 };
+.level::cache_hint = { .L2::cache_hint };

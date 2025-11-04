@@ -1,3 +1,15 @@
-/// `brkpt;`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Brkpt;
+//! Original PTX specification:
+//!
+//! brkpt;
+
+#![allow(unused)]
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Brkpt {
+    }
+
+}

@@ -1,30 +1,30 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! rem.type  d, a, b;
+//! .type = { .u16, .u32, .u64, .s16, .s32, .s64 };
 
-/// `rem.type  d, a, b;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Rem {
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub lhs: RegisterOperand,
-    /// `b`
-    pub rhs: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u16`
-    U16,
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
-    /// `.s16`
-    S16,
-    /// `.s32`
-    S32,
-    /// `.s64`
-    S64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U16, // .u16
+        U32, // .u32
+        U64, // .u64
+        S16, // .s16
+        S32, // .s32
+        S64, // .s64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct RemType {
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
 }

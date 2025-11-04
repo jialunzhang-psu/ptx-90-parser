@@ -1,8 +1,8 @@
 use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
-    r#type::common::RegisterOperand,
-    r#type::instruction::mul24::{DataType as Mul24DataType, Mode as Mul24Mode, Mul24},
+    r#type::common::{Operand, RegisterOperand},
+    r#type::instruction::mul24::{Type as Mul24DataType, Mode as Mul24Mode, Mul24},
 };
 
 #[test]
@@ -11,10 +11,10 @@ fn parses_mul24_lo_with_unsigned_type() {
         parse::<Mul24>("mul24.lo.u32 %r0, %r1, %r2;"),
         Mul24 {
             mode: Mul24Mode::Lo,
-            data_type: Mul24DataType::U32,
-            destination: RegisterOperand::Single("%r0".into()),
-            a: RegisterOperand::Single("%r1".into()),
-            b: RegisterOperand::Single("%r2".into()),
+            type_: Mul24DataType::U32,
+            d: Operand::Register(RegisterOperand::Single("%r0".into())),
+            a: Operand::Register(RegisterOperand::Single("%r1".into())),
+            b: Operand::Register(RegisterOperand::Single("%r2".into())),
         }
     );
     assert_roundtrip::<Mul24>("mul24.lo.u32 %r0, %r1, %r2;");
@@ -25,10 +25,10 @@ fn parses_mul24_hi_with_signed_type() {
         parse::<Mul24>("mul24.hi.s32 %r6, %r7, %r8;"),
         Mul24 {
             mode: Mul24Mode::Hi,
-            data_type: Mul24DataType::S32,
-            destination: RegisterOperand::Single("%r6".into()),
-            a: RegisterOperand::Single("%r7".into()),
-            b: RegisterOperand::Single("%r8".into()),
+            type_: Mul24DataType::S32,
+            d: Operand::Register(RegisterOperand::Single("%r6".into())),
+            a: Operand::Register(RegisterOperand::Single("%r7".into())),
+            b: Operand::Register(RegisterOperand::Single("%r8".into())),
         }
     );
     assert_roundtrip::<Mul24>("mul24.hi.s32 %r6, %r7, %r8;");

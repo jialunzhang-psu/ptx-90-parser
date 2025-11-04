@@ -1,0 +1,13 @@
+min.atype         d, a, b;
+min{.relu}.btype  d, a, b;
+.atype = { .u16, .u32, .u64, .u16x2, .s16, .s64 };
+.btype = { .s16x2, .s32 };
+
+min{.ftz}{.NaN}{.xorsign.abs}.f32  d, a, b;
+min{.ftz}{.NaN}{.abs}.f32          d, a, b, c;
+min.f64                            d, a, b;
+
+min{.ftz}{.NaN}{.xorsign.abs}.f16      d, a, b;
+min{.ftz}{.NaN}{.xorsign.abs}.f16x2    d, a, b;
+min{.NaN}{.xorsign.abs}.bf16           d, a, b;
+min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;

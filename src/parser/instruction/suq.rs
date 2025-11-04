@@ -1,90 +1,119 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::{RegisterOperand, VariableSymbol},
-        instruction::suq::{Operand, Query, Suq},
-    },
-};
+//! Original PTX specification:
+//!
+//! suq.query.b32   d, [a];
+//! .query = { .width, .height, .depth,
+//! .channel_data_type, .channel_order,
+//! .array_size, .memory_layout };
 
-impl PtxParser for Query {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-        match modifier.as_str() {
-            "width" => Ok(Query::Width),
-            "height" => Ok(Query::Height),
-            "depth" => Ok(Query::Depth),
-            "channel_data_type" => Ok(Query::ChannelDataType),
-            "channel_order" => Ok(Query::ChannelOrder),
-            "array_size" => Ok(Query::ArraySize),
-            "memory_layout" => Ok(Query::MemoryLayout),
-            other => Err(unexpected_value(
-                span,
-                &[
-                    ".width",
-                    ".height",
-                    ".depth",
-                    ".channel_data_type",
-                    ".channel_order",
-                    ".array_size",
-                    ".memory_layout",
-                ],
-                format!(".{other}"),
-            )),
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::suq::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Query {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Width
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".width").is_ok() {
+                    return Ok(Query::Width);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Height
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".height").is_ok() {
+                    return Ok(Query::Height);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Depth
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".depth").is_ok() {
+                    return Ok(Query::Depth);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try ChannelDataType
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".channel_data_type").is_ok() {
+                    return Ok(Query::ChannelDataType);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try ChannelOrder
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".channel_order").is_ok() {
+                    return Ok(Query::ChannelOrder);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try ArraySize
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".array_size").is_ok() {
+                    return Ok(Query::ArraySize);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try MemoryLayout
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".memory_layout").is_ok() {
+                    return Ok(Query::MemoryLayout);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".width", ".height", ".depth", ".channel_data_type", ".channel_order", ".array_size", ".memory_layout"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for Operand {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        stream.expect(&PtxToken::LBracket)?;
-
-        let operand = if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
-            Operand::Surface(VariableSymbol::parse(stream)?)
-        } else if stream.check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace)) {
-            Operand::Register(RegisterOperand::parse(stream)?)
-        } else {
-            let (token, span) = stream.peek()?;
-            return Err(unexpected_value(
-                span.clone(),
-                &["surface identifier", "register operand"],
-                format!("{token:?}"),
-            ));
-        };
-
-        stream.expect(&PtxToken::RBracket)?;
-        Ok(operand)
-    }
-}
-
-impl PtxParser for Suq {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "suq" {
-            return Err(unexpected_value(span, &["suq"], opcode));
+    impl PtxParser for SuqQueryB32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("suq")?;
+            let query = Query::parse(stream)?;
+            stream.expect_string(".b32")?;
+            let b32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = AddressOperand::parse(stream)?;
+            Ok(SuqQueryB32 {
+                query,
+                b32,
+                d,
+                a,
+            })
         }
-
-        let query = Query::parse(stream)?;
-
-        let (data_type, data_span) = stream.expect_directive()?;
-        if data_type.as_str() != "b32" {
-            return Err(unexpected_value(
-                data_span,
-                &[".b32"],
-                format!(".{data_type}"),
-            ));
-        }
-
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-
-        let address = Operand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Suq {
-            query,
-            destination,
-            address,
-        })
     }
+
+
 }
+

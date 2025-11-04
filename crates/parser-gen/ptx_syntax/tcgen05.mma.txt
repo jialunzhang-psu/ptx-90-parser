@@ -1,0 +1,64 @@
+// 1. Floating-point type without block scaling:
+tcgen05.mma.cta_group.kind   [d-tmem],  a-desc,  b-desc, idesc
+{, disable-output-lane }, enable-input-d {, scale-input-d};
+tcgen05.mma.cta_group.kind   [d-tmem], [a-tmem], b-desc, idesc
+{, disable-output-lane }, enable-input-d {, scale-input-d};
+.kind      = { .kind::f16, .kind::tf32, .kind::f8f6f4 };
+.cta_group = { .cta_group::1, .cta_group::2 };
+------------------------------------------------------------------
+// 2. Floating-point type with block scaling:
+tcgen05.mma.cta_group.kind.block_scale{.scale_vectorsize}
+[d-tmem],  a-desc,  b-desc, idesc,
+[scale-A-tmem], [scale-B-tmem], enable-input-d;
+tcgen05.mma.cta_group.kind.block_scale{.scale_vectorsize}
+[d-tmem], [a-tmem], b-desc, idesc,
+[scale-A-tmem], [scale-B-tmem], enable-input-d;
+.kind = { .kind::mxf8f6f4, .kind::mxf4, .kind::mxf4nvf4 };
+.cta_group      = { .cta_group::1,   .cta_group::2 };
+.scale_vectorsize = { .scale_vec::1X, .scale_vec::2X, .scale_vec::4X, .block16, .block32 };
+------------------------------------------------------------------
+// 3. Convolution MMA for floating-point type without block scaling:
+tcgen05.mma.cta_group.kind.collector_usage [d-tmem],  a-desc,  b-desc, idesc
+{, disable-output-lane }, enable-input-d {, scale-input-d};
+tcgen05.mma.cta_group.kind{.ashift}.collector_usage [d-tmem], [a-tmem], b-desc, idesc
+{, disable-output-lane }, enable-input-d {, scale-input-d};
+tcgen05.mma.cta_group.kind.ashift{.collector_usage} [d-tmem], [a-tmem], b-desc, idesc
+{, disable-output-lane }, enable-input-d {, scale-input-d};
+.kind      = { .kind::f16, .kind::tf32, .kind::f8f6f4 };
+.cta_group = { .cta_group::1,   .cta_group::2 };
+.collector_usage = { .collector::buffer::op };
+::buffer         = { ::a };
+::op             = { ::fill, ::use, ::lastuse, ::discard* };
+------------------------------------------------------------------
+// 4. Activation Stationary MMA for floating-point type with block scaling:
+tcgen05.mma.cta_group.kind.block_scale{.scale_vectorsize}.collector_usage
+[d-tmem],  a-desc,  b-desc, idesc,
+[scale-A-tmem], [scale-B-tmem], enable-input-d;
+tcgen05.mma.cta_group.kind.block_scale{.scale_vectorsize}.collector_usage
+[d-tmem], [a-tmem], b-desc, idesc,
+[scale-A-tmem], [scale-B-tmem], enable-input-d;
+.cta_group       = { .cta_group::1,   .cta_group::2 };
+.scale_vectorsize  = { .scale_vec::1X, .scale_vec::2X, .scale_vec::4X, .block16, .block32 };
+.kind            = { .kind::mxf8f6f4, .kind::mxf4, .kind::mxf4nvf4 };
+.collector_usage = { .collector::buffer::op };
+::buffer         = { ::a };
+::op             = { ::fill, ::use, ::lastuse, ::discard* };
+------------------------------------------------------------------
+// 5. Integer type:
+tcgen05.mma.cta_group.kind::i8  [d-tmem],  a-desc,  b-desc, idesc
+{, disable-output-lane }, enable-input-d;
+tcgen05.mma.cta_group.kind::i8  [d-tmem], [a-tmem], b-desc, idesc
+{, disable-output-lane }, enable-input-d;
+.cta_group = { .cta_group::1,   .cta_group::2  };
+------------------------------------------------------------------
+// 6. Convolution MMA for integer type:
+tcgen05.mma.cta_group.kind::i8.collector_usage          [d-tmem],  a-desc,  b-desc, idesc
+{, disable-output-lane }, enable-input-d;
+tcgen05.mma.cta_group.kind::i8.ashift{.collector_usage} [d-tmem], [a-tmem], b-desc, idesc
+{, disable-output-lane }, enable-input-d;
+tcgen05.mma.cta_group.kind::i8{.ashift}.collector_usage [d-tmem], [a-tmem], b-desc, idesc
+{, disable-output-lane }, enable-input-d;
+.cta_group       = { .cta_group::1,   .cta_group::2  };
+.collector_usage = { .collector::buffer::op };
+::buffer         = { ::a };
+::op             = { ::fill, ::use, ::lastuse, ::discard* };

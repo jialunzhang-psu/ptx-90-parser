@@ -1,0 +1,2 @@
+griddepcontrol.action;
+.action   = { .launch_dependents, .wait };

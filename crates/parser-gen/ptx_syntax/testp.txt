@@ -1,0 +1,5 @@
+testp.op.type  p, a;  // result is .pred
+.op   = { .finite, .infinite,
+.number, .notanumber,
+.normal, .subnormal };
+.type = { .f32, .f64 };

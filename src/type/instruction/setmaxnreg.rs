@@ -1,19 +1,27 @@
-use crate::r#type::common::Immediate;
+//! Original PTX specification:
+//!
+//! setmaxnreg.action.sync.aligned.u32 imm-reg-count;
+//! .action = { .inc, .dec };
 
-/// `setmaxnreg.action.sync.aligned.u32 imm-reg-count;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Setmaxnreg {
-    /// `.action`
-    pub action: Action,
-    /// `imm-reg-count`
-    pub register_count: Immediate,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.action = { .inc, .dec };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Action {
-    /// `.inc`
-    Inc,
-    /// `.dec`
-    Dec,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Action {
+        Inc, // .inc
+        Dec, // .dec
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetmaxnregActionSyncAlignedU32 {
+        pub action: Action, // .action
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub u32: (), // .u32
+        pub imm_reg_count: Operand, // imm-reg-count
+    }
+
 }

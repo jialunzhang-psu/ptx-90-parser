@@ -1,0 +1,2 @@
+prmt.b32{.mode}  d, a, b, c;
+.mode = { .f4e, .b4e, .rc8, .ecl, .ecr, .rc16 };

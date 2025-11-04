@@ -1,0 +1,2 @@
+clz.type  d, a;
+.type = { .b32, .b64 };

@@ -1,0 +1,112 @@
+use logos::Logos;
+
+pub use logos::Span;
+
+/// PTX specification token types for lexical analysis.
+#[derive(Logos, Debug, Clone, PartialEq, Eq)]
+#[logos(error = LexError)]
+#[logos(skip r"[ \t\r\n]+")]
+pub enum PtxToken {
+    #[regex(r"//[^\n]*", logos::skip)]
+    #[regex(r"/\*[^*]*\*+(?:[^/*][^*]*\*+)*/", logos::skip)]
+    #[token("::")]
+    DoubleColon,
+    #[token(".")]
+    Dot,
+    #[token(",")]
+    Comma,
+    #[token(";")]
+    Semicolon,
+    #[token(":")]
+    Colon,
+    #[token("(")]
+    LParen,
+    #[token(")")]
+    RParen,
+    #[token("[")]
+    LBracket,
+    #[token("]")]
+    RBracket,
+    #[token("{")]
+    LBrace,
+    #[token("}")]
+    RBrace,
+    #[token("+")]
+    Plus,
+    #[token("-")]
+    Minus,
+    #[token("*")]
+    Star,
+    #[token("/")]
+    Slash,
+    #[token("<")]
+    LAngle,
+    #[token(">")]
+    RAngle,
+    #[token("=")]
+    Equals,
+    #[token("%")]
+    Percent,
+    #[token("!")]
+    Exclaim,
+    #[token("|")]
+    Pipe,
+    #[token("&")]
+    Ampersand,
+    #[token("^")]
+    Caret,
+    #[token("~")]
+    Tilde,
+    #[token("@")]
+    At,
+    #[regex(r"0[fFdD][0-9a-fA-F]{8}", |lex| lex.slice().to_string())]
+    #[regex(r"0[fFdD][0-9a-fA-F]{16}", |lex| lex.slice().to_string())]
+    HexFloat(String),
+    #[regex(r"0[xX][0-9a-fA-F]+", |lex| lex.slice().to_string())]
+    HexInteger(String),
+    #[regex(r"0[bB][01]+", |lex| lex.slice().to_string())]
+    BinaryInteger(String),
+    #[regex(r"0[0-7]+", |lex| lex.slice().to_string())]
+    OctalInteger(String),
+    #[regex(r"[0-9]+\.[0-9]+[eE][+-]?[0-9]+", |lex| lex.slice().to_string())]
+    #[regex(r"[0-9]+[eE][+-]?[0-9]+", |lex| lex.slice().to_string())]
+    FloatExponent(String),
+    #[regex(r"[0-9]+\.[0-9]+", |lex| lex.slice().to_string())]
+    Float(String),
+    #[regex(r"[0-9]+", |lex| lex.slice().to_string())]
+    DecimalInteger(String),
+    #[regex(r"%[a-zA-Z_][a-zA-Z0-9_]*", |lex| lex.slice().to_string())]
+    Register(String),
+    #[regex(r"[a-zA-Z_$][a-zA-Z0-9_$-]*", |lex| lex.slice().to_string())]
+    Identifier(String),
+    #[regex(r#""([^"\\]|\\.)*""#, |lex| {
+        let slice = lex.slice();
+        slice[1..slice.len() - 1].to_string()
+    })]
+    StringLiteral(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct LexError {
+    pub span: Span,
+}
+
+impl From<Span> for LexError {
+    fn from(span: Span) -> Self {
+        LexError { span }
+    }
+}
+
+pub fn tokenize(source: &str) -> Result<Vec<(PtxToken, Span)>, LexError> {
+    let mut lexer = PtxToken::lexer(source);
+    let mut tokens = Vec::new();
+
+    while let Some(item) = lexer.next() {
+        match item {
+            Ok(token) => tokens.push((token, lexer.span())),
+            Err(_) => return Err(LexError { span: lexer.span() }),
+        }
+    }
+
+    Ok(tokens)
+}

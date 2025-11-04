@@ -1,0 +1,2 @@
+tcgen05.wait_operation.sync.aligned;
+.wait_operation = { .wait::ld, .wait::st }

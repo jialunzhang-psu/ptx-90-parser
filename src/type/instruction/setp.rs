@@ -1,102 +1,211 @@
-use crate::r#type::common::{PredicateRegister, RegisterOperand};
+//! Original PTX specification:
+//!
+//! setp.CmpOp{.ftz}.type         p{|q}, a, b;
+//! setp.CmpOp.BoolOp{.ftz}.type  p{|q}, a, b, {!}c;
+//! .CmpOp  = { .eq, .ne, .lt, .le, .gt, .ge, .lo, .ls, .hi, .hs, .equ, .neu, .ltu, .leu, .gtu, .geu, .num, .nan };
+//! .BoolOp = { .and, .or, .xor };
+//! .type   = { .b16, .b32, .b64, .u16, .u32, .u64, .s16, .s32, .s64, .f32, .f64 };
+//! --------------------------------------------------------------
+//! setp.CmpOp{.ftz}.f16           p, a, b;
+//! setp.CmpOp.BoolOp{.ftz}.f16    p, a, b, {!}c;
+//! setp.CmpOp{.ftz}.f16x2         p|q, a, b;
+//! setp.CmpOp.BoolOp{.ftz}.f16x2  p|q, a, b, {!}c;
+//! setp.CmpOp.bf16                p, a, b;
+//! setp.CmpOp.BoolOp.bf16         p, a, b, {!}c;
+//! setp.CmpOp.bf16x2              p|q, a, b;
+//! setp.CmpOp.BoolOp.bf16x2       p|q, a, b, {!}c;
+//! .CmpOp  = { .eq, .ne, .lt, .le, .gt, .ge, .equ, .neu, .ltu, .leu, .gtu, .geu, .num, .nan };
+//! .BoolOp = { .and, .or, .xor };
 
-/// `setp.CmpOp{.ftz}.type p[|q], a, b;`
-/// `setp.CmpOp.BoolOp{.ftz}.type p[|q], a, b, {!}c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Setp {
-    /// `setp.CmpOp{.ftz}.type p[|q], a, b;`
-    Compare(Compare),
-    /// `setp.CmpOp.BoolOp{.ftz}.type p[|q], a, b, {!}c;`
-    CompareBool(CompareBool),
+#![allow(unused)]
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Cmpop {
+        Eq, // .eq
+        Ne, // .ne
+        Lt, // .lt
+        Le, // .le
+        Gt, // .gt
+        Ge, // .ge
+        Lo, // .lo
+        Ls, // .ls
+        Hi, // .hi
+        Hs, // .hs
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        B16, // .b16
+        B32, // .b32
+        B64, // .b64
+        U16, // .u16
+        U32, // .u32
+        U64, // .u64
+        S16, // .s16
+        S32, // .s32
+        S64, // .s64
+        F32, // .f32
+        F64, // .f64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Boolop {
+        And, // .and
+        Or, // .or
+        Xor, // .xor
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetpCmpopFtzType {
+        pub cmpop: Cmpop, // .CmpOp
+        pub ftz: bool, // {.ftz}
+        pub type_: Type, // .type
+        pub p: Operand, // p{|q}
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetpCmpopBoolopFtzType {
+        pub cmpop: Cmpop, // .CmpOp
+        pub boolop: Boolop, // .BoolOp
+        pub ftz: bool, // {.ftz}
+        pub type_: Type, // .type
+        pub p: Operand, // p{|q}
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c_op: bool, // {!} operator
+        pub c: Operand, // {!}c
+    }
+
 }
 
-/// `setp.CmpOp{.ftz}.type p[|q], a, b;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Compare {
-    pub compare_op: CompareOp,
-    pub flush_to_zero: bool,
-    pub data_type: DataType,
-    pub destination: Destination,
-    pub a: RegisterOperand,
-    pub b: RegisterOperand,
-}
+pub mod section_1 {
+    use crate::r#type::common::*;
 
-/// `setp.CmpOp.BoolOp{.ftz}.type p[|q], a, b, {!}c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CompareBool {
-    pub compare_op: CompareOp,
-    pub bool_op: BoolOp,
-    pub flush_to_zero: bool,
-    pub data_type: DataType,
-    pub destination: Destination,
-    pub a: RegisterOperand,
-    pub b: RegisterOperand,
-    pub predicate: Predicate,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Cmpop {
+        Eq, // .eq
+        Ne, // .ne
+        Lt, // .lt
+        Le, // .le
+        Gt, // .gt
+        Ge, // .ge
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
+    }
 
-/// `p[|q]`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Destination {
-    pub predicate: PredicateTarget,
-    pub complement: Option<PredicateTarget>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Boolop {
+        And, // .and
+        Or, // .or
+        Xor, // .xor
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum PredicateTarget {
-    Register(PredicateRegister),
-    Sink,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetpCmpopFtzF16 {
+        pub cmpop: Cmpop, // .CmpOp
+        pub ftz: bool, // {.ftz}
+        pub f16: (), // .f16
+        pub p: Operand, // p
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
 
-/// `{!}c`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Predicate {
-    pub register: PredicateRegister,
-    pub negated: bool,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetpCmpopBoolopFtzF16 {
+        pub cmpop: Cmpop, // .CmpOp
+        pub boolop: Boolop, // .BoolOp
+        pub ftz: bool, // {.ftz}
+        pub f16: (), // .f16
+        pub p: Operand, // p
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c_op: bool, // {!} operator
+        pub c: Operand, // {!}c
+    }
 
-/// `.CmpOp = { eq, ne, lt, le, gt, ge, lo, ls, hi, hs, equ, neu, ltu, leu, gtu, geu, num, nan }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CompareOp {
-    Eq,
-    Ne,
-    Lt,
-    Le,
-    Gt,
-    Ge,
-    Lo,
-    Ls,
-    Hi,
-    Hs,
-    Equ,
-    Neu,
-    Ltu,
-    Leu,
-    Gtu,
-    Geu,
-    Num,
-    Nan,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetpCmpopFtzF16x2 {
+        pub cmpop: Cmpop, // .CmpOp
+        pub ftz: bool, // {.ftz}
+        pub f16x2: (), // .f16x2
+        pub p: Operand, // p|q
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
 
-/// `.BoolOp = { and, or, xor }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum BoolOp {
-    And,
-    Or,
-    Xor,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetpCmpopBoolopFtzF16x2 {
+        pub cmpop: Cmpop, // .CmpOp
+        pub boolop: Boolop, // .BoolOp
+        pub ftz: bool, // {.ftz}
+        pub f16x2: (), // .f16x2
+        pub p: Operand, // p|q
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c_op: bool, // {!} operator
+        pub c: Operand, // {!}c
+    }
 
-/// `.type = { .b16, .b32, .b64, .u16, .u32, .u64, .s16, .s32, .s64, .f32, .f64 }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    B16,
-    B32,
-    B64,
-    U16,
-    U32,
-    U64,
-    S16,
-    S32,
-    S64,
-    F32,
-    F64,
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetpCmpopBf16 {
+        pub cmpop: Cmpop, // .CmpOp
+        pub bf16: (), // .bf16
+        pub p: Operand, // p
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetpCmpopBoolopBf16 {
+        pub cmpop: Cmpop, // .CmpOp
+        pub boolop: Boolop, // .BoolOp
+        pub bf16: (), // .bf16
+        pub p: Operand, // p
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c_op: bool, // {!} operator
+        pub c: Operand, // {!}c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetpCmpopBf16x2 {
+        pub cmpop: Cmpop, // .CmpOp
+        pub bf16x2: (), // .bf16x2
+        pub p: Operand, // p|q
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SetpCmpopBoolopBf16x2 {
+        pub cmpop: Cmpop, // .CmpOp
+        pub boolop: Boolop, // .BoolOp
+        pub bf16x2: (), // .bf16x2
+        pub p: Operand, // p|q
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c_op: bool, // {!} operator
+        pub c: Operand, // {!}c
+    }
+
 }

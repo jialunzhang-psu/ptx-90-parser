@@ -1,131 +1,140 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::RegisterOperand,
-        instruction::sqrt::{Rounding, Sqrt},
-    },
-};
+//! Original PTX specification:
+//!
+//! sqrt.approx{.ftz}.f32  d, a; // fast, approximate square root
+//! sqrt.rnd{.ftz}.f32     d, a; // IEEE 754 compliant rounding
+//! sqrt.rnd.f64           d, a; // IEEE 754 compliant rounding
+//! .rnd = { .rn, .rz, .rm, .rp };
 
-impl PtxParser for Rounding {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "rn" => Ok(Rounding::Rn),
-            "rz" => Ok(Rounding::Rz),
-            "rm" => Ok(Rounding::Rm),
-            "rp" => Ok(Rounding::Rp),
-            other => Err(unexpected_value(
-                span,
-                &[".rn", ".rz", ".rm", ".rp"],
-                format!(".{other}"),
-            )),
-        }
-    }
-}
+#![allow(unused)]
 
-impl PtxParser for Sqrt {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, opcode_span) = stream.expect_identifier()?;
-        if opcode != "sqrt" {
-            return Err(unexpected_value(opcode_span, &["sqrt"], opcode));
-        }
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-        let (modifier, modifier_span) = stream.expect_modifier()?;
-        match modifier.as_str() {
-            "approx" => parse_approx(stream),
-            "rnd" => parse_rnd(stream),
-            other => Err(unexpected_value(
-                modifier_span,
-                &[".approx", ".rnd"],
-                format!(".{other}"),
-            )),
-        }
-    }
-}
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::sqrt::section_0::*;
 
-fn parse_approx(stream: &mut PtxTokenStream) -> Result<Sqrt, PtxParseError> {
-    let flush_to_zero =
-        if stream.check(|token| matches!(token, PtxToken::Directive(value) if value == "ftz")) {
-            stream.consume()?;
-            true
-        } else {
-            false
-        };
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
 
-    let (data_type, data_span) = stream.expect_directive()?;
-    if data_type.as_str() != "f32" {
-        return Err(unexpected_value(
-            data_span,
-            &[".f32"],
-            format!(".{data_type}"),
-        ));
-    }
-
-    let destination = RegisterOperand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let source = RegisterOperand::parse(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
-
-    Ok(Sqrt::ApproxF32 {
-        flush_to_zero,
-        destination,
-        source,
-    })
-}
-
-fn parse_rnd(stream: &mut PtxTokenStream) -> Result<Sqrt, PtxParseError> {
-    let rounding = Rounding::parse(stream)?;
-
-    let mut flush_to_zero = false;
-    let mut flush_span = None;
-    if let Some((_, span)) =
-        stream.consume_if(|token| matches!(token, PtxToken::Directive(value) if value == "ftz"))
-    {
-        flush_to_zero = true;
-        flush_span = Some(span.clone());
-    }
-
-    let (data_type, data_span) = stream.expect_directive()?;
-    match data_type.as_str() {
-        "f32" => {
-            let destination = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let source = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Semicolon)?;
-
-            Ok(Sqrt::RndF32 {
-                rounding,
-                flush_to_zero,
-                destination,
-                source,
-            })
-        }
-        "f64" => {
-            if flush_to_zero {
-                let span = flush_span.unwrap_or_else(|| data_span.clone());
-                return Err(unexpected_value(
-                    span,
-                    &["omit .ftz when using .f64"],
-                    ".ftz",
-                ));
+    impl PtxParser for Rnd {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Rn
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rn").is_ok() {
+                    return Ok(Rnd::Rn);
+                }
+                stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try Rz
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rz").is_ok() {
+                    return Ok(Rnd::Rz);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rm
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rm").is_ok() {
+                    return Ok(Rnd::Rm);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rp
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rp").is_ok() {
+                    return Ok(Rnd::Rp);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".rn", ".rz", ".rm", ".rp"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
-            let destination = RegisterOperand::parse(stream)?;
+    impl PtxParser for SqrtApproxFtzF32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("sqrt")?;
+            stream.expect_string(".approx")?;
+            let approx = ();
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f32")?;
+            let f32 = ();
+            let d = Operand::parse(stream)?;
             stream.expect(&PtxToken::Comma)?;
-            let source = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Semicolon)?;
-
-            Ok(Sqrt::RndF64 {
-                rounding,
-                destination,
-                source,
+            let a = Operand::parse(stream)?;
+            Ok(SqrtApproxFtzF32 {
+                approx,
+                ftz,
+                f32,
+                d,
+                a,
             })
         }
-        other => Err(unexpected_value(
-            data_span,
-            &[".f32", ".f64"],
-            format!(".{other}"),
-        )),
     }
+
+
+    impl PtxParser for SqrtRndFtzF32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("sqrt")?;
+            let rnd = Rnd::parse(stream)?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f32")?;
+            let f32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            Ok(SqrtRndFtzF32 {
+                rnd,
+                ftz,
+                f32,
+                d,
+                a,
+            })
+        }
+    }
+
+
+    impl PtxParser for SqrtRndF64 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("sqrt")?;
+            let rnd = Rnd::parse(stream)?;
+            stream.expect_string(".f64")?;
+            let f64 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            Ok(SqrtRndF64 {
+                rnd,
+                f64,
+                d,
+                a,
+            })
+        }
+    }
+
+
 }
+

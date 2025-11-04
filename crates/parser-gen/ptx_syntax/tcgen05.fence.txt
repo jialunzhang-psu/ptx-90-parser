@@ -1,0 +1,2 @@
+tcgen05.fence::before_thread_sync ;
+tcgen05.fence::after_thread_sync  ;

@@ -1,0 +1,3 @@
+match.any.sync.type  d, a, membermask;
+match.all.sync.type  d{|p}, a, membermask;
+.type = { .b32, .b64 };

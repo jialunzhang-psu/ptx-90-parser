@@ -1,120 +1,410 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::RegisterOperand,
-        instruction::max::{AType, BType, Max, Relu},
-    },
-};
+//! Original PTX specification:
+//!
+//! max.atype         d, a, b;
+//! max{.relu}.btype  d, a, b;
+//! .atype = { .u16, .u32, .u64,
+//! .u16x2, .s16, .s64 };
+//! .btype = { .s16x2, .s32 };
+//! 
+//! max{.ftz}{.NaN}{.xorsign.abs}.f32  d, a, b;
+//! max{.ftz}{.NaN}{.abs}.f32          d, a, b, c;
+//! max.f64                            d, a, b;
+//! 
+//! max{.ftz}{.NaN}{.xorsign.abs}.f16      d, a, b;
+//! max{.ftz}{.NaN}{.xorsign.abs}.f16x2    d, a, b;
+//! max{.NaN}{.xorsign.abs}.bf16           d, a, b;
+//! max{.NaN}{.xorsign.abs}.bf16x2         d, a, b;
 
-impl AType {
-    fn from_modifier(modifier: &str) -> Option<Self> {
-        match modifier {
-            "u16" => Some(AType::U16),
-            "u32" => Some(AType::U32),
-            "u64" => Some(AType::U64),
-            "u16x2" => Some(AType::U16x2),
-            "s16" => Some(AType::S16),
-            "s64" => Some(AType::S64),
-            _ => None,
-        }
-    }
-}
+#![allow(unused)]
 
-impl BType {
-    fn from_modifier(modifier: &str) -> Option<Self> {
-        match modifier {
-            "s16x2" => Some(BType::S16x2),
-            "s32" => Some(BType::S32),
-            _ => None,
-        }
-    }
-}
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-impl PtxParser for AType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-        AType::from_modifier(&modifier).ok_or_else(|| {
-            unexpected_value(
-                span,
-                &[".u16", ".u32", ".u64", ".u16x2", ".s16", ".s64"],
-                format!(".{modifier}"),
-            )
-        })
-    }
-}
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::max::section_0::*;
 
-impl PtxParser for BType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-        BType::from_modifier(&modifier)
-            .ok_or_else(|| unexpected_value(span, &[".s16x2", ".s32"], format!(".{modifier}")))
-    }
-}
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
 
-impl PtxParser for Max {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "max" {
-            return Err(unexpected_value(span, &["max"], opcode));
-        }
-
-        let relu_token =
-            stream.consume_if(|token| matches!(token, PtxToken::Directive(name) if name == "relu"));
-        let relu = if relu_token.is_some() {
-            Relu::Relu
-        } else {
-            Relu::Default
-        };
-        let relu_span = relu_token.map(|(_, span)| span.clone());
-
-        let (modifier, span) = stream.expect_directive()?;
-
-        if let Some(data_type) = AType::from_modifier(&modifier) {
-            if matches!(relu, Relu::Relu) {
-                return Err(unexpected_value(
-                    relu_span.expect("relu span available"),
-                    &[".s16x2", ".s32"],
-                    ".relu".to_string(),
-                ));
+    impl PtxParser for Atype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u16").is_ok() {
+                    return Ok(Atype::U16);
+                }
+                stream.set_position(saved_pos);
             }
-
-            let destination = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Semicolon)?;
-
-            Ok(Max::AType {
-                data_type,
-                destination,
-                a,
-                b,
-            })
-        } else if let Some(data_type) = BType::from_modifier(&modifier) {
-            let destination = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Semicolon)?;
-
-            Ok(Max::BType {
-                relu,
-                data_type,
-                destination,
-                a,
-                b,
-            })
-        } else {
-            Err(unexpected_value(
-                span,
-                &[
-                    ".u16", ".u32", ".u64", ".u16x2", ".s16", ".s64", ".s16x2", ".s32",
-                ],
-                format!(".{modifier}"),
-            ))
+            let saved_pos = stream.position();
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Atype::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u64").is_ok() {
+                    return Ok(Atype::U64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U16x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u16x2").is_ok() {
+                    return Ok(Atype::U16x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s16").is_ok() {
+                    return Ok(Atype::S16);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s64").is_ok() {
+                    return Ok(Atype::S64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u16", ".u32", ".u64", ".u16x2", ".s16", ".s64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
+
+    impl PtxParser for Btype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try S16x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s16x2").is_ok() {
+                    return Ok(Btype::S16x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Btype::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".s16x2", ".s32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for MaxAtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("max")?;
+            let atype = Atype::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(MaxAtype {
+                atype,
+                d,
+                a,
+                b,
+            })
+        }
+    }
+
+
+    impl PtxParser for MaxReluBtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("max")?;
+            let saved_pos = stream.position();
+            let relu = stream.expect_string(".relu").is_ok();
+            if !relu {
+                stream.set_position(saved_pos);
+            }
+            let btype = Btype::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(MaxReluBtype {
+                relu,
+                btype,
+                d,
+                a,
+                b,
+            })
+        }
+    }
+
+
+    impl PtxParser for MaxFtzNanXorsignAbsF32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("max")?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let nan = stream.expect_string(".NaN").is_ok();
+            if !nan {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
+            if !xorsign_abs {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f32")?;
+            let f32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(MaxFtzNanXorsignAbsF32 {
+                ftz,
+                nan,
+                xorsign_abs,
+                f32,
+                d,
+                a,
+                b,
+            })
+        }
+    }
+
+
+    impl PtxParser for MaxFtzNanAbsF32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("max")?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let nan = stream.expect_string(".NaN").is_ok();
+            if !nan {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let abs = stream.expect_string(".abs").is_ok();
+            if !abs {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f32")?;
+            let f32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(MaxFtzNanAbsF32 {
+                ftz,
+                nan,
+                abs,
+                f32,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+    impl PtxParser for MaxF64 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("max")?;
+            stream.expect_string(".f64")?;
+            let f64 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(MaxF64 {
+                f64,
+                d,
+                a,
+                b,
+            })
+        }
+    }
+
+
+    impl PtxParser for MaxFtzNanXorsignAbsF16 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("max")?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let nan = stream.expect_string(".NaN").is_ok();
+            if !nan {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
+            if !xorsign_abs {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f16")?;
+            let f16 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(MaxFtzNanXorsignAbsF16 {
+                ftz,
+                nan,
+                xorsign_abs,
+                f16,
+                d,
+                a,
+                b,
+            })
+        }
+    }
+
+
+    impl PtxParser for MaxFtzNanXorsignAbsF16x2 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("max")?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let nan = stream.expect_string(".NaN").is_ok();
+            if !nan {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
+            if !xorsign_abs {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f16x2")?;
+            let f16x2 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(MaxFtzNanXorsignAbsF16x2 {
+                ftz,
+                nan,
+                xorsign_abs,
+                f16x2,
+                d,
+                a,
+                b,
+            })
+        }
+    }
+
+
+    impl PtxParser for MaxNanXorsignAbsBf16 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("max")?;
+            let saved_pos = stream.position();
+            let nan = stream.expect_string(".NaN").is_ok();
+            if !nan {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
+            if !xorsign_abs {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".bf16")?;
+            let bf16 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(MaxNanXorsignAbsBf16 {
+                nan,
+                xorsign_abs,
+                bf16,
+                d,
+                a,
+                b,
+            })
+        }
+    }
+
+
+    impl PtxParser for MaxNanXorsignAbsBf16x2 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("max")?;
+            let saved_pos = stream.position();
+            let nan = stream.expect_string(".NaN").is_ok();
+            if !nan {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
+            if !xorsign_abs {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".bf16x2")?;
+            let bf16x2 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(MaxNanXorsignAbsBf16x2 {
+                nan,
+                xorsign_abs,
+                bf16x2,
+                d,
+                a,
+                b,
+            })
+        }
+    }
+
+
 }
+

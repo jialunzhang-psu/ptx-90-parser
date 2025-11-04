@@ -1,0 +1,6 @@
+slct.dtype.s32        d, a, b, c;
+slct{.ftz}.dtype.f32  d, a, b, c;
+.dtype = { .b16, .b32, .b64,
+.u16, .u32, .u64,
+.s16, .s32, .s64,
+.f32, .f64 };

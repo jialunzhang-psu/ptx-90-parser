@@ -1,0 +1,2 @@
+stackrestore.type  a;
+.type = { .u32, .u64 };

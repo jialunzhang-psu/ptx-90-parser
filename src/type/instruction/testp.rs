@@ -1,40 +1,39 @@
-use crate::r#type::common::{PredicateRegister, RegisterOperand};
+//! Original PTX specification:
+//!
+//! testp.op.type  p, a;  // result is .pred
+//! .op   = { .finite, .infinite,
+//! .number, .notanumber,
+//! .normal, .subnormal };
+//! .type = { .f32, .f64 };
 
-/// `testp.op.type  p, a;  // result is .pred`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Testp {
-    /// `.op`
-    pub test: PredicateTest,
-    /// `.type`
-    pub data_type: DataType,
-    /// `p`
-    pub destination: PredicateRegister,
-    /// `a`
-    pub source: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.op = { .finite, .infinite, .number, .notanumber, .normal, .subnormal };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PredicateTest {
-    /// `.finite`
-    Finite,
-    /// `.infinite`
-    Infinite,
-    /// `.number`
-    Number,
-    /// `.notanumber`
-    NotANumber,
-    /// `.normal`
-    Normal,
-    /// `.subnormal`
-    Subnormal,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.type = { .f32, .f64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.f32`
-    F32,
-    /// `.f64`
-    F64,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Op {
+        Finite, // .finite
+        Infinite, // .infinite
+        Number, // .number
+        Notanumber, // .notanumber
+        Normal, // .normal
+        Subnormal, // .subnormal
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        F32, // .f32
+        F64, // .f64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct TestpOpType {
+        pub op: Op, // .op
+        pub type_: Type, // .type
+        pub p: Operand, // p
+        pub a: Operand, // a
+    }
+
 }

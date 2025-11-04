@@ -1,38 +1,36 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! bfind.type           d, a;
+//! bfind.shiftamt.type  d, a;
+//! .type = { .u32, .u64, .s32, .s64 };
 
-/// `bfind.type d, a;`
-/// `bfind.shiftamt.type d, a;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Bfind {
-    /// `bfind.type d, a;`
-    Plain {
-        /// `.type`
-        data_type: DataType,
-        /// `d`
-        destination: RegisterOperand,
-        /// `a`
-        source: RegisterOperand,
-    },
-    /// `bfind.shiftamt.type d, a;`
-    ShiftAmount {
-        /// `.type`
-        data_type: DataType,
-        /// `d`
-        destination: RegisterOperand,
-        /// `a`
-        source: RegisterOperand,
-    },
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.type = { .u32, .u64, .s32, .s64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
-    /// `.s32`
-    S32,
-    /// `.s64`
-    S64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U32, // .u32
+        U64, // .u64
+        S32, // .s32
+        S64, // .s64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BfindType {
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BfindShiftamtType {
+        pub shiftamt: (), // .shiftamt
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
 }

@@ -1,0 +1,2 @@
+applypriority{.global}.level::eviction_priority  [a], size;
+.level::eviction_priority = { .L2::evict_normal };

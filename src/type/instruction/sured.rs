@@ -1,113 +1,109 @@
-use crate::r#type::common::{RegisterOperand, VariableSymbol};
+//! Original PTX specification:
+//!
+//! sured.b.op.geom.ctype.mode [a,b],c; // byte addressing
+//! .op    = { .add, .min, .max, .and, .or };
+//! .geom  = { .1d, .2d, .3d };
+//! .ctype = { .u32, .u64, .s32, .b32, .s64 };  // for sured.b
+//! .mode  = { .trap, .clamp, .zero };
+//! ----------------------------------------------------
+//! sured.p.op.geom.ctype.mode [a,b],c; // sample addressing
+//! .op    = { .add, .min, .max, .and, .or };
+//! .geom  = { .1d, .2d, .3d };
+//! .ctype = { .b32, .b64 };                    // for sured.p
+//! .mode  = { .trap, .clamp, .zero };
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Sured {
-    /// `sured.b.op.1d.ctype.clamp [a,b],c;`
-    Byte1d(Byte<Coordinate1d>),
-    /// `sured.b.op.2d.ctype.clamp [a,b],c;`
-    Byte2d(Byte<Coordinate2d>),
-    /// `sured.b.op.3d.ctype.clamp [a,b],c;`
-    Byte3d(Byte<Coordinate3d>),
-    /// `sured.p.op.1d.ctype.clamp [a,b],c;`
-    Sample1d(Sample<Coordinate1d>),
-    /// `sured.p.op.2d.ctype.clamp [a,b],c;`
-    Sample2d(Sample<Coordinate2d>),
-    /// `sured.p.op.3d.ctype.clamp [a,b],c;`
-    Sample3d(Sample<Coordinate3d>),
+#![allow(unused)]
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Op {
+        Add, // .add
+        Min, // .min
+        Max, // .max
+        And, // .and
+        Or, // .or
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Geom {
+        _1d, // .1d
+        _2d, // .2d
+        _3d, // .3d
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Ctype {
+        U32, // .u32
+        U64, // .u64
+        S32, // .s32
+        B32, // .b32
+        S64, // .s64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        Trap, // .trap
+        Clamp, // .clamp
+        Zero, // .zero
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SuredBOpGeomCtypeMode {
+        pub b: (), // .b
+        pub op: Op, // .op
+        pub geom: Geom, // .geom
+        pub ctype: Ctype, // .ctype
+        pub mode: Mode, // .mode
+        pub a: (Operand, Operand), // [a, b]
+        pub c: Operand, // c
+    }
+
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Reduction<TDataType, TCoordinates> {
-    /// `.op`
-    pub operator: Operator,
-    /// `.ctype`
-    pub data_type: TDataType,
-    /// `.clamp`
-    pub clamp: Clamp,
-    /// `a`
-    pub surface: Surface,
-    /// `b`
-    pub coordinates: TCoordinates,
-    /// `c`
-    pub source: RegisterOperand,
-}
+pub mod section_1 {
+    use crate::r#type::common::*;
 
-pub type Byte<TCoordinates> = Reduction<ByteDataType, TCoordinates>;
-pub type Sample<TCoordinates> = Reduction<SampleDataType, TCoordinates>;
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Op {
+        Add, // .add
+        Min, // .min
+        Max, // .max
+        And, // .and
+        Or, // .or
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Operator {
-    /// `.add`
-    Add,
-    /// `.min`
-    Min,
-    /// `.max`
-    Max,
-    /// `.and`
-    And,
-    /// `.or`
-    Or,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Geom {
+        _1d, // .1d
+        _2d, // .2d
+        _3d, // .3d
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ByteDataType {
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
-    /// `.s32`
-    S32,
-    /// `.b32`
-    B32,
-    /// `.s64`
-    S64,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Ctype {
+        B32, // .b32
+        B64, // .b64
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SampleDataType {
-    /// `.b32`
-    B32,
-    /// `.b64`
-    B64,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        Trap, // .trap
+        Clamp, // .clamp
+        Zero, // .zero
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Clamp {
-    /// `.trap`
-    Trap,
-    /// `.clamp`
-    Clamp,
-    /// `.zero`
-    Zero,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SuredPOpGeomCtypeMode {
+        pub p: (), // .p
+        pub op: Op, // .op
+        pub geom: Geom, // .geom
+        pub ctype: Ctype, // .ctype
+        pub mode: Mode, // .mode
+        pub a: (Operand, Operand), // [a, b]
+        pub c: Operand, // c
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Surface {
-    /// `.surfref`
-    Reference(VariableSymbol),
-    /// `.u64`
-    Indirect(RegisterOperand),
-}
-
-/// `.1d`
-pub type Coordinate1d = RegisterOperand;
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Coordinate2d {
-    /// `.2d`
-    pub x: RegisterOperand,
-    /// `.2d`
-    pub y: RegisterOperand,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Coordinate3d {
-    /// `.3d`
-    pub x: RegisterOperand,
-    /// `.3d`
-    pub y: RegisterOperand,
-    /// `.3d`
-    pub z: RegisterOperand,
-    /// `.3d` (ignored)
-    pub w: RegisterOperand,
 }

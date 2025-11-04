@@ -1,0 +1,1 @@
+st.bulk{.weak}{.shared::cta}  [a], size, initval; // initval must be zero

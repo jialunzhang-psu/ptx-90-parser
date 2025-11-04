@@ -1,0 +1,6 @@
+tcgen05.st.sync.aligned.shape1.num{.unpack}.b32    [taddr], r;
+tcgen05.st.sync.aligned.shape2.num{.unpack}.b32    [taddr], immHalfSplitoff, r;
+.shape1 = { .16x64b, .16x128b, .16x256b, .32x32b };
+.shape2 = { .16x32bx2 };
+.num    = { .x1, .x2, .x4, .x8, .x16, .x32, .x64, .x128 };
+.unpack = { .unpack::16b };

@@ -1,55 +1,42 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::cos::*},
-};
+//! Original PTX specification:
+//!
+//! cos.approx{.ftz}.f32  d, a;
 
-impl PtxParser for crate::r#type::instruction::cos::DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "f32" => Ok(crate::r#type::instruction::cos::DataType::F32),
-            other => Err(unexpected_value(span, &[".f32"], format!(".{other}"))),
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::cos::section_0::*;
+
+    impl PtxParser for CosApproxFtzF32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("cos")?;
+            stream.expect_string(".approx")?;
+            let approx = ();
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f32")?;
+            let f32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            Ok(CosApproxFtzF32 {
+                approx,
+                ftz,
+                f32,
+                d,
+                a,
+            })
         }
     }
+
+
 }
 
-impl PtxParser for Cos {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, opcode_span) = stream.expect_identifier()?;
-        if opcode != "cos" {
-            return Err(unexpected_value(opcode_span, &["cos"], opcode));
-        }
-
-        let (modifier, modifier_span) = stream.expect_modifier()?;
-        if modifier != "approx" {
-            return Err(unexpected_value(
-                modifier_span,
-                &[".approx"],
-                format!(".{modifier}"),
-            ));
-        }
-
-        let flush_to_zero = if stream
-            .check(|token| matches!(token, PtxToken::Directive(value) if value == "ftz"))
-        {
-            stream.consume()?;
-            true
-        } else {
-            false
-        };
-
-        let data_type = <crate::r#type::instruction::cos::DataType as PtxParser>::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let source = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Cos {
-            flush_to_zero,
-            data_type,
-            destination,
-            source,
-        })
-    }
-}

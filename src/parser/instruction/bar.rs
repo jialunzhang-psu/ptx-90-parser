@@ -1,325 +1,383 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{
-        PtxParseError, PtxParser, PtxTokenStream, consume_directive_if, expect_directive_value,
-        unexpected_value,
-    },
-    r#type::{
-        common::{Operand, PredicateRegister, RegisterOperand},
-        instruction::bar::{
-            Bar, BarArrive, BarReductionLogical, BarReductionPopc, BarSync, BarrierArrive,
-            BarrierReductionLogical, BarrierReductionPopc, BarrierSync, DataType, LogicalOperation,
-            PredicateInput, Scope,
-        },
-    },
-};
+//! Original PTX specification:
+//!
+//! barrier{.cta}.sync{.aligned}      a{, b};
+//! barrier{.cta}.arrive{.aligned}    a, b;
+//! barrier{.cta}.red.popc{.aligned}.u32  d, a{, b}, {!}c;
+//! barrier{.cta}.red.op{.aligned}.pred   p, a{, b}, {!}c;
+//! bar{.cta}.sync      a{, b};
+//! bar{.cta}.arrive    a, b;
+//! bar{.cta}.red.popc.u32  d, a{, b}, {!}c;
+//! bar{.cta}.red.op.pred   p, a{, b}, {!}c;
+//! .op = { .and, .or };
 
-impl PtxParser for Scope {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        if consume_directive_if(stream, "cta") {
-            Ok(Scope::Cta)
-        } else {
-            Ok(Scope::None)
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::bar::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Op {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try And
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".and").is_ok() {
+                    return Ok(Op::And);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Or
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Op::Or);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".and", ".or"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_directive_value(stream, "u32")?;
-        Ok(DataType::U32)
-    }
-}
-
-impl PtxParser for LogicalOperation {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-        match modifier.as_str() {
-            "and" => Ok(LogicalOperation::And),
-            "or" => Ok(LogicalOperation::Or),
-            other => Err(unexpected_value(
-                span,
-                &[".and", ".or"],
-                format!(".{other}"),
-            )),
+    impl PtxParser for BarrierCtaSyncAligned {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("barrier")?;
+            let saved_pos = stream.position();
+            let cta = stream.expect_string(".cta").is_ok();
+            if !cta {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".sync")?;
+            let sync = ();
+            let saved_pos = stream.position();
+            let aligned = stream.expect_string(".aligned").is_ok();
+            if !aligned {
+                stream.set_position(saved_pos);
+            }
+            let a = Operand::parse(stream)?;
+            let saved_pos = stream.position();
+            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
+            if !has_comma {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let b = match Operand::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            Ok(BarrierCtaSyncAligned {
+                cta,
+                sync,
+                aligned,
+                a,
+                b,
+            })
         }
     }
-}
 
-impl PtxParser for PredicateInput {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let negated = stream
-            .consume_if(|token| matches!(token, PtxToken::Exclaim))
-            .is_some();
-        let predicate = PredicateRegister::parse(stream)?;
-        Ok(PredicateInput { negated, predicate })
-    }
-}
 
-impl PtxParser for Bar {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        match opcode.as_str() {
-            "barrier" => parse_barrier_instruction(stream),
-            "bar" => parse_bar_instruction(stream),
-            other => Err(unexpected_value(span, &["barrier", "bar"], other)),
+    impl PtxParser for BarrierCtaArriveAligned {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("barrier")?;
+            let saved_pos = stream.position();
+            let cta = stream.expect_string(".cta").is_ok();
+            if !cta {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".arrive")?;
+            let arrive = ();
+            let saved_pos = stream.position();
+            let aligned = stream.expect_string(".aligned").is_ok();
+            if !aligned {
+                stream.set_position(saved_pos);
+            }
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(BarrierCtaArriveAligned {
+                cta,
+                arrive,
+                aligned,
+                a,
+                b,
+            })
         }
     }
-}
 
-fn parse_barrier_instruction(stream: &mut PtxTokenStream) -> Result<Bar, PtxParseError> {
-    let scope = Scope::parse(stream)?;
-    let (modifier, span) = stream.expect_directive()?;
-    match modifier.as_str() {
-        "sync" => parse_barrier_sync(stream, scope),
-        "arrive" => parse_barrier_arrive(stream, scope),
-        "red" => parse_barrier_reduction(stream, scope),
-        other => Err(unexpected_value(
-            span,
-            &[".sync", ".arrive", ".red"],
-            format!(".{other}"),
-        )),
+
+    impl PtxParser for BarrierCtaRedPopcAlignedU32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("barrier")?;
+            let saved_pos = stream.position();
+            let cta = stream.expect_string(".cta").is_ok();
+            if !cta {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".red")?;
+            let red = ();
+            stream.expect_string(".popc")?;
+            let popc = ();
+            let saved_pos = stream.position();
+            let aligned = stream.expect_string(".aligned").is_ok();
+            if !aligned {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".u32")?;
+            let u32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            let saved_pos = stream.position();
+            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
+            if !has_comma {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let b = match Operand::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            stream.expect(&PtxToken::Comma)?;
+            let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
+            let c = Operand::parse(stream)?;
+            Ok(BarrierCtaRedPopcAlignedU32 {
+                cta,
+                red,
+                popc,
+                aligned,
+                u32,
+                d,
+                a,
+                b,
+                c_op,
+                c,
+            })
+        }
     }
-}
 
-fn parse_bar_instruction(stream: &mut PtxTokenStream) -> Result<Bar, PtxParseError> {
-    let scope = Scope::parse(stream)?;
-    let (modifier, span) = stream.expect_directive()?;
-    match modifier.as_str() {
-        "sync" => parse_bar_sync(stream, scope),
-        "arrive" => parse_bar_arrive(stream, scope),
-        "red" => parse_bar_reduction(stream, scope),
-        other => Err(unexpected_value(
-            span,
-            &[".sync", ".arrive", ".red"],
-            format!(".{other}"),
-        )),
+
+    impl PtxParser for BarrierCtaRedOpAlignedPred {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("barrier")?;
+            let saved_pos = stream.position();
+            let cta = stream.expect_string(".cta").is_ok();
+            if !cta {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".red")?;
+            let red = ();
+            let op = Op::parse(stream)?;
+            let saved_pos = stream.position();
+            let aligned = stream.expect_string(".aligned").is_ok();
+            if !aligned {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".pred")?;
+            let pred = ();
+            let p = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            let saved_pos = stream.position();
+            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
+            if !has_comma {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let b = match Operand::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            stream.expect(&PtxToken::Comma)?;
+            let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
+            let c = Operand::parse(stream)?;
+            Ok(BarrierCtaRedOpAlignedPred {
+                cta,
+                red,
+                op,
+                aligned,
+                pred,
+                p,
+                a,
+                b,
+                c_op,
+                c,
+            })
+        }
     }
-}
 
-fn parse_barrier_sync(stream: &mut PtxTokenStream, scope: Scope) -> Result<Bar, PtxParseError> {
-    let aligned = consume_directive_if(stream, "aligned");
-    let barrier = Operand::parse(stream)?;
-    let expected_count = if stream
-        .consume_if(|token| matches!(token, PtxToken::Comma))
-        .is_some()
-    {
-        Some(Operand::parse(stream)?)
-    } else {
-        None
-    };
-    stream.expect(&PtxToken::Semicolon)?;
 
-    Ok(Bar::BarrierSync(BarrierSync {
-        scope,
-        aligned,
-        barrier,
-        expected_count,
-    }))
-}
-
-fn parse_barrier_arrive(stream: &mut PtxTokenStream, scope: Scope) -> Result<Bar, PtxParseError> {
-    let aligned = consume_directive_if(stream, "aligned");
-    let barrier = Operand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let expected_count = Operand::parse(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
-
-    Ok(Bar::BarrierArrive(BarrierArrive {
-        scope,
-        aligned,
-        barrier,
-        expected_count,
-    }))
-}
-
-fn parse_barrier_reduction(
-    stream: &mut PtxTokenStream,
-    scope: Scope,
-) -> Result<Bar, PtxParseError> {
-    let (kind, span) = stream.expect_directive()?;
-    match kind.as_str() {
-        "popc" => parse_barrier_reduction_popc(stream, scope),
-        "and" | "or" => parse_barrier_reduction_logical(stream, scope, kind),
-        other => Err(unexpected_value(
-            span,
-            &[".popc", ".and", ".or"],
-            format!(".{other}"),
-        )),
+    impl PtxParser for BarCtaSync {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("bar")?;
+            let saved_pos = stream.position();
+            let cta = stream.expect_string(".cta").is_ok();
+            if !cta {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".sync")?;
+            let sync = ();
+            let a = Operand::parse(stream)?;
+            let saved_pos = stream.position();
+            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
+            if !has_comma {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let b = match Operand::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            Ok(BarCtaSync {
+                cta,
+                sync,
+                a,
+                b,
+            })
+        }
     }
-}
 
-fn parse_barrier_reduction_popc(
-    stream: &mut PtxTokenStream,
-    scope: Scope,
-) -> Result<Bar, PtxParseError> {
-    let aligned = consume_directive_if(stream, "aligned");
-    let data_type = DataType::parse(stream)?;
-    let destination = RegisterOperand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let barrier = Operand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let (expected_count, predicate) = parse_optional_expected_count_and_predicate(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
 
-    Ok(Bar::BarrierReductionPopc(BarrierReductionPopc {
-        scope,
-        aligned,
-        data_type,
-        destination,
-        barrier,
-        expected_count,
-        predicate,
-    }))
-}
-
-fn parse_barrier_reduction_logical(
-    stream: &mut PtxTokenStream,
-    scope: Scope,
-    operation_directive: String,
-) -> Result<Bar, PtxParseError> {
-    let operation = match operation_directive.as_str() {
-        "and" => LogicalOperation::And,
-        "or" => LogicalOperation::Or,
-        _ => unreachable!(),
-    };
-
-    let aligned = consume_directive_if(stream, "aligned");
-    expect_directive_value(stream, "pred")?;
-    let destination = PredicateRegister::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let barrier = Operand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let (expected_count, predicate) = parse_optional_expected_count_and_predicate(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
-
-    Ok(Bar::BarrierReductionLogical(BarrierReductionLogical {
-        scope,
-        aligned,
-        destination,
-        barrier,
-        expected_count,
-        predicate,
-        operation,
-    }))
-}
-
-fn parse_bar_sync(stream: &mut PtxTokenStream, scope: Scope) -> Result<Bar, PtxParseError> {
-    let barrier = Operand::parse(stream)?;
-    let expected_count = if stream
-        .consume_if(|token| matches!(token, PtxToken::Comma))
-        .is_some()
-    {
-        Some(Operand::parse(stream)?)
-    } else {
-        None
-    };
-    stream.expect(&PtxToken::Semicolon)?;
-
-    Ok(Bar::BarSync(BarSync {
-        scope,
-        barrier,
-        expected_count,
-    }))
-}
-
-fn parse_bar_arrive(stream: &mut PtxTokenStream, scope: Scope) -> Result<Bar, PtxParseError> {
-    let barrier = Operand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let expected_count = Operand::parse(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
-
-    Ok(Bar::BarArrive(BarArrive {
-        scope,
-        barrier,
-        expected_count,
-    }))
-}
-
-fn parse_bar_reduction(stream: &mut PtxTokenStream, scope: Scope) -> Result<Bar, PtxParseError> {
-    let (kind, span) = stream.expect_directive()?;
-    match kind.as_str() {
-        "popc" => parse_bar_reduction_popc(stream, scope),
-        "and" | "or" => parse_bar_reduction_logical(stream, scope, kind),
-        other => Err(unexpected_value(
-            span,
-            &[".popc", ".and", ".or"],
-            format!(".{other}"),
-        )),
+    impl PtxParser for BarCtaArrive {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("bar")?;
+            let saved_pos = stream.position();
+            let cta = stream.expect_string(".cta").is_ok();
+            if !cta {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".arrive")?;
+            let arrive = ();
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            Ok(BarCtaArrive {
+                cta,
+                arrive,
+                a,
+                b,
+            })
+        }
     }
-}
 
-fn parse_bar_reduction_popc(
-    stream: &mut PtxTokenStream,
-    scope: Scope,
-) -> Result<Bar, PtxParseError> {
-    let data_type = DataType::parse(stream)?;
-    let destination = RegisterOperand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let barrier = Operand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let (expected_count, predicate) = parse_optional_expected_count_and_predicate(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
 
-    Ok(Bar::BarReductionPopc(BarReductionPopc {
-        scope,
-        data_type,
-        destination,
-        barrier,
-        expected_count,
-        predicate,
-    }))
-}
-
-fn parse_bar_reduction_logical(
-    stream: &mut PtxTokenStream,
-    scope: Scope,
-    operation_directive: String,
-) -> Result<Bar, PtxParseError> {
-    let operation = match operation_directive.as_str() {
-        "and" => LogicalOperation::And,
-        "or" => LogicalOperation::Or,
-        _ => unreachable!(),
-    };
-
-    expect_directive_value(stream, "pred")?;
-    let destination = PredicateRegister::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let barrier = Operand::parse(stream)?;
-    stream.expect(&PtxToken::Comma)?;
-    let (expected_count, predicate) = parse_optional_expected_count_and_predicate(stream)?;
-    stream.expect(&PtxToken::Semicolon)?;
-
-    Ok(Bar::BarReductionLogical(BarReductionLogical {
-        scope,
-        destination,
-        barrier,
-        expected_count,
-        predicate,
-        operation,
-    }))
-}
-
-fn parse_optional_expected_count_and_predicate(
-    stream: &mut PtxTokenStream,
-) -> Result<(Option<Operand>, PredicateInput), PtxParseError> {
-    let predicate_next = next_is_predicate_input(stream)?;
-    if predicate_next {
-        let predicate = PredicateInput::parse(stream)?;
-        Ok((None, predicate))
-    } else {
-        let expected_count = Operand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let predicate = PredicateInput::parse(stream)?;
-        Ok((Some(expected_count), predicate))
+    impl PtxParser for BarCtaRedPopcU32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("bar")?;
+            let saved_pos = stream.position();
+            let cta = stream.expect_string(".cta").is_ok();
+            if !cta {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".red")?;
+            let red = ();
+            stream.expect_string(".popc")?;
+            let popc = ();
+            stream.expect_string(".u32")?;
+            let u32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            let saved_pos = stream.position();
+            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
+            if !has_comma {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let b = match Operand::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            stream.expect(&PtxToken::Comma)?;
+            let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
+            let c = Operand::parse(stream)?;
+            Ok(BarCtaRedPopcU32 {
+                cta,
+                red,
+                popc,
+                u32,
+                d,
+                a,
+                b,
+                c_op,
+                c,
+            })
+        }
     }
+
+
+    impl PtxParser for BarCtaRedOpPred {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("bar")?;
+            let saved_pos = stream.position();
+            let cta = stream.expect_string(".cta").is_ok();
+            if !cta {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".red")?;
+            let red = ();
+            let op = Op::parse(stream)?;
+            stream.expect_string(".pred")?;
+            let pred = ();
+            let p = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            let saved_pos = stream.position();
+            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
+            if !has_comma {
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            let b = match Operand::parse(stream) {
+                Ok(val) => Some(val),
+                Err(_) => {
+                    stream.set_position(saved_pos);
+                    None
+                }
+            };
+            stream.expect(&PtxToken::Comma)?;
+            let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
+            let c = Operand::parse(stream)?;
+            Ok(BarCtaRedOpPred {
+                cta,
+                red,
+                op,
+                pred,
+                p,
+                a,
+                b,
+                c_op,
+                c,
+            })
+        }
+    }
+
+
 }
 
-fn next_is_predicate_input(stream: &mut PtxTokenStream) -> Result<bool, PtxParseError> {
-    let (token, _) = stream.peek()?;
-    match token {
-        PtxToken::Exclaim => Ok(true),
-        PtxToken::Register(name) => Ok(name.starts_with("%p")),
-        _ => Ok(false),
-    }
-}

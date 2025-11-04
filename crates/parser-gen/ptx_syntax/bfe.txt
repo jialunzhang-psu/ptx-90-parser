@@ -1,0 +1,2 @@
+bfe.type  d, a, b, c;
+.type = { .u32, .u64, .s32, .s64 };

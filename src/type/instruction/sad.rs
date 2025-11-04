@@ -1,28 +1,31 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! sad.type  d, a, b, c;
+//! .type = { .u16, .u32, .u64, .s16, .s32, .s64 };
 
-/// `sad.type  d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Sad {
-    pub data_type: DataType,
-    pub destination: RegisterOperand,
-    pub a: RegisterOperand,
-    pub b: RegisterOperand,
-    pub c: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.type = { .u16, .u32, .u64, .s16, .s32, .s64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u16`
-    U16,
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
-    /// `.s16`
-    S16,
-    /// `.s32`
-    S32,
-    /// `.s64`
-    S64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U16, // .u16
+        U32, // .u32
+        U64, // .u64
+        S16, // .s16
+        S32, // .s32
+        S64, // .s64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SadType {
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }

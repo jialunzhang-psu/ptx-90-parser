@@ -1,25 +1,27 @@
+//! Original PTX specification:
+//!
+//! shl.type d, a, b;
+//! .type = { .b16, .b32, .b64 };
+
+#![allow(unused)]
 use crate::r#type::common::*;
 
-/// `shl.type d, a, b;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Shl {
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub a: RegisterOperand,
-    /// `b`
-    pub b: Operand,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.type = { .b16, .b32, .b64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b16`
-    B16,
-    /// `.b32`
-    B32,
-    /// `.b64`
-    B64,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        B16, // .b16
+        B32, // .b32
+        B64, // .b64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ShlType {
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
 }

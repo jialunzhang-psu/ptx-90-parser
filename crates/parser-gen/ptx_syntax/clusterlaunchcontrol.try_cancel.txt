@@ -1,0 +1,3 @@
+clusterlaunchcontrol.try_cancel.async{.space}.completion_mechanism{.multicast::cluster::all}.b128 [addr], [mbar];
+.completion_mechanism = { .mbarrier::complete_tx::bytes };
+.space = { .shared::cta };

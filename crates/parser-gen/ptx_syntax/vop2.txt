@@ -1,0 +1,10 @@
+// SIMD instruction with secondary SIMD merge operation
+vop2.dtype.atype.btype{.sat}  d{.mask}, a{.asel}, b{.bsel}, c;
+// SIMD instruction with secondary accumulate operation
+vop2.dtype.atype.btype.add  d{.mask}, a{.asel}, b{.bsel}, c;
+vop2  = { vadd2, vsub2, vavrg2, vabsdiff2, vmin2, vmax2 };
+.dtype = .atype = .btype = { .u32, .s32 };
+.mask  = { .h0, .h1, .h10 };  // defaults to .h10
+.asel  = .bsel  = { .h00, .h01, .h02, .h03, .h10, .h11, .h12, .h13, .h20, .h21, .h22, .h23, .h30, .h31, .h32, .h33 }; 
+// .asel defaults to .h10
+// .bsel defaults to .h32

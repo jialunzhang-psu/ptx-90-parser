@@ -1,0 +1,8 @@
+mbarrier.arrive{.sem}{.scope}{.state}.b64           state, [addr]{, count};
+mbarrier.arrive{.sem}{.scope}{.shared::cluster}.b64         _, [addr] {,count};
+mbarrier.arrive.expect_tx{.sem}{.scope}{.state}.b64 state, [addr], txCount;
+mbarrier.arrive.expect_tx{.sem}{.scope}{.shared::cluster}.b64   _, [addr], txCount;
+mbarrier.arrive.noComplete{.release}{.cta}{.state}.b64  state, [addr], count;
+.sem   = { .release, .relaxed };
+.scope = { .cta, .cluster };
+.state = { .shared, .shared::cta}

@@ -2,8 +2,8 @@ use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
-        common::RegisterOperand,
-        instruction::tanh::{Approximation, DataType, Tanh},
+        common::{Operand, RegisterOperand},
+        instruction::tanh::{Type, Tanh},
     },
 };
 
@@ -12,10 +12,10 @@ fn parses_tanh_instruction() {
     assert_eq!(
         parse::<Tanh>("tanh.approx.f32 %f0, %f1;"),
         Tanh {
-            approximation: Approximation::Approx,
-            data_type: DataType::F32,
-            destination: RegisterOperand::Single("%f0".into()),
-            source: RegisterOperand::Single("%f1".into()),
+            approx: (),
+            type_: Type::F32,
+            d: Operand::Register(RegisterOperand::Single("%f0".into())),
+            a: Operand::Register(RegisterOperand::Single("%f1".into())),
         }
     );
     assert_roundtrip::<Tanh>("tanh.approx.f32 %f0, %f1;");
@@ -29,8 +29,15 @@ fn rejects_tanh_with_invalid_modifier() {
 }
 
 #[test]
-fn rejects_tanh_with_invalid_data_type() {
-    let err = parse_result::<Tanh>("tanh.approx.f16 %f0, %f1;")
-        .expect_err("parse should fail with data type");
-    assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
+fn parses_tanh_with_f16_data_type() {
+    assert_eq!(
+        parse::<Tanh>("tanh.approx.f16 %f0, %f1;"),
+        Tanh {
+            approx: (),
+            type_: Type::F16,
+            d: Operand::Register(RegisterOperand::Single("%f0".into())),
+            a: Operand::Register(RegisterOperand::Single("%f1".into())),
+        }
+    );
+    assert_roundtrip::<Tanh>("tanh.approx.f16 %f0, %f1;");
 }

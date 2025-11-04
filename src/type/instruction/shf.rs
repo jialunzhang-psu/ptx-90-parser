@@ -1,45 +1,41 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! shf.l.mode.b32  d, a, b, c;  // left shift
+//! shf.r.mode.b32  d, a, b, c;  // right shift
+//! .mode = { .clamp, .wrap };
 
-/// `shf.direction.mode.type  d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Shf {
-    /// `.direction`
-    pub direction: Direction,
-    /// `.mode`
-    pub mode: Mode,
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub a: RegisterOperand,
-    /// `b`
-    pub b: RegisterOperand,
-    /// `c`
-    pub c: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.direction = { .l, .r };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Direction {
-    /// `.l` (left shift)
-    Left,
-    /// `.r` (right shift)
-    Right,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.mode = { .clamp, .wrap };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mode {
-    /// `.clamp`
-    Clamp,
-    /// `.wrap`
-    Wrap,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        Clamp, // .clamp
+        Wrap, // .wrap
+    }
 
-/// `.type = { .b32 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b32`
-    B32,
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ShfLModeB32 {
+        pub l: (), // .l
+        pub mode: Mode, // .mode
+        pub b32: (), // .b32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ShfRModeB32 {
+        pub r: (), // .r
+        pub mode: Mode, // .mode
+        pub b32: (), // .b32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }

@@ -1,0 +1,5 @@
+tcgen05.cp.cta_group.shape{.multicast}{.dst_src_fmt} [taddr], s-desc;
+.cta_group = { .cta_group::1, .cta_group::2 };
+.dst_src_fmt   = { .b8x16.b6x16_p32, .b8x16.b4x16_p64 };
+.shape     = { .128x256b, .4x256b, .128x128b, .64x128b**, .32x128b*** };
+.multicast = { .warpx2::02_13** , .warpx2::01_23**, .warpx4*** };

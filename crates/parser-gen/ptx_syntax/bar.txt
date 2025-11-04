@@ -1,0 +1,9 @@
+barrier{.cta}.sync{.aligned}      a{, b};
+barrier{.cta}.arrive{.aligned}    a, b;
+barrier{.cta}.red.popc{.aligned}.u32  d, a{, b}, {!}c;
+barrier{.cta}.red.op{.aligned}.pred   p, a{, b}, {!}c;
+bar{.cta}.sync      a{, b};
+bar{.cta}.arrive    a, b;
+bar{.cta}.red.popc.u32  d, a{, b}, {!}c;
+bar{.cta}.red.op.pred   p, a{, b}, {!}c;
+.op = { .and, .or };

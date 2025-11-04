@@ -1,41 +1,47 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! mad24.mode.type  d, a, b, c;
+//! mad24.hi.sat.s32 d, a, b, c;
+//! .mode = { .hi, .lo };
+//! .type = { .u32, .s32 };
 
-/// `mad24.mode.type d, a, b, c;`
-/// `mad24.hi.sat.s32 d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Mad24 {
-    /// `mad24.mode.type d, a, b, c;`
-    Mode {
-        mode: Mode,
-        data_type: DataType,
-        destination: RegisterOperand,
-        a: RegisterOperand,
-        b: RegisterOperand,
-        c: RegisterOperand,
-    },
-    /// `mad24.hi.sat.s32 d, a, b, c;`
-    HiSatS32 {
-        destination: RegisterOperand,
-        a: RegisterOperand,
-        b: RegisterOperand,
-        c: RegisterOperand,
-    },
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.mode = { .hi, .lo };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mode {
-    /// `.hi`
-    Hi,
-    /// `.lo`
-    Lo,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.type = { .u32, .s32 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-    /// `.s32`
-    S32,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        Hi, // .hi
+        Lo, // .lo
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U32, // .u32
+        S32, // .s32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Mad24ModeType {
+        pub mode: Mode, // .mode
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Mad24HiSatS32 {
+        pub hi: (), // .hi
+        pub sat: (), // .sat
+        pub s32: (), // .s32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }

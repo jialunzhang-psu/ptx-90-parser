@@ -3,7 +3,7 @@ use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
         common::{Immediate, Operand, RegisterOperand},
-        instruction::nanosleep::{DataType, Nanosleep},
+        instruction::nanosleep::Nanosleep,
     },
 };
 
@@ -12,8 +12,8 @@ fn parses_nanosleep_with_register_operand() {
     assert_eq!(
         parse::<Nanosleep>("nanosleep.u32 %r3;"),
         Nanosleep {
-            data_type: DataType::U32,
-            delay: Operand::Register(RegisterOperand::Single("%r3".into())),
+            u32: (),
+            t: Operand::Register(RegisterOperand::Single("%r3".into())),
         }
     );
     assert_roundtrip::<Nanosleep>("nanosleep.u32 %r3;");
@@ -24,8 +24,8 @@ fn parses_nanosleep_with_immediate_operand() {
     assert_eq!(
         parse::<Nanosleep>("nanosleep.u32 128;"),
         Nanosleep {
-            data_type: DataType::U32,
-            delay: Operand::Immediate(Immediate("128".into())),
+            u32: (),
+            t: Operand::Immediate(Immediate("128".into())),
         }
     );
     assert_roundtrip::<Nanosleep>("nanosleep.u32 128;");

@@ -1,54 +1,130 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! max.atype         d, a, b;
+//! max{.relu}.btype  d, a, b;
+//! .atype = { .u16, .u32, .u64,
+//! .u16x2, .s16, .s64 };
+//! .btype = { .s16x2, .s32 };
+//! 
+//! max{.ftz}{.NaN}{.xorsign.abs}.f32  d, a, b;
+//! max{.ftz}{.NaN}{.abs}.f32          d, a, b, c;
+//! max.f64                            d, a, b;
+//! 
+//! max{.ftz}{.NaN}{.xorsign.abs}.f16      d, a, b;
+//! max{.ftz}{.NaN}{.xorsign.abs}.f16x2    d, a, b;
+//! max{.NaN}{.xorsign.abs}.bf16           d, a, b;
+//! max{.NaN}{.xorsign.abs}.bf16x2         d, a, b;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Max {
-    /// `max.atype d, a, b;`
-    AType {
-        data_type: AType,
-        destination: RegisterOperand,
-        a: RegisterOperand,
-        b: RegisterOperand,
-    },
-    /// `max{.relu}.btype d, a, b;`
-    BType {
-        relu: Relu,
-        data_type: BType,
-        destination: RegisterOperand,
-        a: RegisterOperand,
-        b: RegisterOperand,
-    },
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `{.relu}` in `max{.relu}.btype d, a, b;`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Relu {
-    Default,
-    /// `.relu`
-    Relu,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.atype = { .u16, .u32, .u64, .u16x2, .s16, .s64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AType {
-    /// `.u16`
-    U16,
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
-    /// `.u16x2`
-    U16x2,
-    /// `.s16`
-    S16,
-    /// `.s64`
-    S64,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Atype {
+        U16, // .u16
+        U32, // .u32
+        U64, // .u64
+        U16x2, // .u16x2
+        S16, // .s16
+        S64, // .s64
+    }
 
-/// `.btype = { .s16x2, .s32 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum BType {
-    /// `.s16x2`
-    S16x2,
-    /// `.s32`
-    S32,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Btype {
+        S16x2, // .s16x2
+        S32, // .s32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MaxAtype {
+        pub atype: Atype, // .atype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MaxReluBtype {
+        pub relu: bool, // {.relu}
+        pub btype: Btype, // .btype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MaxFtzNanXorsignAbsF32 {
+        pub ftz: bool, // {.ftz}
+        pub nan: bool, // {.NaN}
+        pub xorsign_abs: bool, // {.xorsign.abs}
+        pub f32: (), // .f32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MaxFtzNanAbsF32 {
+        pub ftz: bool, // {.ftz}
+        pub nan: bool, // {.NaN}
+        pub abs: bool, // {.abs}
+        pub f32: (), // .f32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MaxF64 {
+        pub f64: (), // .f64
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MaxFtzNanXorsignAbsF16 {
+        pub ftz: bool, // {.ftz}
+        pub nan: bool, // {.NaN}
+        pub xorsign_abs: bool, // {.xorsign.abs}
+        pub f16: (), // .f16
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MaxFtzNanXorsignAbsF16x2 {
+        pub ftz: bool, // {.ftz}
+        pub nan: bool, // {.NaN}
+        pub xorsign_abs: bool, // {.xorsign.abs}
+        pub f16x2: (), // .f16x2
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MaxNanXorsignAbsBf16 {
+        pub nan: bool, // {.NaN}
+        pub xorsign_abs: bool, // {.xorsign.abs}
+        pub bf16: (), // .bf16
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MaxNanXorsignAbsBf16x2 {
+        pub nan: bool, // {.NaN}
+        pub xorsign_abs: bool, // {.xorsign.abs}
+        pub bf16x2: (), // .bf16x2
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
 }

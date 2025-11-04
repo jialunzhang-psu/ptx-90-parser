@@ -1,58 +1,42 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::RegisterOperand,
-        instruction::sin::{DataType, Sin},
-    },
-};
+//! Original PTX specification:
+//!
+//! sin.approx{.ftz}.f32  d, a;
 
-impl PtxParser for DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "f32" => Ok(DataType::F32),
-            other => Err(unexpected_value(span, &[".f32"], format!(".{other}"))),
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::sin::section_0::*;
+
+    impl PtxParser for SinApproxFtzF32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("sin")?;
+            stream.expect_string(".approx")?;
+            let approx = ();
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            stream.expect_string(".f32")?;
+            let f32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            Ok(SinApproxFtzF32 {
+                approx,
+                ftz,
+                f32,
+                d,
+                a,
+            })
         }
     }
+
+
 }
 
-impl PtxParser for Sin {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, opcode_span) = stream.expect_identifier()?;
-        if opcode != "sin" {
-            return Err(unexpected_value(opcode_span, &["sin"], opcode));
-        }
-
-        let (modifier, modifier_span) = stream.expect_modifier()?;
-        if modifier != "approx" {
-            return Err(unexpected_value(
-                modifier_span,
-                &[".approx"],
-                format!(".{modifier}"),
-            ));
-        }
-
-        let flush_to_zero = if stream
-            .check(|token| matches!(token, PtxToken::Directive(value) if value == "ftz"))
-        {
-            stream.consume()?;
-            true
-        } else {
-            false
-        };
-
-        let data_type = DataType::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let source = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Sin {
-            flush_to_zero,
-            data_type,
-            destination,
-            source,
-        })
-    }
-}

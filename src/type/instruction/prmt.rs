@@ -1,33 +1,32 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! prmt.b32{.mode}  d, a, b, c;
+//! .mode = { .f4e, .b4e, .rc8, .ecl, .ecr, .rc16 };
 
-/// `prmt.b32{.mode} d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Prmt {
-    /// `.mode`
-    pub mode: Option<Mode>,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub a: RegisterOperand,
-    /// `b`
-    pub b: RegisterOperand,
-    /// `c`
-    pub c: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.mode = { .f4e, .b4e, .rc8, .ecl, .ecr, .rc16 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mode {
-    /// `.f4e`
-    F4e,
-    /// `.b4e`
-    B4e,
-    /// `.rc8`
-    Rc8,
-    /// `.ecl`
-    Ecl,
-    /// `.ecr`
-    Ecr,
-    /// `.rc16`
-    Rc16,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        F4e, // .f4e
+        B4e, // .b4e
+        Rc8, // .rc8
+        Ecl, // .ecl
+        Ecr, // .ecr
+        Rc16, // .rc16
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct PrmtB32Mode {
+        pub b32: (), // .b32
+        pub mode: Option<Mode>, // {.mode}
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }

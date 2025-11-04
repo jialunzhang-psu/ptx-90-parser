@@ -1,0 +1,23 @@
+// Thread fence:
+fence{.sem}.scope;
+// Thread fence (uni-directional):
+fence.acquire.sync_restrict::shared::cluster.cluster;
+fence.release.sync_restrict::shared::cta.cluster;
+// Operation fence (uni-directional):
+fence.op_restrict.release.cluster;
+// Proxy fence (bi-directional):
+fence.proxy.proxykind;
+// Proxy fence (uni-directional):
+fence.proxy.to_proxykind::from_proxykind.release.scope;
+fence.proxy.to_proxykind::from_proxykind.acquire.scope  [addr], size;
+fence.proxy.async::generic.acquire.sync_restrict::shared::cluster.cluster;
+fence.proxy.async::generic.release.sync_restrict::shared::cta.cluster;
+// Old style membar:
+membar.level;
+membar.proxy.proxykind;
+.sem       = { .sc, .acq_rel, .acquire, .release };
+.scope     = { .cta, .cluster, .gpu, .sys };
+.level     = { .cta, .gl, .sys };
+.proxykind = { .alias, .async, .async.global, .async.shared::cta, .async.shared::cluster};
+.op_restrict = { .mbarrier_init };
+.to_proxykind::from_proxykind = {.tensormap::generic};

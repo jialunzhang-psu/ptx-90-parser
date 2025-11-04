@@ -1,0 +1,2 @@
+or.type d, a, b;
+.type = { .pred, .b16, .b32, .b64 };

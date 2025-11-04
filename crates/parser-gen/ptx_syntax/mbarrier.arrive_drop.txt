@@ -1,0 +1,8 @@
+mbarrier.arrive_drop{.sem}{.scope}{.state}.b64 state,           [addr]{, count};
+mbarrier.arrive_drop{.sem}{.scope}{.shared::cluster}.b64           _,   [addr] {,count};
+mbarrier.arrive_drop.expect_tx{.state}{.sem}{.scope}.b64 state, [addr], tx_count;
+mbarrier.arrive_drop.expect_tx{.shared::cluster}{.sem}{.scope}.b64   _, [addr], tx_count;
+mbarrier.arrive_drop.noComplete{.release}{.cta}{.state}.b64 state,  [addr], count;
+.sem   = { .release, .relaxed };
+.scope = { .cta, .cluster };
+.state = { .shared, .shared::cta}

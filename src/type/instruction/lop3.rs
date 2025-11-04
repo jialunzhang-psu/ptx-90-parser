@@ -1,76 +1,41 @@
-use crate::r#type::common::{Immediate, PredicateRegister, RegisterOperand};
+//! Original PTX specification:
+//!
+//! lop3.b32 d, a, b, c, immLut;
+//! lop3.BoolOp.b32 d|p, a, b, c, immLut, q;
+//! .BoolOp   = { .or , .and };
 
-/// `lop3.b32 d, a, b, c, immLut;`
-/// `lop3.BoolOp.b32 d|p, a, b, c, immLut, q;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Lop3 {
-    /// `lop3.b32 d, a, b, c, immLut;`
-    Plain(Plain),
-    /// `lop3.BoolOp.b32 d|p, a, b, c, immLut, q;`
-    Boolean(Boolean),
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `lop3.b32 d, a, b, c, immLut;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Plain {
-    /// `.b32`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub a: RegisterOperand,
-    /// `b`
-    pub b: RegisterOperand,
-    /// `c`
-    pub c: RegisterOperand,
-    /// `immLut`
-    pub lut: Immediate,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `lop3.BoolOp.b32 d|p, a, b, c, immLut, q;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Boolean {
-    /// `.BoolOp`
-    pub operator: BoolOp,
-    /// `.b32`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: Destination,
-    /// `p`
-    pub predicate: PredicateRegister,
-    /// `a`
-    pub a: RegisterOperand,
-    /// `b`
-    pub b: RegisterOperand,
-    /// `c`
-    pub c: RegisterOperand,
-    /// `immLut`
-    pub lut: Immediate,
-    /// `q`
-    pub predicate_input: PredicateRegister,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Boolop {
+        Or, // .or
+        And, // .and
+    }
 
-/// `d`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Destination {
-    /// `d`
-    Register(RegisterOperand),
-    /// `_`
-    Sink,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Lop3B32 {
+        pub b32: (), // .b32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+        pub immlut: Operand, // immLut
+    }
 
-/// `.BoolOp = { .or, .and }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum BoolOp {
-    /// `.or`
-    Or,
-    /// `.and`
-    And,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Lop3BoolopB32 {
+        pub boolop: Boolop, // .BoolOp
+        pub b32: (), // .b32
+        pub d: Operand, // d|p
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+        pub immlut: Operand, // immLut
+        pub q: Operand, // q
+    }
 
-/// `.b32`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b32`
-    B32,
 }

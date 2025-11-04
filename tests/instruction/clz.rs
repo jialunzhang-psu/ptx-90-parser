@@ -2,8 +2,8 @@ use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
-        common::RegisterOperand,
-        instruction::clz::{Clz, DataType},
+        common::{Operand, RegisterOperand},
+        instruction::clz::{Clz, Type},
     },
 };
 
@@ -13,9 +13,9 @@ fn parses_clz_instruction() {
     assert_eq!(
         parse::<Clz>(source),
         Clz {
-            data_type: DataType::B32,
-            destination: RegisterOperand::Single("%r1".into()),
-            source: RegisterOperand::Single("%r2".into()),
+            type_: Type::B32,
+            d: Operand::Register(RegisterOperand::Single("%r1".into())),
+            a: Operand::Register(RegisterOperand::Single("%r2".into())),
         }
     );
     assert_roundtrip::<Clz>(source);

@@ -1,0 +1,1 @@
+cos.approx{.ftz}.f32  d, a;

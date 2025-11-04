@@ -1,8 +1,8 @@
 use crate::util::{assert_roundtrip as assert_roundtrip_generic, parse, parse_result};
-use ptx_parser::r#type::common::RegisterOperand;
+use ptx_parser::r#type::common::{Operand, RegisterOperand};
 use ptx_parser::{
     parser::ParseErrorKind,
-    r#type::instruction::addc::{Addc, ConditionCode, DataType},
+    r#type::instruction::addc::{Addc, Type},
 };
 
 fn assert_roundtrip(source: &str) {
@@ -14,11 +14,11 @@ fn parses_addc_with_condition_code() {
     assert_eq!(
         parse::<Addc>("addc.cc.u32 %r0, %r1, %r2;"),
         Addc {
-            condition_code: ConditionCode::Cc,
-            data_type: DataType::U32,
-            destination: RegisterOperand::Single("%r0".into()),
-            augend: RegisterOperand::Single("%r1".into()),
-            addend: RegisterOperand::Single("%r2".into()),
+            cc: true,
+            type_: Type::U32,
+            d: Operand::Register(RegisterOperand::Single("%r0".into())),
+            a: Operand::Register(RegisterOperand::Single("%r1".into())),
+            b: Operand::Register(RegisterOperand::Single("%r2".into())),
         }
     );
     assert_roundtrip("addc.cc.u32 %r0, %r1, %r2;");
@@ -29,11 +29,11 @@ fn parses_addc_without_condition_code() {
     assert_eq!(
         parse::<Addc>("addc.s64 %rd0, %rd1, %rd2;"),
         Addc {
-            condition_code: ConditionCode::None,
-            data_type: DataType::S64,
-            destination: RegisterOperand::Single("%rd0".into()),
-            augend: RegisterOperand::Single("%rd1".into()),
-            addend: RegisterOperand::Single("%rd2".into()),
+            cc: false,
+            type_: Type::S64,
+            d: Operand::Register(RegisterOperand::Single("%rd0".into())),
+            a: Operand::Register(RegisterOperand::Single("%rd1".into())),
+            b: Operand::Register(RegisterOperand::Single("%rd2".into())),
         }
     );
     assert_roundtrip("addc.s64 %rd0, %rd1, %rd2;");

@@ -1,28 +1,59 @@
-#[allow(unused_imports)]
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, expect_identifier_value, unexpected_value},
-    r#type::{common::*, instruction::griddepcontrol::*},
-};
+//! Original PTX specification:
+//!
+//! griddepcontrol.action;
+//! .action   = { .launch_dependents, .wait };
 
-impl PtxParser for Griddepcontrol {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "griddepcontrol")?;
+#![allow(unused)]
 
-        let (modifier, span) = stream.expect_directive()?;
-        let instruction = match modifier.as_str() {
-            "launch_dependents" => Griddepcontrol::LaunchDependents,
-            "wait" => Griddepcontrol::Wait,
-            other => {
-                return Err(unexpected_value(
-                    span,
-                    &[".launch_dependents", ".wait"],
-                    format!(".{other}"),
-                ));
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::griddepcontrol::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Action {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try LaunchDependents
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".launch_dependents").is_ok() {
+                    return Ok(Action::LaunchDependents);
+                }
+                stream.set_position(saved_pos);
             }
-        };
-
-        stream.expect(&PtxToken::Semicolon)?;
-        Ok(instruction)
+            let saved_pos = stream.position();
+            // Try Wait
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".wait").is_ok() {
+                    return Ok(Action::Wait);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".launch_dependents", ".wait"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
     }
+
+    impl PtxParser for GriddepcontrolAction {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("griddepcontrol")?;
+            let action = Action::parse(stream)?;
+            Ok(GriddepcontrolAction {
+                action,
+            })
+        }
+    }
+
+
 }
+

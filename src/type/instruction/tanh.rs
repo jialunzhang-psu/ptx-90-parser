@@ -1,26 +1,29 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! tanh.approx.type d, a;
+//! .type = {.f16, .f32, .f16x2, .bf16, .bf16x2};
 
-/// `tanh.approx.f32 d, a;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Tanh {
-    /// `.approx`
-    pub approximation: Approximation,
-    /// `.f32`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub source: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Approximation {
-    /// `.approx`
-    Approx,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.f32`
-    F32,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        F16, // .f16
+        F32, // .f32
+        F16x2, // .f16x2
+        Bf16, // .bf16
+        Bf16x2, // .bf16x2
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct TanhApproxType {
+        pub approx: (), // .approx
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
 }

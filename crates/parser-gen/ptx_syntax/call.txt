@@ -1,0 +1,12 @@
+// direct call to named function, func is a symbol
+call{.uni} (ret-param), func, (param-list);
+call{.uni} func, (param-list);
+call{.uni} func;
+// indirect call via pointer, with full list of call targets
+call{.uni} (ret-param), fptr, (param-list), flist;
+call{.uni} fptr, (param-list), flist;
+call{.uni} fptr, flist;
+// indirect call via pointer, with no knowledge of call targets
+call{.uni} (ret-param), fptr, (param-list), fproto;
+call{.uni} fptr, (param-list), fproto;
+call{.uni} fptr, fproto;

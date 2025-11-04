@@ -2,14 +2,10 @@ use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
-        common::RegisterOperand,
-        instruction::szext::{DataType, Mode, Szext},
+        common::{Operand, RegisterOperand},
+        instruction::szext::{Type, Mode, Szext},
     },
 };
-
-fn reg(name: &str) -> RegisterOperand {
-    RegisterOperand::Single(name.into())
-}
 
 #[test]
 fn parses_clamp_u32() {
@@ -17,10 +13,10 @@ fn parses_clamp_u32() {
         parse::<Szext>("szext.clamp.u32 %r1, %r2, %r3;"),
         Szext {
             mode: Mode::Clamp,
-            data_type: DataType::U32,
-            destination: reg("%r1"),
-            a: reg("%r2"),
-            b: reg("%r3"),
+            type_: Type::U32,
+            d: Operand::Register(RegisterOperand::Single("%r1".into())),
+            a: Operand::Register(RegisterOperand::Single("%r2".into())),
+            b: Operand::Register(RegisterOperand::Single("%r3".into())),
         }
     );
     assert_roundtrip::<Szext>("szext.clamp.u32 %r1, %r2, %r3;");
@@ -32,10 +28,10 @@ fn parses_wrap_s32() {
         parse::<Szext>("szext.wrap.s32 %rd4, %rd5, %rd6;"),
         Szext {
             mode: Mode::Wrap,
-            data_type: DataType::S32,
-            destination: reg("%rd4"),
-            a: reg("%rd5"),
-            b: reg("%rd6"),
+            type_: Type::S32,
+            d: Operand::Register(RegisterOperand::Single("%rd4".into())),
+            a: Operand::Register(RegisterOperand::Single("%rd5".into())),
+            b: Operand::Register(RegisterOperand::Single("%rd6".into())),
         }
     );
     assert_roundtrip::<Szext>("szext.wrap.s32 %rd4, %rd5, %rd6;");

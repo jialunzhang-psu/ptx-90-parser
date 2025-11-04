@@ -1,0 +1,27 @@
+// global -> shared::cta
+cp.async.bulk.dst.src.completion_mechanism{.level::cache_hint} [dstMem], [srcMem], size, [mbar] {, cache-policy};
+.dst =                  { .shared::cta };
+.src =                  { .global };
+.completion_mechanism = { .mbarrier::complete_tx::bytes };
+.level::cache_hint =    { .L2::cache_hint };
+----------------------------------------------------------------
+// global -> shared::cluster;
+cp.async.bulk.dst.src.completion_mechanism{.multicast}{.level::cache_hint} [dstMem], [srcMem], size, [mbar] {, ctaMask} {, cache-policy};
+.dst =                  { .shared::cluster };
+.src =                  { .global };
+.completion_mechanism = { .mbarrier::complete_tx::bytes };
+.level::cache_hint =    { .L2::cache_hint };
+.multicast =            { .multicast::cluster  };
+----------------------------------------------------------------
+// shared::cta -> shared::cluster
+cp.async.bulk.dst.src.completion_mechanism [dstMem], [srcMem], size, [mbar];
+.dst =                  { .shared::cluster };
+.src =                  { .shared::cta };
+.completion_mechanism = { .mbarrier::complete_tx::bytes };
+----------------------------------------------------------------
+// shared::cta -> global
+cp.async.bulk.dst.src.completion_mechanism{.level::cache_hint}{.cp_mask} [dstMem], [srcMem], size {, cache-policy} {, byteMask};
+.dst =                  { .global };
+.src =                  { .shared::cta };
+.completion_mechanism = { .bulk_group };
+.level::cache_hint =    { .L2::cache_hint };

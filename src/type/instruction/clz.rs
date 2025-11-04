@@ -1,20 +1,25 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! clz.type  d, a;
+//! .type = { .b32, .b64 };
 
-/// `clz.type d, a;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Clz {
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub source: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b32`
-    B32,
-    /// `.b64`
-    B64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        B32, // .b32
+        B64, // .b64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ClzType {
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
 }

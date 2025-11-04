@@ -1,0 +1,3 @@
+cp.async.bulk.prefetch.L2.src{.level::cache_hint}   [srcMem], size {, cache-policy};
+.src =                { .global };
+.level::cache_hint =  { .L2::cache_hint };

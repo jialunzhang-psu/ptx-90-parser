@@ -1,3 +1,15 @@
-/// `exit;`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Exit;
+//! Original PTX specification:
+//!
+//! exit;
+
+#![allow(unused)]
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Exit {
+    }
+
+}

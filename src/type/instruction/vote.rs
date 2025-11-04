@@ -1,47 +1,38 @@
+//! Original PTX specification:
+//!
+//! vote.mode.pred  d, {!}a;
+//! vote.ballot.b32 d, {!}a;  // 'ballot' form, returns bitmask
+//! .mode = { .all, .any, .uni };
+
+#![allow(unused)]
 use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Vote {
-    /// `vote.mode.pred d, {!}a;`
-    Predicate(Predicate),
-    /// `vote.ballot.b32 d, {!}a;`
-    Ballot(Ballot),
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Predicate {
-    /// `.mode`
-    pub mode: Mode,
-    /// `d`
-    pub destination: PredicateRegister,
-    /// `{!}a`
-    pub source: PredicateOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        All, // .all
+        Any, // .any
+        Uni, // .uni
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Ballot {
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `{!}a`
-    pub source: PredicateOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct VoteModePred {
+        pub mode: Mode, // .mode
+        pub pred: (), // .pred
+        pub d: Operand, // d
+        pub a_op: bool, // {!} operator
+        pub a: Operand, // {!}a
+    }
 
-/// `.mode = { .all, .any, .uni };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mode {
-    /// `.all`
-    All,
-    /// `.any`
-    Any,
-    /// `.uni`
-    Uni,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct VoteBallotB32 {
+        pub ballot: (), // .ballot
+        pub b32: (), // .b32
+        pub d: Operand, // d
+        pub a_op: bool, // {!} operator
+        pub a: Operand, // {!}a
+    }
 
-/// `{!}a`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PredicateOperand {
-    /// `a`
-    pub register: PredicateRegister,
-    /// `!`
-    pub negated: bool,
 }

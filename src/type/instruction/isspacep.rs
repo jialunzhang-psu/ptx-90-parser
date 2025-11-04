@@ -1,33 +1,31 @@
-use crate::r#type::common::{PredicateRegister, RegisterOperand};
+//! Original PTX specification:
+//!
+//! isspacep.space  p, a;    // result is .pred
+//! .space = { .const, .global, .local, .shared, .shared::cta, .shared::cluster, .param, .param::entry };
 
-/// `isspacep.space  p, a;    // result is .pred`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Isspacep {
-    /// `.space`
-    pub space: Space,
-    /// `p`
-    pub predicate: PredicateRegister,
-    /// `a`
-    pub address: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.space = { const, .global, .local, .shared{::cta, ::cluster}, .param{::entry} };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Space {
-    /// `const`
-    Const,
-    /// `.global`
-    Global,
-    /// `.local`
-    Local,
-    /// `.shared`
-    Shared,
-    /// `.shared::cta`
-    SharedCta,
-    /// `.shared::cluster`
-    SharedCluster,
-    /// `.param`
-    Param,
-    /// `.param::entry`
-    ParamEntry,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Space {
+        Const, // .const
+        Global, // .global
+        Local, // .local
+        Shared, // .shared
+        SharedCta, // .shared::cta
+        SharedCluster, // .shared::cluster
+        Param, // .param
+        ParamEntry, // .param::entry
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct IsspacepSpace {
+        pub space: Space, // .space
+        pub p: Operand, // p
+        pub a: Operand, // a
+    }
+
 }

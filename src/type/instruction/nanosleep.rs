@@ -1,17 +1,17 @@
+//! Original PTX specification:
+//!
+//! nanosleep.u32 t;
+
+#![allow(unused)]
 use crate::r#type::common::*;
 
-/// `nanosleep.u32 t;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Nanosleep {
-    /// `.u32`
-    pub data_type: DataType,
-    /// `t`
-    pub delay: Operand,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.u32`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct NanosleepU32 {
+        pub u32: (), // .u32
+        pub t: Operand, // t
+    }
+
 }

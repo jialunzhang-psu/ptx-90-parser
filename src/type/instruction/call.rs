@@ -1,114 +1,91 @@
-use crate::r#type::common::{FunctionSymbol, Immediate, Label, RegisterOperand, VariableSymbol};
+//! Original PTX specification:
+//!
+//! // direct call to named function, func is a symbol
+//! call{.uni} (ret-param), func, (param-list);
+//! call{.uni} func, (param-list);
+//! call{.uni} func;
+//! // indirect call via pointer, with full list of call targets
+//! call{.uni} (ret-param), fptr, (param-list), flist;
+//! call{.uni} fptr, (param-list), flist;
+//! call{.uni} fptr, flist;
+//! // indirect call via pointer, with no knowledge of call targets
+//! call{.uni} (ret-param), fptr, (param-list), fproto;
+//! call{.uni} fptr, (param-list), fproto;
+//! call{.uni} fptr, fproto;
 
-/// `call{.uni} ...;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Call {
-    /// `.uni`
-    pub uniform: bool,
-    pub kind: CallKind,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum CallKind {
-    /// `call{.uni} (ret-param), func, (param-list);`
-    DirectReturnAndArguments {
-        /// `(ret-param)`
-        return_parameter: CallReturn,
-        /// `func`
-        callee: FunctionSymbol,
-        /// `(param-list)`
-        arguments: Vec<CallArgument>,
-    },
-    /// `call{.uni} func, (param-list);`
-    DirectArguments {
-        /// `func`
-        callee: FunctionSymbol,
-        /// `(param-list)`
-        arguments: Vec<CallArgument>,
-    },
-    /// `call{.uni} func;`
-    Direct {
-        /// `func`
-        callee: FunctionSymbol,
-    },
-    /// `call{.uni} (ret-param), fptr, (param-list), flist;`
-    IndirectTargetsReturnAndArguments {
-        /// `(ret-param)`
-        return_parameter: CallReturn,
-        /// `fptr`
-        pointer: RegisterOperand,
-        /// `(param-list)`
-        arguments: Vec<CallArgument>,
-        /// `flist`
-        targets: CallTargetList,
-    },
-    /// `call{.uni} fptr, (param-list), flist;`
-    IndirectTargetsArguments {
-        /// `fptr`
-        pointer: RegisterOperand,
-        /// `(param-list)`
-        arguments: Vec<CallArgument>,
-        /// `flist`
-        targets: CallTargetList,
-    },
-    /// `call{.uni} fptr, flist;`
-    IndirectTargets {
-        /// `fptr`
-        pointer: RegisterOperand,
-        /// `flist`
-        targets: CallTargetList,
-    },
-    /// `call{.uni} (ret-param), fptr, (param-list), fproto;`
-    IndirectPrototypeReturnAndArguments {
-        /// `(ret-param)`
-        return_parameter: CallReturn,
-        /// `fptr`
-        pointer: RegisterOperand,
-        /// `(param-list)`
-        arguments: Vec<CallArgument>,
-        /// `fproto`
-        prototype: Label,
-    },
-    /// `call{.uni} fptr, (param-list), fproto;`
-    IndirectPrototypeArguments {
-        /// `fptr`
-        pointer: RegisterOperand,
-        /// `(param-list)`
-        arguments: Vec<CallArgument>,
-        /// `fproto`
-        prototype: Label,
-    },
-    /// `call{.uni} fptr, fproto;`
-    IndirectPrototype {
-        /// `fptr`
-        pointer: RegisterOperand,
-        /// `fproto`
-        prototype: Label,
-    },
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum CallReturn {
-    /// `ret-param`
-    Register(RegisterOperand),
-    /// `ret-param`
-    Param(VariableSymbol),
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CallUni {
+        pub uni: bool, // {.uni}
+        pub ret_param: Operand, // (ret-param)
+        pub func: Operand, // func
+        pub param_list: Vec<Operand>, // (param-list)
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum CallArgument {
-    /// `reg`
-    Register(RegisterOperand),
-    /// `imm`
-    Immediate(Immediate),
-    /// `param`
-    Param(VariableSymbol),
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CallUni1 {
+        pub uni: bool, // {.uni}
+        pub func: Operand, // func
+        pub param_list: Vec<Operand>, // (param-list)
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum CallTargetList {
-    /// `flist`
-    Table(VariableSymbol),
-    /// `flist`
-    Label(Label),
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CallUni2 {
+        pub uni: bool, // {.uni}
+        pub func: Operand, // func
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CallUni3 {
+        pub uni: bool, // {.uni}
+        pub ret_param: Operand, // (ret-param)
+        pub fptr: Operand, // fptr
+        pub param_list: Vec<Operand>, // (param-list)
+        pub flist: Operand, // flist
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CallUni4 {
+        pub uni: bool, // {.uni}
+        pub fptr: Operand, // fptr
+        pub param_list: Vec<Operand>, // (param-list)
+        pub flist: Operand, // flist
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CallUni5 {
+        pub uni: bool, // {.uni}
+        pub fptr: Operand, // fptr
+        pub flist: Operand, // flist
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CallUni6 {
+        pub uni: bool, // {.uni}
+        pub ret_param: Operand, // (ret-param)
+        pub fptr: Operand, // fptr
+        pub param_list: Vec<Operand>, // (param-list)
+        pub fproto: Operand, // fproto
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CallUni7 {
+        pub uni: bool, // {.uni}
+        pub fptr: Operand, // fptr
+        pub param_list: Vec<Operand>, // (param-list)
+        pub fproto: Operand, // fproto
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CallUni8 {
+        pub uni: bool, // {.uni}
+        pub fptr: Operand, // fptr
+        pub fproto: Operand, // fproto
+    }
+
 }

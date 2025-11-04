@@ -1,23 +1,26 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! copysign.type  d, a, b;
+//! .type = { .f32, .f64 };
 
-/// `copysign.type  d, a, b;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Copysign {
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub a: RegisterOperand,
-    /// `b`
-    pub b: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.type = { .f32, .f64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.f32`
-    F32,
-    /// `.f64`
-    F64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        F32, // .f32
+        F64, // .f64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CopysignType {
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
 }

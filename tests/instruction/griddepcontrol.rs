@@ -1,12 +1,14 @@
 use crate::util::*;
-use ptx_parser::{parser::ParseErrorKind, r#type::instruction::griddepcontrol::Griddepcontrol};
+use ptx_parser::{parser::ParseErrorKind, r#type::instruction::griddepcontrol::{Griddepcontrol, Action}};
 
 #[test]
 fn parses_launch_dependents_variant() {
     assert_roundtrip::<Griddepcontrol>("griddepcontrol.launch_dependents;");
     assert_eq!(
         parse::<Griddepcontrol>("griddepcontrol.launch_dependents;"),
-        Griddepcontrol::LaunchDependents
+        Griddepcontrol {
+            action: Action::LaunchDependents,
+        }
     );
 }
 
@@ -15,7 +17,9 @@ fn parses_wait_variant() {
     assert_roundtrip::<Griddepcontrol>("griddepcontrol.wait;");
     assert_eq!(
         parse::<Griddepcontrol>("griddepcontrol.wait;"),
-        Griddepcontrol::Wait
+        Griddepcontrol {
+            action: Action::Wait,
+        }
     );
 }
 

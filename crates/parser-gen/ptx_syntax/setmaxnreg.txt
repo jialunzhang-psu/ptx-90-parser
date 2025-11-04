@@ -1,0 +1,2 @@
+setmaxnreg.action.sync.aligned.u32 imm-reg-count;
+.action = { .inc, .dec };

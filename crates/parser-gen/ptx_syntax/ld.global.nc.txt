@@ -1,0 +1,14 @@
+ld.global{.cop}.nc{.level::cache_hint}{.level::prefetch_size}.type                 d, [a]{, cache-policy};
+ld.global{.cop}.nc{.level::cache_hint}{.level::prefetch_size}.vec.type             d, [a]{, cache-policy};
+ld.global.nc{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}.type      d, [a]{, cache-policy};
+ld.global.nc{.level1::eviction_priority}{.level2::eviction_priority}{.level::cache_hint}{.level::prefetch_size}.vec.type  d, [a]{, cache-policy};
+.cop  =                     { .ca, .cg, .cs };     // cache operation
+.level1::eviction_priority = { .L1::evict_normal, .L1::evict_unchanged, .L1::evict_first, .L1::evict_last, .L1::no_allocate};
+.level2::eviction_priority = {.L2::evict_normal, .L2::evict_first, .L2::evict_last};
+.level::cache_hint =        { .L2::cache_hint };
+.level::prefetch_size =     { .L2::64B, .L2::128B, .L2::256B };
+.vec  =                     { .v2, .v4, .v8 };
+.type =                     { .b8, .b16, .b32, .b64, .b128,
+.u8, .u16, .u32, .u64,
+.s8, .s16, .s32, .s64,
+.f32, .f64 };

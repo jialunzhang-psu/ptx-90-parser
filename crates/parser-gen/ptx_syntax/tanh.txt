@@ -1,0 +1,2 @@
+tanh.approx.type d, a;
+.type = {.f16, .f32, .f16x2, .bf16, .bf16x2};

@@ -14,29 +14,7 @@ use crate::{
 };
 
 fn is_module_directive_start(token: &PtxToken) -> bool {
-    matches!(
-        token,
-        PtxToken::Directive(name)
-            if matches!(
-                name.as_str(),
-                "version"
-                    | "target"
-                    | "address_size"
-                    | "file"
-                    | "section"
-                    | "entry"
-                    | "func"
-                    | "alias"
-                    | "global"
-                    | "const"
-                    | "shared"
-                    | "tex"
-                    | "visible"
-                    | "extern"
-                    | "weak"
-                    | "common"
-            )
-    )
+    matches!(token, PtxToken::Dot)
 }
 
 fn parse_decimal_u32(
@@ -58,7 +36,7 @@ fn parse_decimal_u32(
 
 fn token_to_string(token: &PtxToken) -> String {
     match token {
-        PtxToken::Directive(name) => format!(".{name}"),
+        PtxToken::Dot => ".".into(),
         PtxToken::Identifier(name) => name.clone(),
         PtxToken::DecimalInteger(value) => value.clone(),
         PtxToken::StringLiteral(value) => format!("\"{value}\""),
@@ -80,10 +58,17 @@ fn classify_next_directive(stream: &PtxTokenStream) -> Option<String> {
     let mut iter = stream.remaining().iter();
     while let Some((token, _)) = iter.next() {
         match token {
-            PtxToken::Directive(name) => match name.as_str() {
-                "visible" | "extern" | "weak" | "common" => continue,
-                other => return Some(other.to_string()),
-            },
+            PtxToken::Dot => {
+                // Check if next token is an identifier
+                if let Some((PtxToken::Identifier(name), _)) = iter.next() {
+                    match name.as_str() {
+                        "visible" | "extern" | "weak" | "common" => continue,
+                        other => return Some(other.to_string()),
+                    }
+                } else {
+                    return None;
+                }
+            }
             _ => return None,
         }
     }
@@ -155,9 +140,10 @@ impl PtxParser for TargetDirective {
                     entries.push(name.clone());
                     stream.consume()?;
                 }
-                PtxToken::Directive(name) => {
-                    entries.push(format!(".{name}"));
+                PtxToken::Dot => {
                     stream.consume()?;
+                    let (name, _) = stream.expect_identifier()?;
+                    entries.push(format!(".{name}"));
                 }
                 _ => break,
             }
@@ -235,7 +221,10 @@ impl PtxParser for SectionDirective {
         let (token, span) = stream.consume()?;
         let name = match token {
             PtxToken::Identifier(value) => value.clone(),
-            PtxToken::Directive(value) => format!(".{value}"),
+            PtxToken::Dot => {
+                let (value, _) = stream.expect_identifier()?;
+                format!(".{value}")
+            }
             _ => {
                 return Err(unexpected_value(
                     span.clone(),
@@ -312,23 +301,16 @@ impl PtxParser for LinkingDirective {
 fn parse_code_or_data_linkage(
     stream: &mut PtxTokenStream,
 ) -> Result<(CodeOrDataLinkage, std::ops::Range<usize>), PtxParseError> {
-    let (token, span) = stream.consume()?;
-    match token {
-        PtxToken::Directive(name) => match name.as_str() {
-            "visible" => Ok((CodeOrDataLinkage::Visible, span.clone())),
-            "extern" => Ok((CodeOrDataLinkage::Extern, span.clone())),
-            "weak" => Ok((CodeOrDataLinkage::Weak, span.clone())),
-            "common" => Ok((CodeOrDataLinkage::Common, span.clone())),
-            _ => Err(unexpected_value(
-                span.clone(),
-                &[".visible", ".extern", ".weak", ".common"],
-                format!(".{name}"),
-            )),
-        },
+    let (directive, span) = stream.expect_directive()?;
+    match directive.as_str() {
+        "visible" => Ok((CodeOrDataLinkage::Visible, span.clone())),
+        "extern" => Ok((CodeOrDataLinkage::Extern, span.clone())),
+        "weak" => Ok((CodeOrDataLinkage::Weak, span.clone())),
+        "common" => Ok((CodeOrDataLinkage::Common, span.clone())),
         _ => Err(unexpected_value(
             span.clone(),
-            &["linkage directive"],
-            format!("{token:?}"),
+            &[".visible", ".extern", ".weak", ".common"],
+            format!(".{directive}"),
         )),
     }
 }

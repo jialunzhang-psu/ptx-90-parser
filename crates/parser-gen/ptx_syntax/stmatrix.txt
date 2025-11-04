@@ -1,0 +1,5 @@
+stmatrix.sync.aligned.shape.num{.trans}{.ss}.type [p], r;
+.shape  = {.m8n8, .m16n8};
+.num    = {.x1, .x2, .x4};
+.ss     = {.shared, .shared::cta};
+.type   = {.b16, .b8};

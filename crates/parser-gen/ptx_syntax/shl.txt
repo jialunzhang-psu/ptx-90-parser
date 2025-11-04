@@ -1,0 +1,2 @@
+shl.type d, a, b;
+.type = { .b16, .b32, .b64 };

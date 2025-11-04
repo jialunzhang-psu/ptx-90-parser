@@ -1,121 +1,108 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::lop3::*},
-};
+//! Original PTX specification:
+//!
+//! lop3.b32 d, a, b, c, immLut;
+//! lop3.BoolOp.b32 d|p, a, b, c, immLut, q;
+//! .BoolOp   = { .or , .and };
 
-impl PtxParser for crate::r#type::instruction::lop3::BoolOp {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
+#![allow(unused)]
 
-        match modifier.as_str() {
-            "or" => Ok(BoolOp::Or),
-            "and" => Ok(BoolOp::And),
-            other => Err(unexpected_value(
-                span,
-                &[".or", ".and"],
-                format!(".{other}"),
-            )),
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::lop3::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Boolop {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Or
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Boolop::Or);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try And
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".and").is_ok() {
+                    return Ok(Boolop::And);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".or", ".and"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for crate::r#type::instruction::lop3::DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-
-        match modifier.as_str() {
-            "b32" => Ok(crate::r#type::instruction::lop3::DataType::B32),
-            other => Err(unexpected_value(span, &[".b32"], format!(".{other}"))),
+    impl PtxParser for Lop3B32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("lop3")?;
+            stream.expect_string(".b32")?;
+            let b32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let immlut = Operand::parse(stream)?;
+            Ok(Lop3B32 {
+                b32,
+                d,
+                a,
+                b,
+                c,
+                immlut,
+            })
         }
     }
-}
 
-impl PtxParser for crate::r#type::instruction::lop3::Destination {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        if stream
-            .consume_if(|token| matches!(token, PtxToken::Identifier(name) if name == "_"))
-            .is_some()
-        {
-            return Ok(Destination::Sink);
-        }
 
-        if stream.check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace)) {
-            return Ok(Destination::Register(RegisterOperand::parse(stream)?));
-        }
-
-        let (token, span) = stream.peek()?;
-        Err(unexpected_value(
-            span.clone(),
-            &["register operand", "_"],
-            format!("{token:?}"),
-        ))
-    }
-}
-
-impl PtxParser for crate::r#type::instruction::lop3::Lop3 {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        expect_identifier_value(stream, "lop3")?;
-
-        if is_bool_op_modifier(stream) {
-            let operator = BoolOp::parse(stream)?;
-            let data_type = crate::r#type::instruction::lop3::DataType::parse(stream)?;
-            let destination = Destination::parse(stream)?;
+    impl PtxParser for Lop3BoolopB32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("lop3")?;
+            let boolop = Boolop::parse(stream)?;
+            stream.expect_string(".b32")?;
+            let b32 = ();
+            let d = Operand::parse(stream)?;
             stream.expect(&PtxToken::Pipe)?;
-            let predicate = PredicateRegister::parse(stream)?;
+            let p = Operand::parse(stream)?;
             stream.expect(&PtxToken::Comma)?;
-            let a = RegisterOperand::parse(stream)?;
+            let a = Operand::parse(stream)?;
             stream.expect(&PtxToken::Comma)?;
-            let b = RegisterOperand::parse(stream)?;
+            let b = Operand::parse(stream)?;
             stream.expect(&PtxToken::Comma)?;
-            let c = RegisterOperand::parse(stream)?;
+            let c = Operand::parse(stream)?;
             stream.expect(&PtxToken::Comma)?;
-            let lut = Immediate::parse(stream)?;
+            let immlut = Operand::parse(stream)?;
             stream.expect(&PtxToken::Comma)?;
-            let predicate_input = PredicateRegister::parse(stream)?;
-            stream.expect(&PtxToken::Semicolon)?;
-
-            Ok(Lop3::Boolean(Boolean {
-                operator,
-                data_type,
-                destination,
-                predicate,
+            let q = Operand::parse(stream)?;
+            Ok(Lop3BoolopB32 {
+                boolop,
+                b32,
+                d,
                 a,
                 b,
                 c,
-                lut,
-                predicate_input,
-            }))
-        } else {
-            let data_type = crate::r#type::instruction::lop3::DataType::parse(stream)?;
-            let destination = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = RegisterOperand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let lut = Immediate::parse(stream)?;
-            stream.expect(&PtxToken::Semicolon)?;
-
-            Ok(Lop3::Plain(Plain {
-                data_type,
-                destination,
-                a,
-                b,
-                c,
-                lut,
-            }))
+                immlut,
+                q,
+            })
         }
     }
+
+
 }
 
-fn is_bool_op_modifier(stream: &mut PtxTokenStream) -> bool {
-    stream.check(|token| {
-        matches!(
-            token,
-            PtxToken::Directive(name) if matches!(name.as_str(), "or" | "and")
-        )
-    })
-}

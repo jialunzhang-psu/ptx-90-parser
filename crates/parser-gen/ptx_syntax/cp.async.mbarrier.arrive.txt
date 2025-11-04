@@ -1,0 +1,2 @@
+cp.async.mbarrier.arrive{.noinc}{.state}.b64 [addr];
+.state = { .shared, .shared::cta}

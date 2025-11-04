@@ -1,0 +1,8 @@
+// shared::cta -> global
+cp.reduce.async.bulk.tensor.dim.dst.src.redOp{.load_mode}.completion_mechanism{.level::cache_hint} [tensorMap, tensorCoords], [srcMem] {,cache-policy};
+.dst =                  { .global };
+.src =                  { .shared::cta };
+.dim =                  { .1d, .2d, .3d, .4d, .5d };
+.completion_mechanism = { .bulk_group };
+.load_mode =            { .tile, .im2col_no_offs };
+.redOp =                { .add, .min, .max, .inc, .dec, .and, .or, .xor};

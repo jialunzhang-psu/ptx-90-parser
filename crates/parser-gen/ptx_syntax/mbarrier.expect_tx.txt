@@ -1,0 +1,4 @@
+mbarrier.expect_tx{.sem}{.scope}{.space}.b64 [addr], txCount;
+.sem   = { .relaxed };
+.scope = { .cta, .cluster };
+.space = { .shared, .shared::cta, .shared::cluster };

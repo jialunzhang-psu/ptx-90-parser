@@ -1,0 +1,40 @@
+set.CmpOp{.ftz}.dtype.stype         d, a, b;
+set.CmpOp.BoolOp{.ftz}.dtype.stype  d, a, b, {!}c;
+.CmpOp  = { eq, ne, lt, le, gt, ge, lo, ls, hi, hs,
+equ, neu, ltu, leu, gtu, geu, num, nan };
+.BoolOp = { and, or, xor };
+.dtype  = { .u32, .s32, .f32 };
+.stype  = { .b16, .b32, .b64,
+.u16, .u32, .u64,
+.s16, .s32, .s64,
+.f32, .f64 };
+-------------------------------------------------------------
+set.CmpOp{.ftz}.f16.stype            d, a, b;
+set.CmpOp.BoolOp{.ftz}.f16.stype     d, a, b, {!}c;
+set.CmpOp.bf16.stype                 d, a, b;
+set.CmpOp.BoolOp.bf16.stype          d, a, b, {!}c;
+set.CmpOp{.ftz}.dtype.f16            d, a, b;
+set.CmpOp.BoolOp{.ftz}.dtype.f16     d, a, b, {!}c;
+.dtype  = { .u16, .s16, .u32, .s32};
+----------------------------------------------------
+// Alternate floating point type:
+set.CmpOp.dtype.bf16                 d, a, b;
+set.CmpOp.BoolOp.dtype.bf16          d, a, b, {!}c;
+.dtype  = { .u16, .s16, .u32, .s32};
+----------------------------------------------------
+// Alternate floating point type:
+set.CmpOp{.ftz}.dtype.f16x2          d, a, b;
+set.CmpOp.BoolOp{.ftz}.dtype.f16x2   d, a, b, {!}c;
+.dtype  = { .f16x2, .u32, .s32};
+----------------------------------------------------
+// Alternate floating point type:
+set.CmpOp.dtype.bf16x2               d, a, b;
+set.CmpOp.BoolOp.dtype.bf16x2        d, a, b, {!}c;
+.dtype  = { .bf16x2, .u32, .s32};
+.CmpOp  = { eq, ne, lt, le, gt, ge,
+equ, neu, ltu, leu, gtu, geu, num, nan };
+.BoolOp = { and, or, xor };
+.stype  = { .b16, .b32, .b64,
+.u16, .u32, .u64,
+.s16, .s32, .s64,
+.f16, .f32, .f64};

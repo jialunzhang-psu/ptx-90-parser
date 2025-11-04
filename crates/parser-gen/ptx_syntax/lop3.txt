@@ -1,0 +1,3 @@
+lop3.b32 d, a, b, c, immLut;
+lop3.BoolOp.b32 d|p, a, b, c, immLut, q;
+.BoolOp   = { .or , .and };

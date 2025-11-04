@@ -1,0 +1,9 @@
+ldmatrix.sync.aligned.shape.num{.trans}{.ss}.type r, [p];
+ldmatrix.sync.aligned.m8n16.num{.ss}.dst_fmt.src_fmt        r, [p];
+ldmatrix.sync.aligned.m16n16.num.trans{.ss}.dst_fmt.src_fmt r, [p];
+.shape   = {.m8n8, .m16n16};
+.num     = {.x1, .x2, .x4};
+.ss      = {.shared, .shared::cta};
+.type    = {.b16, .b8};
+.dst_fmt = { .b8x16 };
+.src_fmt = { .b6x16_p32, .b4x16_p64 };

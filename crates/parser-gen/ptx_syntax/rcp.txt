@@ -1,0 +1,4 @@
+rcp.approx{.ftz}.f32  d, a;  // fast, approximate reciprocal
+rcp.rnd{.ftz}.f32     d, a;  // IEEE 754 compliant rounding
+rcp.rnd.f64           d, a;  // IEEE 754 compliant rounding
+.rnd = { .rn, .rz, .rm, .rp };

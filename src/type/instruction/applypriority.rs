@@ -1,27 +1,25 @@
-use crate::r#type::common::AddressOperand;
+//! Original PTX specification:
+//!
+//! applypriority{.global}.level::eviction_priority  [a], size;
+//! .level::eviction_priority = { .L2::evict_normal };
 
-/// `applypriority{.global}.level::eviction_priority [a], size;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Applypriority {
-    /// `.global`
-    pub global: bool,
-    /// `.L2::evict_normal`
-    pub eviction_priority: EvictionPriority,
-    /// `[a]`
-    pub address: AddressOperand,
-    /// `size`
-    pub size: Size,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.level::eviction_priority = { .L2::evict_normal };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum EvictionPriority {
-    /// `.L2::evict_normal`
-    L2EvictNormal,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Size {
-    /// `128`
-    B128,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum LevelEvictionPriority {
+        L2EvictNormal, // .L2::evict_normal
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ApplypriorityGlobalLevelEvictionPriority {
+        pub global: bool, // {.global}
+        pub level_eviction_priority: LevelEvictionPriority, // .level::eviction_priority
+        pub a: AddressOperand, // [a]
+        pub size: Operand, // size
+    }
+
 }

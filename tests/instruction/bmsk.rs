@@ -12,7 +12,8 @@ fn parses_bmsk_clamp_register_operands() {
         parse::<Bmsk>(source),
         Bmsk {
             mode: Mode::Clamp,
-            destination: RegisterOperand::Single("%r1".into()),
+            b32: (),
+            d: Operand::Register(RegisterOperand::Single("%r1".into())),
             a: Operand::Register(RegisterOperand::Single("%r2".into())),
             b: Operand::Register(RegisterOperand::Single("%r3".into())),
         }
@@ -27,7 +28,8 @@ fn parses_bmsk_wrap_with_immediate() {
         parse::<Bmsk>(source),
         Bmsk {
             mode: Mode::Wrap,
-            destination: RegisterOperand::Single("%r4".into()),
+            b32: (),
+            d: Operand::Register(RegisterOperand::Single("%r4".into())),
             a: Operand::Immediate(Immediate("0xff".into())),
             b: Operand::Register(RegisterOperand::Single("%r5".into())),
         }

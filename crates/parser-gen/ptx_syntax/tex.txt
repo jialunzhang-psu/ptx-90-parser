@@ -1,0 +1,15 @@
+tex.geom.v4.dtype.ctype  d, [a, c] {, e} {, f};
+tex.geom.v4.dtype.ctype  d{|p}, [a, b, c] {, e} {, f};  // explicit sampler
+tex.geom.v2.f16x2.ctype  d{|p}, [a, c] {, e} {, f};
+tex.geom.v2.f16x2.ctype  d{|p}, [a, b, c] {, e} {, f};  // explicit sampler
+// mipmaps
+tex.base.geom.v4.dtype.ctype   d{|p}, [a, {b,} c] {, e} {, f};
+tex.level.geom.v4.dtype.ctype  d{|p}, [a, {b,} c], lod {, e} {, f};
+tex.grad.geom.v4.dtype.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
+tex.base.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c] {, e} {, f};
+tex.level.geom.v2.f16x2.ctype  d{|p}, [a, {b,} c], lod {, e} {, f};
+tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
+.geom  = { .1d, .2d, .3d, .a1d, .a2d, .cube, .acube, .2dms, .a2dms };
+.dtype = { .u32, .s32, .f16,  .f32 };
+.ctype = {       .s32, .f32 };          // .cube, .acube require .f32
+// .2dms, .a2dms require .s32

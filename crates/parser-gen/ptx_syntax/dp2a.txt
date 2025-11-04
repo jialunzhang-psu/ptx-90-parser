@@ -1,0 +1,3 @@
+dp2a.mode.atype.btype  d, a, b, c;
+.atype = .btype = { .u32, .s32 };
+.mode = { .lo, .hi };

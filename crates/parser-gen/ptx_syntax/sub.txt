@@ -1,0 +1,19 @@
+sub.type       d, a, b;
+sub{.sat}.s32  d, a, b;     // .sat applies only to .s32
+.type = { .u16, .u32, .u64,
+.s16, .s32, .s64 };
+--------------------------------------------
+sub{.rnd}{.ftz}{.sat}.f32  d, a, b;
+sub{.rnd}{.ftz}.f32x2      d, a, b;
+sub{.rnd}.f64              d, a, b;
+.rnd = { .rn, .rz, .rm, .rp };
+--------------------------------------------
+sub{.rnd}{.ftz}{.sat}.f16   d, a, b;
+sub{.rnd}{.ftz}{.sat}.f16x2 d, a, b;
+sub{.rnd}.bf16   d, a, b;
+sub{.rnd}.bf16x2 d, a, b;
+.rnd = { .rn };
+--------------------------------------------
+sub{.rnd}{.sat}.f32.atype  d, a, c;
+.atype = { .f16, .bf16};
+.rnd   = { .rn, .rz, .rm, .rp };

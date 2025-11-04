@@ -1,52 +1,110 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::sad::*},
-};
+//! Original PTX specification:
+//!
+//! sad.type  d, a, b, c;
+//! .type = { .u16, .u32, .u64, .s16, .s32, .s64 };
 
-impl PtxParser for crate::r#type::instruction::sad::DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
+#![allow(unused)]
 
-        match modifier.as_str() {
-            "u16" => Ok(crate::r#type::instruction::sad::DataType::U16),
-            "u32" => Ok(crate::r#type::instruction::sad::DataType::U32),
-            "u64" => Ok(crate::r#type::instruction::sad::DataType::U64),
-            "s16" => Ok(crate::r#type::instruction::sad::DataType::S16),
-            "s32" => Ok(crate::r#type::instruction::sad::DataType::S32),
-            "s64" => Ok(crate::r#type::instruction::sad::DataType::S64),
-            other => Err(unexpected_value(
-                span,
-                &[".u16", ".u32", ".u64", ".s16", ".s32", ".s64"],
-                format!(".{other}"),
-            )),
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::sad::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u16").is_ok() {
+                    return Ok(Type::U16);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Type::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u64").is_ok() {
+                    return Ok(Type::U64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s16").is_ok() {
+                    return Ok(Type::S16);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Type::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s64").is_ok() {
+                    return Ok(Type::S64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u16", ".u32", ".u64", ".s16", ".s32", ".s64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for Sad {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "sad" {
-            return Err(unexpected_value(span, &["sad"], opcode));
+    impl PtxParser for SadType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("sad")?;
+            let type_ = Type::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(SadType {
+                type_,
+                d,
+                a,
+                b,
+                c,
+            })
         }
-
-        let data_type = crate::r#type::instruction::sad::DataType::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let a = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let b = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let c = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Sad {
-            data_type,
-            destination,
-            a,
-            b,
-            c,
-        })
     }
+
+
 }
+

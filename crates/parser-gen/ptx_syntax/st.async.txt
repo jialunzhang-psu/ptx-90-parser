@@ -1,0 +1,19 @@
+st.async{.sem}{.scope}{.ss}{.completion_mechanism}{.vec}.type [a], b, [mbar];
+.sem  =                 { .weak };
+.scope =                { .cluster };
+.ss   =                 { .shared::cluster };
+.type =                 { .b32, .b64,
+.u32, .u64,
+.s32, .s64,
+.f32, .f64 };
+.vec  =                 { .v2, .v4 };
+.completion_mechanism = { .mbarrier::complete_tx::bytes };
+---------------------------------------------------------
+st.async{.mmio}.sem.scope{.ss}.type [a], b;
+.sem =                  { .release };
+.scope =                { .gpu, .sys };
+.ss =                   { .global };
+.type =                 { .b8, .b16, .b32, .b64,
+.u8, .u16, .u32, .u64,
+.s8, .s16, .s32, .s64,
+.f32, .f64 };

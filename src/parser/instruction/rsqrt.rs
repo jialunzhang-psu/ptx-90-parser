@@ -1,73 +1,63 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::rsqrt::*},
-};
+//! Original PTX specification:
+//!
+//! rsqrt.approx{.ftz}.f32  d, a;
+//! rsqrt.approx.f64        d, a;
 
-impl PtxParser for Rsqrt {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, opcode_span) = stream.expect_identifier()?;
-        if opcode != "rsqrt" {
-            return Err(unexpected_value(opcode_span, &["rsqrt"], opcode));
-        }
+#![allow(unused)]
 
-        let (modifier, modifier_span) = stream.expect_modifier()?;
-        if modifier.as_str() != "approx" {
-            return Err(unexpected_value(
-                modifier_span,
-                &[".approx"],
-                format!(".{modifier}"),
-            ));
-        }
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-        let mut flush_to_zero = false;
-        let mut flush_span = None;
-        if let Some((_, span)) =
-            stream.consume_if(|token| matches!(token, PtxToken::Directive(value) if value == "ftz"))
-        {
-            flush_to_zero = true;
-            flush_span = Some(span.clone());
-        }
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::rsqrt::section_0::*;
 
-        let (data_type, data_span) = stream.expect_directive()?;
-        match data_type.as_str() {
-            "f32" => {
-                let destination = RegisterOperand::parse(stream)?;
-                stream.expect(&PtxToken::Comma)?;
-                let source = RegisterOperand::parse(stream)?;
-                stream.expect(&PtxToken::Semicolon)?;
-
-                Ok(Rsqrt::ApproxF32(ApproxF32 {
-                    flush_to_zero,
-                    destination,
-                    source,
-                }))
+    impl PtxParser for RsqrtApproxFtzF32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("rsqrt")?;
+            stream.expect_string(".approx")?;
+            let approx = ();
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
             }
-            "f64" => {
-                if flush_to_zero {
-                    let span = flush_span.unwrap_or_else(|| data_span.clone());
-                    return Err(unexpected_value(
-                        span,
-                        &["omit .ftz when using .f64"],
-                        ".ftz",
-                    ));
-                }
-
-                let destination = RegisterOperand::parse(stream)?;
-                stream.expect(&PtxToken::Comma)?;
-                let source = RegisterOperand::parse(stream)?;
-                stream.expect(&PtxToken::Semicolon)?;
-
-                Ok(Rsqrt::ApproxF64(ApproxF64 {
-                    destination,
-                    source,
-                }))
-            }
-            other => Err(unexpected_value(
-                data_span,
-                &[".f32", ".f64"],
-                format!(".{other}"),
-            )),
+            stream.expect_string(".f32")?;
+            let f32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            Ok(RsqrtApproxFtzF32 {
+                approx,
+                ftz,
+                f32,
+                d,
+                a,
+            })
         }
     }
+
+
+    impl PtxParser for RsqrtApproxF64 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("rsqrt")?;
+            stream.expect_string(".approx")?;
+            let approx = ();
+            stream.expect_string(".f64")?;
+            let f64 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            Ok(RsqrtApproxF64 {
+                approx,
+                f64,
+                d,
+                a,
+            })
+        }
+    }
+
+
 }
+

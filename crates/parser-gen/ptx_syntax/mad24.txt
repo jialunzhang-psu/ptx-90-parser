@@ -1,0 +1,4 @@
+mad24.mode.type  d, a, b, c;
+mad24.hi.sat.s32 d, a, b, c;
+.mode = { .hi, .lo };
+.type = { .u32, .s32 };

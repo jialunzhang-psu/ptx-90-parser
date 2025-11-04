@@ -1,27 +1,34 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! dp4a.atype.btype  d, a, b, c;
+//! .atype = .btype = { .u32, .s32 };
 
-/// `dp4a.atype.btype d, a, b, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Dp4a {
-    /// `.atype`
-    pub atype: DataType,
-    /// `.btype`
-    pub btype: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub a: RegisterOperand,
-    /// `b`
-    pub b: RegisterOperand,
-    /// `c`
-    pub c: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.atype = .btype = { .u32, .s32 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-    /// `.s32`
-    S32,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Atype {
+        U32, // .u32
+        S32, // .s32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Btype {
+        U32, // .u32
+        S32, // .s32
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Dp4aAtypeBtype {
+        pub atype: Atype, // .atype
+        pub btype: Btype, // .btype
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+        pub c: Operand, // c
+    }
+
 }

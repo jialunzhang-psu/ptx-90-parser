@@ -1,17 +1,24 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! stackrestore.type  a;
+//! .type = { .u32, .u64 };
 
-/// `stackrestore.type a;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Stackrestore {
-    pub data_type: DataType,
-    pub register: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.type = { .u32, .u64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-    /// `.u64`
-    U64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        U32, // .u32
+        U64, // .u64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct StackrestoreType {
+        pub type_: Type, // .type
+        pub a: Operand, // a
+    }
+
 }

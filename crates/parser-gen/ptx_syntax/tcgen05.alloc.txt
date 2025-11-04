@@ -1,0 +1,4 @@
+tcgen05.alloc.cta_group.sync.aligned{.shared::cta}.b32  [dst], nCols;
+tcgen05.dealloc.cta_group.sync.aligned.b32              taddr, nCols;
+tcgen05.relinquish_alloc_permit.cta_group.sync.aligned;
+.cta_group = { .cta_group::1, .cta_group::2 };

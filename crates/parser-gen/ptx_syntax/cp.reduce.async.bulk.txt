@@ -1,0 +1,21 @@
+cp.reduce.async.bulk.dst.src.completion_mechanism.redOp.type [dstMem], [srcMem], size, [mbar];
+.dst =                  { .shared::cluster };
+.src =                  { .shared::cta };
+.completion_mechanism = { .mbarrier::complete_tx::bytes };
+.redOp=                 { .and, .or, .xor, .add, .inc, .dec, .min, .max };
+.type =                 { .b32, .u32, .s32, .b64, .u64 };
+----------------------------------------------------------------
+cp.reduce.async.bulk.dst.src.completion_mechanism{.level::cache_hint}.redOp.type [dstMem], [srcMem], size{, cache-policy};
+.dst =                  { .global      };
+.src =                  { .shared::cta };
+----------------------------------------------------------------
+.completion_mechanism = { .bulk_group };
+.level::cache_hint    = { .L2::cache_hint };
+.redOp=                 { .and, .or, .xor, .add, .inc, .dec, .min, .max };
+.type =                 { .f16, .bf16, .b32, .u32, .s32, .b64, .u64, .s64, .f32, .f64 };
+----------------------------------------------------------------
+cp.reduce.async.bulk.dst.src.completion_mechanism{.level::cache_hint}.add.noftz.type [dstMem], [srcMem], size{, cache-policy};
+.dst  =                 { .global };
+.src  =                 { .shared::cta };
+.completion_mechanism = { .bulk_group };
+.type =                 { .f16, .bf16 };

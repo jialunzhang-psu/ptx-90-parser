@@ -1,0 +1,11 @@
+redux.sync.op.type dst, src, membermask;
+.op   = {.add, .min, .max};
+.type = {.u32, .s32};
+----------------------------------------------------
+// Alternate floating point type:
+redux.sync.op.b32 dst, src, membermask;
+.op   = {.and, .or, .xor};
+----------------------------------------------------
+// Alternate floating point type:
+redux.sync.op{.abs}{.NaN}.f32 dst, src, membermask;
+.op   = { .min, .max };

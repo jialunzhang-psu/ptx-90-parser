@@ -1,23 +1,26 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! cnot.type d, a;
+//! .type = { .b16, .b32, .b64 };
 
-/// `cnot.type d, a;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Cnot {
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub source: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.type = { .b16, .b32, .b64 }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b16`
-    B16,
-    /// `.b32`
-    B32,
-    /// `.b64`
-    B64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        B16, // .b16
+        B32, // .b32
+        B64, // .b64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct CnotType {
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
 }

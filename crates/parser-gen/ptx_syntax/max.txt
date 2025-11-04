@@ -1,0 +1,14 @@
+max.atype         d, a, b;
+max{.relu}.btype  d, a, b;
+.atype = { .u16, .u32, .u64,
+.u16x2, .s16, .s64 };
+.btype = { .s16x2, .s32 };
+
+max{.ftz}{.NaN}{.xorsign.abs}.f32  d, a, b;
+max{.ftz}{.NaN}{.abs}.f32          d, a, b, c;
+max.f64                            d, a, b;
+
+max{.ftz}{.NaN}{.xorsign.abs}.f16      d, a, b;
+max{.ftz}{.NaN}{.xorsign.abs}.f16x2    d, a, b;
+max{.NaN}{.xorsign.abs}.bf16           d, a, b;
+max{.NaN}{.xorsign.abs}.bf16x2         d, a, b;

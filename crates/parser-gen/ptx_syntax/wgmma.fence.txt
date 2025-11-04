@@ -1,0 +1,1 @@
+wgmma.fence.sync.aligned;

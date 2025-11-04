@@ -1,0 +1,1 @@
+rsqrt.approx.ftz.f64 d, a;

@@ -1,48 +1,97 @@
-use crate::{
-    lexer::PtxToken,
-    parser::*,
-    r#type::{common::*, instruction::tanh::*},
-};
+//! Original PTX specification:
+//!
+//! tanh.approx.type d, a;
+//! .type = {.f16, .f32, .f16x2, .bf16, .bf16x2};
 
-impl PtxParser for Approximation {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_modifier()?;
-        match modifier.as_str() {
-            "approx" => Ok(Approximation::Approx),
-            other => Err(unexpected_value(span, &[".approx"], format!(".{other}"))),
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::tanh::section_0::*;
+
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try F16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f16").is_ok() {
+                    return Ok(Type::F16);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try F32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f32").is_ok() {
+                    return Ok(Type::F32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try F16x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f16x2").is_ok() {
+                    return Ok(Type::F16x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Bf16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".bf16").is_ok() {
+                    return Ok(Type::Bf16);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Bf16x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".bf16x2").is_ok() {
+                    return Ok(Type::Bf16x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".f16", ".f32", ".f16x2", ".bf16", ".bf16x2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
-}
 
-impl PtxParser for crate::r#type::instruction::tanh::DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, span) = stream.expect_directive()?;
-        match directive.as_str() {
-            "f32" => Ok(crate::r#type::instruction::tanh::DataType::F32),
-            other => Err(unexpected_value(span, &[".f32"], format!(".{other}"))),
+    impl PtxParser for TanhApproxType {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("tanh")?;
+            stream.expect_string(".approx")?;
+            let approx = ();
+            let type_ = Type::parse(stream)?;
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            Ok(TanhApproxType {
+                approx,
+                type_,
+                d,
+                a,
+            })
         }
     }
+
+
 }
 
-impl PtxParser for Tanh {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, opcode_span) = stream.expect_identifier()?;
-        if opcode != "tanh" {
-            return Err(unexpected_value(opcode_span, &["tanh"], opcode));
-        }
-
-        let approximation = Approximation::parse(stream)?;
-        let data_type = crate::r#type::instruction::tanh::DataType::parse(stream)?;
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let source = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Tanh {
-            approximation,
-            data_type,
-            destination,
-            source,
-        })
-    }
-}

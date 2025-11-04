@@ -1,0 +1,15 @@
+mul.mode.type  d, a, b;
+.mode = { .hi, .lo, .wide };
+.type = { .u16, .u32, .u64,
+.s16, .s32, .s64 };
+--------------------------------------------
+mul{.rnd}{.ftz}{.sat}.f32  d, a, b;
+mul{.rnd}{.ftz}.f32x2      d, a, b;
+mul{.rnd}.f64              d, a, b;
+.rnd = { .rn, .rz, .rm, .rp };
+--------------------------------------------
+mul{.rnd}{.ftz}{.sat}.f16   d, a, b;
+mul{.rnd}{.ftz}{.sat}.f16x2 d, a, b;
+mul{.rnd}.bf16   d, a, b;
+mul{.rnd}.bf16x2 d, a, b;
+.rnd = { .rn };

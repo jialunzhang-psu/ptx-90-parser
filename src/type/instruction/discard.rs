@@ -1,33 +1,25 @@
-use crate::r#type::common::AddressOperand;
+//! Original PTX specification:
+//!
+//! discard{.global}.level  [a], size;
+//! .level = { .L2 };
 
-/// `discard{.global}.level [a], size;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Discard {
-    /// `{.global}`
-    pub space: Option<Space>,
-    /// `.level`
-    pub level: Level,
-    /// `[a]`
-    pub address: AddressOperand,
-    /// `size`
-    pub size: Size,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Space {
-    /// `.global`
-    Global,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.level = { .L2 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Level {
-    /// `.L2`
-    L2,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Level {
+        L2, // .L2
+    }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Size {
-    /// `128`
-    Bytes128,
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct DiscardGlobalLevel {
+        pub global: bool, // {.global}
+        pub level: Level, // .level
+        pub a: AddressOperand, // [a]
+        pub size: Operand, // size
+    }
+
 }

@@ -1,0 +1,9 @@
+div.type  d, a, b;
+.type = { .u16, .u32, .u64,
+.s16, .s32, .s64 };
+
+div.approx{.ftz}.f32  d, a, b;  // fast, approximate divide
+div.full{.ftz}.f32    d, a, b;  // full-range approximate divide
+div.rnd{.ftz}.f32     d, a, b;  // IEEE 754 compliant rounding
+div.rnd.f64           d, a, b;  // IEEE 754 compliant rounding
+.rnd = { .rn, .rz, .rm, .rp };

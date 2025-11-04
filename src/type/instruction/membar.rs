@@ -1,159 +1,155 @@
-use crate::r#type::common::AddressOperand;
+//! Original PTX specification:
+//!
+//! // Thread fence:
+//! fence{.sem}.scope;
+//! // Thread fence (uni-directional):
+//! fence.acquire.sync_restrict::shared::cluster.cluster;
+//! fence.release.sync_restrict::shared::cta.cluster;
+//! // Operation fence (uni-directional):
+//! fence.op_restrict.release.cluster;
+//! // Proxy fence (bi-directional):
+//! fence.proxy.proxykind;
+//! // Proxy fence (uni-directional):
+//! fence.proxy.to_proxykind::from_proxykind.release.scope;
+//! fence.proxy.to_proxykind::from_proxykind.acquire.scope  [addr], size;
+//! fence.proxy.async::generic.acquire.sync_restrict::shared::cluster.cluster;
+//! fence.proxy.async::generic.release.sync_restrict::shared::cta.cluster;
+//! // Old style membar:
+//! membar.level;
+//! membar.proxy.proxykind;
+//! .sem       = { .sc, .acq_rel, .acquire, .release };
+//! .scope     = { .cta, .cluster, .gpu, .sys };
+//! .level     = { .cta, .gl, .sys };
+//! .proxykind = { .alias, .async, .async.global, .async.shared::cta, .async.shared::cluster};
+//! .op_restrict = { .mbarrier_init };
+//! .to_proxykind::from_proxykind = {.tensormap::generic};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Membar {
-    /// `fence{.sem}.scope;`
-    ThreadFence(ThreadFence),
-    /// `fence.acquire.sync_restrict::shared::cluster.cluster;`
-    /// `fence.release.sync_restrict::shared::cta.cluster;`
-    ThreadFenceSyncRestrict(ThreadFenceSyncRestrict),
-    /// `fence.op_restrict.release.scope;`
-    OperationFence(OperationFence),
-    /// `fence.proxy.proxykind;`
-    ProxyFence(ProxyFence),
-    /// `fence.proxy.tensormap::generic.release.scope;`
-    ProxyTensormapRelease(ProxyTensormapRelease),
-    /// `fence.proxy.tensormap::generic.acquire.scope  [addr], size;`
-    ProxyTensormapAcquire(ProxyTensormapAcquire),
-    /// `fence.proxy.async::generic.acquire.sync_restrict::shared::cluster.cluster;`
-    /// `fence.proxy.async::generic.release.sync_restrict::shared::cta.cluster;`
-    ProxyAsync(ProxyAsync),
-    /// `membar.level;`
-    OldStyleScope(OldStyleScope),
-    /// `membar.proxy.proxykind;`
-    OldStyleProxy(OldStyleProxy),
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `fence{.sem}.scope;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ThreadFence {
-    /// `.sem`
-    pub semantics: Option<Semantics>,
-    /// `.scope`
-    pub scope: Scope,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `fence.acquire.sync_restrict::shared::cluster.cluster;`
-/// `fence.release.sync_restrict::shared::cta.cluster;`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ThreadFenceSyncRestrict {
-    /// `fence.acquire.sync_restrict::shared::cluster.cluster;`
-    AcquireSharedCluster,
-    /// `fence.release.sync_restrict::shared::cta.cluster;`
-    ReleaseSharedCta,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Sem {
+        Sc, // .sc
+        AcqRel, // .acq_rel
+        Acquire, // .acquire
+        Release, // .release
+    }
 
-/// `fence.op_restrict.release.scope;`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct OperationFence {
-    /// `.scope`
-    pub scope: Scope,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Scope {
+        Cta, // .cta
+        Cluster, // .cluster
+        Gpu, // .gpu
+        Sys, // .sys
+    }
 
-/// `fence.proxy.proxykind;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ProxyFence {
-    /// `.proxykind`
-    pub kind: ProxyKind,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum OpRestrict {
+        MbarrierInit, // .mbarrier_init
+    }
 
-/// `fence.proxy.tensormap::generic.release.scope;`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ProxyTensormapRelease {
-    /// `.scope`
-    pub scope: Scope,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Proxykind {
+        Alias, // .alias
+        Async, // .async
+        AsyncGlobal, // .async.global
+        AsyncSharedCta, // .async.shared::cta
+        AsyncSharedCluster, // .async.shared::cluster
+    }
 
-/// `fence.proxy.tensormap::generic.acquire.scope  [addr], size;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ProxyTensormapAcquire {
-    /// `.scope`
-    pub scope: Scope,
-    /// `[addr]`
-    pub address: AddressOperand,
-    /// `size`
-    pub size: ProxySize,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum ToProxykindFromProxykind {
+        TensormapGeneric, // .tensormap::generic
+    }
 
-/// `fence.proxy.async::generic.acquire.sync_restrict::shared::cluster.cluster;`
-/// `fence.proxy.async::generic.release.sync_restrict::shared::cta.cluster;`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ProxyAsync {
-    /// `fence.proxy.async::generic.acquire.sync_restrict::shared::cluster.cluster;`
-    AcquireSharedCluster,
-    /// `fence.proxy.async::generic.release.sync_restrict::shared::cta.cluster;`
-    ReleaseSharedCta,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Level {
+        Cta, // .cta
+        Gl, // .gl
+        Sys, // .sys
+    }
 
-/// `membar.level;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct OldStyleScope {
-    /// `.level`
-    pub level: Level,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FenceSemScope {
+        pub sem: Option<Sem>, // {.sem}
+        pub scope: Scope, // .scope
+    }
 
-/// `membar.proxy.proxykind;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct OldStyleProxy {
-    /// `.proxykind`
-    pub kind: ProxyKind,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FenceAcquireSyncRestrictSharedClusterCluster {
+        pub acquire: (), // .acquire
+        pub sync_restrict_shared_cluster: (), // .sync_restrict::shared::cluster
+        pub cluster: (), // .cluster
+    }
 
-/// `.sem = { .sc, .acq_rel, .acquire, .release }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Semantics {
-    /// `.sc`
-    Sc,
-    /// `.acq_rel`
-    AcqRel,
-    /// `.acquire`
-    Acquire,
-    /// `.release`
-    Release,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FenceReleaseSyncRestrictSharedCtaCluster {
+        pub release: (), // .release
+        pub sync_restrict_shared_cta: (), // .sync_restrict::shared::cta
+        pub cluster: (), // .cluster
+    }
 
-/// `.scope = { .cta, .cluster, .gpu, .sys }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Scope {
-    /// `.cta`
-    Cta,
-    /// `.cluster`
-    Cluster,
-    /// `.gpu`
-    Gpu,
-    /// `.sys`
-    Sys,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FenceOpRestrictReleaseCluster {
+        pub op_restrict: OpRestrict, // .op_restrict
+        pub release: (), // .release
+        pub cluster: (), // .cluster
+    }
 
-/// `.proxykind = { .alias, .async, .async.global, .async.shared::{cta, cluster} }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ProxyKind {
-    /// `.alias`
-    Alias,
-    /// `.async`
-    Async,
-    /// `.async.global`
-    AsyncGlobal,
-    /// `.async.shared::cta`
-    AsyncSharedCta,
-    /// `.async.shared::cluster`
-    AsyncSharedCluster,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FenceProxyProxykind {
+        pub proxy: (), // .proxy
+        pub proxykind: Proxykind, // .proxykind
+    }
 
-/// `size = 128`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ProxySize {
-    /// `size = 128`
-    B128,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FenceProxyToProxykindFromProxykindReleaseScope {
+        pub proxy: (), // .proxy
+        pub to_proxykind_from_proxykind: ToProxykindFromProxykind, // .to_proxykind::from_proxykind
+        pub release: (), // .release
+        pub scope: Scope, // .scope
+    }
 
-/// `.level = { .cta, .gl, .sys }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Level {
-    /// `.cta`
-    Cta,
-    /// `.gl`
-    Gl,
-    /// `.sys`
-    Sys,
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FenceProxyToProxykindFromProxykindAcquireScope {
+        pub proxy: (), // .proxy
+        pub to_proxykind_from_proxykind: ToProxykindFromProxykind, // .to_proxykind::from_proxykind
+        pub acquire: (), // .acquire
+        pub scope: Scope, // .scope
+        pub addr: AddressOperand, // [addr]
+        pub size: Operand, // size
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FenceProxyAsyncGenericAcquireSyncRestrictSharedClusterCluster {
+        pub proxy: (), // .proxy
+        pub async_generic: (), // .async::generic
+        pub acquire: (), // .acquire
+        pub sync_restrict_shared_cluster: (), // .sync_restrict::shared::cluster
+        pub cluster: (), // .cluster
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct FenceProxyAsyncGenericReleaseSyncRestrictSharedCtaCluster {
+        pub proxy: (), // .proxy
+        pub async_generic: (), // .async::generic
+        pub release: (), // .release
+        pub sync_restrict_shared_cta: (), // .sync_restrict::shared::cta
+        pub cluster: (), // .cluster
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MembarLevel {
+        pub level: Level, // .level
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MembarProxyProxykind {
+        pub proxy: (), // .proxy
+        pub proxykind: Proxykind, // .proxykind
+    }
+
 }

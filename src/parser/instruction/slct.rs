@@ -1,94 +1,198 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{
-        common::RegisterOperand,
-        instruction::slct::{DataType, Slct},
-    },
-};
+//! Original PTX specification:
+//!
+//! slct.dtype.s32        d, a, b, c;
+//! slct{.ftz}.dtype.f32  d, a, b, c;
+//! .dtype = { .b16, .b32, .b64,
+//! .u16, .u32, .u64,
+//! .s16, .s32, .s64,
+//! .f32, .f64 };
 
-impl PtxParser for DataType {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (modifier, span) = stream.expect_directive()?;
-        match modifier.as_str() {
-            "b16" => Ok(DataType::B16),
-            "b32" => Ok(DataType::B32),
-            "b64" => Ok(DataType::B64),
-            "u16" => Ok(DataType::U16),
-            "u32" => Ok(DataType::U32),
-            "u64" => Ok(DataType::U64),
-            "s16" => Ok(DataType::S16),
-            "s32" => Ok(DataType::S32),
-            "s64" => Ok(DataType::S64),
-            "f32" => Ok(DataType::F32),
-            "f64" => Ok(DataType::F64),
-            other => Err(unexpected_value(
-                span,
-                &[
-                    ".b16", ".b32", ".b64", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64", ".f32",
-                    ".f64",
-                ],
-                format!(".{other}"),
-            )),
-        }
-    }
-}
+#![allow(unused)]
 
-impl PtxParser for Slct {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "slct" {
-            return Err(unexpected_value(span, &["slct"], opcode));
-        }
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
 
-        let ftz_token =
-            stream.consume_if(|token| matches!(token, PtxToken::Directive(name) if name == "ftz"));
-        let flush_to_zero = ftz_token.is_some();
-        let ftz_span = ftz_token.map(|(_, span)| span.clone());
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::slct::section_0::*;
 
-        let data_type = DataType::parse(stream)?;
-        let (selector_modifier, selector_span) = stream.expect_directive()?;
+    // ============================================================================
+    // Generated enum parsers
+    // ============================================================================
 
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let on_true = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let on_false = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Comma)?;
-        let selector = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        match selector_modifier.as_str() {
-            "s32" => {
-                if flush_to_zero {
-                    return Err(unexpected_value(
-                        ftz_span.expect("ftz span must be present when ftz is set"),
-                        &[".f32"],
-                        ".ftz",
-                    ));
+    impl PtxParser for Dtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try B16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b16").is_ok() {
+                    return Ok(Dtype::B16);
                 }
-
-                Ok(Slct::S32 {
-                    data_type,
-                    destination,
-                    on_true,
-                    on_false,
-                    selector,
-                })
+                stream.set_position(saved_pos);
             }
-            "f32" => Ok(Slct::F32 {
-                flush_to_zero,
-                data_type,
-                destination,
-                on_true,
-                on_false,
-                selector,
-            }),
-            other => Err(unexpected_value(
-                selector_span,
-                &[".s32", ".f32"],
-                format!(".{other}"),
-            )),
+            let saved_pos = stream.position();
+            // Try B32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b32").is_ok() {
+                    return Ok(Dtype::B32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b64").is_ok() {
+                    return Ok(Dtype::B64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u16").is_ok() {
+                    return Ok(Dtype::U16);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Dtype::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u64").is_ok() {
+                    return Ok(Dtype::U64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s16").is_ok() {
+                    return Ok(Dtype::S16);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Dtype::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s64").is_ok() {
+                    return Ok(Dtype::S64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try F32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f32").is_ok() {
+                    return Ok(Dtype::F32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try F64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f64").is_ok() {
+                    return Ok(Dtype::F64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".b16", ".b32", ".b64", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64", ".f32", ".f64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
+
+    impl PtxParser for SlctDtypeS32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("slct")?;
+            let dtype = Dtype::parse(stream)?;
+            stream.expect_string(".s32")?;
+            let s32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(SlctDtypeS32 {
+                dtype,
+                s32,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
+    impl PtxParser for SlctFtzDtypeF32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("slct")?;
+            let saved_pos = stream.position();
+            let ftz = stream.expect_string(".ftz").is_ok();
+            if !ftz {
+                stream.set_position(saved_pos);
+            }
+            let dtype = Dtype::parse(stream)?;
+            stream.expect_string(".f32")?;
+            let f32 = ();
+            let d = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let a = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let b = Operand::parse(stream)?;
+            stream.expect(&PtxToken::Comma)?;
+            let c = Operand::parse(stream)?;
+            Ok(SlctFtzDtypeF32 {
+                ftz,
+                dtype,
+                f32,
+                d,
+                a,
+                b,
+                c,
+            })
+        }
+    }
+
+
 }
+

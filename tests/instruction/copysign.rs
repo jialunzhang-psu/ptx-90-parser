@@ -1,8 +1,8 @@
 use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
-    r#type::common::RegisterOperand,
-    r#type::instruction::copysign::{Copysign, DataType as CopysignDataType},
+    r#type::common::{Operand, RegisterOperand},
+    r#type::instruction::copysign::{Copysign, Type},
 };
 
 #[test]
@@ -10,10 +10,10 @@ fn parses_copysign_f32() {
     assert_eq!(
         parse::<Copysign>("copysign.f32 %f1,%f2,%f3;"),
         Copysign {
-            data_type: CopysignDataType::F32,
-            destination: RegisterOperand::Single("%f1".into()),
-            a: RegisterOperand::Single("%f2".into()),
-            b: RegisterOperand::Single("%f3".into()),
+            type_: Type::F32,
+            d: Operand::Register(RegisterOperand::Single("%f1".into())),
+            a: Operand::Register(RegisterOperand::Single("%f2".into())),
+            b: Operand::Register(RegisterOperand::Single("%f3".into())),
         }
     );
     assert_roundtrip::<Copysign>("copysign.f32 %f1,%f2,%f3;");
@@ -24,10 +24,10 @@ fn parses_copysign_f64_with_spaces() {
     assert_eq!(
         parse::<Copysign>("copysign.f64 %fd0, %fd1, %fd2;"),
         Copysign {
-            data_type: CopysignDataType::F64,
-            destination: RegisterOperand::Single("%fd0".into()),
-            a: RegisterOperand::Single("%fd1".into()),
-            b: RegisterOperand::Single("%fd2".into()),
+            type_: Type::F64,
+            d: Operand::Register(RegisterOperand::Single("%fd0".into())),
+            a: Operand::Register(RegisterOperand::Single("%fd1".into())),
+            b: Operand::Register(RegisterOperand::Single("%fd2".into())),
         }
     );
     assert_roundtrip::<Copysign>("copysign.f64 %fd0, %fd1, %fd2;");

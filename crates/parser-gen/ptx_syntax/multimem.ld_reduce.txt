@@ -1,0 +1,31 @@
+// Integer type:
+multimem.ld_reduce{.ldsem}{.scope}{.ss}.op.type      d, [a];
+multimem.ld_reduce.weak{.ss}.op.type                 d, [a];
+multimem.st{.stsem}{.scope}{.ss}.type                [a], b;
+multimem.st.weak{.ss}.type                           [a], b;
+multimem.red{.redsem}{.scope}{.ss}.op.type           [a], b;
+.ss =       { .global };
+.ldsem =    { .relaxed, .acquire };
+.stsem =    { .relaxed, .release };
+.redsem =   { .relaxed, .release };
+.scope =    { .cta, .cluster, .gpu, .sys };
+.op  =      { .min, .max, .add, .and, .or, .xor };
+.type =     { .b32, .b64,  .u32, .u64, .s32, .s64 };
+------------------------------------------------------------------
+// Floating point type:
+multimem.ld_reduce{.ldsem}{.scope}{.ss}.op{.acc_prec}{.vec}.type    d, [a];
+multimem.ld_reduce.weak{.ss}.op{.acc_prec}{.vec}.type               d, [a];
+multimem.st{.stsem}{.scope}{.ss}{.vec}.type                         [a], b;
+multimem.st.weak{.ss}{.vec}.type                                    [a], b;
+multimem.red{.redsem}{.scope}{.ss}.redop{.vec}.redtype              [a], b;
+.ss =       { .global };
+.ldsem =    { .relaxed, .acquire };
+.stsem =    { .relaxed, .release };
+.redsem =   { .relaxed, .release };
+.scope =    { .cta, .cluster, .gpu, .sys };
+.op  =      { .min, .max, .add };
+.redop  =   { .add };
+.acc_prec = { .acc::f32, .acc::f16 };
+.vec =      { .v2, .v4, .v8 };
+.type=      { .f16, .f16x2, .bf16, .bf16x2, .f32, .f64, .e5m2, .e5m2x2, .e5m2x4, .e4m3, .e4m3x2, .e4m3x4 };
+.redtype =  { .f16, .f16x2, .bf16, .bf16x2, .f32, .f64 };

@@ -1,0 +1,9 @@
+sust.b.dim{.cop}.vec.ctype.mode [a, b], c;  // unformatted
+sust.p.dim.vec.b32.mode       [a, b], c;  // formatted
+sust.b.adim{.cop}.vec.ctype.mode   [a, b], c;  // unformatted
+.cop   = { .wb, .cg, .cs, .wt };                     // cache operation
+.vec   = { none, .v2, .v4 };
+.ctype = { .b8 , .b16, .b32, .b64 };
+.mode  = { .trap, .clamp, .zero };
+.dim   = { .1d, .2d, .3d };
+.adim  = { .a1d, .a2d };

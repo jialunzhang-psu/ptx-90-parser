@@ -1,28 +1,34 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! movmatrix.sync.aligned.shape.trans.type d, a;
+//! .shape  = {.m8n8};
+//! .type   = {.b16};
 
-/// `movmatrix.sync.aligned.shape.trans.type d, a;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Movmatrix {
-    /// `.shape`
-    pub shape: Shape,
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub source: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.shape = {.m8n8};`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Shape {
-    /// `.m8n8`
-    M8N8,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `.type = {.b16};`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.b16`
-    B16,
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Shape {
+        M8n8, // .m8n8
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        B16, // .b16
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct MovmatrixSyncAlignedShapeTransType {
+        pub sync: (), // .sync
+        pub aligned: (), // .aligned
+        pub shape: Shape, // .shape
+        pub trans: (), // .trans
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
 }

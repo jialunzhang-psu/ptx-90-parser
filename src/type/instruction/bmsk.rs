@@ -1,23 +1,27 @@
-use crate::r#type::common::{Operand, RegisterOperand};
+//! Original PTX specification:
+//!
+//! bmsk.mode.b32  d, a, b;
+//! .mode = { .clamp, .wrap };
 
-/// `bmsk.mode.b32 d, a, b;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Bmsk {
-    /// `.mode`
-    pub mode: Mode,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub a: Operand,
-    /// `b`
-    pub b: Operand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.mode = { .clamp, .wrap };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mode {
-    /// `.clamp`
-    Clamp,
-    /// `.wrap`
-    Wrap,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mode {
+        Clamp, // .clamp
+        Wrap, // .wrap
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct BmskModeB32 {
+        pub mode: Mode, // .mode
+        pub b32: (), // .b32
+        pub d: Operand, // d
+        pub a: Operand, // a
+        pub b: Operand, // b
+    }
+
 }

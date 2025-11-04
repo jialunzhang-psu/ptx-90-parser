@@ -1,0 +1,16 @@
+mov.type  d, a; 
+// mov.type  d, sreg;
+// mov.type  d, avar;       // get address of variable
+// mov.type  d, avar+imm;   // get address of variable with offset
+mov.u32   d, fname;      // get address of device function
+mov.u64   d, fname;      // get address of device function
+mov.u32   d, kernel;     // get address of entry function
+mov.u64   d, kernel;     // get address of entry function
+.type = { .pred,
+.b16, .b32, .b64,
+.u16, .u32, .u64,
+.s16, .s32, .s64,
+.f32, .f64 };
+----------------------------------------------
+mov.type  d, a;
+.type = { .b16, .b32, .b64, .b128 };

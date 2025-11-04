@@ -1,40 +1,33 @@
-use crate::r#type::common::{RegisterOperand, VariableSymbol};
+//! Original PTX specification:
+//!
+//! suq.query.b32   d, [a];
+//! .query = { .width, .height, .depth,
+//! .channel_data_type, .channel_order,
+//! .array_size, .memory_layout };
 
-/// `suq.query.b32 d, [a];`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Suq {
-    /// `.query`
-    pub query: Query,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `[a]`
-    pub address: Operand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.query = { .width, .height, .depth, .channel_data_type, .channel_order, .array_size, .memory_layout };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Query {
-    /// `.width`
-    Width,
-    /// `.height`
-    Height,
-    /// `.depth`
-    Depth,
-    /// `.channel_data_type`
-    ChannelDataType,
-    /// `.channel_order`
-    ChannelOrder,
-    /// `.array_size`
-    ArraySize,
-    /// `.memory_layout`
-    MemoryLayout,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `a = { .surfref, .u64 }`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Operand {
-    /// `.surfref`
-    Surface(VariableSymbol),
-    /// `.u64`
-    Register(RegisterOperand),
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Query {
+        Width, // .width
+        Height, // .height
+        Depth, // .depth
+        ChannelDataType, // .channel_data_type
+        ChannelOrder, // .channel_order
+        ArraySize, // .array_size
+        MemoryLayout, // .memory_layout
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct SuqQueryB32 {
+        pub query: Query, // .query
+        pub b32: (), // .b32
+        pub d: Operand, // d
+        pub a: AddressOperand, // [a]
+    }
+
 }

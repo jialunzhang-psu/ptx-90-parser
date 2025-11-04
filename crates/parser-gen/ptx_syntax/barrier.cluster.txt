@@ -1,0 +1,3 @@
+barrier.cluster.arrive{.sem}{.aligned};
+barrier.cluster.wait{.acquire}{.aligned};
+.sem = {.release, .relaxed};

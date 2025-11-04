@@ -1,0 +1,2 @@
+bfi.type  f, a, b, c, d;
+.type = { .b32, .b64 };

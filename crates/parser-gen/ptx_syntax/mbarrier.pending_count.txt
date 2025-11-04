@@ -1,0 +1,1 @@
+mbarrier.pending_count.b64 count, state;

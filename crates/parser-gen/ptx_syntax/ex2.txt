@@ -1,0 +1,6 @@
+ex2.approx{.ftz}.f32  d, a;
+
+ex2.approx.atype     d, a;
+ex2.approx.ftz.btype d, a;
+.atype = { .f16,  .f16x2};
+.btype = { .bf16, .bf16x2};

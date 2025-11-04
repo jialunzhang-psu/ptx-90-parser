@@ -1,25 +1,27 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! not.type d, a;
+//! .type = { .pred, .b16, .b32, .b64 };
 
-/// `not.type d, a;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Not {
-    /// `.type`
-    pub data_type: DataType,
-    /// `d`
-    pub destination: RegisterOperand,
-    /// `a`
-    pub source: RegisterOperand,
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `.type = { .pred, .b16, .b32, .b64 };`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.pred`
-    Pred,
-    /// `.b16`
-    B16,
-    /// `.b32`
-    B32,
-    /// `.b64`
-    B64,
+pub mod section_0 {
+    use crate::r#type::common::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Type {
+        Pred, // .pred
+        B16, // .b16
+        B32, // .b32
+        B64, // .b64
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct NotType {
+        pub type_: Type, // .type
+        pub d: Operand, // d
+        pub a: Operand, // a
+    }
+
 }

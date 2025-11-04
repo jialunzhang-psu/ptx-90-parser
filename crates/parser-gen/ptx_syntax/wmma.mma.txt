@@ -1,0 +1,48 @@
+// Floating point (.f16 multiplicands) wmma.mma
+wmma.mma.sync.aligned.alayout.blayout.shape.dtype.ctype d, a, b, c;
+----------------------------------------------------------------
+// Integer (.u8/.s8 multiplicands) wmma.mma
+wmma.mma.sync.aligned.alayout.blayout.shape.s32.atype.btype.s32{.satfinite} d, a, b, c;
+.alayout = {.row, .col};
+.blayout = {.row, .col};
+.shape  =  {.m16n16k16, .m8n32k16, .m32n8k16};
+.dtype   = {.f16, .f32};
+.atype   = {.s8, .u8};
+.btype   = {.s8, .u8};
+.ctype   = {.f16, .f32};
+----------------------------------------------------------------
+// Floating point format .bf16 wmma.mma:
+wmma.mma.sync.aligned.alayout.blayout.shape.f32.atype.btype.f32 d, a, b, c;
+.alayout = {.row, .col};
+.blayout = {.row, .col};
+.shape   = {.m16n16k16, .m8n32k16, .m32n8k16};
+.atype   = {.bf16 };
+.btype   = {.bf16};
+----------------------------------------------------------------
+// Floating point format .tf32 wmma.mma:
+wmma.mma.sync.aligned.alayout.blayout.shape.f32.atype.btype.f32 d, a, b, c;
+.alayout = {.row, .col};
+.blayout = {.row, .col};
+.shape   = {.m16n16k8 };
+.atype   = {.tf32 };
+.btype   = {.tf32};
+----------------------------------------------------------------
+// Floating point Double precision wmma.mma:
+wmma.mma.sync.aligned.alayout.blayout.shape{.rnd}.f64.f64.f64.f64 d, a, b, c;
+.alayout = {.row, .col};
+.blayout = {.row, .col};
+.shape   = {.m8n8k4 };
+.rnd = { .rn, .rz, .rm, .rp };
+----------------------------------------------------------------
+// Sub-byte (.u4/.s4 multiplicands) wmma.mma:
+wmma.mma.sync.aligned.row.col.shape.s32.atype.btype.s32{.satfinite} d, a, b, c;
+.shape  = {.m8n8k32};
+.atype  = {.s4, .u4};
+.btype  = {.s4, .u4};
+----------------------------------------------------------------
+// Single-bit (.b1 multiplicands) wmma.mma:
+wmma.mma.op.popc.sync.aligned.row.col.shape.s32.atype.btype.s32 d, a, b, c;
+.shape  = {.m8n8k128};
+.atype  = {.b1};
+.btype  = {.b1};
+.op     = {.xor, .and};

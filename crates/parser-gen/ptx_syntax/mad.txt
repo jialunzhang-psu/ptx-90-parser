@@ -1,0 +1,10 @@
+mad.mode.type  d, a, b, c;
+mad.hi.sat.s32 d, a, b, c;
+.mode = { .hi, .lo, .wide };
+.type = { .u16, .u32, .u64,
+.s16, .s32, .s64 };
+
+mad{.ftz}{.sat}.f32      d, a, b, c;    // .target sm_1x
+mad.rnd{.ftz}{.sat}.f32  d, a, b, c;    // .target sm_20
+mad.rnd.f64              d, a, b, c;    // .target sm_13 and higher
+.rnd = { .rn, .rz, .rm, .rp };

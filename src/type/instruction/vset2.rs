@@ -1,133 +1,118 @@
-use crate::r#type::common::RegisterOperand;
+//! Original PTX specification:
+//!
+//! // SIMD instruction with secondary SIMD merge operation
+//! vset2.atype.btype.cmp  d{.mask}, a{.asel}, b{.bsel}, c;
+//! // SIMD instruction with secondary accumulate operation
+//! vset2.atype.btype.cmp.add  d{.mask}, a{.asel}, b{.bsel}, c;
+//! .atype = .btype = { .u32, .s32 };
+//! .cmp   = { .eq, .ne, .lt, .le, .gt, .ge };
+//! .mask  = { .h0, .h1, .h10 };  // defaults to .h10
+//! .asel  = .bsel  = { .h00, .h01, .h02, .h03, .h10, .h11, .h12, .h13, .h20, .h21, .h22, .h23, .h30, .h31, .h32, .h33 }; // { .hxy, where x,y are from { 0, 1, 2, 3 } };
+//! // .asel defaults to .h10
+//! // .bsel defaults to .h32
 
-/// `vset2.atype.btype.cmp  d{.mask}, a{.asel}, b{.bsel}, c;`
-/// `vset2.atype.btype.cmp.add  d{.mask}, a{.asel}, b{.bsel}, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Vset2 {
-    /// `vset2.atype.btype.cmp  d{.mask}, a{.asel}, b{.bsel}, c;`
-    SimdMerge(SimdMerge),
-    /// `vset2.atype.btype.cmp.add  d{.mask}, a{.asel}, b{.bsel}, c;`
-    Accumulate(Accumulate),
-}
+#![allow(unused)]
+use crate::r#type::common::*;
 
-/// `vset2.atype.btype.cmp  d{.mask}, a{.asel}, b{.bsel}, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SimdMerge {
-    /// `.atype`
-    pub a_type: DataType,
-    /// `.btype`
-    pub b_type: DataType,
-    /// `.cmp`
-    pub comparison: CompareOp,
-    /// `d{.mask}`
-    pub destination: Destination,
-    /// `a{.asel}`
-    pub a: ASource,
-    /// `b{.bsel}`
-    pub b: BSource,
-    /// `c`
-    pub c: RegisterOperand,
-}
+pub mod section_0 {
+    use crate::r#type::common::*;
 
-/// `vset2.atype.btype.cmp.add  d{.mask}, a{.asel}, b{.bsel}, c;`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Accumulate {
-    /// `.atype`
-    pub a_type: DataType,
-    /// `.btype`
-    pub b_type: DataType,
-    /// `.cmp`
-    pub comparison: CompareOp,
-    /// `d{.mask}`
-    pub destination: Destination,
-    /// `a{.asel}`
-    pub a: ASource,
-    /// `b{.bsel}`
-    pub b: BSource,
-    /// `c`
-    pub c: RegisterOperand,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Atype {
+        U32, // .u32
+        S32, // .s32
+    }
 
-/// `d{.mask}` default `.h10`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Destination {
-    /// `d`
-    pub register: RegisterOperand,
-    /// `{.mask}`
-    pub mask: Option<Mask>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Btype {
+        U32, // .u32
+        S32, // .s32
+    }
 
-/// `a{.asel}` default `.h10`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ASource {
-    /// `a`
-    pub register: RegisterOperand,
-    /// `{.asel}`
-    pub selector: Option<Selector>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Cmp {
+        Eq, // .eq
+        Ne, // .ne
+        Lt, // .lt
+        Le, // .le
+        Gt, // .gt
+        Ge, // .ge
+    }
 
-/// `b{.bsel}` default `.h32`
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BSource {
-    /// `b`
-    pub register: RegisterOperand,
-    /// `{.bsel}`
-    pub selector: Option<Selector>,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Mask {
+        H0, // .h0
+        H1, // .h1
+        H10, // .h10
+    }
 
-/// `.atype = .btype = { .u32, .s32 }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DataType {
-    /// `.u32`
-    U32,
-    /// `.s32`
-    S32,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Asel {
+        H00, // .h00
+        H01, // .h01
+        H02, // .h02
+        H03, // .h03
+        H10, // .h10
+        H11, // .h11
+        H12, // .h12
+        H13, // .h13
+        H20, // .h20
+        H21, // .h21
+        H22, // .h22
+        H23, // .h23
+        H30, // .h30
+        H31, // .h31
+        H32, // .h32
+        H33, // .h33
+    }
 
-/// `.cmp = { .eq, .ne, .lt, .le, .gt, .ge }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CompareOp {
-    /// `.eq`
-    Eq,
-    /// `.ne`
-    Ne,
-    /// `.lt`
-    Lt,
-    /// `.le`
-    Le,
-    /// `.gt`
-    Gt,
-    /// `.ge`
-    Ge,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Bsel {
+        H00, // .h00
+        H01, // .h01
+        H02, // .h02
+        H03, // .h03
+        H10, // .h10
+        H11, // .h11
+        H12, // .h12
+        H13, // .h13
+        H20, // .h20
+        H21, // .h21
+        H22, // .h22
+        H23, // .h23
+        H30, // .h30
+        H31, // .h31
+        H32, // .h32
+        H33, // .h33
+    }
 
-/// `.mask = { .h0, .h1, .h10 }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mask {
-    /// `.h0`
-    H0,
-    /// `.h1`
-    H1,
-    /// `.h10`
-    H10,
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Vset2AtypeBtypeCmp {
+        pub atype: Atype, // .atype
+        pub btype: Btype, // .btype
+        pub cmp: Cmp, // .cmp
+        pub d: Operand, // d
+        pub mask: Option<Mask>, // {.mask}
+        pub a: Operand, // a
+        pub asel: Option<Asel>, // {.asel}
+        pub b: Operand, // b
+        pub bsel: Option<Bsel>, // {.bsel}
+        pub c: Operand, // c
+    }
 
-/// `.asel = .bsel = { .hxy, where x,y are from { 0, 1, 2, 3 } }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Selector {
-    /// `xy`
-    pub halves: [Half; 2],
-}
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct Vset2AtypeBtypeCmpAdd {
+        pub atype: Atype, // .atype
+        pub btype: Btype, // .btype
+        pub cmp: Cmp, // .cmp
+        pub add: (), // .add
+        pub d: Operand, // d
+        pub mask: Option<Mask>, // {.mask}
+        pub a: Operand, // a
+        pub asel: Option<Asel>, // {.asel}
+        pub b: Operand, // b
+        pub bsel: Option<Bsel>, // {.bsel}
+        pub c: Operand, // c
+    }
 
-/// `x`, `y` from `{ 0, 1, 2, 3 }`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Half {
-    /// `0`
-    H0,
-    /// `1`
-    H1,
-    /// `2`
-    H2,
-    /// `3`
-    H3,
 }

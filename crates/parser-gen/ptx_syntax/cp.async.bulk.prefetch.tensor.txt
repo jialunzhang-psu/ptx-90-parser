@@ -1,0 +1,6 @@
+// global -> shared::cluster:
+cp.async.bulk.prefetch.tensor.dim.L2.src{.load_mode}{.level::cache_hint} [tensorMap, tensorCoords] {, im2colInfo } {, cache-policy};
+.src =                { .global };
+.dim =                { .1d, .2d, .3d, .4d, .5d };
+.load_mode =          { .tile, .tile::gather4, .im2col, .im2col::w, .im2col::w::128 };
+.level::cache_hint =  { .L2::cache_hint };

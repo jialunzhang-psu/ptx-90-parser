@@ -1,0 +1,3 @@
+shf.l.mode.b32  d, a, b, c;  // left shift
+shf.r.mode.b32  d, a, b, c;  // right shift
+.mode = { .clamp, .wrap };

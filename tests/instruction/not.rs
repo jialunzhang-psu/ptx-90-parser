@@ -2,8 +2,8 @@ use crate::util::*;
 use ptx_parser::{
     parser::ParseErrorKind,
     r#type::{
-        common::RegisterOperand,
-        instruction::not::{DataType as NotDataType, Not},
+        common::{Operand, RegisterOperand},
+        instruction::not::{Not, Type},
     },
 };
 
@@ -17,9 +17,9 @@ fn parses_not_predicate() {
     assert_eq!(
         parse::<Not>("not.pred %p1, %p0;"),
         Not {
-            data_type: NotDataType::Pred,
-            destination: reg("%p1"),
-            source: reg("%p0"),
+            type_: Type::Pred,
+            d: Operand::Register(reg("%p1")),
+            a: Operand::Register(reg("%p0")),
         }
     );
 }
@@ -30,9 +30,9 @@ fn parses_not_bitwise() {
     assert_eq!(
         parse::<Not>("not.b64 %rd3, %rd2;"),
         Not {
-            data_type: NotDataType::B64,
-            destination: reg("%rd3"),
-            source: reg("%rd2"),
+            type_: Type::B64,
+            d: Operand::Register(reg("%rd3")),
+            a: Operand::Register(reg("%rd2")),
         }
     );
 }

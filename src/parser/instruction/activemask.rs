@@ -1,24 +1,30 @@
-use crate::{
-    lexer::PtxToken,
-    parser::{PtxParseError, PtxParser, PtxTokenStream, unexpected_value},
-    r#type::{common::RegisterOperand, instruction::activemask::Activemask},
-};
+//! Original PTX specification:
+//!
+//! activemask.b32 d;
 
-impl PtxParser for Activemask {
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (opcode, span) = stream.expect_identifier()?;
-        if opcode != "activemask" {
-            return Err(unexpected_value(span, &["activemask"], opcode));
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::common::*;
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::activemask::section_0::*;
+
+    impl PtxParser for ActivemaskB32 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            stream.expect_string("activemask")?;
+            stream.expect_string(".b32")?;
+            let b32 = ();
+            let d = Operand::parse(stream)?;
+            Ok(ActivemaskB32 {
+                b32,
+                d,
+            })
         }
-
-        let (modifier, span) = stream.expect_directive()?;
-        if modifier != "b32" {
-            return Err(unexpected_value(span, &[".b32"], format!(".{modifier}")));
-        }
-
-        let destination = RegisterOperand::parse(stream)?;
-        stream.expect(&PtxToken::Semicolon)?;
-
-        Ok(Activemask { destination })
     }
+
+
 }
+

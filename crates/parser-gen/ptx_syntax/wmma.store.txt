@@ -1,0 +1,23 @@
+wmma.store.d.sync.aligned.layout.shape{.ss}.type [p], r {, stride};
+.layout = {.row, .col};
+.shape  = {.m16n16k16, .m8n32k16, .m32n8k16};
+.ss     = {.global, .shared, .shared::cta};
+.type   = {.f16, .f32, .s32};
+----------------------------------------------------------------
+wmma.store.d.sync.aligned.layout.shape{.ss}.type [p], r {, stride};
+.layout = {.row, .col};
+.shape  = {.m8n8k32, .m8n8k128};
+.ss     = {.global, .shared, .shared::cta};
+.type   = {.s32};
+----------------------------------------------------------------
+wmma.store.d.sync.aligned.layout.shape{.ss}.type [p], r {, stride};
+.layout = {.row, .col};
+.shape  = {.m16n16k8};
+.ss     = {.global, .shared, .shared::cta};
+.type   = {.f32};
+----------------------------------------------------------------
+wmma.store.d.sync.aligned.layout.shape{.ss}.type [p], r {, stride};
+.layout = {.row, .col};
+.shape  = {.m8n8k4 };
+.ss     = {.global, .shared, .shared::cta};
+.type   = {.f64};

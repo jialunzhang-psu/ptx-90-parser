@@ -1,0 +1,25 @@
+// Reduction operation with scalar type:
+red.op{.space}{.sem}{.scope}{.level::cache_hint}.type          [a], b{, cache-policy};
+red.add{.space}{.sem}{.scope}.noftz{.level::cache_hint}.f16    [a], b{, cache-policy};
+red.add{.space}{.sem}{.scope}.noftz{.level::cache_hint}.f16x2  [a], b{, cache-policy};
+red.add{.space}{.sem}{.scope}.noftz{.level::cache_hint}.bf16   [a], b{, cache-policy};
+red.add{.space}{.sem}{.scope}.noftz{.level::cache_hint}.bf16x2 [a], b{, cache-policy};
+.space =              { .global, .shared, .shared::cta, .shared::cluster};
+.sem =                {.relaxed, .release};
+.scope =              {.cta, .cluster, .gpu, .sys};
+.op =                 { .and, .or, .xor, .add, .inc, .dec, .min, .max };
+.level::cache_hint =  { .L2::cache_hint };
+.type =               { .b32, .b64, .u32, .u64, .s32, .s64, .f32, .f64 };
+------------------------------------------------------------------
+// Reduction operation with vector type:
+red.add{.space}{.sem}{.scope}{.level::cache_hint}.vec_32_bit.f32 [a], b{, cache-policy};
+red.op{.space}{.sem}{.scope}.noftz{.level::cache_hint}. vec_16_bit.half_word_type [a], b{, cache-policy};
+red.op{.space}{.sem}{.scope}.noftz{.level::cache_hint}.vec_32_bit.packed_type [a], b {, cache-policy};
+.sem =                { .relaxed, .release };
+.scope =              { .cta, .cluster, .gpu, .sys };
+.op =                 { .add, .min, .max };
+.half_word_type =     { .f16, .bf16 };
+.packed_type =        { .f16x2,.bf16x2 };
+.vec_16_bit =         { .v2, .v4, .v8 };
+.vec_32_bit =         { .v2, .v4 };
+.level::cache_hint =  { .L2::cache_hint };

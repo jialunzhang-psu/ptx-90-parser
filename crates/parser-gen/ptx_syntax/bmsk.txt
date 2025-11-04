@@ -1,0 +1,2 @@
+bmsk.mode.b32  d, a, b;
+.mode = { .clamp, .wrap };

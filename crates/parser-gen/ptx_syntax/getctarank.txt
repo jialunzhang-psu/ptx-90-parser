@@ -1,0 +1,11 @@
+getctarank{.space}.type d, a;
+// Get cta rank from source shared memory address in register a.
+getctarank.shared::cluster.type d, a;
+// // Get cta rank from shared memory variable.
+// getctarank.shared::cluster.type d, var;
+// // Get cta rank from shared memory variable+offset.
+// getctarank.shared::cluster.type d, var + imm;
+// Get cta rank from generic address of shared memory variable in register a.
+getctarank.type d, a;
+.space = { .shared::cluster };
+.type  = { .u32, .u64 };
