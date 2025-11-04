@@ -165,9 +165,26 @@ use crate::r#type::common::*;"#
                 output.push_str(&format!("            {},\n", rust_name));
             }
 
-            // Operand element field
-            let operand_name = Self::get_operand_rust_name(&operand.operand);
-            output.push_str(&format!("            {},\n", operand_name));
+            // Operand element field(s)
+            // PipeChoice and PipeOptionalChoice need TWO fields
+            use AnalyzedOperandElement::*;
+            match &operand.operand {
+                PipeChoice(((_, first_name), (_, second_name))) => {
+                    // Add both fields for d|p
+                    output.push_str(&format!("            {},\n", first_name));
+                    output.push_str(&format!("            {},\n", second_name));
+                }
+                PipeOptionalChoice(((_, first_name), (_, second_name))) => {
+                    // Add both fields for d{|p}
+                    output.push_str(&format!("            {},\n", first_name));
+                    output.push_str(&format!("            {},\n", second_name));
+                }
+                _ => {
+                    // Single field for all other types
+                    let operand_name = Self::get_operand_rust_name(&operand.operand);
+                    output.push_str(&format!("            {},\n", operand_name));
+                }
+            }
 
             // Operand modifier field
             if let Some((_modifier, rust_name)) = &operand.modifier {

@@ -201,16 +201,41 @@ impl TypeGenerator {
             // Add the operand element raw form
             operand_raw.push_str(&self.get_operand_raw_form(&operand.operand));
 
-            // Determine the type based on operand element
-            let operand_type = self.get_operand_type(&operand.operand);
-
-            // Get the rust name from the operand element
-            let field_name = Self::get_operand_rust_name(&operand.operand);
-
-            output.push_str(&format!(
-                "    pub {}: {}, // {}\n",
-                field_name, operand_type, operand_raw
-            ));
+            // Handle PipeChoice and PipeOptionalChoice specially - they need two fields
+            use AnalyzedOperandElement::*;
+            match &operand.operand {
+                PipeChoice(((_, first_name), (_, second_name))) => {
+                    // d|p generates: pub d: Operand, pub p: Operand
+                    output.push_str(&format!(
+                        "    pub {}: Operand, // first operand of {}\n",
+                        first_name, operand_raw
+                    ));
+                    output.push_str(&format!(
+                        "    pub {}: Operand, // second operand of {}\n",
+                        second_name, operand_raw
+                    ));
+                }
+                PipeOptionalChoice(((_, first_name), (_, second_name))) => {
+                    // d{|p} generates: pub d: Operand, pub p: Option<Operand>
+                    output.push_str(&format!(
+                        "    pub {}: Operand, // first operand of {}\n",
+                        first_name, operand_raw
+                    ));
+                    output.push_str(&format!(
+                        "    pub {}: Option<Operand>, // optional second operand of {}\n",
+                        second_name, operand_raw
+                    ));
+                }
+                _ => {
+                    // All other operand types - single field
+                    let operand_type = self.get_operand_type(&operand.operand);
+                    let field_name = Self::get_operand_rust_name(&operand.operand);
+                    output.push_str(&format!(
+                        "    pub {}: {}, // {}\n",
+                        field_name, operand_type, operand_raw
+                    ));
+                }
+            }
 
             // If operand has a modifier, generate field for it
             if let Some((modifier, rust_name)) = &operand.modifier {
