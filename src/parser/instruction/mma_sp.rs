@@ -270,50 +270,6 @@ pub mod section_1 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Sp
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp").is_ok() {
-                    return Ok(Spvariant::Sp);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp", ".sp::ordered_metadata"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindF8f6f4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::f8f6f4").is_ok() {
-                    return Ok(Kind::KindF8f6f4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::f8f6f4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for F8type {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try E4m3
@@ -330,6 +286,33 @@ pub mod section_1 {
                 let saved_pos = stream.position();
                 if stream.expect_string(".e5m2").is_ok() {
                     return Ok(F8type::E5m2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".e4m3", ".e5m2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for F8type1 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try E4m3
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e4m3").is_ok() {
+                    return Ok(F8type1::E4m3);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try E5m2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e5m2").is_ok() {
+                    return Ok(F8type1::E5m2);
                 }
                 stream.set_position(saved_pos);
             }
@@ -398,28 +381,28 @@ pub mod section_1 {
         }
     }
 
-    impl PtxParser for F8type1 {
+    impl PtxParser for Spvariant {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E4m3
+            // Try Sp
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".e4m3").is_ok() {
-                    return Ok(F8type1::E4m3);
+                if stream.expect_string(".sp").is_ok() {
+                    return Ok(Spvariant::Sp);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try E5m2
+            // Try SpOrderedMetadata
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".e5m2").is_ok() {
-                    return Ok(F8type1::E5m2);
+                if stream.expect_string(".sp::ordered_metadata").is_ok() {
+                    return Ok(Spvariant::SpOrderedMetadata);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e4m3", ".e5m2"];
+            let expected = &[".sp", ".sp::ordered_metadata"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -531,6 +514,23 @@ pub mod section_1 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".f16", ".f32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Kind {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try KindF8f6f4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::f8f6f4").is_ok() {
+                    return Ok(Kind::KindF8f6f4);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".kind::f8f6f4"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -873,40 +873,6 @@ pub mod section_2 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp::ordered_metadata"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindMxf4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf4").is_ok() {
-                    return Ok(Kind::KindMxf4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::mxf4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for ScaleVecSize {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try ScaleVec2x
@@ -936,6 +902,40 @@ pub mod section_2 {
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".ue8m0"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Spvariant {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try SpOrderedMetadata
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".sp::ordered_metadata").is_ok() {
+                    return Ok(Spvariant::SpOrderedMetadata);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".sp::ordered_metadata"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Kind {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try KindMxf4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf4").is_ok() {
+                    return Ok(Kind::KindMxf4);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".kind::mxf4"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1044,40 +1044,6 @@ pub mod section_3 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp::ordered_metadata"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindMxf4nvf4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf4nvf4").is_ok() {
-                    return Ok(Kind::KindMxf4nvf4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::mxf4nvf4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for ScaleVecSize {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try ScaleVec2x
@@ -1127,6 +1093,40 @@ pub mod section_3 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".ue8m0", ".ue4m3"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Spvariant {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try SpOrderedMetadata
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".sp::ordered_metadata").is_ok() {
+                    return Ok(Spvariant::SpOrderedMetadata);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".sp::ordered_metadata"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Kind {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try KindMxf4nvf4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf4nvf4").is_ok() {
+                    return Ok(Kind::KindMxf4nvf4);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".kind::mxf4nvf4"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1228,40 +1228,6 @@ pub mod section_4 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp::ordered_metadata"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindMxf8f6f4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf8f6f4").is_ok() {
-                    return Ok(Kind::KindMxf8f6f4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::mxf8f6f4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for ScaleVecSize {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try ScaleVec1x
@@ -1274,6 +1240,23 @@ pub mod section_4 {
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".scale_vec::1X"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Stype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Ue8m0
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".ue8m0").is_ok() {
+                    return Ok(Stype::Ue8m0);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".ue8m0"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1336,18 +1319,18 @@ pub mod section_4 {
         }
     }
 
-    impl PtxParser for Stype {
+    impl PtxParser for Spvariant {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Ue8m0
+            // Try SpOrderedMetadata
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".ue8m0").is_ok() {
-                    return Ok(Stype::Ue8m0);
+                if stream.expect_string(".sp::ordered_metadata").is_ok() {
+                    return Ok(Spvariant::SpOrderedMetadata);
                 }
                 stream.set_position(saved_pos);
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".ue8m0"];
+            let expected = &[".sp::ordered_metadata"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1405,6 +1388,23 @@ pub mod section_4 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".e4m3", ".e5m2", ".e3m2", ".e2m3", ".e2m1"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Kind {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try KindMxf8f6f4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf8f6f4").is_ok() {
+                    return Ok(Kind::KindMxf8f6f4);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".kind::mxf8f6f4"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1511,33 +1511,6 @@ pub mod section_5 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Sp
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp").is_ok() {
-                    return Ok(Spvariant::Sp);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp", ".sp::ordered_metadata"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Atype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try U8
@@ -1560,6 +1533,33 @@ pub mod section_5 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".u8", ".s8"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Spvariant {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Sp
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".sp").is_ok() {
+                    return Ok(Spvariant::Sp);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try SpOrderedMetadata
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".sp::ordered_metadata").is_ok() {
+                    return Ok(Spvariant::SpOrderedMetadata);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".sp", ".sp::ordered_metadata"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1687,33 +1687,6 @@ pub mod section_6 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Sp
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp").is_ok() {
-                    return Ok(Spvariant::Sp);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp", ".sp::ordered_metadata"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Atype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try U4
@@ -1736,6 +1709,33 @@ pub mod section_6 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".u4", ".s4"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Spvariant {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Sp
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".sp").is_ok() {
+                    return Ok(Spvariant::Sp);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try SpOrderedMetadata
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".sp::ordered_metadata").is_ok() {
+                    return Ok(Spvariant::SpOrderedMetadata);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".sp", ".sp::ordered_metadata"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

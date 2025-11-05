@@ -69,22 +69,11 @@ fn parses_sign_and_immediate() {
 fn parses_register_operands() {
     assert_eq!(
         parse::<RegisterOperand>("%r1"),
-        RegisterOperand::Single("%r1".into())
+        RegisterOperand("%r1".into())
     );
     assert_roundtrip::<RegisterOperand>("%r1");
-    assert_eq!(
-        parse::<RegisterOperand>("{%r1,%r2}"),
-        RegisterOperand::Vector2(["%r1".into(), "%r2".into()])
-    );
-    assert_roundtrip::<RegisterOperand>("{%r1,%r2}");
-    assert_eq!(
-        parse::<RegisterOperand>("{%r1,%r2,%r3,%r4}"),
-        RegisterOperand::Vector4(["%r1".into(), "%r2".into(), "%r3".into(), "%r4".into()])
-    );
-    assert_roundtrip::<RegisterOperand>("{%r1,%r2,%r3,%r4}");
-
-    let err = parse_result::<RegisterOperand>("{%r0,%r1,%r2}").unwrap_err();
-    assert!(matches!(err.kind, ParseErrorKind::InvalidLiteral(_)));
+    let err = parse_result::<RegisterOperand>("{%r1,%r2}").unwrap_err();
+    assert!(matches!(err.kind, ParseErrorKind::UnexpectedToken { .. }));
 }
 
 #[test]
@@ -132,7 +121,7 @@ fn parses_address_operands() {
     assert_eq!(
         parse::<AddressOperand>("[%r1+4]"),
         AddressOperand::Offset(
-            AddressBase::Register(RegisterOperand::Single("%r1".into())),
+            AddressBase::Register(RegisterOperand("%r1".into())),
             Some(AddressOffset::Immediate(
                 Sign::Positive,
                 Immediate("4".into())
@@ -144,8 +133,8 @@ fn parses_address_operands() {
     assert_eq!(
         parse::<AddressOperand>("[%r2+%r3]"),
         AddressOperand::Offset(
-            AddressBase::Register(RegisterOperand::Single("%r2".into())),
-            Some(AddressOffset::Register(RegisterOperand::Single(
+            AddressBase::Register(RegisterOperand("%r2".into())),
+            Some(AddressOffset::Register(RegisterOperand(
                 "%r3".into()
             )))
         )
@@ -180,7 +169,7 @@ fn parses_address_operands() {
 fn parses_generic_operand() {
     assert_eq!(
         parse::<Operand>("%r1"),
-        Operand::Register(RegisterOperand::Single("%r1".into()))
+        Operand::Register(RegisterOperand("%r1".into()))
     );
     assert_roundtrip::<Operand>("%r1");
     assert_eq!(
@@ -188,6 +177,39 @@ fn parses_generic_operand() {
         Operand::Immediate(Immediate("123".into()))
     );
     assert_roundtrip::<Operand>("123");
+}
+
+#[test]
+fn parses_operand_vectors() {
+    assert_eq!(
+        parse::<Operand>("{%r1,%r2}"),
+        Operand::Vector2(Box::new([
+            Operand::Register(RegisterOperand("%r1".into())),
+            Operand::Register(RegisterOperand("%r2".into())),
+        ]))
+    );
+    assert_roundtrip::<Operand>("{%r1,%r2}");
+
+    assert_eq!(
+        parse::<Operand>("{a,b,c}"),
+        Operand::Vector3(Box::new([
+            Operand::Symbol("a".into()),
+            Operand::Symbol("b".into()),
+            Operand::Symbol("c".into()),
+        ]))
+    );
+    assert_roundtrip::<Operand>("{a,b,c}");
+
+    assert_eq!(
+        parse::<Operand>("{1,2,3,4}"),
+        Operand::Vector4(Box::new([
+            Operand::Immediate(Immediate("1".into())),
+            Operand::Immediate(Immediate("2".into())),
+            Operand::Immediate(Immediate("3".into())),
+            Operand::Immediate(Immediate("4".into())),
+        ]))
+    );
+    assert_roundtrip::<Operand>("{1,2,3,4}");
 }
 
 #[test]

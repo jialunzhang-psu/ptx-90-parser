@@ -80,6 +80,33 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Dtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try F16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f16").is_ok() {
+                    return Ok(Dtype::F16);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try F32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f32").is_ok() {
+                    return Ok(Dtype::F32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".f16", ".f32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Shape {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try M64n8k32
@@ -402,33 +429,6 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".m64n8k32", ".m64n16k32", ".m64n24k32", ".m64n32k32", ".m64n40k32", ".m64n48k32", ".m64n56k32", ".m64n64k32", ".m64n72k32", ".m64n80k32", ".m64n88k32", ".m64n96k32", ".m64n104k32", ".m64n112k32", ".m64n120k32", ".m64n128k32", ".m64n136k32", ".m64n144k32", ".m64n152k32", ".m64n160k32", ".m64n168k32", ".m64n176k32", ".m64n184k32", ".m64n192k32", ".m64n200k32", ".m64n208k32", ".m64n216k32", ".m64n224k32", ".m64n232k32", ".m64n240k32", ".m64n248k32", ".m64n256k32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Dtype::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Dtype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".f32"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -561,6 +561,23 @@ pub mod section_1 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Dtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try F32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f32").is_ok() {
+                    return Ok(Dtype::F32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".f32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Shape {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try M64n8k32
@@ -888,23 +905,6 @@ pub mod section_1 {
         }
     }
 
-    impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Dtype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for WgmmaMmaAsyncSpSyncAlignedShapeDtypeBf16Bf16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("wgmma")?;
@@ -1031,6 +1031,23 @@ pub mod section_2 {
     // ============================================================================
     // Generated enum parsers
     // ============================================================================
+
+    impl PtxParser for Dtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try F32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f32").is_ok() {
+                    return Ok(Dtype::F32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".f32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
     impl PtxParser for Shape {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -1359,23 +1376,6 @@ pub mod section_2 {
         }
     }
 
-    impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Dtype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for WgmmaMmaAsyncSpSyncAlignedShapeDtypeTf32Tf32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("wgmma")?;
@@ -1493,6 +1493,87 @@ pub mod section_3 {
     // ============================================================================
     // Generated enum parsers
     // ============================================================================
+
+    impl PtxParser for Btype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try E4m3
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e4m3").is_ok() {
+                    return Ok(Btype::E4m3);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try E5m2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e5m2").is_ok() {
+                    return Ok(Btype::E5m2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".e4m3", ".e5m2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Dtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try F16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f16").is_ok() {
+                    return Ok(Dtype::F16);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try F32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f32").is_ok() {
+                    return Ok(Dtype::F32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".f16", ".f32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Atype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try E4m3
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e4m3").is_ok() {
+                    return Ok(Atype::E4m3);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try E5m2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e5m2").is_ok() {
+                    return Ok(Atype::E5m2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".e4m3", ".e5m2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
     impl PtxParser for Shape {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -1821,87 +1902,6 @@ pub mod section_3 {
         }
     }
 
-    impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E4m3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3").is_ok() {
-                    return Ok(Atype::E4m3);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try E5m2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2").is_ok() {
-                    return Ok(Atype::E5m2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e4m3", ".e5m2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Dtype::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Dtype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".f32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E4m3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3").is_ok() {
-                    return Ok(Btype::E4m3);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try E5m2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2").is_ok() {
-                    return Ok(Btype::E5m2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e4m3", ".e5m2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for WgmmaMmaAsyncSpSyncAlignedShapeDtypeAtypeBtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("wgmma")?;
@@ -2015,6 +2015,60 @@ pub mod section_4 {
     // ============================================================================
     // Generated enum parsers
     // ============================================================================
+
+    impl PtxParser for Btype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try S8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s8").is_ok() {
+                    return Ok(Btype::S8);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try U8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u8").is_ok() {
+                    return Ok(Btype::U8);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".s8", ".u8"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Atype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try S8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s8").is_ok() {
+                    return Ok(Atype::S8);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try U8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u8").is_ok() {
+                    return Ok(Atype::U8);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".s8", ".u8"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
     impl PtxParser for Shape {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -2198,60 +2252,6 @@ pub mod section_4 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".m64n8k64", ".m64n16k64", ".m64n24k64", ".m64n32k64", ".m64n48k64", ".m64n64k64", ".m64n80k64", ".m64n96k64", ".m64n112k64", ".m64n128k64", ".m64n144k64", ".m64n160k64", ".m64n176k64", ".m64n192k64", ".m64n208k64", ".m64n224k64", ".m64n240k64", ".m64n256k64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try S8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s8").is_ok() {
-                    return Ok(Atype::S8);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try U8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u8").is_ok() {
-                    return Ok(Atype::U8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".s8", ".u8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try S8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s8").is_ok() {
-                    return Ok(Btype::S8);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try U8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u8").is_ok() {
-                    return Ok(Btype::U8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".s8", ".u8"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

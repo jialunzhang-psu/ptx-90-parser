@@ -49,33 +49,6 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Scope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Scope::Cta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Cluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cluster").is_ok() {
-                    return Ok(Scope::Cluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta", ".cluster"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Sem {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Acquire
@@ -98,6 +71,33 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".acquire", ".relaxed"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Scope {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Cta
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta").is_ok() {
+                    return Ok(Scope::Cta);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Cluster
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cluster").is_ok() {
+                    return Ok(Scope::Cluster);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".cta", ".cluster"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

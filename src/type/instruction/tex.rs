@@ -67,7 +67,8 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand, Operand), // [a, b, c]
         pub e: Option<Operand>, // {, e}
         pub f: Option<Operand>, // {, f}
@@ -79,7 +80,8 @@ pub mod section_0 {
         pub v2: (), // .v2
         pub f16x2: (), // .f16x2
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand), // [a, c]
         pub e: Option<Operand>, // {, e}
         pub f: Option<Operand>, // {, f}
@@ -91,7 +93,8 @@ pub mod section_0 {
         pub v2: (), // .v2
         pub f16x2: (), // .f16x2
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand, Operand), // [a, b, c]
         pub e: Option<Operand>, // {, e}
         pub f: Option<Operand>, // {, f}
@@ -104,7 +107,8 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand, Operand), // [a, b, c]
         pub e: Option<Operand>, // {, e}
         pub f: Option<Operand>, // {, f}
@@ -117,7 +121,8 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand, Operand), // [a, b, c]
         pub lod: Operand, // lod
         pub e: Option<Operand>, // {, e}
@@ -131,7 +136,8 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand, Operand), // [a, b, c]
         pub dpdx: Operand, // dPdx
         pub dpdy: Operand, // dPdy
@@ -146,7 +152,8 @@ pub mod section_0 {
         pub v2: (), // .v2
         pub f16x2: (), // .f16x2
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand, Operand), // [a, b, c]
         pub e: Option<Operand>, // {, e}
         pub f: Option<Operand>, // {, f}
@@ -159,7 +166,8 @@ pub mod section_0 {
         pub v2: (), // .v2
         pub f16x2: (), // .f16x2
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand, Operand), // [a, b, c]
         pub lod: Operand, // lod
         pub e: Option<Operand>, // {, e}
@@ -173,7 +181,8 @@ pub mod section_0 {
         pub v2: (), // .v2
         pub f16x2: (), // .f16x2
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand, Operand), // [a, b, c]
         pub dpdx: Operand, // dPdx
         pub dpdy: Operand, // dPdy

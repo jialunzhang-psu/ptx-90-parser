@@ -38,33 +38,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Layout {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Row
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".row").is_ok() {
-                    return Ok(Layout::Row);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Col
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".col").is_ok() {
-                    return Ok(Layout::Col);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".row", ".col"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Ss {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Global
@@ -97,6 +70,33 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".global", ".shared", ".shared::cta"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Layout {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Row
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".row").is_ok() {
+                    return Ok(Layout::Row);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Col
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".col").is_ok() {
+                    return Ok(Layout::Col);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".row", ".col"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -241,28 +241,28 @@ pub mod section_1 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Layout {
+    impl PtxParser for Shape {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Row
+            // Try M8n8k32
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".row").is_ok() {
-                    return Ok(Layout::Row);
+                if stream.expect_string(".m8n8k32").is_ok() {
+                    return Ok(Shape::M8n8k32);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try Col
+            // Try M8n8k128
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".col").is_ok() {
-                    return Ok(Layout::Col);
+                if stream.expect_string(".m8n8k128").is_ok() {
+                    return Ok(Shape::M8n8k128);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".row", ".col"];
+            let expected = &[".m8n8k32", ".m8n8k128"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -322,28 +322,28 @@ pub mod section_1 {
         }
     }
 
-    impl PtxParser for Shape {
+    impl PtxParser for Layout {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M8n8k32
+            // Try Row
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".m8n8k32").is_ok() {
-                    return Ok(Shape::M8n8k32);
+                if stream.expect_string(".row").is_ok() {
+                    return Ok(Layout::Row);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try M8n8k128
+            // Try Col
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".m8n8k128").is_ok() {
-                    return Ok(Shape::M8n8k128);
+                if stream.expect_string(".col").is_ok() {
+                    return Ok(Layout::Col);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m8n8k32", ".m8n8k128"];
+            let expected = &[".row", ".col"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -414,28 +414,18 @@ pub mod section_2 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Layout {
+    impl PtxParser for Shape {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Row
+            // Try M16n16k8
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".row").is_ok() {
-                    return Ok(Layout::Row);
+                if stream.expect_string(".m16n16k8").is_ok() {
+                    return Ok(Shape::M16n16k8);
                 }
                 stream.set_position(saved_pos);
             }
-            let saved_pos = stream.position();
-            // Try Col
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".col").is_ok() {
-                    return Ok(Layout::Col);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".row", ".col"];
+            let expected = &[".m16n16k8"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -495,18 +485,28 @@ pub mod section_2 {
         }
     }
 
-    impl PtxParser for Shape {
+    impl PtxParser for Layout {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M16n16k8
+            // Try Row
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".m16n16k8").is_ok() {
-                    return Ok(Shape::M16n16k8);
+                if stream.expect_string(".row").is_ok() {
+                    return Ok(Layout::Row);
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try Col
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".col").is_ok() {
+                    return Ok(Layout::Col);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m16n16k8"];
+            let expected = &[".row", ".col"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -577,28 +577,18 @@ pub mod section_3 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Layout {
+    impl PtxParser for Shape {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Row
+            // Try M8n8k4
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".row").is_ok() {
-                    return Ok(Layout::Row);
+                if stream.expect_string(".m8n8k4").is_ok() {
+                    return Ok(Shape::M8n8k4);
                 }
                 stream.set_position(saved_pos);
             }
-            let saved_pos = stream.position();
-            // Try Col
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".col").is_ok() {
-                    return Ok(Layout::Col);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".row", ".col"];
+            let expected = &[".m8n8k4"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -658,18 +648,28 @@ pub mod section_3 {
         }
     }
 
-    impl PtxParser for Shape {
+    impl PtxParser for Layout {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M8n8k4
+            // Try Row
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".m8n8k4").is_ok() {
-                    return Ok(Shape::M8n8k4);
+                if stream.expect_string(".row").is_ok() {
+                    return Ok(Layout::Row);
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try Col
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".col").is_ok() {
+                    return Ok(Layout::Col);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m8n8k4"];
+            let expected = &[".row", ".col"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

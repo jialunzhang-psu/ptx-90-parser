@@ -26,33 +26,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for LevelSecondaryPriority {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2EvictFirst
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_first").is_ok() {
-                    return Ok(LevelSecondaryPriority::L2EvictFirst);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try L2EvictUnchanged
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_unchanged").is_ok() {
-                    return Ok(LevelSecondaryPriority::L2EvictUnchanged);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::evict_first", ".L2::evict_unchanged"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for LevelPrimaryPriority {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try L2EvictLast
@@ -95,6 +68,33 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".L2::evict_last", ".L2::evict_normal", ".L2::evict_first", ".L2::evict_unchanged"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for LevelSecondaryPriority {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try L2EvictFirst
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::evict_first").is_ok() {
+                    return Ok(LevelSecondaryPriority::L2EvictFirst);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try L2EvictUnchanged
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::evict_unchanged").is_ok() {
+                    return Ok(LevelSecondaryPriority::L2EvictUnchanged);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".L2::evict_first", ".L2::evict_unchanged"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

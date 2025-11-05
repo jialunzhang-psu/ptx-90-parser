@@ -1,0 +1,741 @@
+// Auto-generated module declarations
+// DO NOT EDIT MANUALLY
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::unparser::PtxUnparser;
+use crate::r#type::instruction::Instruction;
+
+pub mod abs;
+pub mod activemask;
+pub mod add_cc;
+pub mod add;
+pub mod addc;
+pub mod alloca;
+pub mod and;
+pub mod applypriority;
+pub mod atom;
+pub mod bar;
+pub mod bar_warp_sync;
+pub mod barrier_cluster;
+pub mod bfe;
+pub mod bfi;
+pub mod bfind;
+pub mod bmsk;
+pub mod bra;
+pub mod brev;
+pub mod brkpt;
+pub mod brx_idx;
+pub mod call;
+pub mod clusterlaunchcontrol_query_cancel;
+pub mod clusterlaunchcontrol_try_cancel;
+pub mod clz;
+pub mod cnot;
+pub mod copysign;
+pub mod cos;
+pub mod cp_async_bulk_commit_group;
+pub mod cp_async_bulk_prefetch_tensor;
+pub mod cp_async_bulk_prefetch;
+pub mod cp_async_bulk_tensor;
+pub mod cp_async_bulk;
+pub mod cp_async_bulk_wait_group;
+pub mod cp_async_commit_group;
+pub mod cp_async_mbarrier_arrive;
+pub mod cp_async;
+pub mod cp_async_wait_group;
+pub mod cp_reduce_async_bulk_tensor;
+pub mod cp_reduce_async_bulk;
+pub mod createpolicy;
+pub mod cvt_pack;
+pub mod cvt;
+pub mod cvta;
+pub mod discard;
+pub mod div;
+pub mod dp2a;
+pub mod dp4a;
+pub mod elect_sync;
+pub mod ex2;
+pub mod exit;
+pub mod fma;
+pub mod fns;
+pub mod getctarank;
+pub mod griddepcontrol;
+pub mod isspacep;
+pub mod istypep;
+pub mod ld_global_nc;
+pub mod ld;
+pub mod ldmatrix;
+pub mod ldu;
+pub mod lg2;
+pub mod lop3;
+pub mod mad_cc;
+pub mod mad;
+pub mod mad24;
+pub mod madc;
+pub mod mapa;
+pub mod match_sync;
+pub mod max;
+pub mod mbarrier_arrive;
+pub mod mbarrier_arrive_drop;
+pub mod mbarrier_complete_tx;
+pub mod mbarrier_expect_tx;
+pub mod mbarrier_init;
+pub mod mbarrier_inval;
+pub mod mbarrier_pending_count;
+pub mod mbarrier_test_wait;
+pub mod membar;
+pub mod min;
+pub mod mma_sp;
+pub mod mma;
+pub mod mov;
+pub mod movmatrix;
+pub mod mul;
+pub mod mul24;
+pub mod multimem_ld_reduce;
+pub mod nanosleep;
+pub mod neg;
+pub mod not;
+pub mod or;
+pub mod pmevent;
+pub mod popc;
+pub mod prefetch;
+pub mod prmt;
+pub mod rcp_approx_ftz_f64;
+pub mod rcp;
+pub mod red_async;
+pub mod red;
+pub mod redux_sync;
+pub mod rem;
+pub mod ret;
+pub mod rsqrt_approx_ftz_f64;
+pub mod rsqrt;
+pub mod sad;
+pub mod selp;
+pub mod set;
+pub mod setmaxnreg;
+pub mod setp;
+pub mod shf;
+pub mod shfl_sync;
+pub mod shfl;
+pub mod shl;
+pub mod shr;
+pub mod sin;
+pub mod slct;
+pub mod sqrt;
+pub mod st_async;
+pub mod st_bulk;
+pub mod st;
+pub mod stackrestore;
+pub mod stacksave;
+pub mod stmatrix;
+pub mod sub_cc;
+pub mod sub;
+pub mod subc;
+pub mod suld;
+pub mod suq;
+pub mod sured;
+pub mod sust;
+pub mod szext;
+pub mod tanh;
+pub mod tcgen05_alloc;
+pub mod tcgen05_commit;
+pub mod tcgen05_cp;
+pub mod tcgen05_fence;
+pub mod tcgen05_ld;
+pub mod tcgen05_mma_sp;
+pub mod tcgen05_mma;
+pub mod tcgen05_mma_ws_sp;
+pub mod tcgen05_mma_ws;
+pub mod tcgen05_shift;
+pub mod tcgen05_st;
+pub mod tcgen05_wait;
+pub mod tensormap_cp_fenceproxy;
+pub mod tensormap_replace;
+pub mod testp;
+pub mod tex;
+pub mod tld4;
+pub mod trap;
+pub mod txq;
+pub mod vmad;
+pub mod vop;
+pub mod vop2;
+pub mod vop4;
+pub mod vote_sync;
+pub mod vote;
+pub mod vset;
+pub mod vset2;
+pub mod vset4;
+pub mod vsh;
+pub mod wgmma_commit_group;
+pub mod wgmma_fence;
+pub mod wgmma_mma_async_sp;
+pub mod wgmma_mma_async;
+pub mod wgmma_wait_group;
+pub mod wmma_load;
+pub mod wmma_mma;
+pub mod wmma_store;
+pub mod xor;
+
+impl PtxUnparser for Instruction {
+    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        match self {
+            Instruction::AbsType(value) => value.unparse_tokens(tokens),
+            Instruction::AbsFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::AbsF64(value) => value.unparse_tokens(tokens),
+            Instruction::AbsFtzF16(value) => value.unparse_tokens(tokens),
+            Instruction::AbsFtzF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::AbsBf16(value) => value.unparse_tokens(tokens),
+            Instruction::AbsBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::ActivemaskB32(value) => value.unparse_tokens(tokens),
+            Instruction::AddCcType(value) => value.unparse_tokens(tokens),
+            Instruction::AddType(value) => value.unparse_tokens(tokens),
+            Instruction::AddSatS32(value) => value.unparse_tokens(tokens),
+            Instruction::AddRndFtzSatF32(value) => value.unparse_tokens(tokens),
+            Instruction::AddRndFtzF32x2(value) => value.unparse_tokens(tokens),
+            Instruction::AddRndF64(value) => value.unparse_tokens(tokens),
+            Instruction::AddRndFtzSatF16(value) => value.unparse_tokens(tokens),
+            Instruction::AddRndFtzSatF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::AddRndBf16(value) => value.unparse_tokens(tokens),
+            Instruction::AddRndBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::AddRndSatF32Atype(value) => value.unparse_tokens(tokens),
+            Instruction::AddcCcType(value) => value.unparse_tokens(tokens),
+            Instruction::AllocaType(value) => value.unparse_tokens(tokens),
+            Instruction::AndType(value) => value.unparse_tokens(tokens),
+            Instruction::ApplypriorityGlobalLevelEvictionPriority(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeSpaceOpLevelCacheHintType(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeSpaceOpType(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeSpaceCasB16(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeSpaceCasB128(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeSpaceExchLevelCacheHintB128(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeSpaceAddNoftzLevelCacheHintF16(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeSpaceAddNoftzLevelCacheHintF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeSpaceAddNoftzLevelCacheHintBf16(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeSpaceAddNoftzLevelCacheHintBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeGlobalAddLevelCacheHintVec32BitF32(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeGlobalOpNoftzLevelCacheHintVec16BitHalfWordType(value) => value.unparse_tokens(tokens),
+            Instruction::AtomSemScopeGlobalOpNoftzLevelCacheHintVec32BitPackedType(value) => value.unparse_tokens(tokens),
+            Instruction::BarrierCtaSyncAligned(value) => value.unparse_tokens(tokens),
+            Instruction::BarrierCtaArriveAligned(value) => value.unparse_tokens(tokens),
+            Instruction::BarrierCtaRedPopcAlignedU32(value) => value.unparse_tokens(tokens),
+            Instruction::BarrierCtaRedOpAlignedPred(value) => value.unparse_tokens(tokens),
+            Instruction::BarCtaSync(value) => value.unparse_tokens(tokens),
+            Instruction::BarCtaArrive(value) => value.unparse_tokens(tokens),
+            Instruction::BarCtaRedPopcU32(value) => value.unparse_tokens(tokens),
+            Instruction::BarCtaRedOpPred(value) => value.unparse_tokens(tokens),
+            Instruction::BarWarpSync(value) => value.unparse_tokens(tokens),
+            Instruction::BarrierClusterArriveSemAligned(value) => value.unparse_tokens(tokens),
+            Instruction::BarrierClusterWaitAcquireAligned(value) => value.unparse_tokens(tokens),
+            Instruction::BfeType(value) => value.unparse_tokens(tokens),
+            Instruction::BfiType(value) => value.unparse_tokens(tokens),
+            Instruction::BfindType(value) => value.unparse_tokens(tokens),
+            Instruction::BfindShiftamtType(value) => value.unparse_tokens(tokens),
+            Instruction::BmskModeB32(value) => value.unparse_tokens(tokens),
+            Instruction::BraUni(value) => value.unparse_tokens(tokens),
+            Instruction::BraUni1(value) => value.unparse_tokens(tokens),
+            Instruction::BrevType(value) => value.unparse_tokens(tokens),
+            Instruction::Brkpt(value) => value.unparse_tokens(tokens),
+            Instruction::BrxIdxUni(value) => value.unparse_tokens(tokens),
+            Instruction::BrxIdxUni1(value) => value.unparse_tokens(tokens),
+            Instruction::CallUni(value) => value.unparse_tokens(tokens),
+            Instruction::CallUni1(value) => value.unparse_tokens(tokens),
+            Instruction::CallUni2(value) => value.unparse_tokens(tokens),
+            Instruction::CallUni3(value) => value.unparse_tokens(tokens),
+            Instruction::CallUni4(value) => value.unparse_tokens(tokens),
+            Instruction::CallUni5(value) => value.unparse_tokens(tokens),
+            Instruction::CallUni6(value) => value.unparse_tokens(tokens),
+            Instruction::CallUni7(value) => value.unparse_tokens(tokens),
+            Instruction::CallUni8(value) => value.unparse_tokens(tokens),
+            Instruction::ClusterlaunchcontrolQueryCancelIsCanceledPredB128(value) => value.unparse_tokens(tokens),
+            Instruction::ClusterlaunchcontrolQueryCancelGetFirstCtaidV4B32B128(value) => value.unparse_tokens(tokens),
+            Instruction::ClusterlaunchcontrolQueryCancelGetFirstCtaidDimensionB32B128(value) => value.unparse_tokens(tokens),
+            Instruction::ClusterlaunchcontrolTryCancelAsyncSpaceCompletionMechanismMulticastClusterAllB128(value) => value.unparse_tokens(tokens),
+            Instruction::ClzType(value) => value.unparse_tokens(tokens),
+            Instruction::CnotType(value) => value.unparse_tokens(tokens),
+            Instruction::CopysignType(value) => value.unparse_tokens(tokens),
+            Instruction::CosApproxFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkCommitGroup(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkPrefetchTensorDimL2SrcLoadModeLevelCacheHint(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkPrefetchL2SrcLevelCacheHint(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkTensorDimDstSrcLoadModeCompletionMechanismCtaGroupLevelCacheHint(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkTensorDimDstSrcLoadModeCompletionMechanismMulticastCtaGroupLevelCacheHint(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkTensorDimDstSrcLoadModeCompletionMechanismLevelCacheHint(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkDstSrcCompletionMechanismLevelCacheHint(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkDstSrcCompletionMechanismMulticastLevelCacheHint(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkDstSrcCompletionMechanism(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkDstSrcCompletionMechanismLevelCacheHintCpMask(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncBulkWaitGroupRead(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncCommitGroup(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncMbarrierArriveNoincStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncCaStateGlobalLevelCacheHintLevelPrefetchSize(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncCgStateGlobalLevelCacheHintLevelPrefetchSize(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncCaStateGlobalLevelCacheHintLevelPrefetchSize1(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncCgStateGlobalLevelCacheHintLevelPrefetchSize1(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncWaitGroup(value) => value.unparse_tokens(tokens),
+            Instruction::CpAsyncWaitAll(value) => value.unparse_tokens(tokens),
+            Instruction::CpReduceAsyncBulkTensorDimDstSrcRedopLoadModeCompletionMechanismLevelCacheHint(value) => value.unparse_tokens(tokens),
+            Instruction::CpReduceAsyncBulkDstSrcCompletionMechanismRedopType(value) => value.unparse_tokens(tokens),
+            Instruction::CpReduceAsyncBulkDstSrcCompletionMechanismLevelCacheHintRedopType(value) => value.unparse_tokens(tokens),
+            Instruction::CpReduceAsyncBulkDstSrcCompletionMechanismLevelCacheHintAddNoftzType(value) => value.unparse_tokens(tokens),
+            Instruction::CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64(value) => value.unparse_tokens(tokens),
+            Instruction::CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64(value) => value.unparse_tokens(tokens),
+            Instruction::CreatepolicyCvtL2B64(value) => value.unparse_tokens(tokens),
+            Instruction::CvtPackSatConverttypeAbtype(value) => value.unparse_tokens(tokens),
+            Instruction::CvtPackSatConverttypeAbtypeCtype(value) => value.unparse_tokens(tokens),
+            Instruction::CvtIrndFtzSatDtypeAtype(value) => value.unparse_tokens(tokens),
+            Instruction::CvtFrndFtzSatDtypeAtype(value) => value.unparse_tokens(tokens),
+            Instruction::CvtFrnd2ReluSatfiniteF16F32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtFrnd2ReluSatfiniteF16x2F32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRsReluSatfiniteF16x2F32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtFrnd2ReluSatfiniteBf16F32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtFrnd2ReluSatfiniteBf16x2F32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRsReluSatfiniteBf16x2F32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRnaSatfiniteTf32F32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtFrnd2SatfiniteReluTf32F32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRnSatfiniteReluF8x2typeF32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRnSatfiniteReluF8x2typeF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRnReluF16x2F8x2type(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRsReluSatfiniteF8x4typeF32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRnSatfiniteReluF4x2typeF32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRnReluF16x2F4x2type(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRsReluSatfiniteF4x4typeF32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRnSatfiniteReluF6x2typeF32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRnReluF16x2F6x2type(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRsReluSatfiniteF6x4typeF32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtFrnd3SatfiniteUe8m0x2F32(value) => value.unparse_tokens(tokens),
+            Instruction::CvtFrnd3SatfiniteUe8m0x2Bf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::CvtRnBf16x2Ue8m0x2(value) => value.unparse_tokens(tokens),
+            Instruction::CvtaSpaceSize(value) => value.unparse_tokens(tokens),
+            Instruction::CvtaToSpaceSize(value) => value.unparse_tokens(tokens),
+            Instruction::DiscardGlobalLevel(value) => value.unparse_tokens(tokens),
+            Instruction::DivType(value) => value.unparse_tokens(tokens),
+            Instruction::DivApproxFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::DivFullFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::DivRndFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::DivRndF64(value) => value.unparse_tokens(tokens),
+            Instruction::Dp2aModeAtypeBtype(value) => value.unparse_tokens(tokens),
+            Instruction::Dp4aAtypeBtype(value) => value.unparse_tokens(tokens),
+            Instruction::ElectSync(value) => value.unparse_tokens(tokens),
+            Instruction::Ex2ApproxFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::Ex2ApproxAtype(value) => value.unparse_tokens(tokens),
+            Instruction::Ex2ApproxFtzBtype(value) => value.unparse_tokens(tokens),
+            Instruction::Exit(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndFtzSatF32(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndFtzF32x2(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndF64(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndFtzSatF16(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndFtzSatF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndFtzReluF16(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndFtzReluF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndReluBf16(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndReluBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndOobReluType(value) => value.unparse_tokens(tokens),
+            Instruction::FmaRndSatF32Abtype(value) => value.unparse_tokens(tokens),
+            Instruction::FnsB32(value) => value.unparse_tokens(tokens),
+            Instruction::GetctarankSpaceType(value) => value.unparse_tokens(tokens),
+            Instruction::GetctarankSharedClusterType(value) => value.unparse_tokens(tokens),
+            Instruction::GetctarankType(value) => value.unparse_tokens(tokens),
+            Instruction::GriddepcontrolAction(value) => value.unparse_tokens(tokens),
+            Instruction::IsspacepSpace(value) => value.unparse_tokens(tokens),
+            Instruction::IstypepType(value) => value.unparse_tokens(tokens),
+            Instruction::LdGlobalCopNcLevelCacheHintLevelPrefetchSizeType(value) => value.unparse_tokens(tokens),
+            Instruction::LdGlobalCopNcLevelCacheHintLevelPrefetchSizeVecType(value) => value.unparse_tokens(tokens),
+            Instruction::LdGlobalNcLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeType(value) => value.unparse_tokens(tokens),
+            Instruction::LdGlobalNcLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType(value) => value.unparse_tokens(tokens),
+            Instruction::LdWeakSsCopLevelCacheHintLevelPrefetchSizeVecType(value) => value.unparse_tokens(tokens),
+            Instruction::LdWeakSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType(value) => value.unparse_tokens(tokens),
+            Instruction::LdVolatileSsLevelPrefetchSizeVecType(value) => value.unparse_tokens(tokens),
+            Instruction::LdRelaxedScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType(value) => value.unparse_tokens(tokens),
+            Instruction::LdAcquireScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType(value) => value.unparse_tokens(tokens),
+            Instruction::LdMmioRelaxedSysGlobalType(value) => value.unparse_tokens(tokens),
+            Instruction::LdmatrixSyncAlignedShapeNumTransSsType(value) => value.unparse_tokens(tokens),
+            Instruction::LdmatrixSyncAlignedM8n16NumSsDstFmtSrcFmt(value) => value.unparse_tokens(tokens),
+            Instruction::LdmatrixSyncAlignedM16n16NumTransSsDstFmtSrcFmt(value) => value.unparse_tokens(tokens),
+            Instruction::LduSsType(value) => value.unparse_tokens(tokens),
+            Instruction::LduSsVecType(value) => value.unparse_tokens(tokens),
+            Instruction::Lg2ApproxFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::Lop3B32(value) => value.unparse_tokens(tokens),
+            Instruction::Lop3BoolopB32(value) => value.unparse_tokens(tokens),
+            Instruction::MadHiloCcType(value) => value.unparse_tokens(tokens),
+            Instruction::MadModeType(value) => value.unparse_tokens(tokens),
+            Instruction::MadHiSatS32(value) => value.unparse_tokens(tokens),
+            Instruction::MadFtzSatF32(value) => value.unparse_tokens(tokens),
+            Instruction::MadRndFtzSatF32(value) => value.unparse_tokens(tokens),
+            Instruction::MadRndF64(value) => value.unparse_tokens(tokens),
+            Instruction::Mad24ModeType(value) => value.unparse_tokens(tokens),
+            Instruction::Mad24HiSatS32(value) => value.unparse_tokens(tokens),
+            Instruction::MadcHiloCcType(value) => value.unparse_tokens(tokens),
+            Instruction::MapaSpaceType(value) => value.unparse_tokens(tokens),
+            Instruction::MatchAnySyncType(value) => value.unparse_tokens(tokens),
+            Instruction::MatchAllSyncType(value) => value.unparse_tokens(tokens),
+            Instruction::MaxAtype(value) => value.unparse_tokens(tokens),
+            Instruction::MaxReluBtype(value) => value.unparse_tokens(tokens),
+            Instruction::MaxFtzNanXorsignAbsF32(value) => value.unparse_tokens(tokens),
+            Instruction::MaxFtzNanAbsF32(value) => value.unparse_tokens(tokens),
+            Instruction::MaxF64(value) => value.unparse_tokens(tokens),
+            Instruction::MaxFtzNanXorsignAbsF16(value) => value.unparse_tokens(tokens),
+            Instruction::MaxFtzNanXorsignAbsF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::MaxNanXorsignAbsBf16(value) => value.unparse_tokens(tokens),
+            Instruction::MaxNanXorsignAbsBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierArriveSemScopeStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierArriveSemScopeSharedClusterB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierArriveExpectTxSemScopeStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierArriveExpectTxSemScopeSharedClusterB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierArriveNocompleteReleaseCtaStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierArriveDropSemScopeStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierArriveDropSemScopeSharedClusterB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierArriveDropExpectTxStateSemScopeB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierArriveDropExpectTxSharedClusterSemScopeB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierArriveDropNocompleteReleaseCtaStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierCompleteTxSemScopeSpaceB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierExpectTxSemScopeSpaceB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierInitStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierInvalStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierPendingCountB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierTestWaitSemScopeStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierTestWaitParitySemScopeStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierTryWaitSemScopeStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::MbarrierTryWaitParitySemScopeStateB64(value) => value.unparse_tokens(tokens),
+            Instruction::FenceSemScope(value) => value.unparse_tokens(tokens),
+            Instruction::FenceAcquireSyncRestrictSharedClusterCluster(value) => value.unparse_tokens(tokens),
+            Instruction::FenceReleaseSyncRestrictSharedCtaCluster(value) => value.unparse_tokens(tokens),
+            Instruction::FenceOpRestrictReleaseCluster(value) => value.unparse_tokens(tokens),
+            Instruction::FenceProxyProxykind(value) => value.unparse_tokens(tokens),
+            Instruction::FenceProxyToProxykindFromProxykindReleaseScope(value) => value.unparse_tokens(tokens),
+            Instruction::FenceProxyToProxykindFromProxykindAcquireScope(value) => value.unparse_tokens(tokens),
+            Instruction::FenceProxyAsyncGenericAcquireSyncRestrictSharedClusterCluster(value) => value.unparse_tokens(tokens),
+            Instruction::FenceProxyAsyncGenericReleaseSyncRestrictSharedCtaCluster(value) => value.unparse_tokens(tokens),
+            Instruction::MembarLevel(value) => value.unparse_tokens(tokens),
+            Instruction::MembarProxyProxykind(value) => value.unparse_tokens(tokens),
+            Instruction::MinAtype(value) => value.unparse_tokens(tokens),
+            Instruction::MinReluBtype(value) => value.unparse_tokens(tokens),
+            Instruction::MinFtzNanXorsignAbsF32(value) => value.unparse_tokens(tokens),
+            Instruction::MinFtzNanAbsF32(value) => value.unparse_tokens(tokens),
+            Instruction::MinF64(value) => value.unparse_tokens(tokens),
+            Instruction::MinFtzNanXorsignAbsF16(value) => value.unparse_tokens(tokens),
+            Instruction::MinFtzNanXorsignAbsF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::MinNanXorsignAbsBf16(value) => value.unparse_tokens(tokens),
+            Instruction::MinNanXorsignAbsBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedM16n8k16RowColDtypeF16F16Ctype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedM16n8k32RowColDtypeF16F16Ctype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedM16n8k16RowColF32Bf16Bf16F32(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedM16n8k32RowColF32Bf16Bf16F32(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedM16n8k8RowColF32Tf32Tf32F32(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedM16n8k16RowColF32Tf32Tf32F32(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedM16n8k64RowColF32F8typeF8typeF32(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpOrderedMetadataSyncAlignedM16n8k64RowColKindDtypeF8f6f4typeF8f6f4typeCtype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedM16n8k128RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedM16n8k128RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype1(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32F8f6f4typeF8f6f4typeF32Stype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS32(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSpvariantSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS321(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedM8n8k4AlayoutBlayoutDtypeF16F16Ctype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedM16n8k8RowColDtypeF16F16Ctype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedM16n8k16RowColDtypeF16F16Ctype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedM16n8k4RowColF32Tf32Tf32F32(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedM16n8k8RowColF32AtypeBtypeF32(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedM16n8k16RowColF32Bf16Bf16F32(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedShapeRowColDtypeF8typeF8typeCtype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedM16n8k32RowColKindDtypeF8f6f4typeF8f6f4typeCtype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype1(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedM16n8k32RowColKindBlockScaleScaleVecSizeF32F8f6f4typeF8f6f4typeF32Stype(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedShapeRowColF64F64F64F64(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS32(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS321(value) => value.unparse_tokens(tokens),
+            Instruction::MmaSyncAlignedShapeRowColS32B1B1S32BitopPopc(value) => value.unparse_tokens(tokens),
+            Instruction::MovType(value) => value.unparse_tokens(tokens),
+            Instruction::MovU32(value) => value.unparse_tokens(tokens),
+            Instruction::MovU64(value) => value.unparse_tokens(tokens),
+            Instruction::MovU321(value) => value.unparse_tokens(tokens),
+            Instruction::MovU641(value) => value.unparse_tokens(tokens),
+            Instruction::MovType1(value) => value.unparse_tokens(tokens),
+            Instruction::MovmatrixSyncAlignedShapeTransType(value) => value.unparse_tokens(tokens),
+            Instruction::MulModeType(value) => value.unparse_tokens(tokens),
+            Instruction::MulRndFtzSatF32(value) => value.unparse_tokens(tokens),
+            Instruction::MulRndFtzF32x2(value) => value.unparse_tokens(tokens),
+            Instruction::MulRndF64(value) => value.unparse_tokens(tokens),
+            Instruction::MulRndFtzSatF16(value) => value.unparse_tokens(tokens),
+            Instruction::MulRndFtzSatF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::MulRndBf16(value) => value.unparse_tokens(tokens),
+            Instruction::MulRndBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::Mul24ModeType(value) => value.unparse_tokens(tokens),
+            Instruction::MultimemLdReduceLdsemScopeSsOpType(value) => value.unparse_tokens(tokens),
+            Instruction::MultimemLdReduceWeakSsOpType(value) => value.unparse_tokens(tokens),
+            Instruction::MultimemStStsemScopeSsType(value) => value.unparse_tokens(tokens),
+            Instruction::MultimemStWeakSsType(value) => value.unparse_tokens(tokens),
+            Instruction::MultimemRedRedsemScopeSsOpType(value) => value.unparse_tokens(tokens),
+            Instruction::MultimemLdReduceLdsemScopeSsOpAccPrecVecType(value) => value.unparse_tokens(tokens),
+            Instruction::MultimemLdReduceWeakSsOpAccPrecVecType(value) => value.unparse_tokens(tokens),
+            Instruction::MultimemStStsemScopeSsVecType(value) => value.unparse_tokens(tokens),
+            Instruction::MultimemStWeakSsVecType(value) => value.unparse_tokens(tokens),
+            Instruction::MultimemRedRedsemScopeSsRedopVecRedtype(value) => value.unparse_tokens(tokens),
+            Instruction::NanosleepU32(value) => value.unparse_tokens(tokens),
+            Instruction::NegType(value) => value.unparse_tokens(tokens),
+            Instruction::NegFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::NegF64(value) => value.unparse_tokens(tokens),
+            Instruction::NegFtzF16(value) => value.unparse_tokens(tokens),
+            Instruction::NegFtzF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::NegBf16(value) => value.unparse_tokens(tokens),
+            Instruction::NegBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::NotType(value) => value.unparse_tokens(tokens),
+            Instruction::OrType(value) => value.unparse_tokens(tokens),
+            Instruction::Pmevent(value) => value.unparse_tokens(tokens),
+            Instruction::PmeventMask(value) => value.unparse_tokens(tokens),
+            Instruction::PopcType(value) => value.unparse_tokens(tokens),
+            Instruction::PrefetchSpaceLevel(value) => value.unparse_tokens(tokens),
+            Instruction::PrefetchGlobalLevelEvictionPriority(value) => value.unparse_tokens(tokens),
+            Instruction::PrefetchuL1(value) => value.unparse_tokens(tokens),
+            Instruction::PrefetchTensormapSpaceTensormap(value) => value.unparse_tokens(tokens),
+            Instruction::PrmtB32Mode(value) => value.unparse_tokens(tokens),
+            Instruction::RcpApproxFtzF64(value) => value.unparse_tokens(tokens),
+            Instruction::RcpApproxFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::RcpRndFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::RcpRndF64(value) => value.unparse_tokens(tokens),
+            Instruction::RedAsyncSemScopeSsCompletionMechanismOpType(value) => value.unparse_tokens(tokens),
+            Instruction::RedAsyncSemScopeSsCompletionMechanismOpType1(value) => value.unparse_tokens(tokens),
+            Instruction::RedAsyncSemScopeSsCompletionMechanismOpType2(value) => value.unparse_tokens(tokens),
+            Instruction::RedAsyncSemScopeSsCompletionMechanismAddType(value) => value.unparse_tokens(tokens),
+            Instruction::RedAsyncMmioSemScopeSsAddType(value) => value.unparse_tokens(tokens),
+            Instruction::RedOpSpaceSemScopeLevelCacheHintType(value) => value.unparse_tokens(tokens),
+            Instruction::RedAddSpaceSemScopeNoftzLevelCacheHintF16(value) => value.unparse_tokens(tokens),
+            Instruction::RedAddSpaceSemScopeNoftzLevelCacheHintF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::RedAddSpaceSemScopeNoftzLevelCacheHintBf16(value) => value.unparse_tokens(tokens),
+            Instruction::RedAddSpaceSemScopeNoftzLevelCacheHintBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::RedAddSpaceSemScopeLevelCacheHintVec32BitF32(value) => value.unparse_tokens(tokens),
+            Instruction::RedOpSpaceSemScopeNoftzLevelCacheHintVec16BitHalfWordType(value) => value.unparse_tokens(tokens),
+            Instruction::RedOpSpaceSemScopeNoftzLevelCacheHintVec32BitPackedType(value) => value.unparse_tokens(tokens),
+            Instruction::ReduxSyncOpType(value) => value.unparse_tokens(tokens),
+            Instruction::ReduxSyncOpB32(value) => value.unparse_tokens(tokens),
+            Instruction::ReduxSyncOpAbsNanF32(value) => value.unparse_tokens(tokens),
+            Instruction::RemType(value) => value.unparse_tokens(tokens),
+            Instruction::RetUni(value) => value.unparse_tokens(tokens),
+            Instruction::RsqrtApproxFtzF64(value) => value.unparse_tokens(tokens),
+            Instruction::RsqrtApproxFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::RsqrtApproxF64(value) => value.unparse_tokens(tokens),
+            Instruction::SadType(value) => value.unparse_tokens(tokens),
+            Instruction::SelpType(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopFtzDtypeStype(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopBoolopFtzDtypeStype(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopFtzF16Stype(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopBoolopFtzF16Stype(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopBf16Stype(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopBoolopBf16Stype(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopFtzDtypeF16(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopBoolopFtzDtypeF16(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopDtypeBf16(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopBoolopDtypeBf16(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopFtzDtypeF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopBoolopFtzDtypeF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopDtypeBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::SetCmpopBoolopDtypeBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::SetmaxnregActionSyncAlignedU32(value) => value.unparse_tokens(tokens),
+            Instruction::SetpCmpopFtzType(value) => value.unparse_tokens(tokens),
+            Instruction::SetpCmpopBoolopFtzType(value) => value.unparse_tokens(tokens),
+            Instruction::SetpCmpopFtzF16(value) => value.unparse_tokens(tokens),
+            Instruction::SetpCmpopBoolopFtzF16(value) => value.unparse_tokens(tokens),
+            Instruction::SetpCmpopFtzF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::SetpCmpopBoolopFtzF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::SetpCmpopBf16(value) => value.unparse_tokens(tokens),
+            Instruction::SetpCmpopBoolopBf16(value) => value.unparse_tokens(tokens),
+            Instruction::SetpCmpopBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::SetpCmpopBoolopBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::ShfLModeB32(value) => value.unparse_tokens(tokens),
+            Instruction::ShfRModeB32(value) => value.unparse_tokens(tokens),
+            Instruction::ShflSyncModeB32(value) => value.unparse_tokens(tokens),
+            Instruction::ShflModeB32(value) => value.unparse_tokens(tokens),
+            Instruction::ShlType(value) => value.unparse_tokens(tokens),
+            Instruction::ShrType(value) => value.unparse_tokens(tokens),
+            Instruction::SinApproxFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::SlctDtypeS32(value) => value.unparse_tokens(tokens),
+            Instruction::SlctFtzDtypeF32(value) => value.unparse_tokens(tokens),
+            Instruction::SqrtApproxFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::SqrtRndFtzF32(value) => value.unparse_tokens(tokens),
+            Instruction::SqrtRndF64(value) => value.unparse_tokens(tokens),
+            Instruction::StAsyncSemScopeSsCompletionMechanismVecType(value) => value.unparse_tokens(tokens),
+            Instruction::StAsyncMmioSemScopeSsType(value) => value.unparse_tokens(tokens),
+            Instruction::StBulkWeakSharedCta(value) => value.unparse_tokens(tokens),
+            Instruction::StWeakSsCopLevelCacheHintVecType(value) => value.unparse_tokens(tokens),
+            Instruction::StWeakSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType(value) => value.unparse_tokens(tokens),
+            Instruction::StVolatileSsVecType(value) => value.unparse_tokens(tokens),
+            Instruction::StRelaxedScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType(value) => value.unparse_tokens(tokens),
+            Instruction::StReleaseScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType(value) => value.unparse_tokens(tokens),
+            Instruction::StMmioRelaxedSysGlobalType(value) => value.unparse_tokens(tokens),
+            Instruction::StackrestoreType(value) => value.unparse_tokens(tokens),
+            Instruction::StacksaveType(value) => value.unparse_tokens(tokens),
+            Instruction::StmatrixSyncAlignedShapeNumTransSsType(value) => value.unparse_tokens(tokens),
+            Instruction::SubCcType(value) => value.unparse_tokens(tokens),
+            Instruction::SubType(value) => value.unparse_tokens(tokens),
+            Instruction::SubSatS32(value) => value.unparse_tokens(tokens),
+            Instruction::SubRndFtzSatF32(value) => value.unparse_tokens(tokens),
+            Instruction::SubRndFtzF32x2(value) => value.unparse_tokens(tokens),
+            Instruction::SubRndF64(value) => value.unparse_tokens(tokens),
+            Instruction::SubRndFtzSatF16(value) => value.unparse_tokens(tokens),
+            Instruction::SubRndFtzSatF16x2(value) => value.unparse_tokens(tokens),
+            Instruction::SubRndBf16(value) => value.unparse_tokens(tokens),
+            Instruction::SubRndBf16x2(value) => value.unparse_tokens(tokens),
+            Instruction::SubRndSatF32Atype(value) => value.unparse_tokens(tokens),
+            Instruction::SubcCcType(value) => value.unparse_tokens(tokens),
+            Instruction::SuldBGeomCopVecDtypeMode(value) => value.unparse_tokens(tokens),
+            Instruction::SuqQueryB32(value) => value.unparse_tokens(tokens),
+            Instruction::SuredBOpGeomCtypeMode(value) => value.unparse_tokens(tokens),
+            Instruction::SuredPOpGeomCtypeMode(value) => value.unparse_tokens(tokens),
+            Instruction::SustBDimCopVecCtypeMode(value) => value.unparse_tokens(tokens),
+            Instruction::SustPDimVecB32Mode(value) => value.unparse_tokens(tokens),
+            Instruction::SustBAdimCopVecCtypeMode(value) => value.unparse_tokens(tokens),
+            Instruction::SzextModeType(value) => value.unparse_tokens(tokens),
+            Instruction::TanhApproxType(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05AllocCtaGroupSyncAlignedSharedCtaB32(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05DeallocCtaGroupSyncAlignedB32(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05RelinquishAllocPermitCtaGroupSyncAligned(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05CommitCtaGroupCompletionMechanismSharedClusterMulticastB64(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05CpCtaGroupShapeMulticastDstSrcFmt(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05FenceBeforeThreadSync(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05FenceAfterThreadSync(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05LdSyncAlignedShape1NumPackB32(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05LdSyncAlignedShape2NumPackB32(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05LdRedSyncAlignedShape3NumRedopAbsNanF32(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05LdRedSyncAlignedShape4NumRedopAbsNanF32(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05LdRedSyncAlignedShape3NumRedopType(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05LdRedSyncAlignedShape4NumRedopType(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKind(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKind1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindBlockScaleScaleVectorsize(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindBlockScaleScaleVectorsize1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindCollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindAshiftCollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindAshiftCollectorUsage1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindBlockScaleScaleVectorsizeCollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindBlockScaleScaleVectorsizeCollectorUsage1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindI8(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindI81(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindI8CollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindI8AshiftCollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaSpCtaGroupKindI8AshiftCollectorUsage1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKind(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKind1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindBlockScaleScaleVectorsize(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindBlockScaleScaleVectorsize1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindCollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindAshiftCollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindAshiftCollectorUsage1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindBlockScaleScaleVectorsizeCollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindBlockScaleScaleVectorsizeCollectorUsage1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindI8(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindI81(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindI8CollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindI8AshiftCollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaCtaGroupKindI8AshiftCollectorUsage1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaWsSpCtaGroup1KindCollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaWsSpCtaGroup1KindCollectorUsage1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaWsSpCtaGroup1KindI8CollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaWsSpCtaGroup1KindI8CollectorUsage1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaWsCtaGroup1KindCollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaWsCtaGroup1KindCollectorUsage1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaWsCtaGroup1KindI8CollectorUsage(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05MmaWsCtaGroup1KindI8CollectorUsage1(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05ShiftCtaGroupDown(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05StSyncAlignedShape1NumUnpackB32(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05StSyncAlignedShape2NumUnpackB32(value) => value.unparse_tokens(tokens),
+            Instruction::Tcgen05WaitOperationSyncAligned(value) => value.unparse_tokens(tokens),
+            Instruction::TensormapCpFenceproxyCpQualifiersFenceQualifiersSyncAligned(value) => value.unparse_tokens(tokens),
+            Instruction::TensormapReplaceModeField1SsB1024Type(value) => value.unparse_tokens(tokens),
+            Instruction::TensormapReplaceModeField2SsB1024Type(value) => value.unparse_tokens(tokens),
+            Instruction::TensormapReplaceModeField3SsB1024Type(value) => value.unparse_tokens(tokens),
+            Instruction::TestpOpType(value) => value.unparse_tokens(tokens),
+            Instruction::TexGeomV4DtypeCtype(value) => value.unparse_tokens(tokens),
+            Instruction::TexGeomV4DtypeCtype1(value) => value.unparse_tokens(tokens),
+            Instruction::TexGeomV2F16x2Ctype(value) => value.unparse_tokens(tokens),
+            Instruction::TexGeomV2F16x2Ctype1(value) => value.unparse_tokens(tokens),
+            Instruction::TexBaseGeomV4DtypeCtype(value) => value.unparse_tokens(tokens),
+            Instruction::TexLevelGeomV4DtypeCtype(value) => value.unparse_tokens(tokens),
+            Instruction::TexGradGeomV4DtypeCtype(value) => value.unparse_tokens(tokens),
+            Instruction::TexBaseGeomV2F16x2Ctype(value) => value.unparse_tokens(tokens),
+            Instruction::TexLevelGeomV2F16x2Ctype(value) => value.unparse_tokens(tokens),
+            Instruction::TexGradGeomV2F16x2Ctype(value) => value.unparse_tokens(tokens),
+            Instruction::Tld4Comp2dV4DtypeF32(value) => value.unparse_tokens(tokens),
+            Instruction::Tld4CompGeomV4DtypeF32(value) => value.unparse_tokens(tokens),
+            Instruction::Trap(value) => value.unparse_tokens(tokens),
+            Instruction::TxqTqueryB32(value) => value.unparse_tokens(tokens),
+            Instruction::TxqLevelTlqueryB32(value) => value.unparse_tokens(tokens),
+            Instruction::TxqSqueryB32(value) => value.unparse_tokens(tokens),
+            Instruction::VmadDtypeAtypeBtypeSatScale(value) => value.unparse_tokens(tokens),
+            Instruction::VmadDtypeAtypeBtypePoSatScale(value) => value.unparse_tokens(tokens),
+            Instruction::VopDtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::VopDtypeAtypeBtypeSatOp2(value) => value.unparse_tokens(tokens),
+            Instruction::VopDtypeAtypeBtypeSat1(value) => value.unparse_tokens(tokens),
+            Instruction::Vop2DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vop2DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vop4DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vop4DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::VoteSyncModePred(value) => value.unparse_tokens(tokens),
+            Instruction::VoteSyncBallotB32(value) => value.unparse_tokens(tokens),
+            Instruction::VoteModePred(value) => value.unparse_tokens(tokens),
+            Instruction::VoteBallotB32(value) => value.unparse_tokens(tokens),
+            Instruction::VsetAtypeBtypeCmp(value) => value.unparse_tokens(tokens),
+            Instruction::VsetAtypeBtypeCmpOp2(value) => value.unparse_tokens(tokens),
+            Instruction::VsetAtypeBtypeCmp1(value) => value.unparse_tokens(tokens),
+            Instruction::Vset2AtypeBtypeCmp(value) => value.unparse_tokens(tokens),
+            Instruction::Vset2AtypeBtypeCmpAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vset4AtypeBtypeCmp(value) => value.unparse_tokens(tokens),
+            Instruction::Vset4AtypeBtypeCmpAdd(value) => value.unparse_tokens(tokens),
+            Instruction::VopDtypeAtypeU32SatMode(value) => value.unparse_tokens(tokens),
+            Instruction::VopDtypeAtypeU32SatModeOp2(value) => value.unparse_tokens(tokens),
+            Instruction::VopDtypeAtypeU32SatMode1(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaCommitGroupSyncAligned(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaFenceSyncAligned(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSpSyncAlignedShapeDtypeF16F16(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSpSyncAlignedShapeDtypeF16F161(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSpSyncAlignedShapeDtypeBf16Bf16(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSpSyncAlignedShapeDtypeBf16Bf161(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSpSyncAlignedShapeDtypeTf32Tf32(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSpSyncAlignedShapeDtypeTf32Tf321(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSpSyncAlignedShapeDtypeAtypeBtype(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSpSyncAlignedShapeDtypeAtypeBtype1(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSpSyncAlignedShapeSatfiniteS32AtypeBtype(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSpSyncAlignedShapeSatfiniteS32AtypeBtype1(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeDtypeF16F16(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeDtypeF16F161(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeDtypeBf16Bf16(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeDtypeBf16Bf161(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeDtypeTf32Tf32(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeDtypeTf32Tf321(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeDtypeAtypeBtype(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeDtypeAtypeBtype1(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeSatfiniteS32AtypeBtype(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeSatfiniteS32AtypeBtype1(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeS32B1B1OpPopc(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaMmaAsyncSyncAlignedShapeS32B1B1OpPopc1(value) => value.unparse_tokens(tokens),
+            Instruction::WgmmaWaitGroupSyncAligned(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadASyncAlignedLayoutShapeSsAtype(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadBSyncAlignedLayoutShapeSsBtype(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadCSyncAlignedLayoutShapeSsCtype(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadASyncAlignedLayoutShapeSsAtype1(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadBSyncAlignedLayoutShapeSsBtype1(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadCSyncAlignedLayoutShapeSsCtype1(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadASyncAlignedLayoutShapeSsAtype2(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadBSyncAlignedLayoutShapeSsBtype2(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadCSyncAlignedLayoutShapeSsCtype2(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadASyncAlignedLayoutShapeSsAtype3(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadBSyncAlignedLayoutShapeSsBtype3(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadCSyncAlignedLayoutShapeSsCtype3(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadASyncAlignedRowShapeSsAtype(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadBSyncAlignedColShapeSsBtype(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadCSyncAlignedLayoutShapeSsCtype4(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadASyncAlignedRowShapeSsAtype1(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadBSyncAlignedColShapeSsBtype1(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaLoadCSyncAlignedLayoutShapeSsCtype5(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaMmaSyncAlignedAlayoutBlayoutShapeDtypeCtype(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaMmaSyncAlignedAlayoutBlayoutShapeS32AtypeBtypeS32Satfinite(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaMmaSyncAlignedAlayoutBlayoutShapeF32AtypeBtypeF32(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaMmaSyncAlignedAlayoutBlayoutShapeF32AtypeBtypeF321(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaMmaSyncAlignedAlayoutBlayoutShapeRndF64F64F64F64(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaMmaSyncAlignedRowColShapeS32AtypeBtypeS32Satfinite(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaMmaOpPopcSyncAlignedRowColShapeS32AtypeBtypeS32(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaStoreDSyncAlignedLayoutShapeSsType(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaStoreDSyncAlignedLayoutShapeSsType1(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaStoreDSyncAlignedLayoutShapeSsType2(value) => value.unparse_tokens(tokens),
+            Instruction::WmmaStoreDSyncAlignedLayoutShapeSsType3(value) => value.unparse_tokens(tokens),
+            Instruction::XorType(value) => value.unparse_tokens(tokens),
+        }
+    }
+}

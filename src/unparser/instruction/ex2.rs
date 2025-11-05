@@ -1,0 +1,74 @@
+//! Original PTX specification:
+//!
+//! ex2.approx{.ftz}.f32  d, a;
+//! 
+//! ex2.approx.atype     d, a;
+//! ex2.approx.ftz.btype d, a;
+//! .atype = { .f16,  .f16x2};
+//! .btype = { .bf16, .bf16x2};
+
+#![allow(unused)]
+
+use crate::lexer::PtxToken;
+use crate::unparser::{PtxUnparser, common::*};
+
+pub mod section_0 {
+    use super::*;
+    use crate::r#type::instruction::ex2::section_0::*;
+
+    impl PtxUnparser for Ex2ApproxFtzF32 {
+        fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            push_opcode(tokens, "ex2");
+                    push_directive(tokens, "approx");
+                    if self.ftz {
+                            push_directive(tokens, "ftz");
+                    }
+                    push_directive(tokens, "f32");
+                    self.d.unparse_tokens(tokens);
+            tokens.push(PtxToken::Comma);
+                    self.a.unparse_tokens(tokens);
+            tokens.push(PtxToken::Semicolon);
+        }
+    }
+
+    impl PtxUnparser for Ex2ApproxAtype {
+        fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            push_opcode(tokens, "ex2");
+                    push_directive(tokens, "approx");
+                    match &self.atype {
+                            Atype::F16 => {
+                                    push_directive(tokens, "f16");
+                            }
+                            Atype::F16x2 => {
+                                    push_directive(tokens, "f16x2");
+                            }
+                    }
+                    self.d.unparse_tokens(tokens);
+            tokens.push(PtxToken::Comma);
+                    self.a.unparse_tokens(tokens);
+            tokens.push(PtxToken::Semicolon);
+        }
+    }
+
+    impl PtxUnparser for Ex2ApproxFtzBtype {
+        fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            push_opcode(tokens, "ex2");
+                    push_directive(tokens, "approx");
+                    push_directive(tokens, "ftz");
+                    match &self.btype {
+                            Btype::Bf16 => {
+                                    push_directive(tokens, "bf16");
+                            }
+                            Btype::Bf16x2 => {
+                                    push_directive(tokens, "bf16x2");
+                            }
+                    }
+                    self.d.unparse_tokens(tokens);
+            tokens.push(PtxToken::Comma);
+                    self.a.unparse_tokens(tokens);
+            tokens.push(PtxToken::Semicolon);
+        }
+    }
+
+}
+

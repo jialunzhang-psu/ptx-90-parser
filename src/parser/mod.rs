@@ -75,10 +75,7 @@ impl<'a> PtxTokenStream<'a> {
 
     /// Check if the next token is the expected type, and if so, consume it.
     /// Otherwise, return an error and do NOT consume the token.
-    pub fn expect(
-        &mut self,
-        expected: &PtxToken,
-    ) -> Result<&'a (PtxToken, Span), PtxParseError> {
+    pub fn expect(&mut self, expected: &PtxToken) -> Result<&'a (PtxToken, Span), PtxParseError> {
         let token_pair = self.peek()?;
         let (token, span) = token_pair;
         if std::mem::discriminant(token) == std::mem::discriminant(expected) {

@@ -26,6 +26,43 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Geom {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try _1d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".1d").is_ok() {
+                    return Ok(Geom::_1d);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try _2d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".2d").is_ok() {
+                    return Ok(Geom::_2d);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try _3d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".3d").is_ok() {
+                    return Ok(Geom::_3d);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".1d", ".2d", ".3d"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Mode {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Trap
@@ -177,43 +214,6 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Geom {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try _1d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".1d").is_ok() {
-                    return Ok(Geom::_1d);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try _2d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".2d").is_ok() {
-                    return Ok(Geom::_2d);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try _3d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".3d").is_ok() {
-                    return Ok(Geom::_3d);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".1d", ".2d", ".3d"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for SuredBOpGeomCtypeMode {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("sured")?;
@@ -253,6 +253,43 @@ pub mod section_1 {
     // ============================================================================
     // Generated enum parsers
     // ============================================================================
+
+    impl PtxParser for Geom {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try _1d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".1d").is_ok() {
+                    return Ok(Geom::_1d);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try _2d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".2d").is_ok() {
+                    return Ok(Geom::_2d);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try _3d
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".3d").is_ok() {
+                    return Ok(Geom::_3d);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".1d", ".2d", ".3d"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
     impl PtxParser for Mode {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -370,43 +407,6 @@ pub mod section_1 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".add", ".min", ".max", ".and", ".or"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Geom {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try _1d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".1d").is_ok() {
-                    return Ok(Geom::_1d);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try _2d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".2d").is_ok() {
-                    return Ok(Geom::_2d);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try _3d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".3d").is_ok() {
-                    return Ok(Geom::_3d);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".1d", ".2d", ".3d"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

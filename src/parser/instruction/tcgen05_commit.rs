@@ -37,6 +37,23 @@ pub mod section_0 {
         }
     }
 
+    impl PtxParser for CompletionMechanism {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try MbarrierArriveOne
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".mbarrier::arrive::one").is_ok() {
+                    return Ok(CompletionMechanism::MbarrierArriveOne);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".mbarrier::arrive::one"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for CtaGroup {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try CtaGroup1
@@ -59,23 +76,6 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".cta_group::1", ".cta_group::2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for CompletionMechanism {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try MbarrierArriveOne
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".mbarrier::arrive::one").is_ok() {
-                    return Ok(CompletionMechanism::MbarrierArriveOne);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".mbarrier::arrive::one"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

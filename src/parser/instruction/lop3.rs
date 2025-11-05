@@ -94,6 +94,7 @@ pub mod section_0 {
                 boolop,
                 b32,
                 d,
+                p,
                 a,
                 b,
                 c,

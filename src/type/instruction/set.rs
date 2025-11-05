@@ -2,9 +2,9 @@
 //!
 //! set.CmpOp{.ftz}.dtype.stype         d, a, b;
 //! set.CmpOp.BoolOp{.ftz}.dtype.stype  d, a, b, {!}c;
-//! .CmpOp  = { eq, ne, lt, le, gt, ge, lo, ls, hi, hs,
-//! equ, neu, ltu, leu, gtu, geu, num, nan };
-//! .BoolOp = { and, or, xor };
+//! .CmpOp  = { .eq, .ne, .lt, .le, .gt, .ge, .lo, .ls, .hi, .hs,
+//! .equ, .neu, .ltu, .leu, .gtu, .geu, .num, .nan };
+//! .BoolOp = { .and, .or, .xor };
 //! .dtype  = { .u32, .s32, .f32 };
 //! .stype  = { .b16, .b32, .b64,
 //! .u16, .u32, .u64,
@@ -33,9 +33,9 @@
 //! set.CmpOp.dtype.bf16x2               d, a, b;
 //! set.CmpOp.BoolOp.dtype.bf16x2        d, a, b, {!}c;
 //! .dtype  = { .bf16x2, .u32, .s32};
-//! .CmpOp  = { eq, ne, lt, le, gt, ge,
-//! equ, neu, ltu, leu, gtu, geu, num, nan };
-//! .BoolOp = { and, or, xor };
+//! .CmpOp  = { .eq, .ne, .lt, .le, .gt, .ge,
+//! .equ, .neu, .ltu, .leu, .gtu, .geu, .num, .nan };
+//! .BoolOp = { .and, .or, .xor };
 //! .stype  = { .b16, .b32, .b64,
 //! .u16, .u32, .u64,
 //! .s16, .s32, .s64,
@@ -49,24 +49,24 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Cmpop {
-        Eq, // eq
-        Ne, // ne
-        Lt, // lt
-        Le, // le
-        Gt, // gt
-        Ge, // ge
-        Lo, // lo
-        Ls, // ls
-        Hi, // hi
-        Hs, // hs
-        Equ, // equ
-        Neu, // neu
-        Ltu, // ltu
-        Leu, // leu
-        Gtu, // gtu
-        Geu, // geu
-        Num, // num
-        Nan, // nan
+        Eq, // .eq
+        Ne, // .ne
+        Lt, // .lt
+        Le, // .le
+        Gt, // .gt
+        Ge, // .ge
+        Lo, // .lo
+        Ls, // .ls
+        Hi, // .hi
+        Hs, // .hs
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -93,9 +93,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Boolop {
-        And, // and
-        Or, // or
-        Xor, // xor
+        And, // .and
+        Or, // .or
+        Xor, // .xor
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -130,24 +130,24 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Cmpop {
-        Eq, // eq
-        Ne, // ne
-        Lt, // lt
-        Le, // le
-        Gt, // gt
-        Ge, // ge
-        Lo, // lo
-        Ls, // ls
-        Hi, // hi
-        Hs, // hs
-        Equ, // equ
-        Neu, // neu
-        Ltu, // ltu
-        Leu, // leu
-        Gtu, // gtu
-        Geu, // geu
-        Num, // num
-        Nan, // nan
+        Eq, // .eq
+        Ne, // .ne
+        Lt, // .lt
+        Le, // .le
+        Gt, // .gt
+        Ge, // .ge
+        Lo, // .lo
+        Ls, // .ls
+        Hi, // .hi
+        Hs, // .hs
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -167,9 +167,9 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Boolop {
-        And, // and
-        Or, // or
-        Xor, // xor
+        And, // .and
+        Or, // .or
+        Xor, // .xor
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -260,24 +260,24 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Cmpop {
-        Eq, // eq
-        Ne, // ne
-        Lt, // lt
-        Le, // le
-        Gt, // gt
-        Ge, // ge
-        Lo, // lo
-        Ls, // ls
-        Hi, // hi
-        Hs, // hs
-        Equ, // equ
-        Neu, // neu
-        Ltu, // ltu
-        Leu, // leu
-        Gtu, // gtu
-        Geu, // geu
-        Num, // num
-        Nan, // nan
+        Eq, // .eq
+        Ne, // .ne
+        Lt, // .lt
+        Le, // .le
+        Gt, // .gt
+        Ge, // .ge
+        Lo, // .lo
+        Ls, // .ls
+        Hi, // .hi
+        Hs, // .hs
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -290,9 +290,9 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Boolop {
-        And, // and
-        Or, // or
-        Xor, // xor
+        And, // .and
+        Or, // .or
+        Xor, // .xor
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -325,24 +325,24 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Cmpop {
-        Eq, // eq
-        Ne, // ne
-        Lt, // lt
-        Le, // le
-        Gt, // gt
-        Ge, // ge
-        Lo, // lo
-        Ls, // ls
-        Hi, // hi
-        Hs, // hs
-        Equ, // equ
-        Neu, // neu
-        Ltu, // ltu
-        Leu, // leu
-        Gtu, // gtu
-        Geu, // geu
-        Num, // num
-        Nan, // nan
+        Eq, // .eq
+        Ne, // .ne
+        Lt, // .lt
+        Le, // .le
+        Gt, // .gt
+        Ge, // .ge
+        Lo, // .lo
+        Ls, // .ls
+        Hi, // .hi
+        Hs, // .hs
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -354,9 +354,9 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Boolop {
-        And, // and
-        Or, // or
-        Xor, // xor
+        And, // .and
+        Or, // .or
+        Xor, // .xor
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -391,20 +391,20 @@ pub mod section_4 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Cmpop {
-        Eq, // eq
-        Ne, // ne
-        Lt, // lt
-        Le, // le
-        Gt, // gt
-        Ge, // ge
-        Equ, // equ
-        Neu, // neu
-        Ltu, // ltu
-        Leu, // leu
-        Gtu, // gtu
-        Geu, // geu
-        Num, // num
-        Nan, // nan
+        Eq, // .eq
+        Ne, // .ne
+        Lt, // .lt
+        Le, // .le
+        Gt, // .gt
+        Ge, // .ge
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -416,9 +416,9 @@ pub mod section_4 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Boolop {
-        And, // and
-        Or, // or
-        Xor, // xor
+        And, // .and
+        Or, // .or
+        Xor, // .xor
     }
 
     #[derive(Debug, Clone, PartialEq)]

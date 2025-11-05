@@ -61,33 +61,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for CtaGroup {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try CtaGroup1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::1").is_ok() {
-                    return Ok(CtaGroup::CtaGroup1);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try CtaGroup2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::2").is_ok() {
-                    return Ok(CtaGroup::CtaGroup2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta_group::1", ".cta_group::2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Kind {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try KindF16
@@ -120,6 +93,33 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".kind::f16", ".kind::tf32", ".kind::f8f6f4"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for CtaGroup {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try CtaGroup1
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta_group::1").is_ok() {
+                    return Ok(CtaGroup::CtaGroup1);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try CtaGroup2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta_group::2").is_ok() {
+                    return Ok(CtaGroup::CtaGroup2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".cta_group::1", ".cta_group::2"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -263,6 +263,43 @@ pub mod section_1 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Kind {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try KindMxf8f6f4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf8f6f4").is_ok() {
+                    return Ok(Kind::KindMxf8f6f4);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try KindMxf4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf4").is_ok() {
+                    return Ok(Kind::KindMxf4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try KindMxf4nvf4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf4nvf4").is_ok() {
+                    return Ok(Kind::KindMxf4nvf4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".kind::mxf8f6f4", ".kind::mxf4", ".kind::mxf4nvf4"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for CtaGroup {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try CtaGroup1
@@ -342,43 +379,6 @@ pub mod section_1 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".scale_vec::1X", ".scale_vec::2X", ".scale_vec::4X", ".block16", ".block32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindMxf8f6f4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf8f6f4").is_ok() {
-                    return Ok(Kind::KindMxf8f6f4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try KindMxf4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf4").is_ok() {
-                    return Ok(Kind::KindMxf4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try KindMxf4nvf4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf4nvf4").is_ok() {
-                    return Ok(Kind::KindMxf4nvf4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::mxf8f6f4", ".kind::mxf4", ".kind::mxf4nvf4"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -502,33 +502,6 @@ pub mod section_2 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for CtaGroup {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try CtaGroup1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::1").is_ok() {
-                    return Ok(CtaGroup::CtaGroup1);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try CtaGroup2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::2").is_ok() {
-                    return Ok(CtaGroup::CtaGroup2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta_group::1", ".cta_group::2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for CollectorUsage {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try CollectorBufferOp
@@ -556,18 +529,28 @@ pub mod section_2 {
         }
     }
 
-    impl PtxParser for Buffer {
+    impl PtxParser for CtaGroup {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try A
+            // Try CtaGroup1
             {
                 let saved_pos = stream.position();
-                if stream.expect_string("::a").is_ok() {
-                    return Ok(Buffer::A);
+                if stream.expect_string(".cta_group::1").is_ok() {
+                    return Ok(CtaGroup::CtaGroup1);
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try CtaGroup2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta_group::2").is_ok() {
+                    return Ok(CtaGroup::CtaGroup2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["::a"];
+            let expected = &[".cta_group::1", ".cta_group::2"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -652,6 +635,23 @@ pub mod section_2 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".kind::f16", ".kind::tf32", ".kind::f8f6f4"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Buffer {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try A
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::a").is_ok() {
+                    return Ok(Buffer::A);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &["::a"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -881,33 +881,6 @@ pub mod section_3 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for CtaGroup {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try CtaGroup1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::1").is_ok() {
-                    return Ok(CtaGroup::CtaGroup1);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try CtaGroup2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::2").is_ok() {
-                    return Ok(CtaGroup::CtaGroup2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta_group::1", ".cta_group::2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for CollectorUsage {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try CollectorBufferOp
@@ -935,75 +908,28 @@ pub mod section_3 {
         }
     }
 
-    impl PtxParser for ScaleVectorsize {
+    impl PtxParser for CtaGroup {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try ScaleVec1x
+            // Try CtaGroup1
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".scale_vec::1X").is_ok() {
-                    return Ok(ScaleVectorsize::ScaleVec1x);
+                if stream.expect_string(".cta_group::1").is_ok() {
+                    return Ok(CtaGroup::CtaGroup1);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try ScaleVec2x
+            // Try CtaGroup2
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".scale_vec::2X").is_ok() {
-                    return Ok(ScaleVectorsize::ScaleVec2x);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try ScaleVec4x
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".scale_vec::4X").is_ok() {
-                    return Ok(ScaleVectorsize::ScaleVec4x);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Block16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".block16").is_ok() {
-                    return Ok(ScaleVectorsize::Block16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Block32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".block32").is_ok() {
-                    return Ok(ScaleVectorsize::Block32);
+                if stream.expect_string(".cta_group::2").is_ok() {
+                    return Ok(CtaGroup::CtaGroup2);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".scale_vec::1X", ".scale_vec::2X", ".scale_vec::4X", ".block16", ".block32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Buffer {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try A
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::a").is_ok() {
-                    return Ok(Buffer::A);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["::a"];
+            let expected = &[".cta_group::1", ".cta_group::2"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1088,6 +1014,80 @@ pub mod section_3 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".kind::mxf8f6f4", ".kind::mxf4", ".kind::mxf4nvf4"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Buffer {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try A
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::a").is_ok() {
+                    return Ok(Buffer::A);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &["::a"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for ScaleVectorsize {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try ScaleVec1x
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".scale_vec::1X").is_ok() {
+                    return Ok(ScaleVectorsize::ScaleVec1x);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try ScaleVec2x
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".scale_vec::2X").is_ok() {
+                    return Ok(ScaleVectorsize::ScaleVec2x);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try ScaleVec4x
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".scale_vec::4X").is_ok() {
+                    return Ok(ScaleVectorsize::ScaleVec4x);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Block16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".block16").is_ok() {
+                    return Ok(ScaleVectorsize::Block16);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Block32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".block32").is_ok() {
+                    return Ok(ScaleVectorsize::Block32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".scale_vec::1X", ".scale_vec::2X", ".scale_vec::4X", ".block16", ".block32"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1354,6 +1354,33 @@ pub mod section_5 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for CollectorUsage {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try CollectorBufferOp
+            {
+                let saved_seq_pos = stream.position();
+                match (|| -> Result<_, PtxParseError> {
+            stream.expect_string(".collector")?;
+            let collector = ();
+            let buffer = Buffer::parse(stream)?;
+            let op = Op::parse(stream)?;
+                    Ok((collector, buffer, op))
+                })() {
+                    Ok((collector, buffer, op)) => {
+                        return Ok(CollectorUsage::CollectorBufferOp(collector, buffer, op));
+                    }
+                    Err(_) => {
+                        stream.set_position(saved_seq_pos);
+                    }
+                }
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &["<complex>"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for CtaGroup {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try CtaGroup1
@@ -1376,23 +1403,6 @@ pub mod section_5 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".cta_group::1", ".cta_group::2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Buffer {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try A
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::a").is_ok() {
-                    return Ok(Buffer::A);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["::a"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1445,28 +1455,18 @@ pub mod section_5 {
         }
     }
 
-    impl PtxParser for CollectorUsage {
+    impl PtxParser for Buffer {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try CollectorBufferOp
+            // Try A
             {
-                let saved_seq_pos = stream.position();
-                match (|| -> Result<_, PtxParseError> {
-            stream.expect_string(".collector")?;
-            let collector = ();
-            let buffer = Buffer::parse(stream)?;
-            let op = Op::parse(stream)?;
-                    Ok((collector, buffer, op))
-                })() {
-                    Ok((collector, buffer, op)) => {
-                        return Ok(CollectorUsage::CollectorBufferOp(collector, buffer, op));
-                    }
-                    Err(_) => {
-                        stream.set_position(saved_seq_pos);
-                    }
+                let saved_pos = stream.position();
+                if stream.expect_string("::a").is_ok() {
+                    return Ok(Buffer::A);
                 }
+                stream.set_position(saved_pos);
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["<complex>"];
+            let expected = &["::a"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

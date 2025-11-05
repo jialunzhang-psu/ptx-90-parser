@@ -31,7 +31,8 @@ pub mod section_0 {
         pub all: (), // .all
         pub sync: (), // .sync
         pub type_: Type, // .type
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: Operand, // a
         pub membermask: Operand, // membermask
     }

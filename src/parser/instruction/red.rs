@@ -40,18 +40,48 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for LevelCacheHint {
+    impl PtxParser for Scope {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2CacheHint
+            // Try Cta
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".L2::cache_hint").is_ok() {
-                    return Ok(LevelCacheHint::L2CacheHint);
+                if stream.expect_string(".cta").is_ok() {
+                    return Ok(Scope::Cta);
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try Cluster
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cluster").is_ok() {
+                    return Ok(Scope::Cluster);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Gpu
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".gpu").is_ok() {
+                    return Ok(Scope::Gpu);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Sys
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".sys").is_ok() {
+                    return Ok(Scope::Sys);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::cache_hint"];
+            let expected = &[".cta", ".cluster", ".gpu", ".sys"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -171,6 +201,23 @@ pub mod section_0 {
         }
     }
 
+    impl PtxParser for LevelCacheHint {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try L2CacheHint
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::cache_hint").is_ok() {
+                    return Ok(LevelCacheHint::L2CacheHint);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".L2::cache_hint"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Space {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Global
@@ -213,53 +260,6 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".global", ".shared", ".shared::cta", ".shared::cluster"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Scope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Scope::Cta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Cluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cluster").is_ok() {
-                    return Ok(Scope::Cluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Gpu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".gpu").is_ok() {
-                    return Ok(Scope::Gpu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Sys
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sys").is_ok() {
-                    return Ok(Scope::Sys);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta", ".cluster", ".gpu", ".sys"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -722,28 +722,28 @@ pub mod section_1 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Vec32Bit {
+    impl PtxParser for HalfWordType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try V2
+            // Try F16
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".v2").is_ok() {
-                    return Ok(Vec32Bit::V2);
+                if stream.expect_string(".f16").is_ok() {
+                    return Ok(HalfWordType::F16);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try V4
+            // Try Bf16
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".v4").is_ok() {
-                    return Ok(Vec32Bit::V4);
+                if stream.expect_string(".bf16").is_ok() {
+                    return Ok(HalfWordType::Bf16);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".v2", ".v4"];
+            let expected = &[".f16", ".bf16"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -796,6 +796,87 @@ pub mod section_1 {
         }
     }
 
+    impl PtxParser for Sem {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Relaxed
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".relaxed").is_ok() {
+                    return Ok(Sem::Relaxed);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Release
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".release").is_ok() {
+                    return Ok(Sem::Release);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".relaxed", ".release"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for LevelCacheHint {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try L2CacheHint
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::cache_hint").is_ok() {
+                    return Ok(LevelCacheHint::L2CacheHint);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".L2::cache_hint"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Op {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Add
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".add").is_ok() {
+                    return Ok(Op::Add);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Min
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".min").is_ok() {
+                    return Ok(Op::Min);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Max
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".max").is_ok() {
+                    return Ok(Op::Max);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".add", ".min", ".max"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Space {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Global
@@ -843,38 +924,28 @@ pub mod section_1 {
         }
     }
 
-    impl PtxParser for Op {
+    impl PtxParser for Vec32Bit {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Add
+            // Try V2
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".add").is_ok() {
-                    return Ok(Op::Add);
+                if stream.expect_string(".v2").is_ok() {
+                    return Ok(Vec32Bit::V2);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try Min
+            // Try V4
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".min").is_ok() {
-                    return Ok(Op::Min);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Max
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".max").is_ok() {
-                    return Ok(Op::Max);
+                if stream.expect_string(".v4").is_ok() {
+                    return Ok(Vec32Bit::V4);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".add", ".min", ".max"];
+            let expected = &[".v2", ".v4"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -912,77 +983,6 @@ pub mod section_1 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".v2", ".v4", ".v8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for HalfWordType {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(HalfWordType::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Bf16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".bf16").is_ok() {
-                    return Ok(HalfWordType::Bf16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".bf16"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for LevelCacheHint {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2CacheHint
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::cache_hint").is_ok() {
-                    return Ok(LevelCacheHint::L2CacheHint);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::cache_hint"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Sem {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Relaxed
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".relaxed").is_ok() {
-                    return Ok(Sem::Relaxed);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Release
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".release").is_ok() {
-                    return Ok(Sem::Release);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".relaxed", ".release"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

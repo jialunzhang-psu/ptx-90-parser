@@ -25,6 +25,7 @@ pub mod section_0 {
             Ok(ElectSync {
                 sync,
                 d,
+                p,
                 membermask,
             })
         }

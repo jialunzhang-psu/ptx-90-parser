@@ -23,6 +23,33 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Space {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Global
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".global").is_ok() {
+                    return Ok(Space::Global);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Local
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".local").is_ok() {
+                    return Ok(Space::Local);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".global", ".local"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Level {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try L1
@@ -45,33 +72,6 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".L1", ".L2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for TensormapSpace {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Const
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".const").is_ok() {
-                    return Ok(TensormapSpace::Const);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Param
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".param").is_ok() {
-                    return Ok(TensormapSpace::Param);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".const", ".param"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -104,28 +104,28 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Space {
+    impl PtxParser for TensormapSpace {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Global
+            // Try Const
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Space::Global);
+                if stream.expect_string(".const").is_ok() {
+                    return Ok(TensormapSpace::Const);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try Local
+            // Try Param
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".local").is_ok() {
-                    return Ok(Space::Local);
+                if stream.expect_string(".param").is_ok() {
+                    return Ok(TensormapSpace::Param);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".global", ".local"];
+            let expected = &[".const", ".param"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

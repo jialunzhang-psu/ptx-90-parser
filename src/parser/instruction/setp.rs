@@ -31,6 +31,43 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Boolop {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try And
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".and").is_ok() {
+                    return Ok(Boolop::And);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Or
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Boolop::Or);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Xor
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".xor").is_ok() {
+                    return Ok(Boolop::Xor);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".and", ".or", ".xor"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Cmpop {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Eq
@@ -335,43 +372,6 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Boolop {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try And
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".and").is_ok() {
-                    return Ok(Boolop::And);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Or
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".or").is_ok() {
-                    return Ok(Boolop::Or);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Xor
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".xor").is_ok() {
-                    return Ok(Boolop::Xor);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".and", ".or", ".xor"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for SetpCmpopFtzType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
@@ -399,6 +399,7 @@ pub mod section_0 {
                 ftz,
                 type_,
                 p,
+                q,
                 a,
                 b,
             })
@@ -438,6 +439,7 @@ pub mod section_0 {
                 ftz,
                 type_,
                 p,
+                q,
                 a,
                 b,
                 c_op,
@@ -456,6 +458,43 @@ pub mod section_1 {
     // ============================================================================
     // Generated enum parsers
     // ============================================================================
+
+    impl PtxParser for Boolop {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try And
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".and").is_ok() {
+                    return Ok(Boolop::And);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Or
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Boolop::Or);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Xor
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".xor").is_ok() {
+                    return Ok(Boolop::Xor);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".and", ".or", ".xor"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
     impl PtxParser for Cmpop {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -604,43 +643,6 @@ pub mod section_1 {
         }
     }
 
-    impl PtxParser for Boolop {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try And
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".and").is_ok() {
-                    return Ok(Boolop::And);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Or
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".or").is_ok() {
-                    return Ok(Boolop::Or);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Xor
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".xor").is_ok() {
-                    return Ok(Boolop::Xor);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".and", ".or", ".xor"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for SetpCmpopFtzF16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
@@ -727,6 +729,7 @@ pub mod section_1 {
                 ftz,
                 f16x2,
                 p,
+                q,
                 a,
                 b,
             })
@@ -762,6 +765,7 @@ pub mod section_1 {
                 ftz,
                 f16x2,
                 p,
+                q,
                 a,
                 b,
                 c_op,
@@ -839,6 +843,7 @@ pub mod section_1 {
                 cmpop,
                 bf16x2,
                 p,
+                q,
                 a,
                 b,
             })
@@ -868,6 +873,7 @@ pub mod section_1 {
                 boolop,
                 bf16x2,
                 p,
+                q,
                 a,
                 b,
                 c_op,

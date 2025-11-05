@@ -11,7 +11,8 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct ElectSync {
         pub sync: (), // .sync
-        pub d: Operand, // d|p
+        pub d: Operand, // first operand of d|p
+        pub p: Operand, // second operand of d|p
         pub membermask: Operand, // membermask
     }
 

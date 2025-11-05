@@ -185,53 +185,6 @@ pub mod section_1 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Buffer {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B0
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::b0").is_ok() {
-                    return Ok(Buffer::B0);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::b1").is_ok() {
-                    return Ok(Buffer::B1);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::b2").is_ok() {
-                    return Ok(Buffer::B2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::b3").is_ok() {
-                    return Ok(Buffer::B3);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["::b0", "::b1", "::b2", "::b3"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Op {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Fill
@@ -301,6 +254,53 @@ pub mod section_1 {
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &["<complex>"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Buffer {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try B0
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::b0").is_ok() {
+                    return Ok(Buffer::B0);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try B1
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::b1").is_ok() {
+                    return Ok(Buffer::B1);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::b2").is_ok() {
+                    return Ok(Buffer::B2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B3
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::b3").is_ok() {
+                    return Ok(Buffer::B3);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &["::b0", "::b1", "::b2", "::b3"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

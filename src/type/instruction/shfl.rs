@@ -21,7 +21,8 @@ pub mod section_0 {
     pub struct ShflModeB32 {
         pub mode: Mode, // .mode
         pub b32: (), // .b32
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: Operand, // a
         pub b: Operand, // b
         pub c: Operand, // c

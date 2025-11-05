@@ -51,48 +51,18 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Irnd {
+    impl PtxParser for F4x4type {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Rni
+            // Try E2m1x4
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".rni").is_ok() {
-                    return Ok(Irnd::Rni);
+                if stream.expect_string(".e2m1x4").is_ok() {
+                    return Ok(F4x4type::E2m1x4);
                 }
                 stream.set_position(saved_pos);
             }
-            let saved_pos = stream.position();
-            // Try Rzi
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rzi").is_ok() {
-                    return Ok(Irnd::Rzi);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Rmi
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rmi").is_ok() {
-                    return Ok(Irnd::Rmi);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Rpi
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rpi").is_ok() {
-                    return Ok(Irnd::Rpi);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".rni", ".rzi", ".rmi", ".rpi"];
+            let expected = &[".e2m1x4"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -352,67 +322,6 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for F8x4type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E4m3x4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3x4").is_ok() {
-                    return Ok(F8x4type::E4m3x4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try E5m2x4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2x4").is_ok() {
-                    return Ok(F8x4type::E5m2x4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e4m3x4", ".e5m2x4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for F4x2type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E2m1x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e2m1x2").is_ok() {
-                    return Ok(F4x2type::E2m1x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e2m1x2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for F4x4type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E2m1x4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e2m1x4").is_ok() {
-                    return Ok(F4x4type::E2m1x4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e2m1x4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Frnd {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Rn
@@ -455,6 +364,97 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".rn", ".rz", ".rm", ".rp"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for F8x2type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try E4m3x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e4m3x2").is_ok() {
+                    return Ok(F8x2type::E4m3x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try E5m2x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e5m2x2").is_ok() {
+                    return Ok(F8x2type::E5m2x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".e4m3x2", ".e5m2x2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for F4x2type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try E2m1x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e2m1x2").is_ok() {
+                    return Ok(F4x2type::E2m1x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".e2m1x2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Irnd {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Rni
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rni").is_ok() {
+                    return Ok(Irnd::Rni);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Rzi
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rzi").is_ok() {
+                    return Ok(Irnd::Rzi);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rmi
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rmi").is_ok() {
+                    return Ok(Irnd::Rmi);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rpi
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rpi").is_ok() {
+                    return Ok(Irnd::Rpi);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".rni", ".rzi", ".rmi", ".rpi"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -514,6 +514,33 @@ pub mod section_0 {
         }
     }
 
+    impl PtxParser for F8x4type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try E4m3x4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e4m3x4").is_ok() {
+                    return Ok(F8x4type::E4m3x4);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try E5m2x4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e5m2x4").is_ok() {
+                    return Ok(F8x4type::E5m2x4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".e4m3x4", ".e5m2x4"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Frnd3 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Rz
@@ -563,33 +590,6 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".rn", ".rz"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for F8x2type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E4m3x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3x2").is_ok() {
-                    return Ok(F8x2type::E4m3x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try E5m2x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2x2").is_ok() {
-                    return Ok(F8x2type::E5m2x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e4m3x2", ".e5m2x2"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

@@ -25,33 +25,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Btype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Btype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Mask {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try H0
@@ -84,173 +57,6 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".h0", ".h1", ".h10"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Bsel {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try H00
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h00").is_ok() {
-                    return Ok(Bsel::H00);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try H01
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h01").is_ok() {
-                    return Ok(Bsel::H01);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H02
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h02").is_ok() {
-                    return Ok(Bsel::H02);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H03
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h03").is_ok() {
-                    return Ok(Bsel::H03);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H10
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h10").is_ok() {
-                    return Ok(Bsel::H10);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H11
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h11").is_ok() {
-                    return Ok(Bsel::H11);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H12
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h12").is_ok() {
-                    return Ok(Bsel::H12);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H13
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h13").is_ok() {
-                    return Ok(Bsel::H13);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H20
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h20").is_ok() {
-                    return Ok(Bsel::H20);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H21
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h21").is_ok() {
-                    return Ok(Bsel::H21);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H22
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h22").is_ok() {
-                    return Ok(Bsel::H22);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H23
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h23").is_ok() {
-                    return Ok(Bsel::H23);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H30
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h30").is_ok() {
-                    return Ok(Bsel::H30);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H31
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h31").is_ok() {
-                    return Ok(Bsel::H31);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h32").is_ok() {
-                    return Ok(Bsel::H32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H33
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h33").is_ok() {
-                    return Ok(Bsel::H33);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".h00", ".h01", ".h02", ".h03", ".h10", ".h11", ".h12", ".h13", ".h20", ".h21", ".h22", ".h23", ".h30", ".h31", ".h32", ".h33"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -423,33 +229,6 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Dtype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Dtype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Atype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try U32
@@ -466,6 +245,227 @@ pub mod section_0 {
                 let saved_pos = stream.position();
                 if stream.expect_string(".s32").is_ok() {
                     return Ok(Atype::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".s32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Bsel {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try H00
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h00").is_ok() {
+                    return Ok(Bsel::H00);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try H01
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h01").is_ok() {
+                    return Ok(Bsel::H01);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H02
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h02").is_ok() {
+                    return Ok(Bsel::H02);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H03
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h03").is_ok() {
+                    return Ok(Bsel::H03);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H10
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h10").is_ok() {
+                    return Ok(Bsel::H10);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H11
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h11").is_ok() {
+                    return Ok(Bsel::H11);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H12
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h12").is_ok() {
+                    return Ok(Bsel::H12);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H13
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h13").is_ok() {
+                    return Ok(Bsel::H13);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H20
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h20").is_ok() {
+                    return Ok(Bsel::H20);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H21
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h21").is_ok() {
+                    return Ok(Bsel::H21);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H22
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h22").is_ok() {
+                    return Ok(Bsel::H22);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H23
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h23").is_ok() {
+                    return Ok(Bsel::H23);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H30
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h30").is_ok() {
+                    return Ok(Bsel::H30);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H31
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h31").is_ok() {
+                    return Ok(Bsel::H31);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h32").is_ok() {
+                    return Ok(Bsel::H32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try H33
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".h33").is_ok() {
+                    return Ok(Bsel::H33);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".h00", ".h01", ".h02", ".h03", ".h10", ".h11", ".h12", ".h13", ".h20", ".h21", ".h22", ".h23", ".h30", ".h31", ".h32", ".h33"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Btype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Btype::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Btype::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".s32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Dtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Dtype::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Dtype::S32);
                 }
                 stream.set_position(saved_pos);
             }

@@ -93,6 +93,7 @@ pub mod section_0 {
                 mode,
                 b32,
                 d,
+                p,
                 a,
                 b,
                 c,

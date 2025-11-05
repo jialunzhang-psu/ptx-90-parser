@@ -25,63 +25,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Squery {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try ForceUnnormalizedCoords
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".force_unnormalized_coords").is_ok() {
-                    return Ok(Squery::ForceUnnormalizedCoords);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try FilterMode
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".filter_mode").is_ok() {
-                    return Ok(Squery::FilterMode);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try AddrMode0
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".addr_mode_0").is_ok() {
-                    return Ok(Squery::AddrMode0);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try AddrMode1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("addr_mode_1").is_ok() {
-                    return Ok(Squery::AddrMode1);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try AddrMode2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("addr_mode_2").is_ok() {
-                    return Ok(Squery::AddrMode2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".force_unnormalized_coords", ".filter_mode", ".addr_mode_0", "addr_mode_1", "addr_mode_2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Tquery {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Width
@@ -174,6 +117,63 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".width", ".height", ".depth", ".channel_data_type", ".channel_order", ".normalized_coords", ".array_size", ".num_mipmap_levels", ".num_samples"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Squery {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try ForceUnnormalizedCoords
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".force_unnormalized_coords").is_ok() {
+                    return Ok(Squery::ForceUnnormalizedCoords);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try FilterMode
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".filter_mode").is_ok() {
+                    return Ok(Squery::FilterMode);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try AddrMode0
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".addr_mode_0").is_ok() {
+                    return Ok(Squery::AddrMode0);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try AddrMode1
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("addr_mode_1").is_ok() {
+                    return Ok(Squery::AddrMode1);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try AddrMode2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("addr_mode_2").is_ok() {
+                    return Ok(Squery::AddrMode2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".force_unnormalized_coords", ".filter_mode", ".addr_mode_0", "addr_mode_1", "addr_mode_2"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

@@ -30,33 +30,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Ctype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Ctype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".s32", ".f32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Geom {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try _1d
@@ -149,6 +122,33 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".1d", ".2d", ".3d", ".a1d", ".a2d", ".cube", ".acube", ".2dms", ".a2dms"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Ctype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Ctype::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try F32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f32").is_ok() {
+                    return Ok(Ctype::F32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".s32", ".f32"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -314,6 +314,7 @@ pub mod section_0 {
                 dtype,
                 ctype,
                 d,
+                p,
                 a,
                 e,
                 f,
@@ -378,6 +379,7 @@ pub mod section_0 {
                 f16x2,
                 ctype,
                 d,
+                p,
                 a,
                 e,
                 f,
@@ -444,6 +446,7 @@ pub mod section_0 {
                 f16x2,
                 ctype,
                 d,
+                p,
                 a,
                 e,
                 f,
@@ -512,6 +515,7 @@ pub mod section_0 {
                 dtype,
                 ctype,
                 d,
+                p,
                 a,
                 e,
                 f,
@@ -582,6 +586,7 @@ pub mod section_0 {
                 dtype,
                 ctype,
                 d,
+                p,
                 a,
                 lod,
                 e,
@@ -655,6 +660,7 @@ pub mod section_0 {
                 dtype,
                 ctype,
                 d,
+                p,
                 a,
                 dpdx,
                 dpdy,
@@ -726,6 +732,7 @@ pub mod section_0 {
                 f16x2,
                 ctype,
                 d,
+                p,
                 a,
                 e,
                 f,
@@ -797,6 +804,7 @@ pub mod section_0 {
                 f16x2,
                 ctype,
                 d,
+                p,
                 a,
                 lod,
                 e,
@@ -871,6 +879,7 @@ pub mod section_0 {
                 f16x2,
                 ctype,
                 d,
+                p,
                 a,
                 dpdx,
                 dpdy,

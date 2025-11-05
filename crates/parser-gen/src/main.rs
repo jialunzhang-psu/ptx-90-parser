@@ -5,6 +5,7 @@ use parser_gen::analyzer::Analyzer;
 use parser_gen::r#type::{Modifier, Rule, Section};
 use parser_gen::type_generator::TypeGenerator;
 use parser_gen::parser_generator::ParserGenerator;
+use parser_gen::unparser_generator::UnparserGenerator;
 use ptx_parser_gen as parser_gen;
 use std::collections::BTreeSet;
 use std::fs;
@@ -69,6 +70,13 @@ enum Command {
         #[arg(value_name = "OUTPUT_DIR")]
         output_dir: PathBuf,
     },
+    /// Generate Rust unparser implementations from PTX specification files.
+    GenerateUnparser {
+        #[arg(value_name = "INPUT_DIR")]
+        input_dir: PathBuf,
+        #[arg(value_name = "OUTPUT_DIR")]
+        output_dir: PathBuf,
+    },
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -84,6 +92,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         Command::GenerateParser { input_dir, output_dir } => {
             generate_parsers(&input_dir, &output_dir)?;
+        }
+        Command::GenerateUnparser { input_dir, output_dir } => {
+            generate_unparsers(&input_dir, &output_dir)?;
         }
     }
     Ok(())
@@ -527,6 +538,147 @@ fn process_parser_file(input_path: &Path, output_dir: &Path) -> Result<ParserMod
     Ok(ParserModuleInfo {
         module_name,
         opcodes,
+        instruction_structs: all_instruction_structs,
+    })
+}
+
+fn generate_unparsers(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
+    fs::create_dir_all(output_dir)?;
+
+    let mut entries: Vec<_> = fs::read_dir(input_dir)?
+        .filter_map(Result::ok)
+        .filter(|entry| {
+            entry.path().is_file()
+                && entry
+                    .path()
+                    .extension()
+                    .map_or(false, |ext| ext == "txt")
+        })
+        .collect();
+    entries.sort_unstable_by(|a, b| a.path().cmp(&b.path()));
+
+    let mut success_count = 0;
+    let mut error_count = 0;
+    let mut module_info = Vec::new();
+
+    for entry in entries {
+        let path = entry.path();
+        let file_name = path.file_stem().unwrap().to_string_lossy();
+
+        eprint!("Processing: {} ... ", file_name);
+
+        match process_unparser_file(&path, output_dir) {
+            Ok(info) => {
+                eprintln!("OK");
+                success_count += 1;
+                module_info.push(info);
+            }
+            Err(e) => {
+                eprintln!("ERROR");
+                eprintln!("  Error: {}", e);
+                error_count += 1;
+            }
+        }
+    }
+
+    eprintln!("\nSummary: {} succeeded, {} failed", success_count, error_count);
+
+    if error_count > 0 {
+        return Err(format!("Generation failed: {} errors", error_count).into());
+    }
+
+    eprintln!("Generating unparser mod.rs ...");
+    let modules: Vec<(String, Vec<(String, String)>)> = module_info
+        .iter()
+        .map(|info| (info.module_name.clone(), info.instruction_structs.clone()))
+        .collect();
+    let content = parser_gen::unparser_generator::generate_unparser_mod_rs_content(&modules);
+    let mod_path = output_dir.join("mod.rs");
+    fs::write(&mod_path, content)?;
+    eprintln!("unparser mod.rs generated successfully");
+
+    Ok(())
+}
+
+fn process_unparser_file(input_path: &Path, output_dir: &Path) -> Result<ModuleInfo, Box<dyn std::error::Error>> {
+    let content = fs::read_to_string(input_path)?;
+    let file_name = input_path.file_name().unwrap().to_string_lossy();
+
+    let sections = parser_gen::parse_spec_with_name(&content, &file_name)?;
+
+    if sections.is_empty() {
+        return Err("No sections found in file".into());
+    }
+
+    let mut analyzer = Analyzer::new();
+    let analyzed_sections = analyzer.analyze_sections(&sections);
+
+    if analyzed_sections.is_empty() {
+        return Err("No instructions found".into());
+    }
+
+    let module_name = input_path
+        .file_stem()
+        .unwrap()
+        .to_string_lossy()
+        .replace('.', "_");
+
+    let mut all_outputs = Vec::new();
+    let mut unparser_gen = UnparserGenerator::new();
+
+    for (section_idx, section) in analyzed_sections.iter().enumerate() {
+        let generated = unparser_gen.generate(section, section_idx, &module_name);
+
+        if !generated.code.trim().is_empty() {
+            all_outputs.push(generated);
+        }
+    }
+
+    if all_outputs.is_empty() {
+        return Err("No instructions found".into());
+    }
+
+    let all_instruction_structs: Vec<(String, String)> = all_outputs
+        .iter()
+        .flat_map(|output| {
+            let section_name = output.module_name.clone();
+            output
+                .instruction_structs
+                .iter()
+                .map(move |struct_name| (section_name.clone(), struct_name.clone()))
+        })
+        .collect();
+
+    let mut output = String::new();
+    output.push_str("//! Original PTX specification:\n");
+    output.push_str("//!\n");
+    for line in content.lines() {
+        output.push_str("//! ");
+        output.push_str(line);
+        output.push_str("\n");
+    }
+    output.push_str("\n");
+    output.push_str("#![allow(unused)]\n");
+    output.push_str("\n");
+    output.push_str(&UnparserGenerator::generate_imports());
+    output.push_str("\n\n");
+
+    for gen_output in all_outputs.iter() {
+        output.push_str(&gen_output.code);
+        output.push_str("\n");
+    }
+
+    let output_file_name = input_path
+        .file_stem()
+        .unwrap()
+        .to_string_lossy()
+        .replace('.', "_");
+
+    let output_path = output_dir.join(format!("{}.rs", output_file_name));
+    fs::write(&output_path, output)?;
+
+    Ok(ModuleInfo {
+        module_name,
         instruction_structs: all_instruction_structs,
     })
 }

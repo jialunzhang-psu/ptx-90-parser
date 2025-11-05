@@ -20,38 +20,48 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Dtype {
+    impl PtxParser for Comp {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
+            // Try R
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Dtype::U32);
+                if stream.expect_string(".r").is_ok() {
+                    return Ok(Comp::R);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try S32
+            // Try G
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Dtype::S32);
+                if stream.expect_string(".g").is_ok() {
+                    return Ok(Comp::G);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try F32
+            // Try B
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Dtype::F32);
+                if stream.expect_string(".b").is_ok() {
+                    return Ok(Comp::B);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try A
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".a").is_ok() {
+                    return Ok(Comp::A);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32", ".f32"];
+            let expected = &[".r", ".g", ".b", ".a"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -104,48 +114,38 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Comp {
+    impl PtxParser for Dtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try R
+            // Try U32
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".r").is_ok() {
-                    return Ok(Comp::R);
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Dtype::U32);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try G
+            // Try S32
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".g").is_ok() {
-                    return Ok(Comp::G);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b").is_ok() {
-                    return Ok(Comp::B);
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Dtype::S32);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try A
+            // Try F32
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".a").is_ok() {
-                    return Ok(Comp::A);
+                if stream.expect_string(".f32").is_ok() {
+                    return Ok(Dtype::F32);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".r", ".g", ".b", ".a"];
+            let expected = &[".u32", ".s32", ".f32"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -210,6 +210,7 @@ pub mod section_0 {
                 dtype,
                 f32,
                 d,
+                p,
                 a,
                 e,
                 f,
@@ -278,6 +279,7 @@ pub mod section_0 {
                 dtype,
                 f32,
                 d,
+                p,
                 a,
                 e,
                 f,

@@ -30,7 +30,8 @@ pub mod section_0 {
     pub struct Lop3BoolopB32 {
         pub boolop: Boolop, // .BoolOp
         pub b32: (), // .b32
-        pub d: Operand, // d|p
+        pub d: Operand, // first operand of d|p
+        pub p: Operand, // second operand of d|p
         pub a: Operand, // a
         pub b: Operand, // b
         pub c: Operand, // c

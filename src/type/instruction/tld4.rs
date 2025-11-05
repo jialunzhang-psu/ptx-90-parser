@@ -42,7 +42,8 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub f32: (), // .f32
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand), // [a, c]
         pub e: Option<Operand>, // {, e}
         pub f: Option<Operand>, // {, f}
@@ -55,7 +56,8 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub f32: (), // .f32
-        pub d: Operand, // d{|p}
+        pub d: Operand, // first operand of d{|p}
+        pub p: Option<Operand>, // optional second operand of d{|p}
         pub a: (Operand, Operand, Operand), // [a, b, c]
         pub e: Option<Operand>, // {, e}
         pub f: Option<Operand>, // {, f}

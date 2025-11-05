@@ -126,51 +126,6 @@ pub enum Axis {
 }
 
 /* --------------------------------------------------- */
-/* ------------------ Memory Operands ---------------- */
-/* --------------------------------------------------- */
-
-/// Representation of an address operand.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum AddressOperand {
-    /// base[immIndex]
-    Array(VariableSymbol, Immediate),
-    ImmediateAddress(Immediate),
-    Offset(AddressBase, Option<AddressOffset>),
-}
-
-/// Base location referenced by an address expression.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum AddressBase {
-    Register(RegisterOperand),
-    Variable(VariableSymbol),
-}
-
-/// Specific adjustment applied within a displacement term.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum AddressOffset {
-    Register(RegisterOperand),
-    Immediate(Sign, Immediate),
-}
-
-/* --------------------------------------------------- */
-/* -------------------- Register Operands ------------ */
-/* --------------------------------------------------- */
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum RegisterOperand {
-    /// `%r1`
-    Single(String),
-    /// `{%r1, %r2}`
-    Vector2([String; 2]),
-    /// `{%r1, %r2, %r3, %r4}`
-    Vector4([String; 4]),
-}
-
-/// Predicate register names (e.g., `%p0`).
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PredicateRegister(pub String);
-
-/* --------------------------------------------------- */
 /* -------------------- Label ------------------------ */
 /* --------------------------------------------------- */
 
@@ -265,14 +220,75 @@ pub enum SpecialRegister {
 }
 
 /* --------------------------------------------------- */
-/* ------------------- Most Common Operand ----------- */
+/* ------------------- Operands ---------------------- */
 /* --------------------------------------------------- */
+
+/// Texture handler with 2 operands, e.g. [%r1, %r2]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TexHandler2([GeneralOperand; 2]);
+
+/// Texture handler with 3 operands, e.g. [%r1{, %r2}, %r3] and [%r1, %r2, %r3]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TexHandler3([GeneralOperand; 3]);
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum GeneralOperand{
+    Vec(VectorOperand),
+    Single(Operand),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum VectorOperand {
+    /// {%r1}
+    Vector1(Operand),
+    /// {%r1, %r2}
+    Vector2([Operand; 2]),
+    /// {%r1, %r2, %r3}
+    Vector3([Operand; 3]),
+    /// {%r1, %r2, %r3, %r4}
+    Vector4([Operand; 4]),
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Operand {
+    /// %r1
     Register(RegisterOperand),
+    /// 0xffff
     Immediate(Immediate),
+    /// foo
     Symbol(String),
+}
+
+/// Register operand starting with % (e.g., `%r1`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RegisterOperand(pub String);
+/// Predicate register names (e.g., `%p0`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PredicateRegister(pub String);
+
+/// Representation of an address operand.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum AddressOperand {
+    /// base[immIndex]
+    Array(VariableSymbol, Immediate),
+    /// Immediate address value, e.g., [0xffff], unsigned, 32-bit
+    ImmediateAddress(Immediate),
+    /// Offset address with optional displacement, e.g., [base + offset] and [base]
+    Offset(AddressBase, Option<AddressOffset>),
+}
+
+/// Base location referenced by an address expression.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum AddressBase {
+    Register(RegisterOperand),
+    Variable(VariableSymbol),
+}
+
+/// Specific adjustment applied within a displacement term.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum AddressOffset {
+    Register(RegisterOperand),
+    Immediate(Sign, Immediate),
 }
 
 /* --------------------------------------------------- */

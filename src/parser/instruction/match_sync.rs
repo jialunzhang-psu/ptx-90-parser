@@ -95,6 +95,7 @@ pub mod section_0 {
                 sync,
                 type_,
                 d,
+                p,
                 a,
                 membermask,
             })

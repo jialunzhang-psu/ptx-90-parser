@@ -184,7 +184,7 @@ fn parse_return_parameter(
 fn parse_optional_noreturn(
     stream: &mut PtxTokenStream,
     directives: &mut Vec<FunctionHeaderDirective>,
-)-> Result<bool, PtxParseError> {
+) -> Result<bool, PtxParseError> {
     if let Some((token, _)) = stream.peek().ok() {
         if let PtxToken::Dot = token {
             // Check if it's a directive

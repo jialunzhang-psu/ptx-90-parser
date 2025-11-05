@@ -32,6 +32,104 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Shape1 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try _16x64b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".16x64b").is_ok() {
+                    return Ok(Shape1::_16x64b);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try _16x128b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".16x128b").is_ok() {
+                    return Ok(Shape1::_16x128b);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try _16x256b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".16x256b").is_ok() {
+                    return Ok(Shape1::_16x256b);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try _32x32b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".32x32b").is_ok() {
+                    return Ok(Shape1::_32x32b);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".16x64b", ".16x128b", ".16x256b", ".32x32b"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Pack {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Pack16b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".pack::16b").is_ok() {
+                    return Ok(Pack::Pack16b);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".pack::16b"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Shape4 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try _16x32bx2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".16x32bx2").is_ok() {
+                    return Ok(Shape4::_16x32bx2);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".16x32bx2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Shape3 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try _32x32b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".32x32b").is_ok() {
+                    return Ok(Shape3::_32x32b);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".32x32b"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Num {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try X1
@@ -119,50 +217,6 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Shape3 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try _32x32b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".32x32b").is_ok() {
-                    return Ok(Shape3::_32x32b);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".32x32b"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Redop {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Min
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".min").is_ok() {
-                    return Ok(Redop::Min);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Max
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".max").is_ok() {
-                    return Ok(Redop::Max);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".min", ".max"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Shape2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try _16x32bx2
@@ -207,82 +261,28 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Shape1 {
+    impl PtxParser for Redop {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try _16x64b
+            // Try Min
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".16x64b").is_ok() {
-                    return Ok(Shape1::_16x64b);
+                if stream.expect_string(".min").is_ok() {
+                    return Ok(Redop::Min);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try _16x128b
+            // Try Max
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".16x128b").is_ok() {
-                    return Ok(Shape1::_16x128b);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try _16x256b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".16x256b").is_ok() {
-                    return Ok(Shape1::_16x256b);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try _32x32b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".32x32b").is_ok() {
-                    return Ok(Shape1::_32x32b);
+                if stream.expect_string(".max").is_ok() {
+                    return Ok(Redop::Max);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".16x64b", ".16x128b", ".16x256b", ".32x32b"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Pack {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Pack16b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".pack::16b").is_ok() {
-                    return Ok(Pack::Pack16b);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".pack::16b"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Shape4 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try _16x32bx2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".16x32bx2").is_ok() {
-                    return Ok(Shape4::_16x32bx2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".16x32bx2"];
+            let expected = &[".min", ".max"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

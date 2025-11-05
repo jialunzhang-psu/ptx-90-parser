@@ -46,77 +46,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Stsem {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Relaxed
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".relaxed").is_ok() {
-                    return Ok(Stsem::Relaxed);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Release
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".release").is_ok() {
-                    return Ok(Stsem::Release);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".relaxed", ".release"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Redsem {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Relaxed
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".relaxed").is_ok() {
-                    return Ok(Redsem::Relaxed);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Release
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".release").is_ok() {
-                    return Ok(Redsem::Release);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".relaxed", ".release"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".global"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Scope {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Cta
@@ -191,68 +120,18 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Op {
+    impl PtxParser for Ss {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Min
+            // Try Global
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".min").is_ok() {
-                    return Ok(Op::Min);
+                if stream.expect_string(".global").is_ok() {
+                    return Ok(Ss::Global);
                 }
                 stream.set_position(saved_pos);
             }
-            let saved_pos = stream.position();
-            // Try Max
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".max").is_ok() {
-                    return Ok(Op::Max);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Add
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".add").is_ok() {
-                    return Ok(Op::Add);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try And
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".and").is_ok() {
-                    return Ok(Op::And);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Or
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".or").is_ok() {
-                    return Ok(Op::Or);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Xor
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".xor").is_ok() {
-                    return Ok(Op::Xor);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".min", ".max", ".add", ".and", ".or", ".xor"];
+            let expected = &[".global"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -320,6 +199,127 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".b32", ".b64", ".u32", ".u64", ".s32", ".s64"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Redsem {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Relaxed
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".relaxed").is_ok() {
+                    return Ok(Redsem::Relaxed);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Release
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".release").is_ok() {
+                    return Ok(Redsem::Release);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".relaxed", ".release"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Stsem {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Relaxed
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".relaxed").is_ok() {
+                    return Ok(Stsem::Relaxed);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Release
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".release").is_ok() {
+                    return Ok(Stsem::Release);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".relaxed", ".release"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Op {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Min
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".min").is_ok() {
+                    return Ok(Op::Min);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Max
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".max").is_ok() {
+                    return Ok(Op::Max);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Add
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".add").is_ok() {
+                    return Ok(Op::Add);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try And
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".and").is_ok() {
+                    return Ok(Op::And);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Or
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Op::Or);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Xor
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".xor").is_ok() {
+                    return Ok(Op::Xor);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".min", ".max", ".add", ".and", ".or", ".xor"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -541,28 +541,172 @@ pub mod section_1 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Redsem {
+    impl PtxParser for Redop {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Relaxed
+            // Try Add
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".relaxed").is_ok() {
-                    return Ok(Redsem::Relaxed);
+                if stream.expect_string(".add").is_ok() {
+                    return Ok(Redop::Add);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".add"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try F16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f16").is_ok() {
+                    return Ok(Type::F16);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try Release
+            // Try F16x2
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".release").is_ok() {
-                    return Ok(Redsem::Release);
+                if stream.expect_string(".f16x2").is_ok() {
+                    return Ok(Type::F16x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Bf16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".bf16").is_ok() {
+                    return Ok(Type::Bf16);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Bf16x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".bf16x2").is_ok() {
+                    return Ok(Type::Bf16x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try F32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f32").is_ok() {
+                    return Ok(Type::F32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try F64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f64").is_ok() {
+                    return Ok(Type::F64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try E5m2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e5m2").is_ok() {
+                    return Ok(Type::E5m2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try E5m2x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e5m2x2").is_ok() {
+                    return Ok(Type::E5m2x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try E5m2x4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e5m2x4").is_ok() {
+                    return Ok(Type::E5m2x4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try E4m3
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e4m3").is_ok() {
+                    return Ok(Type::E4m3);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try E4m3x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e4m3x2").is_ok() {
+                    return Ok(Type::E4m3x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try E4m3x4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e4m3x4").is_ok() {
+                    return Ok(Type::E4m3x4);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".relaxed", ".release"];
+            let expected = &[".f16", ".f16x2", ".bf16", ".bf16x2", ".f32", ".f64", ".e5m2", ".e5m2x2", ".e5m2x4", ".e4m3", ".e4m3x2", ".e4m3x4"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Ldsem {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Relaxed
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".relaxed").is_ok() {
+                    return Ok(Ldsem::Relaxed);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Acquire
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".acquire").is_ok() {
+                    return Ok(Ldsem::Acquire);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".relaxed", ".acquire"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -580,87 +724,6 @@ pub mod section_1 {
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".global"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Op {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Min
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".min").is_ok() {
-                    return Ok(Op::Min);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Max
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".max").is_ok() {
-                    return Ok(Op::Max);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Add
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".add").is_ok() {
-                    return Ok(Op::Add);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".min", ".max", ".add"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for AccPrec {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try AccF32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".acc::f32").is_ok() {
-                    return Ok(AccPrec::AccF32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try AccF16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".acc::f16").is_ok() {
-                    return Ok(AccPrec::AccF16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".acc::f32", ".acc::f16"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Redop {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Add
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".add").is_ok() {
-                    return Ok(Redop::Add);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".add"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -844,155 +907,92 @@ pub mod section_1 {
         }
     }
 
-    impl PtxParser for Ldsem {
+    impl PtxParser for AccPrec {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Relaxed
+            // Try AccF32
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".relaxed").is_ok() {
-                    return Ok(Ldsem::Relaxed);
+                if stream.expect_string(".acc::f32").is_ok() {
+                    return Ok(AccPrec::AccF32);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try Acquire
+            // Try AccF16
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".acquire").is_ok() {
-                    return Ok(Ldsem::Acquire);
+                if stream.expect_string(".acc::f16").is_ok() {
+                    return Ok(AccPrec::AccF16);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".relaxed", ".acquire"];
+            let expected = &[".acc::f32", ".acc::f16"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
 
-    impl PtxParser for Type {
+    impl PtxParser for Redsem {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
+            // Try Relaxed
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Type::F16);
+                if stream.expect_string(".relaxed").is_ok() {
+                    return Ok(Redsem::Relaxed);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try F16x2
+            // Try Release
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".f16x2").is_ok() {
-                    return Ok(Type::F16x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Bf16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".bf16").is_ok() {
-                    return Ok(Type::Bf16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Bf16x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".bf16x2").is_ok() {
-                    return Ok(Type::Bf16x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Type::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try F64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f64").is_ok() {
-                    return Ok(Type::F64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E5m2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2").is_ok() {
-                    return Ok(Type::E5m2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E5m2x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2x2").is_ok() {
-                    return Ok(Type::E5m2x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E5m2x4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2x4").is_ok() {
-                    return Ok(Type::E5m2x4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E4m3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3").is_ok() {
-                    return Ok(Type::E4m3);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E4m3x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3x2").is_ok() {
-                    return Ok(Type::E4m3x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E4m3x4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3x4").is_ok() {
-                    return Ok(Type::E4m3x4);
+                if stream.expect_string(".release").is_ok() {
+                    return Ok(Redsem::Release);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".f16x2", ".bf16", ".bf16x2", ".f32", ".f64", ".e5m2", ".e5m2x2", ".e5m2x4", ".e4m3", ".e4m3x2", ".e4m3x4"];
+            let expected = &[".relaxed", ".release"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Op {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Min
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".min").is_ok() {
+                    return Ok(Op::Min);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Max
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".max").is_ok() {
+                    return Ok(Op::Max);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Add
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".add").is_ok() {
+                    return Ok(Op::Add);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".min", ".max", ".add"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

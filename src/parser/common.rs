@@ -42,7 +42,9 @@ pub(crate) fn parse_register_name(
         match next {
             PtxToken::Dot => {
                 // Peek ahead to see if this is a component like .x, .y, .z or a regular component
-                if let Some((PtxToken::Identifier(_component_name), _)) = stream.tokens.get(stream.index + 1) {
+                if let Some((PtxToken::Identifier(_component_name), _)) =
+                    stream.tokens.get(stream.index + 1)
+                {
                     // consume the dot and identifier
                     stream.consume()?;
                     let (component, component_span) = stream.expect_identifier()?;
@@ -322,55 +324,16 @@ impl PtxParser for Immediate {
 
 impl PtxParser for RegisterOperand {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        // Vector register
-        if stream.check(|token| matches!(token, PtxToken::LBrace)) {
-            let (_, brace_span) = stream.consume()?;
-            let mut span = brace_span.clone();
-
-            let mut registers = Vec::new();
-            loop {
-                let (name, reg_span) = parse_register_name(stream)?;
-                registers.push(name);
-                span.end = reg_span.end;
-
-                if stream
-                    .consume_if(|token| matches!(token, PtxToken::Comma))
-                    .is_some()
-                {
-                    continue;
-                }
-                break;
-            }
-
-            let (_, closing_span) = stream.expect(&PtxToken::RBrace)?;
-            span.end = closing_span.end;
-
-            match registers.len() {
-                2 => {
-                    let mut iter = registers.into_iter();
-                    Ok(RegisterOperand::Vector2([
-                        iter.next().unwrap(),
-                        iter.next().unwrap(),
-                    ]))
-                }
-                4 => {
-                    let mut iter = registers.into_iter();
-                    Ok(RegisterOperand::Vector4([
-                        iter.next().unwrap(),
-                        iter.next().unwrap(),
-                        iter.next().unwrap(),
-                        iter.next().unwrap(),
-                    ]))
-                }
-                other => Err(invalid_literal(
-                    span,
-                    format!("expected register vector of length 2 or 4, found {other}"),
-                )),
-            }
-        } else {
-            let (name, _) = parse_register_name(stream)?;
-            Ok(RegisterOperand::Single(name))
+        if !stream.check(|token| matches!(token, PtxToken::Register(_))) {
+            let (token, span) = stream.peek()?;
+            return Err(unexpected_value(
+                span.clone(),
+                &["register"],
+                format!("{token:?}"),
+            ));
         }
+        let (name, _) = parse_register_name(stream)?;
+        Ok(RegisterOperand(name))
     }
 }
 
@@ -603,13 +566,70 @@ impl PtxParser for SpecialRegister {
 
 impl PtxParser for Operand {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        if stream.check(|token| matches!(token, PtxToken::Register(_) | PtxToken::LBrace)) {
+        if stream.check(|token| matches!(token, PtxToken::LBrace)) {
+            let ( _, brace_span) = stream.consume()?; // consume '{'
+            let mut elements = Vec::new();
+            loop {
+                elements.push(Operand::parse(stream)?);
+                if stream
+                    .consume_if(|token| matches!(token, PtxToken::Comma))
+                    .is_some()
+                {
+                    continue;
+                }
+                break;
+            }
+            stream.expect(&PtxToken::RBrace)?;
+            match elements.len() {
+                1 => Ok(Operand::Vector1(Box::new(elements.remove(0)))),
+                2 => {
+                    let mut iter = elements.into_iter();
+                    Ok(Operand::Vector2(Box::new([
+                        iter.next().unwrap(),
+                        iter.next().unwrap(),
+                    ])))
+                }
+                3 => {
+                    let mut iter = elements.into_iter();
+                    Ok(Operand::Vector3(Box::new([
+                        iter.next().unwrap(),
+                        iter.next().unwrap(),
+                        iter.next().unwrap(),
+                    ])))
+                }
+                4 => {
+                    let mut iter = elements.into_iter();
+                    Ok(Operand::Vector4(Box::new([
+                        iter.next().unwrap(),
+                        iter.next().unwrap(),
+                        iter.next().unwrap(),
+                        iter.next().unwrap(),
+                    ])))
+                }
+                other => Err(invalid_literal(
+                    brace_span.clone(),
+                    format!("expected operand vector of length 1..=4, found {other}"),
+                )),
+            }
+        } else if stream.check(|token| matches!(token, PtxToken::Register(_))) {
             Ok(Operand::Register(RegisterOperand::parse(stream)?))
-        } else if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
-            let (identifier, _) = stream.expect_identifier()?;
-            Ok(Operand::Symbol(identifier))
         } else {
-            Ok(Operand::Immediate(Immediate::parse(stream)?))
+            let saved = stream.position();
+            if let Ok(immediate) = Immediate::parse(stream) {
+                return Ok(Operand::Immediate(immediate));
+            }
+            stream.set_position(saved);
+            if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
+                let (identifier, _) = stream.expect_identifier()?;
+                Ok(Operand::Symbol(identifier))
+            } else {
+                let (token, span) = stream.peek()?;
+                Err(unexpected_value(
+                    span.clone(),
+                    &["operand"],
+                    format!("{token:?}"),
+                ))
+            }
         }
     }
 }
@@ -703,12 +723,11 @@ impl PtxParser for AddressOperand {
         }
 
         let base = AddressBase::parse(stream)?;
-        let offset =
-            if stream.check(|token| matches!(token, PtxToken::Plus | PtxToken::Minus)) {
-                Some(AddressOffset::parse(stream)?)
-            } else {
-                None
-            };
+        let offset = if stream.check(|token| matches!(token, PtxToken::Plus | PtxToken::Minus)) {
+            Some(AddressOffset::parse(stream)?)
+        } else {
+            None
+        };
         stream.expect(&PtxToken::RBracket)?;
 
         Ok(AddressOperand::Offset(base, offset))

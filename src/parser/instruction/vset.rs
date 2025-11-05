@@ -24,6 +24,33 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Atype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Atype::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Atype::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".s32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Asel {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try B0
@@ -85,39 +112,6 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b0", ".b1", ".b2", ".b3", ".h0", ".h1"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Dsel {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            let start_pos = stream.position();
-            if stream.expect_string(".b0").is_ok() {
-                return Ok(Dsel::B0);
-            }
-            stream.set_position(start_pos);
-            if stream.expect_string(".b1").is_ok() {
-                return Ok(Dsel::B1);
-            }
-            stream.set_position(start_pos);
-            if stream.expect_string(".b2").is_ok() {
-                return Ok(Dsel::B2);
-            }
-            stream.set_position(start_pos);
-            if stream.expect_string(".b3").is_ok() {
-                return Ok(Dsel::B3);
-            }
-            stream.set_position(start_pos);
-            if stream.expect_string(".h0").is_ok() {
-                return Ok(Dsel::H0);
-            }
-            stream.set_position(start_pos);
-            if stream.expect_string(".h1").is_ok() {
-                return Ok(Dsel::H1);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(0..0);
             let expected = &[".b0", ".b1", ".b2", ".b3", ".h0", ".h1"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
@@ -186,33 +180,6 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".b0", ".b1", ".b2", ".b3", ".h0", ".h1"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Atype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Atype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -344,6 +311,39 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".add", ".min", ".max"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Dsel {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            let start_pos = stream.position();
+            if stream.expect_string(".b0").is_ok() {
+                return Ok(Dsel::B0);
+            }
+            stream.set_position(start_pos);
+            if stream.expect_string(".b1").is_ok() {
+                return Ok(Dsel::B1);
+            }
+            stream.set_position(start_pos);
+            if stream.expect_string(".b2").is_ok() {
+                return Ok(Dsel::B2);
+            }
+            stream.set_position(start_pos);
+            if stream.expect_string(".b3").is_ok() {
+                return Ok(Dsel::B3);
+            }
+            stream.set_position(start_pos);
+            if stream.expect_string(".h0").is_ok() {
+                return Ok(Dsel::H0);
+            }
+            stream.set_position(start_pos);
+            if stream.expect_string(".h1").is_ok() {
+                return Ok(Dsel::H1);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(0..0);
+            let expected = &[".b0", ".b1", ".b2", ".b3", ".h0", ".h1"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }

@@ -6,6 +6,7 @@ mod spec_parser;
 pub mod r#type;
 pub mod type_generator;
 pub mod parser_generator;
+pub mod unparser_generator;
 
 pub use lexer::{PtxSpecToken, Span, tokenize};
 pub use spec_parser::{SpecParseError, parse_spec, parse_spec_with_name};

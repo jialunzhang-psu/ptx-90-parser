@@ -1,116 +1,368 @@
-// #[path = "instruction/mod.rs"]
-// mod instruction;
 mod util;
-// use ptx_parser::{
-//     parser::ParseErrorKind,
-//     r#type::{
-//         common::{Immediate, Operand, PredicateRegister, RegisterOperand},
-//         instruction::{
-//             Instruction, InstructionOpcode,
-//             add::Add,
-//             barrier::{Barrier, BarrierSync, Scope},
-//             multimem::{Instruction as MultimemInstruction, Red},
-//         },
-//     },
-//     unparser::PtxUnparser,
-// };
-// use util::{assert_roundtrip, parse, parse_result, tokenize_only};
 
-// #[test]
-// fn parses_add_opcode_dispatch() {
-//     let InstructionOpcode::Add(Add {
-//         data_type,
-//         destination,
-//         a,
-//         b,
-//     }) = parse::<InstructionOpcode>("add.s32 %r0, %r1, %r2;")
-//     else {
-//         panic!("expected add opcode");
-//     };
+use ptx_parser::{r#type::instruction::Instruction, unparser::PtxUnparser};
+use util::{parse_result, tokenize_only};
 
-//     assert!(matches!(
-//         data_type,
-//         ptx_parser::r#type::instruction::add::DataType::S32 { .. }
-//     ));
-//     assert_eq!(destination, RegisterOperand::Single("%r0".into()));
-//     assert_eq!(a, RegisterOperand::Single("%r1".into()));
-//     assert_eq!(b, Operand::Register(RegisterOperand::Single("%r2".into())));
-//     assert_roundtrip::<InstructionOpcode>("add.s32 %r0, %r1, %r2;");
-// }
+const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
+    "abs.s32  r0,a;",
+    "activemask.b32  %r1;",
+    "@p  add.u32     x,y,z;",
+    "add.sat.s32 c,c,1;",
+    "add.u16x2   u,v,w;",
+    "@p  addc.cc.u32  x3,y3,z3;",
+    "@p  addc.u32     x4,y4,z4;",
+    "and.b32  x,q,r;",
+    "and.b32  sign,fpvalue,0x80000000;",
+    "applypriority.global.L2::evict_normal [ptr], 128;",
+    "atom.global.add.s32  d,[a],1;",
+    "@p  atom.global.cas.b32  d,[p],my_val,my_new_val;",
+    "atom.add.noftz.f16x2 d, [a], b;",
+    "atom.add.noftz.f16   hd, [ha], hb;",
+    "atom.global.cas.b16  hd, [ha], hb, hc;",
+    "atom.add.noftz.bf16   hd, [a], hb;",
+    "atom.add.noftz.bf16x2 bd, [b], bb;",
+    "createpolicy.fractional.L2::evict_last.b64 cache-policy, 0.25;",
+    "atom.global.add.L2::cache_hint.s32  d, [a], 1, cache-policy;",
+    "bfi.b32  d,a,b,start,len;",
+    "bfind.u32  d, a;",
+    "bmsk.clamp.b32  rd, ra, rb;",
+    "brev.b32  d, a;",
+    "brkpt;",
+    "@p  brkpt;",
+    "@p brx.idx %r0, ts;",
+    "@p    ld.global.u32  %r0, [jmptbl+4];",
+    "@p    ld.global.u32  %r0, [jmptbl+8];",
+    "call  (retval), %r0, (x, y), jmptbl;",
+    "@p    mov.u32  %r0, foo;",
+    "@q    mov.u32  %r0, baz;",
+    "call  (retval), %r0, (x, y), Ftgt;",
+    "call  %fptr, (x, y), Fproto;",
+    "mov.b32 xctaid, %ctaid.x;",
+    "barrier.cluster.arrive.relaxed;",
+    "barrier.cluster.wait.acquire;",
+    "mov.u32  %r0, %tid.x;",
+    "@!p0 bra asyncWork;",
+    "mov.u32  %r0, %cluster_ctaid.x;",
+    "@p0 clusterlaunchcontrol.try_cancel.async.mbarrier::complete_tx::bytes.multicast::cluster::all.b128 [addr], [mbar];",
+    "@!complete bra waitLoop;",
+    "ld.shared.b128 handle, [addr];",
+    "clusterlaunchcontrol.query_cancel.is_canceled.pred.b128 p, handle;",
+    "@p clusterlaunchcontrol.query_cancel.get_first_ctaid.v4.b32.b128 {xctaid, _, _, _},  handle;",
+    "fence.proxy.async.shared::cta;",
+    "bra processCluster;",
+    "clz.b32  d, a;",
+    "cnot.b32 d,a;",
+    "copysign.f32  x, y, z;",
+    "copysign.f64  A, B, C;",
+    "cos.approx.ftz.f32  ca, a;",
+    "cp.async.ca.shared.global  [shrd],    [gbl + 4], 4;",
+    "cp.async.cg.shared.global  [%r2],     [%r3],     16;",
+    "cp.async.cg.shared.global.L2::64B   [%r2],      [%r3],     16;",
+    "cp.async.cg.shared.global.L2::128B  [%r0 + 16], [%r1],     16;",
+    "cp.async.cg.shared.global.L2::256B  [%r2 + 32], [%r3],     16;",
+    "createpolicy.fractional.L2::evict_last.L2::evict_unchanged.b64 cache-policy, 0.25;",
+    "cp.async.ca.shared.global.L2::cache_hint [%r2], [%r1], 4, cache-policy;",
+    "cp.async.ca.shared.global                   [shrd], [gbl], 4, p;",
+    "cp.async.cg.shared.global.L2::cache_hint   [%r0], [%r2], 16, q, cache-policy;",
+    "createpolicy.fractional.L2::evict_last.b64                      policy, 1.0;",
+"createpolicy.fractional.L2::evict_last.L2::evict_unchanged.b64  policy, 0.5;",
+"createpolicy.range.L2::evict_last.L2::evict_first.b64 policy, [ptr], 0x100000, 0x200000;",
+    "createpolicy.cvt.L2.b64 policy, access-prop;",
+    "cvt.f32.s32 f,i;",
+    "cvta.const.u32   ptr,cvar;",
+    "cvta.local.u32   ptr,lptr;",
+    "cvta.to.global.u32  p,gptr;",
+    "cvta.param.u64   ptr,pvar;",
+    "discard.global.L2 [ptr], 128;",
+    "ld.weak.u32 r0, [ptr];",
+    "ld.weak.u32 r1, [ptr];",
+    "div.s32  b,n,i;",
+    "dp2a.lo.u32.u32           d0, a0, b0, c0;",
+    "dp2a.hi.u32.s32           d1, a1, b1, c1;",
+    "dp4a.u32.u32           d0, a0, b0, c0;",
+    "dp4a.u32.s32           d1, a1, b1, c1;",
+    "elect.sync    %r0|%p0, 0xffffffff;",
+    "ex2.approx.ftz.f32  xa, a;",
+    "exit;",
+    "@p  exit;",
+    "membar.gl;",
+    "membar.cta;",
+    "membar.sys;",
+    "fence.sc.cta;",
+    "fence.sc.cluster;",
+    "fence.proxy.alias;",
+    "membar.proxy.alias;",
+    "fence.mbarrier_init.release.cluster;",
+    "fence.proxy.async;",
+    "fence.proxy.async.shared::cluster;",
+    "fence.proxy.async.global;",
+    "tensormap.replace.tile.global_address.global.b1024.b64   [gbl], new_addr;",
+    "fence.proxy.tensormap::generic.release.gpu;",
+    "cvta.global.u64  tmap, gbl;",
+    "fence.proxy.tensormap::generic.acquire.gpu [tmap], 128;",
+    "fence.proxy.async::generic.acquire.sync_restrict::shared::cluster.cluster;",
+    "fence.proxy.async::generic.release.sync_restrict::shared::cta.cluster;",
+    "fence.acquire.sync_restrict::shared::cluster.cluster;",
+    "fence.release.sync_restrict::shared::cta.cluster;",
+    "mbarrier.arrive.relaxed.cluster.shared::cluster.b64 state, [bar];",
+    "fma.rn.ftz.f32  w,x,y,z;",
+    "@p  fma.rn.f64      d,a,b,c;",
+    "fma.rp.ftz.f32x2 p,q,r,s;",
+    "getctarank.shared::cluster.u32 d1, addr;",
+    "getctarank.shared::cluster.u64 d2, sh + 4;",
+    "getctarank.u64                 d3, src;",
+    "griddepcontrol.launch_dependents;",
+    "griddepcontrol.wait;",
+    "isspacep.const           iscnst, cptr;",
+    "isspacep.global          isglbl, gptr;",
+    "isspacep.local           islcl,  lptr;",
+    "isspacep.shared          isshrd, sptr;",
+    "istypep.texref istex, tptr;",
+    "istypep.samplerref issampler, sptr;",
+    "istypep.surfref issurface, surfptr;",
+    "ld.global.f32    d,[a];",
+    "ld.shared.v4.b32 Q,[p];",
+    "ld.const.s32     d,[p+4];",
+    "ld.global.f32    d,[ugbl].unified;",
+    "ld.b32           %r0, [%r1].unified;",
+    "ld.global.L1::evict_last.u32  d, [p];",
+    "createpolicy.fractional.L2::evict_last.L2::evict_unchanged.b64 cache-policy, 1;",
+    "ld.global.L2::cache_hint.b64  x, [p], cache-policy;",
+    "ld.param::entry.b32 %rp1, [kparam1];",
+    "ldmatrix.sync.aligned.m8n8.x2.trans.shared.b16 {d0, d1}, [addr];",
+    "ldmatrix.sync.aligned.m8n8.x4.b16 {d0, d1, d2, d3}, [addr];",
+    "ldmatrix.sync.aligned.m16n16.x1.trans.shared.b8 {d0, d1}, [addr];",
+    "ldu.global.f32    d,[a];",
+    "ldu.global.b32    d,[p+4];",
+    "ldu.global.v4.f32 Q,[p];",
+    "ldu.global.b128   d,[a];",
+    "lg2.approx.ftz.f32  la, a;",
+    "lop3.b32       d, a, b, c, 0x40;",
+    "lop3.or.b32  d|p, a, b, c, 0x3f, q;",
+    "lop3.and.b32 _|p, a, b, c, 0x3f, q;",
+    "@p  mad.lo.s32 d,a,b,c;",
+    "mad.lo.s32 r,p,q,r;",
+    "mapa.shared::cluster.u64 d1, %reg1, cta;",
+    "mapa.shared::cluster.u32 d2, sh, 3;",
+    "mapa.u64                 d3, %reg2, cta;",
+    "match.any.sync.b32    d, a, 0xffffffff;",
+    "match.all.sync.b64    d|p, a, mask;",
+    "max.u32  d,a,b;",
+    "max.s32  q,q,0;",
+    "max.relu.s16x2 t,t,u;",
+    "cvta.shared.u64          addr, shMem2;",
+    "mbarrier.init.b64        [addr],   %r1;",
+    "bar.cta.sync             0;",
+    "bar.sync                 0;",
+    "min.s32  r0,a,b;",
+    "@p  min.u16  h,i,j;",
+    "min.relu.s16x2 u,v,w;",
+    "mov.f32  d,a;",
+    "mov.u16  u,v;",
+    "mov.f32  k,0.1;",
+    "movmatrix.sync.aligned.m8n8.trans.b16 d, a;",
+    "multimem.ld_reduce.and.b32                    val1_b32, [addr1];",
+    "multimem.ld_reduce.acquire.gpu.global.add.u32 val2_u32, [addr2];",
+    "multimem.st.relaxed.gpu.b32                [addr3], val3_b32;",
+    "multimem.st.release.cta.global.u32         [addr4], val4_u32;",
+    "nanosleep.u32 r;",
+    "nanosleep.u32 42;",
+    "@p nanosleep.u32 r;",
+    "neg.s32  r0,a;",
+    "not.b32  mask,mask;",
+    "not.pred  p,q;",
+    "or.pred  p,q,r;",
+    "pmevent      1;",
+    "@p  pmevent      7;",
+    "@q  pmevent.mask 0xff;",
+    "popc.b32  d, a;",
+    "prefetch.global.L1             [ptr];",
+    "prefetch.global.L2::evict_last [ptr];",
+    "prefetchu.L1  [addr];",
+    "prefetch.const.tensormap       [ptr];",
+    "prmt.b32      r1, r2, r3, r4;",
+    "prmt.b32.f4e  r1, r2, r3, r4;",
+    "rcp.approx.ftz.f32  ri,r;",
+    "rcp.rn.ftz.f32      xi,x;",
+    "rcp.rn.f64          xi,x;",
+    "red.add.noftz.f16x2 [a], b;",
+    "red.add.noftz.bf16   [a], hb;",
+    "red.add.noftz.bf16x2 [b], bb;",
+    "redux.sync.add.s32 dst, src, 0xff;",
+    "redux.sync.xor.b32 dst, src, mask;",
+    "redux.sync.min.abs.NaN.f32 dst, src, mask;",
+    "rem.s32  x,x,8;",
+    "ret;",
+    "@p  ret;",
+    "rsqrt.approx.ftz.f32  isr, x;",
+    "rsqrt.approx.f64      ISR, X;",
+    "sad.s32  d,a,b,c;",
+    "selp.s32  r0,r,g,p;",
+    "@q  selp.f32  f0,t,x,xp;",
+    "@p  set.lt.and.f32.s32  d,a,b,r;",
+    "set.eq.u32.u32      d,i,n;",
+    "setmaxnreg.dec.sync.aligned.u32 64;",
+    "setmaxnreg.inc.sync.aligned.u32 192;",
+    "setp.lt.and.s32  p|q,a,b,r;",
+    "@q  setp.eq.u32      p,i,n;",
+    "shfl.up.b32  Ry|p, Rx, 0x1,  0x0;",
+    "@p  add.f32      Rx, Ry, Rx;",
+    "shfl.up.b32  Ry|p, Rx, 0x2,  0x0;",
+    "shfl.up.b32  Ry|p, Rx, 0x4,  0x0;",
+    "shfl.up.b32  Ry|p, Rx, 0x8,  0x0;",
+    "shfl.up.b32  Ry|p, Rx, 0x10, 0x0;",
+    "shfl.down.b32  Ry|p, Rx, 0x1,  0x1f;",
+    "@p  add.f32        Rx, Ry, Rx;",
+    "shfl.down.b32  Ry|p, Rx, 0x2,  0x1f;",
+    "shfl.down.b32  Ry|p, Rx, 0x4,  0x1f;",
+    "shfl.down.b32  Ry|p, Rx, 0x8,  0x1f;",
+    "shfl.down.b32  Ry|p, Rx, 0x10, 0x1f;",
+    "add.f32        Rx, Ry, Rx;",
+    "shfl.bfly.b32  Ry, Rx, 0x8,  0x1f;",
+    "shfl.bfly.b32  Ry, Rx, 0x4,  0x1f;",
+    "shfl.bfly.b32  Ry, Rx, 0x2,  0x1f;",
+    "shfl.bfly.b32  Ry, Rx, 0x1,  0x1f;",
+    "sin.approx.ftz.f32  sa, a;",
+    "slct.u32.s32  x, y, z, val;",
+    "slct.ftz.u64.f32  A, B, C, fval;",
+    "sqrt.approx.ftz.f32  r,x;",
+    "sqrt.rn.ftz.f32      r,x;",
+    "sqrt.rn.f64          r,x;",
+    "st.global.f32    [a],b;",
+    "st.local.b32     [q+4],a;",
+    "st.global.v4.s32 [p],Q;",
+    "st.global.L1::no_allocate.f32 [p], a;",
+    "st.global.L2::cache_hint.b32  [a], b, cache-policy;",
+    "stacksave.u32 ra;",
+    "stackrestore.u32 ra;",
+    "stacksave.u32 rd;",
+    "stacksave.u64 rd1;",
+    "stmatrix.sync.aligned.m8n8.x1.shared.b16 [addr], {r};",
+    "stmatrix.sync.aligned.m8n8.x4.b16 [addr], {r0, r1, r2, r3};",
+    "stmatrix.sync.aligned.m16n8.x1.trans.shared.b8 [addr], {r};",
+    "stmatrix.sync.aligned.m16n8.x4.b8 [addr], {r0, r1, r2, r3};",
+    "sub.s32 c,a,b;",
+    "@p  subc.cc.u32  x3,y3,z3;",
+    "@p  subc.u32     x4,y4,z4;",
+    "suld.b.1d.v4.b32.trap  {s1,s2,s3,s4}, [surf_B, {x}];",
+    "suld.b.3d.v2.b64.trap  {r1,r2}, [surf_A, {x,y,z,w}];",
+    "suld.b.a1d.v2.b32      {r0,r1}, [surf_C, {idx,x}];",
+    "suq.width.b32       %r1, [surf_A];",
+    "sured.b.add.2d.u32.trap  [surf_A, {x,y}], r1;",
+    "sured.p.min.1d.u32.trap  [surf_B, {x}], r1;",
+    "sured.b.max.1d.u64.trap  [surf_C, {x}], r1;",
+    "sured.p.min.1d.b64.trap  [surf_D, {x}], r1;",
+    "sust.p.1d.v4.b32.trap  [surf_B, {x}], {f1,f2,f3,f4};",
+    "sust.b.3d.v2.b64.trap  [surf_A, {x,y,z,w}], {r1,r2};",
+    "sust.b.a1d.v2.b64      [surf_C, {idx,x}], {r1,r2};",
+    "szext.clamp.s32 rd, ra, rb;",
+    "tanh.approx.f32 ta, a;",
+    "tcgen05.alloc.cta_group::1.sync.aligned.shared::cta.b32 [sMemAddr1], 32;",
+    "ld.shared.b32 taddr, [sMemAddr1];",
+    "tcgen05.dealloc.cta_group::1.sync.aligned.b32  taddr, 32;",
+    "tcgen05.relinquish_alloc_permit.cta_group::1.sync.aligned;",
+    "tcgen05.alloc.cta_group::2.sync.aligned.shared::cta.b32 [sMemAddr2], 32;",
+    "ld.shared.b32 taddr, [sMemAddr2];",
+    "tcgen05.dealloc.cta_group::2.sync.aligned.b32  taddr, 32;",
+    "tcgen05.relinquish_alloc_permit.cta_group::2.sync.aligned;",
+    "tensormap.replace.tile.global_address.shared::cta.b1024.b64   [sMem], new_val;",
+    "testp.notanumber.f32  isnan, f0;",
+    "testp.infinite.f64    p, X;",
+    "tex.3d.v4.s32.s32  {r1,r2,r3,r4}, [tex_a,{f1,f2,f3,f4}];",
+    "tex.1d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a,smpl_x,{f1}];",
+    "tex.a1d.v4.s32.s32 {r1,r2,r3,r4}, [tex_a,smpl_x,{idx,s1}];",
+    "tex.a2d.v4.s32.f32 {r1,r2,r3,r4}, [tex_a,{idx,f1,f2,f3}];",
+    "tex.acube.v4.f32.f32 {r0,r1,r2,r3}, [tex_cuarray,{idx,f1,f2,f3}];",
+    "tex.2dms.v4.s32.s32 {r0,r1,r2,r3}, [tex_ms,{sample,r6,r7,r8}];",
+    "tex.2dms.v4.s32.s32 {r0,r1,r2,r3}, [tex_ms, smpl_x,{sample,r6,r7,r8}];",
+    "tex.a2dms.v4.s32.s32 {r0,r1,r2,r3}, [tex_ams,{idx,sample,r6,r7}];",
+    "tex.1d.v4.f16.f32  {h1,h2,h3,h4}, [tex_a,smpl_x,{f1}];",
+    "tex.1d.v2.f16x2.f32  {h1,h2}, [tex_a,smpl_x,{f1}];",
+    "tex.1d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a, {f1}], {r5};",
+    "tex.a2d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a,{idx,f1,f2}], {f5,f6};",
+    "flvl, {r7, r8};",
+    "tex.1d.v4.f32.f32  {f1,f2,f3,f4}, [tex_a, {f1}], f0;",
+    "tex.a2d.v4.s32.f32  {f0,f1,f2,f3}, [tex_a,{idx,f4,f5}], {r5,r6}, f6;",
+    "tex.3d.v4.s32.s32 {r1,r2,r3,r4}|p, [tex_a,{f1,f2,f3,f4}];",
+    "tld4.r.2d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a,{f1,f2}];",
+    "tld4.r.2d.v4.u32.f32  {u1,u2,u3,u4}, [tex_a,smpl_x,{f1,f2}];",
+    "tld4.r.2d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a,{f1,f2}], {r5, r6};",
+    "tld4.r.2d.v4.f32.f32  {f1,f2,f3,f4}, [tex_a,{f5,f6}], f7;",
+    "tld4.r.2d.v4.f32.f32 {f1,f2,f3,f4}|p, [tex_a,{f5,f6}], f7;",
+    "trap;",
+    "@p  trap;",
+    "txq.width.b32       %r1, [tex_A];",
+    "txq.level.width.b32 %r1, [tex_A], %r_lod;",
+    "vadd.s32.u32.s32.sat      r1, r2.b0, r3.h0;",
+    "vsub.s32.s32.u32.sat      r1, r2.h1, r3.h1;",
+    "vabsdiff.s32.s32.s32.sat  r1.h0, r2.b0, r3.b2, c;",
+    "vmin.s32.s32.s32.sat.add  r1, r2, r3, c;",
+    "vadd2.s32.s32.u32.sat  r1, r2, r3, r1;",
+    "vsub2.s32.s32.s32.sat  r1.h0, r2.h10, r3.h32, r1;",
+    "vmin2.s32.u32.u32.add  r1.h10, r2.h00, r3.h22, r1;",
+    "vadd4.s32.s32.u32.sat  r1, r2, r3, r1;",
+    "vsub4.s32.s32.s32.sat  r1.b0, r2.b3210, r3.b7654, r1;",
+    "vmin4.s32.u32.u32.add  r1.b00, r2.b0000, r3.b2222, r1;",
+    "vmad.s32.s32.u32.sat    r0, r1, r2, -r3;",
+    "vmad.u32.u32.u32.shr15  r0, r1.h0, r2.h0, r3;",
+    "vote.all.pred    p,q;",
+    "vote.uni.pred    p,q;",
+    "vset.s32.u32.lt    r1, r2, r3;",
+    "vset.u32.u32.ne    r1, r2, r3.h1;",
+    "vset2.s32.u32.lt      r1, r2, r3, r0;",
+    "vset2.u32.u32.ne.add  r1, r2, r3, r0;",
+    "vset4.s32.u32.lt      r1, r2, r3, r0;",
+    "vset4.u32.u32.ne.max  r1, r2, r3, r0;",
+    "vshl.s32.u32.u32.clamp  r1, r2, r3;",
+    "vshr.u32.u32.u32.wrap   r1, r2, r3.h1;",
+    "wmma.load.b.sync.aligned.m16n16k16.row.f16 {x0,x1,x2,x3,x4,x5,x,x7}, [ptr];",
+    "{x0,x1,x2,x3,x4,x5,x6,x7}, [ptr];",
+    "mul.f32 x0, x0, 0.1;",
+    "mul.f32 x7, x7, 0.1;",
+    "wmma.load.a.sync.aligned.m32n8k16.row.u8 {x0,x1,x2,x3}, [ptr];",
+    "wmma.load.a.sync.aligned.m8n8k32.row.s4 {x0}, [ptr];",
+    "{x0,x1,x2,x3}, [ptr];",
+    "{x0}, [ptr];",
+    "xor.b32  d,q,r;",
+    "xor.b16  d,x,0x0001;",
+];
 
-// #[test]
-// fn parses_barrier_opcode_dispatch() {
-//     let InstructionOpcode::Barrier(Barrier::Sync(BarrierSync {
-//         scope,
-//         aligned,
-//         barrier,
-//         expected_count,
-//     })) = parse::<InstructionOpcode>("barrier.cta.sync.aligned %r1, 4;")
-//     else {
-//         panic!("expected barrier.sync opcode");
-//     };
-
-//     assert_eq!(scope, Scope::Cta);
-//     assert!(aligned);
-//     assert_eq!(
-//         barrier,
-//         Operand::Register(RegisterOperand::Single("%r1".into()))
-//     );
-//     assert_eq!(
-//         expected_count,
-//         Some(Operand::Immediate(Immediate("4".into())))
-//     );
-//     assert_roundtrip::<InstructionOpcode>("barrier.cta.sync.aligned %r1, 4;");
-// }
-
-// #[test]
-// fn parses_multimem_opcode_dispatch() {
-//     let InstructionOpcode::Multimem(MultimemInstruction::Red(Red::Int(_))) =
-//         parse::<InstructionOpcode>("multimem.red.release.cta.global.add.u64 [%rd3], %rd4;")
-//     else {
-//         panic!("expected multimem.red opcode");
-//     };
-//     assert_roundtrip::<InstructionOpcode>("multimem.red.release.cta.global.add.u64 [%rd3], %rd4;");
-// }
-
-// #[test]
-// fn instruction_without_predicate_unparses_add() {
-//     let source = "add.s32 %r0, %r1, %r2;";
-//     let opcode = parse::<InstructionOpcode>(source);
-//     let instruction = Instruction {
-//         predicate: None,
-//         opcode,
-//         comment: None,
-//         raw: source.into(),
-//     };
-//     assert_eq!(instruction.to_tokens(), tokenize_only(source));
-// }
-
-// #[test]
-// fn instruction_with_predicate_unparses_add() {
-//     let opcode = parse::<InstructionOpcode>("add.s32 %r0, %r1, %r2;");
-//     let source = "@%p1 add.s32 %r0, %r1, %r2;";
-//     let instruction = Instruction {
-//         predicate: Some(PredicateRegister("%p1".into())),
-//         opcode,
-//         comment: None,
-//         raw: source.into(),
-//     };
-//     assert_eq!(instruction.to_tokens(), tokenize_only(source));
-// }
-
-// #[test]
-// fn rejects_unknown_instruction_name() {
-//     let err = parse_result::<InstructionOpcode>("foo;")
-//         .expect_err("parsing should fail for unknown opcode");
-
-//     let ParseErrorKind::UnexpectedToken { expected, found } = err.kind else {
-//         panic!("expected unexpected token error");
-//     };
-
-//     assert_eq!(found, "foo");
-//     assert!(
-//         expected.contains(&"abs".to_string()),
-//         "expected list should include known opcodes"
-//     );
-// }
+#[test]
+fn docs_examples_roundtrip() {
+    let mut parse_failures = Vec::new();
+    let mut mismatches = Vec::new();
+    let mut matched = 0usize;
+    for example in DOC_EXAMPLE_INSTRUCTIONS {
+        match parse_result::<Instruction>(example) {
+            Ok(parsed) => {
+                let original = tokenize_only(example);
+                if parsed.to_tokens() == original {
+                    matched += 1;
+                } else {
+                    mismatches.push(*example);
+                }
+            }
+            Err(_) => parse_failures.push(*example),
+        }
+    }
+    eprintln!(
+        "Doc examples roundtrip summary: {} matched, {} parse failures, {} mismatches",
+        matched,
+        parse_failures.len(),
+        mismatches.len()
+    );
+    for example in &parse_failures {
+        eprintln!("  [parse] {}", example);
+    }
+    for example in &mismatches {
+        eprintln!("  [mismatch] {}", example);
+    }
+    assert!(
+        mismatches.len() == 0,
+        "no documentation examples round-tripped"
+    );
+    assert!(
+        parse_failures.is_empty(),
+        "no documentation examples failed to parse"
+    );
+}

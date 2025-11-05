@@ -20,28 +20,28 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for CtaGroup {
+    impl PtxParser for DstSrcFmt {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try CtaGroup1
+            // Try B8x16B6x16P32
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::1").is_ok() {
-                    return Ok(CtaGroup::CtaGroup1);
+                if stream.expect_string(".b8x16.b6x16_p32").is_ok() {
+                    return Ok(DstSrcFmt::B8x16B6x16P32);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try CtaGroup2
+            // Try B8x16B4x16P64
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::2").is_ok() {
-                    return Ok(CtaGroup::CtaGroup2);
+                if stream.expect_string(".b8x16.b4x16_p64").is_ok() {
+                    return Ok(DstSrcFmt::B8x16B4x16P64);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta_group::1", ".cta_group::2"];
+            let expected = &[".b8x16.b6x16_p32", ".b8x16.b4x16_p64"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -104,6 +104,33 @@ pub mod section_0 {
         }
     }
 
+    impl PtxParser for CtaGroup {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try CtaGroup1
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta_group::1").is_ok() {
+                    return Ok(CtaGroup::CtaGroup1);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try CtaGroup2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta_group::2").is_ok() {
+                    return Ok(CtaGroup::CtaGroup2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".cta_group::1", ".cta_group::2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Multicast {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Warpx20213
@@ -136,33 +163,6 @@ pub mod section_0 {
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".warpx2::02_13**", ".warpx2::01_23**", ".warpx4***"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for DstSrcFmt {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B8x16B6x16P32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b8x16.b6x16_p32").is_ok() {
-                    return Ok(DstSrcFmt::B8x16B6x16P32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B8x16B4x16P64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b8x16.b4x16_p64").is_ok() {
-                    return Ok(DstSrcFmt::B8x16B4x16P64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b8x16.b6x16_p32", ".b8x16.b4x16_p64"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
