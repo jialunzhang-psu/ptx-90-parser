@@ -1,6 +1,6 @@
 [package]
 name = "ptx-90-parser"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 description = "Parse NVIDIA PTX 9.0 assembly into a structured AST and explore modules via a CLI."
 license = "MIT"
