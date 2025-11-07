@@ -86,6 +86,25 @@ pub enum PtxToken {
     StringLiteral(String),
 }
 
+impl PtxToken {
+    /// Extract the string value from a token, if it has one
+    pub fn as_str(&self) -> &str {
+        match self {
+            PtxToken::Identifier(s) |
+            PtxToken::DecimalInteger(s) |
+            PtxToken::HexInteger(s) |
+            PtxToken::BinaryInteger(s) |
+            PtxToken::OctalInteger(s) |
+            PtxToken::Float(s) |
+            PtxToken::FloatExponent(s) |
+            PtxToken::HexFloat(s) |
+            PtxToken::Register(s) |
+            PtxToken::StringLiteral(s) => s.as_str(),
+            _ => "",
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct LexError {
     pub span: Span,

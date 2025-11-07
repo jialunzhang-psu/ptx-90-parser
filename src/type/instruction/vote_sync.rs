@@ -22,10 +22,10 @@ pub mod section_0 {
         pub sync: (), // .sync
         pub mode: Mode, // .mode
         pub pred: (), // .pred
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a_op: bool, // {!} operator
-        pub a: Operand, // {!}a
-        pub membermask: Operand, // membermask
+        pub a: GeneralOperand, // {!}a
+        pub membermask: GeneralOperand, // membermask
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -33,10 +33,10 @@ pub mod section_0 {
         pub sync: (), // .sync
         pub ballot: (), // .ballot
         pub b32: (), // .b32
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a_op: bool, // {!} operator
-        pub a: Operand, // {!}a
-        pub membermask: Operand, // membermask
+        pub a: GeneralOperand, // {!}a
+        pub membermask: GeneralOperand, // membermask
     }
 
 }

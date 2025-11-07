@@ -16,6 +16,8 @@ pub mod section_0 {
             push_opcode(tokens, "elect");
                     push_directive(tokens, "sync");
                     self.d.unparse_tokens(tokens);
+                    tokens.push(PtxToken::Pipe);
+                    self.p.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.membermask.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);

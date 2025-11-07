@@ -53,34 +53,34 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Dtype {
-        U8, // .u8
+        Bf16, // .bf16
         U16, // .u16
         U32, // .u32
         U64, // .u64
-        S8, // .s8
         S16, // .s16
         S32, // .s32
         S64, // .s64
-        Bf16, // .bf16
         F16, // .f16
         F32, // .f32
         F64, // .f64
+        U8, // .u8
+        S8, // .s8
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Atype {
-        U8, // .u8
+        Bf16, // .bf16
         U16, // .u16
         U32, // .u32
         U64, // .u64
-        S8, // .s8
         S16, // .s16
         S32, // .s32
         S64, // .s64
-        Bf16, // .bf16
         F16, // .f16
         F32, // .f32
         F64, // .f64
+        U8, // .u8
+        S8, // .s8
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -144,8 +144,8 @@ pub mod section_0 {
         pub sat: bool, // {.sat}
         pub dtype: Dtype, // .dtype
         pub atype: Atype, // .atype
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -155,8 +155,8 @@ pub mod section_0 {
         pub sat: bool, // {.sat}
         pub dtype: Dtype, // .dtype
         pub atype: Atype, // .atype
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -166,8 +166,8 @@ pub mod section_0 {
         pub satfinite: bool, // {.satfinite}
         pub f16: (), // .f16
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -177,9 +177,9 @@ pub mod section_0 {
         pub satfinite: bool, // {.satfinite}
         pub f16x2: (), // .f16x2
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -189,10 +189,10 @@ pub mod section_0 {
         pub satfinite: bool, // {.satfinite}
         pub f16x2: (), // .f16x2
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub rbits: Operand, // rbits
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub rbits: GeneralOperand, // rbits
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -202,8 +202,8 @@ pub mod section_0 {
         pub satfinite: bool, // {.satfinite}
         pub bf16: (), // .bf16
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -213,9 +213,9 @@ pub mod section_0 {
         pub satfinite: bool, // {.satfinite}
         pub bf16x2: (), // .bf16x2
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -225,10 +225,10 @@ pub mod section_0 {
         pub satfinite: bool, // {.satfinite}
         pub bf16x2: (), // .bf16x2
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub rbits: Operand, // rbits
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub rbits: GeneralOperand, // rbits
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -237,8 +237,8 @@ pub mod section_0 {
         pub satfinite: bool, // {.satfinite}
         pub tf32: (), // .tf32
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -248,8 +248,8 @@ pub mod section_0 {
         pub relu: bool, // {.relu}
         pub tf32: (), // .tf32
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -259,9 +259,9 @@ pub mod section_0 {
         pub relu: bool, // {.relu}
         pub f8x2type: F8x2type, // .f8x2type
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -271,8 +271,8 @@ pub mod section_0 {
         pub relu: bool, // {.relu}
         pub f8x2type: F8x2type, // .f8x2type
         pub f16x2: (), // .f16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -281,8 +281,8 @@ pub mod section_0 {
         pub relu: bool, // {.relu}
         pub f16x2: (), // .f16x2
         pub f8x2type: F8x2type, // .f8x2type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -292,9 +292,9 @@ pub mod section_0 {
         pub satfinite: (), // .satfinite
         pub f8x4type: F8x4type, // .f8x4type
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: (Operand, Operand, Operand, Operand), // {a, b, e, f}
-        pub rbits: Operand, // rbits
+        pub d: GeneralOperand, // d
+        pub a: VectorOperand, // {a, b, e, f}
+        pub rbits: GeneralOperand, // rbits
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -304,9 +304,9 @@ pub mod section_0 {
         pub relu: bool, // {.relu}
         pub f4x2type: F4x2type, // .f4x2type
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -315,8 +315,8 @@ pub mod section_0 {
         pub relu: bool, // {.relu}
         pub f16x2: (), // .f16x2
         pub f4x2type: F4x2type, // .f4x2type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -326,9 +326,9 @@ pub mod section_0 {
         pub satfinite: (), // .satfinite
         pub f4x4type: F4x4type, // .f4x4type
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: (Operand, Operand, Operand, Operand), // {a, b, e, f}
-        pub rbits: Operand, // rbits
+        pub d: GeneralOperand, // d
+        pub a: VectorOperand, // {a, b, e, f}
+        pub rbits: GeneralOperand, // rbits
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -338,9 +338,9 @@ pub mod section_0 {
         pub relu: bool, // {.relu}
         pub f6x2type: F6x2type, // .f6x2type
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -349,8 +349,8 @@ pub mod section_0 {
         pub relu: bool, // {.relu}
         pub f16x2: (), // .f16x2
         pub f6x2type: F6x2type, // .f6x2type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -360,9 +360,9 @@ pub mod section_0 {
         pub satfinite: (), // .satfinite
         pub f6x4type: F6x4type, // .f6x4type
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: (Operand, Operand, Operand, Operand), // {a, b, e, f}
-        pub rbits: Operand, // rbits
+        pub d: GeneralOperand, // d
+        pub a: VectorOperand, // {a, b, e, f}
+        pub rbits: GeneralOperand, // rbits
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -371,9 +371,9 @@ pub mod section_0 {
         pub satfinite: bool, // {.satfinite}
         pub ue8m0x2: (), // .ue8m0x2
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -382,8 +382,8 @@ pub mod section_0 {
         pub satfinite: bool, // {.satfinite}
         pub ue8m0x2: (), // .ue8m0x2
         pub bf16x2: (), // .bf16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -391,8 +391,8 @@ pub mod section_0 {
         pub rn: (), // .rn
         pub bf16x2: (), // .bf16x2
         pub ue8m0x2: (), // .ue8m0x2
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
 }

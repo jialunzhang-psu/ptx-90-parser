@@ -18,11 +18,11 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct BfiType {
         pub type_: Type, // .type
-        pub f: Operand, // f
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
-        pub d: Operand, // d
+        pub f: GeneralOperand, // f
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
+        pub d: GeneralOperand, // d
     }
 
 }

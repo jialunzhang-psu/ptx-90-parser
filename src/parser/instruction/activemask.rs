@@ -17,7 +17,11 @@ pub mod section_0 {
             stream.expect_string("activemask")?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ActivemaskB32 {
                 b32,
                 d,

@@ -1,6 +1,6 @@
 //! Original PTX specification:
 //!
-//! tex.geom.v4.dtype.ctype  d, [a, c] {, e} {, f};
+//! tex.geom.v4.dtype.ctype  d{|p}, [a, c] {, e} {, f};
 //! tex.geom.v4.dtype.ctype  d{|p}, [a, b, c] {, e} {, f};  // explicit sampler
 //! tex.geom.v2.f16x2.ctype  d{|p}, [a, c] {, e} {, f};
 //! tex.geom.v2.f16x2.ctype  d{|p}, [a, b, c] {, e} {, f};  // explicit sampler
@@ -24,15 +24,15 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Geom {
+        Acube, // .acube
+        A2dms, // .a2dms
+        Cube, // .cube
+        _2dms, // .2dms
+        A1d, // .a1d
+        A2d, // .a2d
         _1d, // .1d
         _2d, // .2d
         _3d, // .3d
-        A1d, // .a1d
-        A2d, // .a2d
-        Cube, // .cube
-        Acube, // .acube
-        _2dms, // .2dms
-        A2dms, // .a2dms
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -55,10 +55,11 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d
-        pub a: (Operand, Operand), // [a, c]
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler2, // [a, c]
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -67,11 +68,11 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand, Operand), // [a, b, c]
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler3, // [a, b, c]
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -80,11 +81,11 @@ pub mod section_0 {
         pub v2: (), // .v2
         pub f16x2: (), // .f16x2
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand), // [a, c]
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler2, // [a, c]
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -93,11 +94,11 @@ pub mod section_0 {
         pub v2: (), // .v2
         pub f16x2: (), // .f16x2
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand, Operand), // [a, b, c]
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler3, // [a, b, c]
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -107,11 +108,11 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand, Operand), // [a, b, c]
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler3Optional, // [a, {b,}, c]
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -121,12 +122,12 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand, Operand), // [a, b, c]
-        pub lod: Operand, // lod
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler3Optional, // [a, {b,}, c]
+        pub lod: GeneralOperand, // lod
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -136,13 +137,13 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand, Operand), // [a, b, c]
-        pub dpdx: Operand, // dPdx
-        pub dpdy: Operand, // dPdy
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler3Optional, // [a, {b,}, c]
+        pub dpdx: GeneralOperand, // dPdx
+        pub dpdy: GeneralOperand, // dPdy
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -152,11 +153,11 @@ pub mod section_0 {
         pub v2: (), // .v2
         pub f16x2: (), // .f16x2
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand, Operand), // [a, b, c]
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler3Optional, // [a, {b,}, c]
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -166,12 +167,12 @@ pub mod section_0 {
         pub v2: (), // .v2
         pub f16x2: (), // .f16x2
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand, Operand), // [a, b, c]
-        pub lod: Operand, // lod
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler3Optional, // [a, {b,}, c]
+        pub lod: GeneralOperand, // lod
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -181,13 +182,13 @@ pub mod section_0 {
         pub v2: (), // .v2
         pub f16x2: (), // .f16x2
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand, Operand), // [a, b, c]
-        pub dpdx: Operand, // dPdx
-        pub dpdy: Operand, // dPdy
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler3Optional, // [a, {b,}, c]
+        pub dpdx: GeneralOperand, // dPdx
+        pub dpdy: GeneralOperand, // dPdy
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
 }

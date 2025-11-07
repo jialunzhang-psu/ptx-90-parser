@@ -11,19 +11,19 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Type {
-        F16, // .f16
-        F32, // .f32
+        Bf16x2, // .bf16x2
         F16x2, // .f16x2
         Bf16, // .bf16
-        Bf16x2, // .bf16x2
+        F16, // .f16
+        F32, // .f32
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct TanhApproxType {
         pub approx: (), // .approx
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
 }

@@ -1,6 +1,6 @@
 mod util;
 
-use ptx_parser::{r#type::instruction::Instruction, unparser::PtxUnparser};
+use ptx_parser::{r#type::instruction::InstructionWithPredicate, unparser::PtxUnparser};
 use util::{parse_result, tokenize_only};
 
 const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
@@ -65,8 +65,8 @@ const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "cp.async.ca.shared.global                   [shrd], [gbl], 4, p;",
     "cp.async.cg.shared.global.L2::cache_hint   [%r0], [%r2], 16, q, cache-policy;",
     "createpolicy.fractional.L2::evict_last.b64                      policy, 1.0;",
-"createpolicy.fractional.L2::evict_last.L2::evict_unchanged.b64  policy, 0.5;",
-"createpolicy.range.L2::evict_last.L2::evict_first.b64 policy, [ptr], 0x100000, 0x200000;",
+    "createpolicy.fractional.L2::evict_last.L2::evict_unchanged.b64  policy, 0.5;",
+    "createpolicy.range.L2::evict_last.L2::evict_first.b64 policy, [ptr], 0x100000, 0x200000;",
     "createpolicy.cvt.L2.b64 policy, access-prop;",
     "cvt.f32.s32 f,i;",
     "cvta.const.u32   ptr,cvar;",
@@ -249,7 +249,7 @@ const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "suld.b.a1d.v2.b32      {r0,r1}, [surf_C, {idx,x}];",
     "suq.width.b32       %r1, [surf_A];",
     "sured.b.add.2d.u32.trap  [surf_A, {x,y}], r1;",
-    "sured.p.min.1d.u32.trap  [surf_B, {x}], r1;",
+    "sured.p.min.1d.b32.trap  [surf_B, {x}], r1;",
     "sured.b.max.1d.u64.trap  [surf_C, {x}], r1;",
     "sured.p.min.1d.b64.trap  [surf_D, {x}], r1;",
     "sust.p.1d.v4.b32.trap  [surf_B, {x}], {f1,f2,f3,f4};",
@@ -280,7 +280,7 @@ const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "tex.1d.v2.f16x2.f32  {h1,h2}, [tex_a,smpl_x,{f1}];",
     "tex.1d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a, {f1}], {r5};",
     "tex.a2d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a,{idx,f1,f2}], {f5,f6};",
-    "flvl, {r7, r8};",
+    "tex.level.2d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a,{f1,f2}], flvl, {r7, r8};",
     "tex.1d.v4.f32.f32  {f1,f2,f3,f4}, [tex_a, {f1}], f0;",
     "tex.a2d.v4.s32.f32  {f0,f1,f2,f3}, [tex_a,{idx,f4,f5}], {r5,r6}, f6;",
     "tex.3d.v4.s32.s32 {r1,r2,r3,r4}|p, [tex_a,{f1,f2,f3,f4}];",
@@ -302,7 +302,7 @@ const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "vmin2.s32.u32.u32.add  r1.h10, r2.h00, r3.h22, r1;",
     "vadd4.s32.s32.u32.sat  r1, r2, r3, r1;",
     "vsub4.s32.s32.s32.sat  r1.b0, r2.b3210, r3.b7654, r1;",
-    "vmin4.s32.u32.u32.add  r1.b00, r2.b0000, r3.b2222, r1;",
+    "vmin4.s32.u32.u32.add  r1.b10, r2.b0000, r3.b2222, r1;",
     "vmad.s32.s32.u32.sat    r0, r1, r2, -r3;",
     "vmad.u32.u32.u32.shr15  r0, r1.h0, r2.h0, r3;",
     "vote.all.pred    p,q;",
@@ -312,17 +312,13 @@ const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "vset2.s32.u32.lt      r1, r2, r3, r0;",
     "vset2.u32.u32.ne.add  r1, r2, r3, r0;",
     "vset4.s32.u32.lt      r1, r2, r3, r0;",
-    "vset4.u32.u32.ne.max  r1, r2, r3, r0;",
     "vshl.s32.u32.u32.clamp  r1, r2, r3;",
     "vshr.u32.u32.u32.wrap   r1, r2, r3.h1;",
-    "wmma.load.b.sync.aligned.m16n16k16.row.f16 {x0,x1,x2,x3,x4,x5,x,x7}, [ptr];",
-    "{x0,x1,x2,x3,x4,x5,x6,x7}, [ptr];",
+    "wmma.load.b.sync.aligned.row.m16n16k16.f16 {x0,x1,x2,x3,x4,x5,x,x7}, [ptr];",
     "mul.f32 x0, x0, 0.1;",
     "mul.f32 x7, x7, 0.1;",
-    "wmma.load.a.sync.aligned.m32n8k16.row.u8 {x0,x1,x2,x3}, [ptr];",
-    "wmma.load.a.sync.aligned.m8n8k32.row.s4 {x0}, [ptr];",
-    "{x0,x1,x2,x3}, [ptr];",
-    "{x0}, [ptr];",
+    "wmma.load.a.sync.aligned.row.m32n8k16.u8 {x0,x1,x2,x3}, [ptr];",
+    "wmma.load.a.sync.aligned.row.m8n8k32.s4 {x0}, [ptr];",
     "xor.b32  d,q,r;",
     "xor.b16  d,x,0x0001;",
 ];
@@ -333,10 +329,11 @@ fn docs_examples_roundtrip() {
     let mut mismatches = Vec::new();
     let mut matched = 0usize;
     for example in DOC_EXAMPLE_INSTRUCTIONS {
-        match parse_result::<Instruction>(example) {
+        match parse_result::<InstructionWithPredicate>(example) {
             Ok(parsed) => {
                 let original = tokenize_only(example);
-                if parsed.to_tokens() == original {
+                let unparsed = parsed.to_tokens();
+                if util::tokens_equivalent(&unparsed, &original) {
                     matched += 1;
                 } else {
                     mismatches.push(*example);

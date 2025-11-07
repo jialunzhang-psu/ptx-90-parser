@@ -25,8 +25,13 @@ pub mod section_0 {
                             }
                     }
                     match &self.fence_qualifiers {
-                            FenceQualifiers::ToProxyFromProxyReleaseScope => {
-                                    push_directive(tokens, "to_proxy::from_proxy.release.scope");
+                            FenceQualifiers::ToProxyFromProxyReleaseScope(_, _, _) => {
+                                    push_directive(tokens, "tensormap::generic");
+                                    push_directive(tokens, "release");
+                                    push_directive(tokens, "cluster");
+                                    push_directive(tokens, "cta");
+                                    push_directive(tokens, "gpu");
+                                    push_directive(tokens, "sys");
                             }
                     }
                     push_directive(tokens, "sync");

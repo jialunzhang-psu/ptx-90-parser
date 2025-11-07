@@ -28,11 +28,11 @@ pub mod section_0 {
 
     impl PtxParser for LevelPrimaryPriority {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2EvictLast
+            // Try L2EvictUnchanged
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_last").is_ok() {
-                    return Ok(LevelPrimaryPriority::L2EvictLast);
+                if stream.expect_string(".L2::evict_unchanged").is_ok() {
+                    return Ok(LevelPrimaryPriority::L2EvictUnchanged);
                 }
                 stream.set_position(saved_pos);
             }
@@ -57,17 +57,17 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try L2EvictUnchanged
+            // Try L2EvictLast
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_unchanged").is_ok() {
-                    return Ok(LevelPrimaryPriority::L2EvictUnchanged);
+                if stream.expect_string(".L2::evict_last").is_ok() {
+                    return Ok(LevelPrimaryPriority::L2EvictLast);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::evict_last", ".L2::evict_normal", ".L2::evict_first", ".L2::evict_unchanged"];
+            let expected = &[".L2::evict_unchanged", ".L2::evict_normal", ".L2::evict_first", ".L2::evict_last"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -75,15 +75,6 @@ pub mod section_0 {
 
     impl PtxParser for LevelSecondaryPriority {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2EvictFirst
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_first").is_ok() {
-                    return Ok(LevelSecondaryPriority::L2EvictFirst);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
             // Try L2EvictUnchanged
             {
                 let saved_pos = stream.position();
@@ -92,9 +83,18 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try L2EvictFirst
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::evict_first").is_ok() {
+                    return Ok(LevelSecondaryPriority::L2EvictFirst);
+                }
+                stream.set_position(saved_pos);
+            }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::evict_first", ".L2::evict_unchanged"];
+            let expected = &[".L2::evict_unchanged", ".L2::evict_first"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -105,12 +105,15 @@ pub mod section_0 {
             stream.expect_string("createpolicy")?;
             stream.expect_string(".range")?;
             let range = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let global = stream.expect_string(".global").is_ok();
             if !global {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let level_primary_priority = LevelPrimaryPriority::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_secondary_priority = match LevelSecondaryPriority::parse(stream) {
                 Ok(val) => Some(val),
@@ -119,15 +122,23 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b64")?;
             let b64 = ();
-            let cache_policy = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let cache_policy = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let primary_size = Operand::parse(stream)?;
+            let primary_size = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let total_size = Operand::parse(stream)?;
+            let total_size = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
                 range,
                 global,
@@ -148,7 +159,9 @@ pub mod section_0 {
             stream.expect_string("createpolicy")?;
             stream.expect_string(".fractional")?;
             let fractional = ();
+            stream.expect_complete()?;
             let level_primary_priority = LevelPrimaryPriority::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_secondary_priority = match LevelSecondaryPriority::parse(stream) {
                 Ok(val) => Some(val),
@@ -157,22 +170,28 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b64")?;
             let b64 = ();
-            let cache_policy = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let cache_policy = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let fraction = match Operand::parse(stream) {
+            let fraction = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
                 fractional,
                 level_primary_priority,
@@ -190,13 +209,20 @@ pub mod section_0 {
             stream.expect_string("createpolicy")?;
             stream.expect_string(".cvt")?;
             let cvt = ();
+            stream.expect_complete()?;
             stream.expect_string(".L2")?;
             let l2 = ();
+            stream.expect_complete()?;
             stream.expect_string(".b64")?;
             let b64 = ();
-            let cache_policy = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let cache_policy = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let access_property = Operand::parse(stream)?;
+            let access_property = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CreatepolicyCvtL2B64 {
                 cvt,
                 l2,

@@ -6,32 +6,23 @@ use ptx_parser_gen::r#type::{
 
 #[test]
 fn parses_parameter_sequence() {
-    let rules: Vec<Rule> = parse_spec(
-        "
+    assert_eq!(
+        parse_parameter_rules(
+            "
 .collector_usage = { .collector::buffer::op };
 ::buffer         = { ::a };
 ::op             = { ::fill, ::use, ::lastuse, ::discard* };
 .list = { aa::item3 };
 ",
-    )
-    .expect("parse")
-    .into_iter()
-    .flat_map(|top| top.rules)
-    .collect();
-    let mut params: Vec<ParameterRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Parameter(param) => Some(param.clone()),
-            _ => None,
-        })
-        .collect();
-    params.sort_by(|a, b| a.name.cmp(&b.name));
-    assert_eq!(
-        params,
+        ),
         vec![
             ParameterRule {
                 name: ".collector_usage".into(),
-                choices: vec![Modifier::Sequence(vec![".collector".into(), "::buffer".into(), "::op".into()])],
+                choices: vec![Modifier::Sequence(vec![
+                    ".collector".into(),
+                    "::buffer".into(),
+                    "::op".into()
+                ])],
             },
             ParameterRule {
                 name: ".list".into(),
@@ -49,28 +40,61 @@ fn parses_parameter_sequence() {
                     Modifier::Atom("::lastuse".into()),
                     Modifier::Atom("::discard*".into())
                 ],
-            }
+            },
+        ]
+    );
+}
+
+#[test]
+fn parses_sequence_chioces() {
+    assert_eq!(
+        parse_parameter_rules(
+            "
+.asel = .bsel = { .b.n.n.n.n };
+.n = { 0, 1, 2, 3, 4, 5, 6, 7};",
+        ),
+        vec![
+            ParameterRule {
+                name: ".asel".into(),
+                choices: vec![Modifier::Sequence(vec![
+                    ".b".into(),
+                    ".n".into(),
+                    ".n".into(),
+                    ".n".into(),
+                    ".n".into(),
+                ])],
+            },
+            ParameterRule {
+                name: ".bsel".into(),
+                choices: vec![Modifier::Sequence(vec![
+                    ".b".into(),
+                    ".n".into(),
+                    ".n".into(),
+                    ".n".into(),
+                    ".n".into(),
+                ])],
+            },
+            ParameterRule {
+                name: ".n".into(),
+                choices: vec![
+                    Modifier::Atom("0".into()),
+                    Modifier::Atom("1".into()),
+                    Modifier::Atom("2".into()),
+                    Modifier::Atom("3".into()),
+                    Modifier::Atom("4".into()),
+                    Modifier::Atom("5".into()),
+                    Modifier::Atom("6".into()),
+                    Modifier::Atom("7".into()),
+                ],
+            },
         ]
     );
 }
 
 #[test]
 fn duplicates_rules_for_aliases() {
-    let rules: Vec<Rule> = parse_spec(".dtype = .atype = .btype = { .u32, .s32 };")
-        .expect("parse")
-        .into_iter()
-        .flat_map(|top| top.rules)
-        .collect();
-    let mut params: Vec<ParameterRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Parameter(param) => Some(param.clone()),
-            _ => None,
-        })
-        .collect();
-    params.sort_by(|a, b| a.name.cmp(&b.name));
     assert_eq!(
-        params,
+        parse_parameter_rules(".dtype = .atype = .btype = { .u32, .s32 };"),
         vec![
             ParameterRule {
                 name: ".atype".into(),
@@ -88,26 +112,24 @@ fn duplicates_rules_for_aliases() {
     );
 }
 
-#[test]
-fn parses_operand_modifiers() {
-    let rules: Vec<Rule> =
-        parse_spec("vmad.dtype.atype.btype{.sat}{.scale}  d, a{.asel}, b{.bsel}, c;")
-            .expect("parse")
-            .into_iter()
-            .flat_map(|top| top.rules)
-            .collect();
-    let mut instructions: Vec<InstructionRule> = rules
-        .iter()
+fn parse_instruction_rules(x: &str) -> Vec<InstructionRule> {
+    let instructions: Vec<InstructionRule> = parse_spec(x)
+        .expect("parse")
+        .into_iter()
+        .flat_map(|top| top.rules)
         .filter_map(|rule| match rule {
-            Rule::Instruction(instr) => Some(instr.clone()),
+            Rule::Instruction(instr) => Some(instr),
             _ => None,
         })
         .collect();
-    assert_eq!(instructions.len(), 1);
-    let vmad = instructions.pop().unwrap();
-    assert_eq!(
-        vmad,
-        InstructionRule {
+    instructions
+}
+
+#[test]
+fn parses_operand_modifier_suffixes() {
+    assert_instructions(
+        parse_instruction_rules("vmad.dtype.atype.btype{.sat}{.scale}  d, a{.asel}, b{.bsel}, c;"),
+        vec![InstructionRule {
             head: InstructionHead {
                 opcode: "vmad".into(),
                 modifiers: vec![
@@ -116,39 +138,87 @@ fn parses_operand_modifiers() {
                     Modifier::Atom(".btype".into()),
                     Modifier::Optional(".sat".into()),
                     Modifier::Optional(".scale".into()),
-                ]
+                ],
             },
             operands: vec![
                 Operand {
                     operator: None,
                     operand: (OperandElement::Item("d".into())),
-                    modifier: None
+                    modifier: None,
                 },
                 Operand {
                     operator: None,
                     operand: (OperandElement::Item("a".into())),
-                    modifier: Some(Modifier::Optional(".asel".into()))
+                    modifier: Some(Modifier::Optional(".asel".into())),
                 },
                 Operand {
                     operator: None,
                     operand: (OperandElement::Item("b".into())),
-                    modifier: Some(Modifier::Optional(".bsel".into()))
+                    modifier: Some(Modifier::Optional(".bsel".into())),
                 },
                 Operand {
                     operator: None,
                     operand: (OperandElement::Item("c".into())),
-                    modifier: None
+                    modifier: None,
                 },
             ],
-        }
+            ..InstructionRule::default()
+        }],
+    );
+}
+
+#[test]
+fn parses_operand_modifiers() {
+    assert_instructions(
+        parse_instruction_rules("vmad.dtype.atype.btype{.sat}{.scale}  d, a.asel, b.bsel, c;"),
+        vec![InstructionRule {
+            head: InstructionHead {
+                opcode: "vmad".into(),
+                modifiers: vec![
+                    Modifier::Atom(".dtype".into()),
+                    Modifier::Atom(".atype".into()),
+                    Modifier::Atom(".btype".into()),
+                    Modifier::Optional(".sat".into()),
+                    Modifier::Optional(".scale".into()),
+                ],
+            },
+            operands: vec![
+                Operand {
+                    operator: None,
+                    operand: (OperandElement::Item("d".into())),
+                    modifier: None,
+                },
+                Operand {
+                    operator: None,
+                    operand: (OperandElement::Item("a".into())),
+                    modifier: Some(Modifier::Atom(".asel".into())),
+                },
+                Operand {
+                    operator: None,
+                    operand: (OperandElement::Item("b".into())),
+                    modifier: Some(Modifier::Atom(".bsel".into())),
+                },
+                Operand {
+                    operator: None,
+                    operand: (OperandElement::Item("c".into())),
+                    modifier: None,
+                },
+            ],
+            ..InstructionRule::default()
+        }],
     );
 }
 
 #[test]
 fn parses_call() {
-    let rules: Vec<Rule> = parse_spec(
-        "
-call{.uni} (ret-param), func, (param-list);
+    let head = InstructionHead {
+        opcode: "call".into(),
+        modifiers: vec![Modifier::Optional(".uni".into())],
+    };
+
+    assert_instructions(
+        parse_instruction_rules(
+            "call{.uni} (ret-param), func, (param-list);
 call{.uni} func, (param-list);
 call{.uni} func;
 call{.uni} (ret-param), fptr, (param-list), flist;
@@ -158,116 +228,100 @@ call{.uni} (ret-param), fptr, (param-list), fproto;
 call{.uni} fptr, (param-list), fproto;
 call{.uni} fptr, fproto;
 ",
-    )
-    .expect("parse")
-    .into_iter()
-    .flat_map(|top| top.rules)
-    .collect();
-    let instructions: Vec<InstructionRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Instruction(instr) => Some(instr.clone()),
-            _ => None,
-        })
-        .collect();
-    let head = InstructionHead {
-        opcode: "call".into(),
-        modifiers: vec![Modifier::Optional(".uni".into())],
-    };
-    let expected = vec![
-        InstructionRule {
-            head: head.clone(),
-            operands: vec![
-                new_simple_operand(OperandElement::ParenthesizedOperand("ret-param".into())),
-                new_simple_operand(OperandElement::Item("func".into())),
-                new_simple_operand(OperandElement::ParamList),
-            ],
-        },
-        InstructionRule {
-            head: head.clone(),
-            operands: vec![
-                new_simple_operand(OperandElement::Item("func".into())),
-                new_simple_operand(OperandElement::ParamList),
-            ],
-        },
-        InstructionRule {
-            head: head.clone(),
-            operands: vec![new_simple_operand(OperandElement::Item("func".into()))],
-        },
-        InstructionRule {
-            head: head.clone(),
-            operands: vec![
-                new_simple_operand(OperandElement::ParenthesizedOperand("ret-param".into())),
-                new_simple_operand(OperandElement::Item("fptr".into())),
-                new_simple_operand(OperandElement::ParamList),
-                new_simple_operand(OperandElement::Item("flist".into())),
-            ],
-        },
-        InstructionRule {
-            head: head.clone(),
-            operands: vec![
-                new_simple_operand(OperandElement::Item("fptr".into())),
-                new_simple_operand(OperandElement::ParamList),
-                new_simple_operand(OperandElement::Item("flist".into())),
-            ],
-        },
-        InstructionRule {
-            head: head.clone(),
-            operands: vec![
-                new_simple_operand(OperandElement::Item("fptr".into())),
-                new_simple_operand(OperandElement::Item("flist".into())),
-            ],
-        },
-        InstructionRule {
-            head: head.clone(),
-            operands: vec![
-                new_simple_operand(OperandElement::ParenthesizedOperand("ret-param".into())),
-                new_simple_operand(OperandElement::Item("fptr".into())),
-                new_simple_operand(OperandElement::ParamList),
-                new_simple_operand(OperandElement::Item("fproto".into())),
-            ],
-        },
-        InstructionRule {
-            head: head.clone(),
-            operands: vec![
-                new_simple_operand(OperandElement::Item("fptr".into())),
-                new_simple_operand(OperandElement::ParamList),
-                new_simple_operand(OperandElement::Item("fproto".into())),
-            ],
-        },
-        InstructionRule {
-            head: head.clone(),
-            operands: vec![
-                new_simple_operand(OperandElement::Item("fptr".into())),
-                new_simple_operand(OperandElement::Item("fproto".into())),
-            ],
-        },
-    ];
-    assert_eq!(instructions, expected);
+        ),
+        vec![
+            InstructionRule {
+                head: head.clone(),
+                operands: vec![
+                    new_simple_operand(OperandElement::ParenthesizedOperand("ret-param".into())),
+                    new_simple_operand(OperandElement::Item("func".into())),
+                    new_simple_operand(OperandElement::ParamList),
+                ],
+                ..InstructionRule::default()
+            },
+            InstructionRule {
+                head: head.clone(),
+                operands: vec![
+                    new_simple_operand(OperandElement::Item("func".into())),
+                    new_simple_operand(OperandElement::ParamList),
+                ],
+                ..InstructionRule::default()
+            },
+            InstructionRule {
+                head: head.clone(),
+                operands: vec![new_simple_operand(OperandElement::Item("func".into()))],
+                ..InstructionRule::default()
+            },
+            InstructionRule {
+                head: head.clone(),
+                operands: vec![
+                    new_simple_operand(OperandElement::ParenthesizedOperand("ret-param".into())),
+                    new_simple_operand(OperandElement::Item("fptr".into())),
+                    new_simple_operand(OperandElement::ParamList),
+                    new_simple_operand(OperandElement::Item("flist".into())),
+                ],
+                ..InstructionRule::default()
+            },
+            InstructionRule {
+                head: head.clone(),
+                operands: vec![
+                    new_simple_operand(OperandElement::Item("fptr".into())),
+                    new_simple_operand(OperandElement::ParamList),
+                    new_simple_operand(OperandElement::Item("flist".into())),
+                ],
+                ..InstructionRule::default()
+            },
+            InstructionRule {
+                head: head.clone(),
+                operands: vec![
+                    new_simple_operand(OperandElement::Item("fptr".into())),
+                    new_simple_operand(OperandElement::Item("flist".into())),
+                ],
+                ..InstructionRule::default()
+            },
+            InstructionRule {
+                head: head.clone(),
+                operands: vec![
+                    new_simple_operand(OperandElement::ParenthesizedOperand("ret-param".into())),
+                    new_simple_operand(OperandElement::Item("fptr".into())),
+                    new_simple_operand(OperandElement::ParamList),
+                    new_simple_operand(OperandElement::Item("fproto".into())),
+                ],
+                ..InstructionRule::default()
+            },
+            InstructionRule {
+                head: head.clone(),
+                operands: vec![
+                    new_simple_operand(OperandElement::Item("fptr".into())),
+                    new_simple_operand(OperandElement::ParamList),
+                    new_simple_operand(OperandElement::Item("fproto".into())),
+                ],
+                ..InstructionRule::default()
+            },
+            InstructionRule {
+                head: head.clone(),
+                operands: vec![
+                    new_simple_operand(OperandElement::Item("fptr".into())),
+                    new_simple_operand(OperandElement::Item("fproto".into())),
+                ],
+                ..InstructionRule::default()
+            },
+        ],
+    );
 }
 
 #[test]
 fn parse_cluster_launch() {
-    let rules: Vec<Rule> = parse_spec(
-        "
+    let spec = "
 clusterlaunchcontrol.query_cancel.is_canceled.pred.b128 pred, try_cancel_response;
 clusterlaunchcontrol.query_cancel.get_first_ctaid.v4.b32.b128 {xdim, ydim, zdim, _},  try_cancel_response;
 clusterlaunchcontrol.query_cancel{.get_first_ctaid::dimension}.b32.b128 reg, try_cancel_response;
-.get_first_ctaid::dimension = { .get_first_ctaid::x, .get_first_ctaid::y, .get_first_ctaid::z };",
-    )
-    .expect("parse")
-    .into_iter()
-    .flat_map(|top| top.rules)
-    .collect();
-    let instructions: Vec<InstructionRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Instruction(instr) => Some(instr.clone()),
-            _ => None,
-        })
-        .collect();
+.get_first_ctaid::dimension = { .get_first_ctaid::x, .get_first_ctaid::y, .get_first_ctaid::z };";
 
-    let expected = vec![
+    let instructions = parse_instruction_rules(spec);
+    let params = parse_parameter_rules(spec);
+
+    let expected_instructions = vec![
         InstructionRule {
             head: InstructionHead {
                 opcode: "clusterlaunchcontrol".into(),
@@ -282,6 +336,7 @@ clusterlaunchcontrol.query_cancel{.get_first_ctaid::dimension}.b32.b128 reg, try
                 new_simple_operand(OperandElement::Item("pred".into())),
                 new_simple_operand(OperandElement::Item("try_cancel_response".into())),
             ],
+            ..InstructionRule::default()
         },
         InstructionRule {
             head: InstructionHead {
@@ -303,6 +358,7 @@ clusterlaunchcontrol.query_cancel{.get_first_ctaid::dimension}.b32.b128 reg, try
                 ])),
                 new_simple_operand(OperandElement::Item("try_cancel_response".into())),
             ],
+            ..InstructionRule::default()
         },
         InstructionRule {
             head: InstructionHead {
@@ -318,55 +374,37 @@ clusterlaunchcontrol.query_cancel{.get_first_ctaid::dimension}.b32.b128 reg, try
                 new_simple_operand(OperandElement::Item("reg".into())),
                 new_simple_operand(OperandElement::Item("try_cancel_response".into())),
             ],
+            ..InstructionRule::default()
         },
     ];
 
-    assert_eq!(instructions, expected);
+    assert_instructions(instructions, expected_instructions);
 
-    let params: Vec<ParameterRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Parameter(param) => Some(param.clone()),
-            _ => None,
-        })
-        .collect();
-    assert_eq!(
-        params,
-        vec![ParameterRule {
-            name: ".get_first_ctaid::dimension".into(),
-            choices: vec![
-                Modifier::Atom(".get_first_ctaid::x".into()),
-                Modifier::Atom(".get_first_ctaid::y".into()),
-                Modifier::Atom(".get_first_ctaid::z".into())
-            ],
-        }]
-    );
+    let expected_params = vec![ParameterRule {
+        name: ".get_first_ctaid::dimension".into(),
+        choices: vec![
+            Modifier::Atom(".get_first_ctaid::x".into()),
+            Modifier::Atom(".get_first_ctaid::y".into()),
+            Modifier::Atom(".get_first_ctaid::z".into()),
+        ],
+    }];
+    assert_eq!(params, expected_params);
 }
 
 #[test]
 fn parse_tcgen05_cp() {
-    let rules: Vec<Rule> = parse_spec(
-        "
+    let spec = "
 tcgen05.cp.cta_group.shape{.multicast}{.dst_src_fmt} [taddr], s-desc;
 .cta_group = { .cta_group::1, .cta_group::2 };
 .dst_src_fmt   = { .b8x16.b6x16_p32, .b8x16.b4x16_p64 };
 .shape     = { .128x256b, .4x256b, .128x128b, .64x128b**, .32x128b*** };
 .multicast = { .warpx2::02_13** , .warpx2::01_23**, .warpx4*** };
-",
-    )
-    .expect("parse")
-    .into_iter()
-    .flat_map(|top| top.rules)
-    .collect();
-    let instructions: Vec<InstructionRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Instruction(instr) => Some(instr.clone()),
-            _ => None,
-        })
-        .collect();
+";
 
-    let expected = vec![InstructionRule {
+    let instructions = parse_instruction_rules(spec);
+    let mut params = parse_parameter_rules(spec);
+
+    let expected_instructions = vec![InstructionRule {
         head: InstructionHead {
             opcode: "tcgen05".into(),
             modifiers: vec![
@@ -381,61 +419,52 @@ tcgen05.cp.cta_group.shape{.multicast}{.dst_src_fmt} [taddr], s-desc;
             new_simple_operand(OperandElement::Address("taddr".into())),
             new_simple_operand(OperandElement::Item("s-desc".into())),
         ],
+        ..InstructionRule::default()
     }];
 
-    assert_eq!(instructions, expected);
+    assert_instructions(instructions, expected_instructions);
 
-    let mut params: Vec<ParameterRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Parameter(param) => Some(param.clone()),
-            _ => None,
-        })
-        .collect();
     params.sort_by(|a, b| a.name.cmp(&b.name));
-    assert_eq!(
-        params,
-        vec![
-            ParameterRule {
-                name: ".cta_group".into(),
-                choices: vec![
-                    Modifier::Atom(".cta_group::1".into()),
-                    Modifier::Atom(".cta_group::2".into()),
-                ],
-            },
-            ParameterRule {
-                name: ".dst_src_fmt".into(),
-                choices: vec![
-                    Modifier::Atom(".b8x16.b6x16_p32".into()),
-                    Modifier::Atom(".b8x16.b4x16_p64".into())
-                ],
-            },
-            ParameterRule {
-                name: ".multicast".into(),
-                choices: vec![
-                    Modifier::Atom(".warpx2::02_13**".into()),
-                    Modifier::Atom(".warpx2::01_23**".into()),
-                    Modifier::Atom(".warpx4***".into()),
-                ],
-            },
-            ParameterRule {
-                name: ".shape".into(),
-                choices: vec![
-                    Modifier::Atom(".128x256b".into()),
-                    Modifier::Atom(".4x256b".into()),
-                    Modifier::Atom(".128x128b".into()),
-                    Modifier::Atom(".64x128b**".into()),
-                    Modifier::Atom(".32x128b***".into()),
-                ],
-            },
-        ]
-    );
+    let expected_params = vec![
+        ParameterRule {
+            name: ".cta_group".into(),
+            choices: vec![
+                Modifier::Atom(".cta_group::1".into()),
+                Modifier::Atom(".cta_group::2".into()),
+            ],
+        },
+        ParameterRule {
+            name: ".dst_src_fmt".into(),
+            choices: vec![
+                Modifier::Atom(".b8x16.b6x16_p32".into()),
+                Modifier::Atom(".b8x16.b4x16_p64".into()),
+            ],
+        },
+        ParameterRule {
+            name: ".multicast".into(),
+            choices: vec![
+                Modifier::Atom(".warpx2::02_13**".into()),
+                Modifier::Atom(".warpx2::01_23**".into()),
+                Modifier::Atom(".warpx4***".into()),
+            ],
+        },
+        ParameterRule {
+            name: ".shape".into(),
+            choices: vec![
+                Modifier::Atom(".128x256b".into()),
+                Modifier::Atom(".4x256b".into()),
+                Modifier::Atom(".128x128b".into()),
+                Modifier::Atom(".64x128b**".into()),
+                Modifier::Atom(".32x128b***".into()),
+            ],
+        },
+    ];
+    assert_eq!(params, expected_params);
 }
 
 #[test]
 fn parse_bar() {
-    let rules: Vec<Rule> = parse_spec(
-        "
+    let spec = "
 barrier{.cta}.sync{.aligned}      a{, b};
 barrier{.cta}.arrive{.aligned}    a, b;
 barrier{.cta}.red.popc{.aligned}.u32  d, a{, b}, {!}c;
@@ -444,21 +473,12 @@ bar{.cta}.sync      a{, b};
 bar{.cta}.arrive    a, b;
 bar{.cta}.red.popc.u32  d, a{, b}, {!}c;
 bar{.cta}.red.op.pred   p, a{, b}, {!}c;
-.op = { .and, .or };",
-    )
-    .expect("parse")
-    .into_iter()
-    .flat_map(|top| top.rules)
-    .collect();
-    let instructions: Vec<InstructionRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Instruction(instr) => Some(instr.clone()),
-            _ => None,
-        })
-        .collect();
+.op = { .and, .or };";
 
-    let expected = vec![
+    let instructions = parse_instruction_rules(spec);
+    let params = parse_parameter_rules(spec);
+
+    let expected_instructions = vec![
         // barrier{.cta}.sync{.aligned} a{, b};
         InstructionRule {
             head: InstructionHead {
@@ -473,6 +493,7 @@ bar{.cta}.red.op.pred   p, a{, b}, {!}c;
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Optional("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // barrier{.cta}.arrive{.aligned} a, b;
         InstructionRule {
@@ -488,6 +509,7 @@ bar{.cta}.red.op.pred   p, a{, b}, {!}c;
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Item("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // barrier{.cta}.red.popc{.aligned}.u32 d, a{, b}, {!}c;
         InstructionRule {
@@ -511,6 +533,7 @@ bar{.cta}.red.op.pred   p, a{, b}, {!}c;
                     modifier: None,
                 },
             ],
+            ..InstructionRule::default()
         },
         // barrier{.cta}.red.op{.aligned}.pred p, a{, b}, {!}c;
         InstructionRule {
@@ -534,6 +557,7 @@ bar{.cta}.red.op.pred   p, a{, b}, {!}c;
                     modifier: None,
                 },
             ],
+            ..InstructionRule::default()
         },
         // bar{.cta}.sync a{, b};
         InstructionRule {
@@ -548,6 +572,7 @@ bar{.cta}.red.op.pred   p, a{, b}, {!}c;
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Optional("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // bar{.cta}.arrive a, b;
         InstructionRule {
@@ -562,6 +587,7 @@ bar{.cta}.red.op.pred   p, a{, b}, {!}c;
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Item("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // bar{.cta}.red.popc.u32 d, a{, b}, {!}c;
         InstructionRule {
@@ -584,6 +610,7 @@ bar{.cta}.red.op.pred   p, a{, b}, {!}c;
                     modifier: None,
                 },
             ],
+            ..InstructionRule::default()
         },
         // bar{.cta}.red.op.pred p, a{, b}, {!}c;
         InstructionRule {
@@ -606,30 +633,21 @@ bar{.cta}.red.op.pred   p, a{, b}, {!}c;
                     modifier: None,
                 },
             ],
+            ..InstructionRule::default()
         },
     ];
 
-    assert_eq!(instructions, expected);
+    assert_instructions(instructions, expected_instructions);
 
-    let params: Vec<ParameterRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Parameter(param) => Some(param.clone()),
-            _ => None,
-        })
-        .collect();
-    assert_eq!(
-        params,
-        vec![ParameterRule {
-            name: ".op".into(),
-            choices: vec![Modifier::Atom(".and".into()), Modifier::Atom(".or".into())],
-        }]
-    );
+    let expected_params = vec![ParameterRule {
+        name: ".op".into(),
+        choices: vec![Modifier::Atom(".and".into()), Modifier::Atom(".or".into())],
+    }];
+    assert_eq!(params, expected_params);
 }
 #[test]
 fn parse_tex() {
-    let rules: Vec<Rule> = parse_spec(
-        "
+    let spec = "
 tex.geom.v4.dtype.ctype  d, [a, c] {, e} {, f};
 tex.geom.v4.dtype.ctype  d{|p}, [a, b, c] {, e} {, f};
 tex.geom.v2.f16x2.ctype  d{|p}, [a, c] {, e} {, f};
@@ -643,21 +661,12 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
 .geom  = { .1d, .2d, .3d, .a1d, .a2d, .cube, .acube, .2dms, .a2dms };
 .dtype = { .u32, .s32, .f16,  .f32 };
 .ctype = {       .s32, .f32 };
-",
-    )
-    .expect("parse")
-    .into_iter()
-    .flat_map(|top| top.rules)
-    .collect();
-    let instructions: Vec<InstructionRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Instruction(instr) => Some(instr.clone()),
-            _ => None,
-        })
-        .collect();
+";
 
-    let expected = vec![
+    let instructions = parse_instruction_rules(spec);
+    let mut params = parse_parameter_rules(spec);
+
+    let expected_instructions = vec![
         // tex.geom.v4.dtype.ctype  d, [a, c] {, e} {, f};
         InstructionRule {
             head: InstructionHead {
@@ -678,6 +687,7 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                 new_simple_operand(OperandElement::Optional("e".into())),
                 new_simple_operand(OperandElement::Optional("f".into())),
             ],
+            ..InstructionRule::default()
         },
         // tex.geom.v4.dtype.ctype  d{|p}, [a, b, c] {, e} {, f};
         InstructionRule {
@@ -700,6 +710,7 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                 new_simple_operand(OperandElement::Optional("e".into())),
                 new_simple_operand(OperandElement::Optional("f".into())),
             ],
+            ..InstructionRule::default()
         },
         // tex.geom.v2.f16x2.ctype  d{|p}, [a, c] {, e} {, f};
         InstructionRule {
@@ -721,6 +732,7 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                 new_simple_operand(OperandElement::Optional("e".into())),
                 new_simple_operand(OperandElement::Optional("f".into())),
             ],
+            ..InstructionRule::default()
         },
         // tex.geom.v2.f16x2.ctype  d{|p}, [a, b, c] {, e} {, f};
         InstructionRule {
@@ -743,6 +755,7 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                 new_simple_operand(OperandElement::Optional("e".into())),
                 new_simple_operand(OperandElement::Optional("f".into())),
             ],
+            ..InstructionRule::default()
         },
         // tex.base.geom.v4.dtype.ctype   d{|p}, [a, {b,} c] {, e} {, f};
         InstructionRule {
@@ -766,6 +779,7 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                 new_simple_operand(OperandElement::Optional("e".into())),
                 new_simple_operand(OperandElement::Optional("f".into())),
             ],
+            ..InstructionRule::default()
         },
         // tex.level.geom.v4.dtype.ctype  d{|p}, [a, {b,} c], lod {, e} {, f};
         InstructionRule {
@@ -790,6 +804,7 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                 new_simple_operand(OperandElement::Optional("e".into())),
                 new_simple_operand(OperandElement::Optional("f".into())),
             ],
+            ..InstructionRule::default()
         },
         // tex.grad.geom.v4.dtype.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
         InstructionRule {
@@ -815,6 +830,7 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                 new_simple_operand(OperandElement::Optional("e".into())),
                 new_simple_operand(OperandElement::Optional("f".into())),
             ],
+            ..InstructionRule::default()
         },
         // tex.base.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c] {, e} {, f};
         InstructionRule {
@@ -838,6 +854,7 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                 new_simple_operand(OperandElement::Optional("e".into())),
                 new_simple_operand(OperandElement::Optional("f".into())),
             ],
+            ..InstructionRule::default()
         },
         // tex.level.geom.v2.f16x2.ctype  d{|p}, [a, {b,} c], lod {, e} {, f};
         InstructionRule {
@@ -862,6 +879,7 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                 new_simple_operand(OperandElement::Optional("e".into())),
                 new_simple_operand(OperandElement::Optional("f".into())),
             ],
+            ..InstructionRule::default()
         },
         // tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
         InstructionRule {
@@ -887,22 +905,14 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                 new_simple_operand(OperandElement::Optional("e".into())),
                 new_simple_operand(OperandElement::Optional("f".into())),
             ],
+            ..InstructionRule::default()
         },
     ];
 
-    assert_eq!(instructions, expected);
+    assert_instructions(instructions, expected_instructions);
 
-    let mut params: Vec<ParameterRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Parameter(param) => Some(param.clone()),
-            _ => None,
-        })
-        .collect();
     params.sort_by(|a, b| a.name.cmp(&b.name));
-    assert_eq!(
-        params,
-        vec![
+    let expected_params = vec![
             ParameterRule {
                 name: ".ctype".into(),
                 choices: vec![Modifier::Atom(".s32".into()), Modifier::Atom(".f32".into())],
@@ -930,8 +940,8 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
                     Modifier::Atom(".a2dms".into()),
                 ],
             },
-        ]
-    );
+        ];
+    assert_eq!(params, expected_params);
 }
 
 #[test]
@@ -1008,6 +1018,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Optional("cache-policy".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.space}.op.type d, [a], b, c;
         InstructionRule {
@@ -1027,6 +1038,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Item("c".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.space}.cas.b16 d, [a], b, c;
         InstructionRule {
@@ -1046,6 +1058,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Item("c".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.space}.cas.b128 d, [a], b, c;
         InstructionRule {
@@ -1065,6 +1078,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Item("c".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.space}.exch{.level::cache_hint}.b128 d, [a], b {, cache-policy};
         InstructionRule {
@@ -1085,6 +1099,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Optional("cache-policy".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.space}.add.noftz{.level::cache_hint}.f16 d, [a], b{, cache-policy};
         InstructionRule {
@@ -1106,6 +1121,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Optional("cache-policy".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.space}.add.noftz{.level::cache_hint}.f16x2 d, [a], b{, cache-policy};
         InstructionRule {
@@ -1127,6 +1143,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Optional("cache-policy".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.space}.add.noftz{.level::cache_hint}.bf16 d, [a], b{, cache-policy};
         InstructionRule {
@@ -1148,6 +1165,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Optional("cache-policy".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.space}.add.noftz{.level::cache_hint}.bf16x2 d, [a], b{, cache-policy};
         InstructionRule {
@@ -1169,6 +1187,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Optional("cache-policy".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.global}.add{.level::cache_hint}.vec_32_bit.f32 d, [a], b{, cache-policy};
         InstructionRule {
@@ -1190,6 +1209,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Optional("cache-policy".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_16_bit.half_word_type d, [a], b{, cache-policy};
         InstructionRule {
@@ -1212,6 +1232,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Optional("cache-policy".into())),
             ],
+            ..InstructionRule::default()
         },
         // atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type d, [a], b{, cache-policy};
         InstructionRule {
@@ -1234,6 +1255,7 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Optional("cache-policy".into())),
             ],
+            ..InstructionRule::default()
         },
     ];
 
@@ -1241,8 +1263,8 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
     let expected1 = expected[0..9].to_vec();
     let expected2 = expected[9..12].to_vec();
 
-    assert_eq!(instructions1, expected1);
-    assert_eq!(instructions2, expected2);
+    assert_instructions(instructions1, expected1);
+    assert_instructions(instructions2, expected2);
 
     // Check section 1 parameters
     let mut params1: Vec<ParameterRule> = rules1
@@ -1392,27 +1414,17 @@ atom{.sem}{.scope}{.global}.op.noftz{.level::cache_hint}.vec_32_bit.packed_type 
 
 #[test]
 fn parse_vmad() {
-    let src = "// 32-bit scalar operation
+    let spec = "// 32-bit scalar operation
 vmad.dtype.atype.btype{.sat}{.scale}     d, {-}a{.asel}, {-}b{.bsel},
 {-}c;
 vmad.dtype.atype.btype.po{.sat}{.scale}  d, a{.asel}, b{.bsel}, c;
 .dtype = .atype = .btype = { .u32, .s32 };
 .asel  = .bsel  = { .b0, .b1, .b2, .b3, .h0, .h1 };
 .scale = { .shr7, .shr15 };";
-    let rules: Vec<Rule> = parse_spec(src)
-        .expect("parse")
-        .into_iter()
-        .flat_map(|top| top.rules)
-        .collect();
-    let instructions: Vec<InstructionRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Instruction(instr) => Some(instr.clone()),
-            _ => None,
-        })
-        .collect();
 
-    let expected = vec![
+    let instructions = parse_instruction_rules(spec);
+
+    let expected_instructions = vec![
         // vmad.dtype.atype.btype{.sat}{.scale} d, {-}a{.asel}, {-}b{.bsel}, {-}c;
         InstructionRule {
             head: InstructionHead {
@@ -1443,6 +1455,7 @@ vmad.dtype.atype.btype.po{.sat}{.scale}  d, a{.asel}, b{.bsel}, c;
                     modifier: None,
                 },
             ],
+            ..InstructionRule::default()
         },
         // vmad.dtype.atype.btype.po{.sat}{.scale} d, a{.asel}, b{.bsel}, c;
         InstructionRule {
@@ -1471,22 +1484,15 @@ vmad.dtype.atype.btype.po{.sat}{.scale}  d, a{.asel}, b{.bsel}, c;
                 },
                 new_simple_operand(OperandElement::Item("c".into())),
             ],
+            ..InstructionRule::default()
         },
     ];
 
-    assert_eq!(instructions, expected);
+    assert_instructions(instructions, expected_instructions);
 
-    let mut params: Vec<ParameterRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Parameter(param) => Some(param.clone()),
-            _ => None,
-        })
-        .collect();
+    let mut params = parse_parameter_rules(spec);
     params.sort_by(|a, b| a.name.cmp(&b.name));
-    assert_eq!(
-        params,
-        vec![
+    let expected_params = vec![
             ParameterRule {
                 name: ".asel".into(),
                 choices: vec![
@@ -1528,13 +1534,13 @@ vmad.dtype.atype.btype.po{.sat}{.scale}  d, a{.asel}, b{.bsel}, c;
                     Modifier::Atom(".shr15".into()),
                 ],
             },
-        ]
-    );
+        ];
+    assert_eq!(params, expected_params);
 }
 
 #[test]
 fn parse_min() {
-    let src = "min.atype         d, a, b;
+    let spec = "min.atype         d, a, b;
 min{.relu}.btype  d, a, b;
 .atype = { .u16, .u32, .u64, .u16x2, .s16, .s64 };
 .btype = { .s16x2, .s32 };
@@ -1548,20 +1554,9 @@ min{.ftz}{.NaN}{.xorsign.abs}.f16x2    d, a, b;
 min{.NaN}{.xorsign.abs}.bf16           d, a, b;
 min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
 
-    let rules: Vec<Rule> = parse_spec(src)
-        .expect("parse")
-        .into_iter()
-        .flat_map(|top| top.rules)
-        .collect();
-    let instructions: Vec<InstructionRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Instruction(instr) => Some(instr.clone()),
-            _ => None,
-        })
-        .collect();
+    let instructions = parse_instruction_rules(spec);
 
-    let expected = vec![
+    let expected_instructions = vec![
         // min.atype d, a, b;
         InstructionRule {
             head: InstructionHead {
@@ -1573,6 +1568,7 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Item("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // min.btype d, a, b;
         InstructionRule {
@@ -1588,6 +1584,7 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Item("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // min{.ftz}{.NaN}{.xorsign.abs}.f32 d, a, b;
         InstructionRule {
@@ -1605,6 +1602,7 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Item("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // min{.ftz}{.NaN}{.abs}.f32 d, a, b, c;
         InstructionRule {
@@ -1623,6 +1621,7 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
                 new_simple_operand(OperandElement::Item("b".into())),
                 new_simple_operand(OperandElement::Item("c".into())),
             ],
+            ..InstructionRule::default()
         },
         // min.f64 d, a, b;
         InstructionRule {
@@ -1635,6 +1634,7 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Item("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // min{.ftz}{.NaN}{.xorsign.abs}.f16 d, a, b;
         InstructionRule {
@@ -1652,6 +1652,7 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Item("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // min{.ftz}{.NaN}{.xorsign.abs}.f16x2 d, a, b;
         InstructionRule {
@@ -1669,6 +1670,7 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Item("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // min{.NaN}{.xorsign.abs}.bf16 d, a, b;
         InstructionRule {
@@ -1685,6 +1687,7 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Item("b".into())),
             ],
+            ..InstructionRule::default()
         },
         // min{.NaN}{.xorsign.abs}.bf16x2 d, a, b;
         InstructionRule {
@@ -1701,22 +1704,15 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
                 new_simple_operand(OperandElement::Item("a".into())),
                 new_simple_operand(OperandElement::Item("b".into())),
             ],
+            ..InstructionRule::default()
         },
     ];
 
-    assert_eq!(instructions, expected);
+    assert_instructions(instructions, expected_instructions);
 
-    let mut params: Vec<ParameterRule> = rules
-        .iter()
-        .filter_map(|rule| match rule {
-            Rule::Parameter(param) => Some(param.clone()),
-            _ => None,
-        })
-        .collect();
+    let mut params = parse_parameter_rules(spec);
     params.sort_by(|a, b| a.name.cmp(&b.name));
-    assert_eq!(
-        params,
-        vec![
+    let expected_params = vec![
             ParameterRule {
                 name: ".atype".into(),
                 choices: vec![
@@ -1735,22 +1731,17 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
                     Modifier::Atom(".s32".into()),
                 ],
             },
-        ]
-    );
+        ];
+    assert_eq!(params, expected_params);
 }
 
 #[test]
 fn parse_cp_async() {
-    let src = "cp.async.cg.state.global{.level::cache_hint}{.level::prefetch_size} [dst], [src], 16{, ignore-src}{, cache-policy}";
-    let rules: Vec<Rule> = parse_spec(src)
-        .expect("parse")
-        .into_iter()
-        .flat_map(|top| top.rules)
-        .collect();
-    let instruction: InstructionRule = match &rules[0] {
-        Rule::Instruction(instr) => instr.clone(),
-        _ => panic!("Expected InstructionRule"),
-    };
+    let spec = "cp.async.cg.state.global{.level::cache_hint}{.level::prefetch_size} [dst], [src], 16{, ignore-src}{, cache-policy}";
+
+    let instructions = parse_instruction_rules(spec);
+    let mut instruction = instructions.into_iter().next().expect("Expected instruction");
+    instruction.raw.clear();
 
     let expected = InstructionRule {
         head: InstructionHead {
@@ -1771,23 +1762,18 @@ fn parse_cp_async() {
             new_simple_operand(OperandElement::Optional("ignore-src".into())),
             new_simple_operand(OperandElement::Optional("cache-policy".into())),
         ],
+        ..InstructionRule::default()
     };
     assert_eq!(instruction, expected);
 }
 
 #[test]
 fn test_setp_cmp_op() {
-    let src = "setp.CmpOp{.ftz}.f16x2         p|q, a, b";
+    let spec = "setp.CmpOp{.ftz}.f16x2         p|q, a, b";
 
-    let rules: Vec<Rule> = parse_spec(src)
-        .expect("parse")
-        .into_iter()
-        .flat_map(|top| top.rules)
-        .collect();
-    let instruction: InstructionRule = match &rules[0] {
-        Rule::Instruction(instr) => instr.clone(),
-        _ => panic!("Expected InstructionRule"),
-    };
+    let instructions = parse_instruction_rules(spec);
+    let mut instruction = instructions.into_iter().next().expect("Expected instruction");
+    instruction.raw.clear();
 
     let expected = InstructionRule {
         head: InstructionHead {
@@ -1803,6 +1789,7 @@ fn test_setp_cmp_op() {
             new_simple_operand(OperandElement::Item("a".into())),
             new_simple_operand(OperandElement::Item("b".into())),
         ],
+        ..InstructionRule::default()
     };
 
     assert_eq!(instruction, expected);
@@ -1824,38 +1811,149 @@ fn test_imm_num() {
     let expected = ParameterRule {
         name: "cp-size".into(),
         choices: vec![
-            Modifier::ImmediateNumber("4".into()),
-            Modifier::ImmediateNumber("8".into()),
-            Modifier::ImmediateNumber("16".into()),
+            Modifier::Atom("4".into()),
+            Modifier::Atom("8".into()),
+            Modifier::Atom("16".into()),
         ],
     };
     assert_eq!(parameter, expected);
 }
 
 #[test]
+fn test_tld4(){
+    let spec = "tld4.comp.2d.v4.dtype.f32    d{|p}, [a, c] {, e} {, f};
+tld4.comp.geom.v4.dtype.f32  d{|p}, [a, b, c] {, e} {, f};  // explicit sampler
+.comp  = { .r, .g, .b, .a };
+.geom  = { .2d, .a2d, .cube, .acube };
+.dtype = { .u32, .s32, .f32 };";
+
+    let instructions = parse_instruction_rules(spec);
+    let mut params = parse_parameter_rules(spec);
+
+    let expected_instructions = vec![
+        // tld4.comp.2d.v4.dtype.f32    d{|p}, [a, c] {, e} {, f};
+        InstructionRule {
+            head: InstructionHead {
+                opcode: "tld4".into(),
+                modifiers: vec![
+                    Modifier::Atom(".comp".into()),
+                    Modifier::Atom(".2d".into()),
+                    Modifier::Atom(".v4".into()),
+                    Modifier::Atom(".dtype".into()),
+                    Modifier::Atom(".f32".into()),
+                ],
+            },
+            operands: vec![
+                new_simple_operand(OperandElement::PipeOptionalChoice(("d".into(), "p".into()))),
+                new_simple_operand(OperandElement::SquareGroup(vec![
+                    new_simple_operand(OperandElement::Item("a".into())),
+                    new_simple_operand(OperandElement::Item("c".into())),
+                ])),
+                new_simple_operand(OperandElement::Optional("e".into())),
+                new_simple_operand(OperandElement::Optional("f".into())),
+            ],
+            ..InstructionRule::default()
+        },
+        // tld4.comp.geom.v4.dtype.f32  d{|p}, [a, b, c] {, e} {, f};
+        InstructionRule {
+            head: InstructionHead {
+                opcode: "tld4".into(),
+                modifiers: vec![
+                    Modifier::Atom(".comp".into()),
+                    Modifier::Atom(".geom".into()),
+                    Modifier::Atom(".v4".into()),
+                    Modifier::Atom(".dtype".into()),
+                    Modifier::Atom(".f32".into()),
+                ],
+            },
+            operands: vec![
+                new_simple_operand(OperandElement::PipeOptionalChoice(("d".into(), "p".into()))),
+                new_simple_operand(OperandElement::SquareGroup(vec![
+                    new_simple_operand(OperandElement::Item("a".into())),
+                    new_simple_operand(OperandElement::Item("b".into())),
+                    new_simple_operand(OperandElement::Item("c".into())),
+                ])),
+                new_simple_operand(OperandElement::Optional("e".into())),
+                new_simple_operand(OperandElement::Optional("f".into())),
+            ],
+            ..InstructionRule::default()
+        },
+    ];
+
+    assert_instructions(instructions, expected_instructions);
+
+    params.sort_by(|a, b| a.name.cmp(&b.name));
+    let expected_params = vec![
+        ParameterRule {
+            name: ".comp".into(),
+            choices: vec![
+                Modifier::Atom(".r".into()),
+                Modifier::Atom(".g".into()),
+                Modifier::Atom(".b".into()),
+                Modifier::Atom(".a".into()),
+            ],
+        },
+        ParameterRule {
+            name: ".dtype".into(),
+            choices: vec![
+                Modifier::Atom(".u32".into()),
+                Modifier::Atom(".s32".into()),
+                Modifier::Atom(".f32".into()),
+            ],
+        },
+        ParameterRule {
+            name: ".geom".into(),
+            choices: vec![
+                Modifier::Atom(".2d".into()),
+                Modifier::Atom(".a2d".into()),
+                Modifier::Atom(".cube".into()),
+                Modifier::Atom(".acube".into()),
+            ],
+        },
+    ];
+    assert_eq!(params, expected_params);
+}
+
+#[test]
 fn test_ld() {
-    let src="ld{.weak}{.ss}{.cop}{.level::cache_hint}{.level::prefetch_size}{.vec}.type  d, [a]{.unified}{, cache-policy};";
-    
-    let rules: Vec<Rule> = parse_spec(src)
-        .expect("parse")
-        .into_iter()
-        .flat_map(|top| top.rules)
-        .collect();
-    let instruction: InstructionRule = match &rules[0] {
-        Rule::Instruction(instr) => instr.clone(),
-        _ => panic!("Expected InstructionRule"),
-    };
+    let spec = "ld{.weak}{.ss}{.cop}{.level::cache_hint}{.level::prefetch_size}{.vec}.type  d, [a]{.unified}{, cache-policy};";
+
+    let instructions = parse_instruction_rules(spec);
+    let instruction = instructions.into_iter().next().expect("Expected instruction");
 
     // Print the actual parsed structure for debugging
     println!("{:#?}", instruction);
-    
+
     // Check that [a]{.unified} is parsed as Address with modifier
-    assert_eq!(instruction.operands[1].operand, OperandElement::Address("a".into()));
-    assert_eq!(instruction.operands[1].modifier, Some(Modifier::Optional(".unified".into())));
-    
+    assert_eq!(
+        instruction.operands[1].operand,
+        OperandElement::Address("a".into())
+    );
+    assert_eq!(
+        instruction.operands[1].modifier,
+        Some(Modifier::Optional(".unified".into()))
+    );
+
     // Check that {, cache-policy} is parsed as Optional operand
-    assert_eq!(instruction.operands[2].operand, OperandElement::Optional("cache-policy".into()));
+    assert_eq!(
+        instruction.operands[2].operand,
+        OperandElement::Optional("cache-policy".into())
+    );
     assert_eq!(instruction.operands[2].modifier, None);
+}
+
+fn normalize_instructions(mut instructions: Vec<InstructionRule>) -> Vec<InstructionRule> {
+    for instr in &mut instructions {
+        instr.raw.clear();
+    }
+    instructions
+}
+
+fn assert_instructions(actual: Vec<InstructionRule>, expected: Vec<InstructionRule>) {
+    assert_eq!(
+        normalize_instructions(actual),
+        normalize_instructions(expected)
+    );
 }
 
 fn new_simple_operand(operand: OperandElement) -> Operand {
@@ -1864,4 +1962,18 @@ fn new_simple_operand(operand: OperandElement) -> Operand {
         operand,
         modifier: None,
     }
+}
+
+fn parse_parameter_rules(x: &str) -> Vec<ParameterRule> {
+    let mut params: Vec<ParameterRule> = parse_spec(x)
+        .expect("parse")
+        .into_iter()
+        .flat_map(|top| top.rules)
+        .filter_map(|rule| match rule {
+            Rule::Parameter(param) => Some(param),
+            _ => None,
+        })
+        .collect();
+    params.sort_by(|a, b| a.name.cmp(&b.name));
+    params
 }

@@ -352,7 +352,7 @@ impl PtxParser for ModuleDirective {
                 let span = stream
                     .peek()
                     .map(|(_, span)| span.clone())
-                    .unwrap_or(position..position);
+                    .unwrap_or(position.index..position.index);
                 Err(unexpected_value(
                     span,
                     &["module directive"],

@@ -15,14 +15,14 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Atype {
-        F16, // .f16
         F16x2, // .f16x2
+        F16, // .f16
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Btype {
-        Bf16, // .bf16
         Bf16x2, // .bf16x2
+        Bf16, // .bf16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -30,16 +30,16 @@ pub mod section_0 {
         pub approx: (), // .approx
         pub ftz: bool, // {.ftz}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Ex2ApproxAtype {
         pub approx: (), // .approx
         pub atype: Atype, // .atype
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -47,8 +47,8 @@ pub mod section_0 {
         pub approx: (), // .approx
         pub ftz: (), // .ftz
         pub btype: Btype, // .btype
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
 }

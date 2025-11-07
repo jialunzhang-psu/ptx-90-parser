@@ -41,9 +41,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Mask {
+        H10, // .h10
         H0, // .h0
         H1, // .h1
-        H10, // .h10
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -91,13 +91,13 @@ pub mod section_0 {
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
         pub cmp: Cmp, // .cmp
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: Operand, // a
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: Operand, // c
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -106,13 +106,13 @@ pub mod section_0 {
         pub btype: Btype, // .btype
         pub cmp: Cmp, // .cmp
         pub add: (), // .add
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: Operand, // a
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: Operand, // c
+        pub c: GeneralOperand, // c
     }
 
 }

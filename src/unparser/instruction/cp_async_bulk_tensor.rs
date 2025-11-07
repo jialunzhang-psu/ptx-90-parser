@@ -74,20 +74,20 @@ pub mod section_0 {
                     }
                     if let Some(load_mode_0) = self.load_mode.as_ref() {
                             match load_mode_0 {
-                                    LoadMode::Tile => {
-                                            push_directive(tokens, "tile");
+                                    LoadMode::Im2colW128 => {
+                                            push_directive(tokens, "im2col::w::128");
                                     }
                                     LoadMode::TileGather4 => {
                                             push_directive(tokens, "tile::gather4");
                                     }
-                                    LoadMode::Im2col => {
-                                            push_directive(tokens, "im2col");
-                                    }
                                     LoadMode::Im2colW => {
                                             push_directive(tokens, "im2col::w");
                                     }
-                                    LoadMode::Im2colW128 => {
-                                            push_directive(tokens, "im2col::w::128");
+                                    LoadMode::Im2col => {
+                                            push_directive(tokens, "im2col");
+                                    }
+                                    LoadMode::Tile => {
+                                            push_directive(tokens, "tile");
                                     }
                             }
                     }
@@ -115,21 +115,16 @@ pub mod section_0 {
                     }
                     self.dstmem.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_3_0, ref group_3_1) = &self.tensormap;
-                    group_3_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_3_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    self.tensormap.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.mbar.unparse_tokens(tokens);
             if self.im2colinfo.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_4) = self.im2colinfo.as_ref() {
-                        opt_4.unparse_tokens(tokens);
+                    if let Some(opt_3) = self.im2colinfo.as_ref() {
+                        opt_3.unparse_tokens(tokens);
                     }
             if self.cache_policy.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_5) = self.cache_policy.as_ref() {
-                        opt_5.unparse_tokens(tokens);
+                    if let Some(opt_4) = self.cache_policy.as_ref() {
+                        opt_4.unparse_tokens(tokens);
                     }
             tokens.push(PtxToken::Semicolon);
         }
@@ -174,22 +169,22 @@ pub mod section_1 {
                                     push_directive(tokens, "global");
                             }
                     }
-                    if let Some(load_mode_6) = self.load_mode.as_ref() {
-                            match load_mode_6 {
-                                    LoadMode::Tile => {
-                                            push_directive(tokens, "tile");
+                    if let Some(load_mode_5) = self.load_mode.as_ref() {
+                            match load_mode_5 {
+                                    LoadMode::Im2colW128 => {
+                                            push_directive(tokens, "im2col::w::128");
                                     }
                                     LoadMode::TileGather4 => {
                                             push_directive(tokens, "tile::gather4");
                                     }
-                                    LoadMode::Im2col => {
-                                            push_directive(tokens, "im2col");
-                                    }
                                     LoadMode::Im2colW => {
                                             push_directive(tokens, "im2col::w");
                                     }
-                                    LoadMode::Im2colW128 => {
-                                            push_directive(tokens, "im2col::w::128");
+                                    LoadMode::Im2col => {
+                                            push_directive(tokens, "im2col");
+                                    }
+                                    LoadMode::Tile => {
+                                            push_directive(tokens, "tile");
                                     }
                             }
                     }
@@ -198,15 +193,15 @@ pub mod section_1 {
                                     push_directive(tokens, "mbarrier::complete_tx::bytes");
                             }
                     }
-                    if let Some(multicast_7) = self.multicast.as_ref() {
-                            match multicast_7 {
+                    if let Some(multicast_6) = self.multicast.as_ref() {
+                            match multicast_6 {
                                     Multicast::MulticastCluster => {
                                             push_directive(tokens, "multicast::cluster");
                                     }
                             }
                     }
-                    if let Some(cta_group_8) = self.cta_group.as_ref() {
-                            match cta_group_8 {
+                    if let Some(cta_group_7) = self.cta_group.as_ref() {
+                            match cta_group_7 {
                                     CtaGroup::CtaGroup1 => {
                                             push_directive(tokens, "cta_group::1");
                                     }
@@ -215,8 +210,8 @@ pub mod section_1 {
                                     }
                             }
                     }
-                    if let Some(level_cache_hint_9) = self.level_cache_hint.as_ref() {
-                            match level_cache_hint_9 {
+                    if let Some(level_cache_hint_8) = self.level_cache_hint.as_ref() {
+                            match level_cache_hint_8 {
                                     LevelCacheHint::L2CacheHint => {
                                             push_directive(tokens, "L2::cache_hint");
                                     }
@@ -224,25 +219,20 @@ pub mod section_1 {
                     }
                     self.dstmem.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_10_0, ref group_10_1) = &self.tensormap;
-                    group_10_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_10_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    self.tensormap.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.mbar.unparse_tokens(tokens);
             if self.im2colinfo.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_11) = self.im2colinfo.as_ref() {
-                        opt_11.unparse_tokens(tokens);
+                    if let Some(opt_9) = self.im2colinfo.as_ref() {
+                        opt_9.unparse_tokens(tokens);
                     }
             if self.ctamask.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_12) = self.ctamask.as_ref() {
-                        opt_12.unparse_tokens(tokens);
+                    if let Some(opt_10) = self.ctamask.as_ref() {
+                        opt_10.unparse_tokens(tokens);
                     }
             if self.cache_policy.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_13) = self.cache_policy.as_ref() {
-                        opt_13.unparse_tokens(tokens);
+                    if let Some(opt_11) = self.cache_policy.as_ref() {
+                        opt_11.unparse_tokens(tokens);
                     }
             tokens.push(PtxToken::Semicolon);
         }
@@ -287,16 +277,16 @@ pub mod section_2 {
                                     push_directive(tokens, "shared::cta");
                             }
                     }
-                    if let Some(load_mode_14) = self.load_mode.as_ref() {
-                            match load_mode_14 {
-                                    LoadMode::Tile => {
-                                            push_directive(tokens, "tile");
-                                    }
+                    if let Some(load_mode_12) = self.load_mode.as_ref() {
+                            match load_mode_12 {
                                     LoadMode::TileScatter4 => {
                                             push_directive(tokens, "tile::scatter4");
                                     }
                                     LoadMode::Im2colNoOffs => {
                                             push_directive(tokens, "im2col_no_offs");
+                                    }
+                                    LoadMode::Tile => {
+                                            push_directive(tokens, "tile");
                                     }
                             }
                     }
@@ -305,24 +295,19 @@ pub mod section_2 {
                                     push_directive(tokens, "bulk_group");
                             }
                     }
-                    if let Some(level_cache_hint_15) = self.level_cache_hint.as_ref() {
-                            match level_cache_hint_15 {
+                    if let Some(level_cache_hint_13) = self.level_cache_hint.as_ref() {
+                            match level_cache_hint_13 {
                                     LevelCacheHint::L2CacheHint => {
                                             push_directive(tokens, "L2::cache_hint");
                                     }
                             }
                     }
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_16_0, ref group_16_1) = &self.tensormap;
-                    group_16_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_16_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    self.tensormap.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.srcmem.unparse_tokens(tokens);
             if self.cache_policy.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_17) = self.cache_policy.as_ref() {
-                        opt_17.unparse_tokens(tokens);
+                    if let Some(opt_14) = self.cache_policy.as_ref() {
+                        opt_14.unparse_tokens(tokens);
                     }
             tokens.push(PtxToken::Semicolon);
         }

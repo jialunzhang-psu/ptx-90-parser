@@ -21,11 +21,11 @@ pub mod section_0 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M8n8 => {
-                                    push_directive(tokens, "m8n8");
-                            }
                             Shape::M16n8 => {
                                     push_directive(tokens, "m16n8");
+                            }
+                            Shape::M8n8 => {
+                                    push_directive(tokens, "m8n8");
                             }
                     }
                     match &self.num {
@@ -44,11 +44,11 @@ pub mod section_0 {
                     }
                     if let Some(ss_0) = self.ss.as_ref() {
                             match ss_0 {
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
                                     Ss::SharedCta => {
                                             push_directive(tokens, "shared::cta");
+                                    }
+                                    Ss::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                             }
                     }

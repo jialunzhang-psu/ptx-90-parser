@@ -1,7 +1,7 @@
 //! Original PTX specification:
 //!
-//! pmevent       a;    // trigger a single performance monitor event
-//! pmevent.mask  a;    // trigger one or more performance monitor events
+//! pmevent a;         // trigger a single performance monitor event
+//! pmevent.mask a;    // trigger one or more performance monitor events
 
 #![allow(unused)]
 
@@ -16,7 +16,10 @@ pub mod section_0 {
     impl PtxParser for Pmevent {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("pmevent")?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Pmevent {
                 a,
             })
@@ -29,7 +32,11 @@ pub mod section_0 {
             stream.expect_string("pmevent")?;
             stream.expect_string(".mask")?;
             let mask = ();
-            let a = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(PmeventMask {
                 mask,
                 a,

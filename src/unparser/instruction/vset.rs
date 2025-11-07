@@ -256,26 +256,25 @@ pub mod section_0 {
                             }
                     }
                     self.d.unparse_tokens(tokens);
-            tokens.push(PtxToken::Comma);
                     match &self.dsel {
-                        Dsel::B0 => {
+                            Dsel::B0 => {
                                     push_directive(tokens, "b0");
-                        }
-                        Dsel::B1 => {
+                            }
+                            Dsel::B1 => {
                                     push_directive(tokens, "b1");
-                        }
-                        Dsel::B2 => {
+                            }
+                            Dsel::B2 => {
                                     push_directive(tokens, "b2");
-                        }
-                        Dsel::B3 => {
+                            }
+                            Dsel::B3 => {
                                     push_directive(tokens, "b3");
-                        }
-                        Dsel::H0 => {
+                            }
+                            Dsel::H0 => {
                                     push_directive(tokens, "h0");
-                        }
-                        Dsel::H1 => {
+                            }
+                            Dsel::H1 => {
                                     push_directive(tokens, "h1");
-                        }
+                            }
                     }
             tokens.push(PtxToken::Comma);
                     self.a.unparse_tokens(tokens);

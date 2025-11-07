@@ -20,8 +20,8 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct NotType {
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
 }

@@ -12,8 +12,8 @@ pub mod section_0 {
     pub struct MbarrierPendingCountB64 {
         pub pending_count: (), // .pending_count
         pub b64: (), // .b64
-        pub count: Operand, // count
-        pub state: Operand, // state
+        pub count: GeneralOperand, // count
+        pub state: GeneralOperand, // state
     }
 
 }

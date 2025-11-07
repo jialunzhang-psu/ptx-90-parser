@@ -11,7 +11,7 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct ActivemaskB32 {
         pub b32: (), // .b32
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
     }
 
 }

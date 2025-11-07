@@ -21,9 +21,9 @@ pub mod section_0 {
     pub struct SubcCcType {
         pub cc: bool, // {.cc}
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
 }

@@ -59,12 +59,18 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("vote")?;
             let mode = Mode::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".pred")?;
             let pred = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(VoteModePred {
                 mode,
                 pred,
@@ -81,12 +87,18 @@ pub mod section_0 {
             stream.expect_string("vote")?;
             stream.expect_string(".ballot")?;
             let ballot = ();
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(VoteBallotB32 {
                 ballot,
                 b32,

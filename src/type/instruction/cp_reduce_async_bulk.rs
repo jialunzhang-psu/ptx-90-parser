@@ -46,13 +46,13 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Redop {
         And, // .and
-        Or, // .or
         Xor, // .xor
         Add, // .add
         Inc, // .inc
         Dec, // .dec
         Min, // .min
         Max, // .max
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -76,7 +76,7 @@ pub mod section_0 {
         pub type_: Type, // .type
         pub dstmem: AddressOperand, // [dstMem]
         pub srcmem: AddressOperand, // [srcMem]
-        pub size: Operand, // size
+        pub size: GeneralOperand, // size
         pub mbar: AddressOperand, // [mbar]
     }
 
@@ -103,13 +103,13 @@ pub mod section_1 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Redop {
         And, // .and
-        Or, // .or
         Xor, // .xor
         Add, // .add
         Inc, // .inc
         Dec, // .dec
         Min, // .min
         Max, // .max
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -134,8 +134,8 @@ pub mod section_1 {
         pub type_: Type, // .type
         pub dstmem: AddressOperand, // [dstMem]
         pub srcmem: AddressOperand, // [srcMem]
-        pub size: Operand, // size
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub size: GeneralOperand, // size
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }
@@ -165,8 +165,8 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Type {
-        F16, // .f16
         Bf16, // .bf16
+        F16, // .f16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -183,8 +183,8 @@ pub mod section_2 {
         pub type_: Type, // .type
         pub dstmem: AddressOperand, // [dstMem]
         pub srcmem: AddressOperand, // [srcMem]
-        pub size: Operand, // size
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub size: GeneralOperand, // size
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }

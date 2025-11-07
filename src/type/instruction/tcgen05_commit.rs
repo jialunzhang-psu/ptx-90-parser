@@ -37,7 +37,7 @@ pub mod section_0 {
         pub multicast: Option<Multicast>, // {.multicast}
         pub b64: (), // .b64
         pub mbar: AddressOperand, // [mbar]
-        pub ctamask: Option<Operand>, // {, ctaMask}
+        pub ctamask: Option<GeneralOperand>, // {, ctaMask}
     }
 
 }

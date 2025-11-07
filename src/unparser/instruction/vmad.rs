@@ -49,11 +49,11 @@ pub mod section_0 {
                     }
                     if let Some(scale_0) = self.scale.as_ref() {
                             match scale_0 {
-                                    Scale::Shr7 => {
-                                            push_directive(tokens, "shr7");
-                                    }
                                     Scale::Shr15 => {
                                             push_directive(tokens, "shr15");
+                                    }
+                                    Scale::Shr7 => {
+                                            push_directive(tokens, "shr7");
                                     }
                             }
                     }
@@ -148,11 +148,11 @@ pub mod section_0 {
                     }
                     if let Some(scale_3) = self.scale.as_ref() {
                             match scale_3 {
-                                    Scale::Shr7 => {
-                                            push_directive(tokens, "shr7");
-                                    }
                                     Scale::Shr15 => {
                                             push_directive(tokens, "shr15");
+                                    }
+                                    Scale::Shr7 => {
+                                            push_directive(tokens, "shr7");
                                     }
                             }
                     }

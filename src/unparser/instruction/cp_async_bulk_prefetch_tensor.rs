@@ -48,20 +48,20 @@ pub mod section_0 {
                     }
                     if let Some(load_mode_0) = self.load_mode.as_ref() {
                             match load_mode_0 {
-                                    LoadMode::Tile => {
-                                            push_directive(tokens, "tile");
+                                    LoadMode::Im2colW128 => {
+                                            push_directive(tokens, "im2col::w::128");
                                     }
                                     LoadMode::TileGather4 => {
                                             push_directive(tokens, "tile::gather4");
                                     }
-                                    LoadMode::Im2col => {
-                                            push_directive(tokens, "im2col");
-                                    }
                                     LoadMode::Im2colW => {
                                             push_directive(tokens, "im2col::w");
                                     }
-                                    LoadMode::Im2colW128 => {
-                                            push_directive(tokens, "im2col::w::128");
+                                    LoadMode::Im2col => {
+                                            push_directive(tokens, "im2col");
+                                    }
+                                    LoadMode::Tile => {
+                                            push_directive(tokens, "tile");
                                     }
                             }
                     }
@@ -72,19 +72,14 @@ pub mod section_0 {
                                     }
                             }
                     }
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_2_0, ref group_2_1) = &self.tensormap;
-                    group_2_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_2_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    self.tensormap.unparse_tokens(tokens);
             if self.im2colinfo.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_3) = self.im2colinfo.as_ref() {
-                        opt_3.unparse_tokens(tokens);
+                    if let Some(opt_2) = self.im2colinfo.as_ref() {
+                        opt_2.unparse_tokens(tokens);
                     }
             if self.cache_policy.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_4) = self.cache_policy.as_ref() {
-                        opt_4.unparse_tokens(tokens);
+                    if let Some(opt_3) = self.cache_policy.as_ref() {
+                        opt_3.unparse_tokens(tokens);
                     }
             tokens.push(PtxToken::Semicolon);
         }

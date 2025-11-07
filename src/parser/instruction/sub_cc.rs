@@ -69,12 +69,19 @@ pub mod section_0 {
             stream.expect_string("sub")?;
             stream.expect_string(".cc")?;
             let cc = ();
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SubCcType {
                 cc,
                 type_,

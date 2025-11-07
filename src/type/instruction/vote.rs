@@ -21,18 +21,18 @@ pub mod section_0 {
     pub struct VoteModePred {
         pub mode: Mode, // .mode
         pub pred: (), // .pred
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a_op: bool, // {!} operator
-        pub a: Operand, // {!}a
+        pub a: GeneralOperand, // {!}a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct VoteBallotB32 {
         pub ballot: (), // .ballot
         pub b32: (), // .b32
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a_op: bool, // {!} operator
-        pub a: Operand, // {!}a
+        pub a: GeneralOperand, // {!}a
     }
 
 }

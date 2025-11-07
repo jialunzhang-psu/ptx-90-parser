@@ -32,10 +32,10 @@ pub mod section_0 {
     pub struct SlctDtypeS32 {
         pub dtype: Dtype, // .dtype
         pub s32: (), // .s32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -43,10 +43,10 @@ pub mod section_0 {
         pub ftz: bool, // {.ftz}
         pub dtype: Dtype, // .dtype
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }

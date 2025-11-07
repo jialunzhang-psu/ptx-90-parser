@@ -49,11 +49,11 @@ pub mod section_0 {
             push_opcode(tokens, "prefetch");
                     push_directive(tokens, "global");
                     match &self.level_eviction_priority {
-                            LevelEvictionPriority::L2EvictLast => {
-                                    push_directive(tokens, "L2::evict_last");
-                            }
                             LevelEvictionPriority::L2EvictNormal => {
                                     push_directive(tokens, "L2::evict_normal");
+                            }
+                            LevelEvictionPriority::L2EvictLast => {
+                                    push_directive(tokens, "L2::evict_last");
                             }
                     }
                     self.a.unparse_tokens(tokens);

@@ -11,7 +11,7 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct NanosleepU32 {
         pub u32: (), // .u32
-        pub t: Operand, // t
+        pub t: GeneralOperand, // t
     }
 
 }

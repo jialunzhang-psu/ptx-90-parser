@@ -48,13 +48,20 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("bmsk")?;
             let mode = Mode::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BmskModeB32 {
                 mode,
                 b32,

@@ -3,8 +3,9 @@ use crate::{
     lexer::{PtxToken, tokenize},
     r#type::common::{
         AddressBase, AddressOffset, AddressOperand, AddressSpace, AttributeDirective, Axis,
-        CodeLinkage, CodeOrDataLinkage, DataLinkage, DataType, FunctionSymbol, Immediate, Label,
-        Operand, PredicateRegister, RegisterOperand, Sign, SpecialRegister, TexType, VariableSymbol,
+        CodeLinkage, CodeOrDataLinkage, DataLinkage, DataType, FunctionSymbol, GeneralOperand,
+        Immediate, Label, Operand, PredicateRegister, RegisterOperand, Sign, SpecialRegister,
+        TexHandler2, TexHandler3, TexHandler3Optional, TexType, VariableSymbol, VectorOperand,
     },
 };
 
@@ -305,42 +306,103 @@ impl PtxUnparser for Operand {
             Operand::Register(register) => register.unparse_tokens(tokens),
             Operand::Immediate(immediate) => immediate.unparse_tokens(tokens),
             Operand::Symbol(symbol) => push_identifier(tokens, symbol),
-            Operand::Vector1(item) => {
-                tokens.push(PtxToken::LBrace);
-                item.unparse_tokens(tokens);
-                tokens.push(PtxToken::RBrace);
-            }
-            Operand::Vector2(items) => {
-                tokens.push(PtxToken::LBrace);
-                for (idx, item) in items.iter().enumerate() {
-                    if idx > 0 {
-                        tokens.push(PtxToken::Comma);
-                    }
-                    item.unparse_tokens(tokens);
-                }
-                tokens.push(PtxToken::RBrace);
-            }
-            Operand::Vector3(items) => {
-                tokens.push(PtxToken::LBrace);
-                for (idx, item) in items.iter().enumerate() {
-                    if idx > 0 {
-                        tokens.push(PtxToken::Comma);
-                    }
-                    item.unparse_tokens(tokens);
-                }
-                tokens.push(PtxToken::RBrace);
-            }
-            Operand::Vector4(items) => {
-                tokens.push(PtxToken::LBrace);
-                for (idx, item) in items.iter().enumerate() {
-                    if idx > 0 {
-                        tokens.push(PtxToken::Comma);
-                    }
-                    item.unparse_tokens(tokens);
-                }
-                tokens.push(PtxToken::RBrace);
+            Operand::SymbolOffset(symbol, offset) => {
+                push_identifier(tokens, symbol);
+                tokens.push(PtxToken::Plus);
+                offset.unparse_tokens(tokens);
             }
         }
+    }
+}
+
+impl PtxUnparser for VectorOperand {
+    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        tokens.push(PtxToken::LBrace);
+        match self {
+            VectorOperand::Vector1(item) => item.unparse_tokens(tokens),
+            VectorOperand::Vector2(items) => {
+                for (idx, item) in items.iter().enumerate() {
+                    if idx > 0 {
+                        tokens.push(PtxToken::Comma);
+                    }
+                    item.unparse_tokens(tokens);
+                }
+            }
+            VectorOperand::Vector3(items) => {
+                for (idx, item) in items.iter().enumerate() {
+                    if idx > 0 {
+                        tokens.push(PtxToken::Comma);
+                    }
+                    item.unparse_tokens(tokens);
+                }
+            }
+            VectorOperand::Vector4(items) => {
+                for (idx, item) in items.iter().enumerate() {
+                    if idx > 0 {
+                        tokens.push(PtxToken::Comma);
+                    }
+                    item.unparse_tokens(tokens);
+                }
+            }
+            VectorOperand::Vector8(items) => {
+                for (idx, item) in items.iter().enumerate() {
+                    if idx > 0 {
+                        tokens.push(PtxToken::Comma);
+                    }
+                    item.unparse_tokens(tokens);
+                }
+            }
+        }
+        tokens.push(PtxToken::RBrace);
+    }
+}
+
+impl PtxUnparser for GeneralOperand {
+    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        match self {
+            GeneralOperand::Vec(vector) => vector.unparse_tokens(tokens),
+            GeneralOperand::Single(operand) => operand.unparse_tokens(tokens),
+        }
+    }
+}
+
+impl PtxUnparser for TexHandler2 {
+    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        tokens.push(PtxToken::LBracket);
+        let TexHandler2(items) = self;
+        for (idx, item) in items.iter().enumerate() {
+            if idx > 0 {
+                tokens.push(PtxToken::Comma);
+            }
+            item.unparse_tokens(tokens);
+        }
+        tokens.push(PtxToken::RBracket);
+    }
+}
+
+impl PtxUnparser for TexHandler3 {
+    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        tokens.push(PtxToken::LBracket);
+        self.handle.unparse_tokens(tokens);
+        tokens.push(PtxToken::Comma);
+        self.sampler.unparse_tokens(tokens);
+        tokens.push(PtxToken::Comma);
+        self.coords.unparse_tokens(tokens);
+        tokens.push(PtxToken::RBracket);
+    }
+}
+
+impl PtxUnparser for TexHandler3Optional {
+    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        tokens.push(PtxToken::LBracket);
+        self.handle.unparse_tokens(tokens);
+        tokens.push(PtxToken::Comma);
+        if let Some(sampler) = &self.sampler {
+            sampler.unparse_tokens(tokens);
+            tokens.push(PtxToken::Comma);
+        }
+        self.coords.unparse_tokens(tokens);
+        tokens.push(PtxToken::RBracket);
     }
 }
 

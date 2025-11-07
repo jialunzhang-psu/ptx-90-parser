@@ -50,8 +50,10 @@ pub mod section_0 {
             stream.expect_string("barrier")?;
             stream.expect_string(".cluster")?;
             let cluster = ();
+            stream.expect_complete()?;
             stream.expect_string(".arrive")?;
             let arrive = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let sem = match Sem::parse(stream) {
                 Ok(val) => Some(val),
@@ -60,11 +62,15 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let aligned = stream.expect_string(".aligned").is_ok();
             if !aligned {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarrierClusterArriveSemAligned {
                 cluster,
                 arrive,
@@ -80,18 +86,24 @@ pub mod section_0 {
             stream.expect_string("barrier")?;
             stream.expect_string(".cluster")?;
             let cluster = ();
+            stream.expect_complete()?;
             stream.expect_string(".wait")?;
             let wait = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let acquire = stream.expect_string(".acquire").is_ok();
             if !acquire {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let aligned = stream.expect_string(".aligned").is_ok();
             if !aligned {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarrierClusterWaitAcquireAligned {
                 cluster,
                 wait,

@@ -57,11 +57,11 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LoadMode {
-        Tile, // .tile
-        TileGather4, // .tile::gather4
-        Im2col, // .im2col
-        Im2colW, // .im2col::w
         Im2colW128, // .im2col::w::128
+        TileGather4, // .tile::gather4
+        Im2colW, // .im2col::w
+        Im2col, // .im2col
+        Tile, // .tile
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -93,10 +93,10 @@ pub mod section_0 {
         pub cta_group: Option<CtaGroup>, // {.cta_group}
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub dstmem: AddressOperand, // [dstMem]
-        pub tensormap: (Operand, Operand), // [tensorMap, tensorCoords]
+        pub tensormap: TexHandler2, // [tensorMap, tensorCoords]
         pub mbar: AddressOperand, // [mbar]
-        pub im2colinfo: Option<Operand>, // {, im2colInfo}
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub im2colinfo: Option<GeneralOperand>, // {, im2colInfo}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }
@@ -125,11 +125,11 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LoadMode {
-        Tile, // .tile
-        TileGather4, // .tile::gather4
-        Im2col, // .im2col
-        Im2colW, // .im2col::w
         Im2colW128, // .im2col::w::128
+        TileGather4, // .tile::gather4
+        Im2colW, // .im2col::w
+        Im2col, // .im2col
+        Tile, // .tile
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -167,11 +167,11 @@ pub mod section_1 {
         pub cta_group: Option<CtaGroup>, // {.cta_group}
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub dstmem: AddressOperand, // [dstMem]
-        pub tensormap: (Operand, Operand), // [tensorMap, tensorCoords]
+        pub tensormap: TexHandler2, // [tensorMap, tensorCoords]
         pub mbar: AddressOperand, // [mbar]
-        pub im2colinfo: Option<Operand>, // {, im2colInfo}
-        pub ctamask: Option<Operand>, // {, ctaMask}
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub im2colinfo: Option<GeneralOperand>, // {, im2colInfo}
+        pub ctamask: Option<GeneralOperand>, // {, ctaMask}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }
@@ -200,9 +200,9 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LoadMode {
-        Tile, // .tile
         TileScatter4, // .tile::scatter4
         Im2colNoOffs, // .im2col_no_offs
+        Tile, // .tile
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -226,9 +226,9 @@ pub mod section_2 {
         pub load_mode: Option<LoadMode>, // {.load_mode}
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub tensormap: (Operand, Operand), // [tensorMap, tensorCoords]
+        pub tensormap: TexHandler2, // [tensorMap, tensorCoords]
         pub srcmem: AddressOperand, // [srcMem]
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }

@@ -41,18 +41,25 @@ pub(crate) fn parse_register_name(
 
         match next {
             PtxToken::Dot => {
-                // Peek ahead to see if this is a component like .x, .y, .z or a regular component
-                if let Some((PtxToken::Identifier(_component_name), _)) =
+                // Peek ahead to see if this is a valid register component
+                if let Some((PtxToken::Identifier(component_name), _)) =
                     stream.tokens.get(stream.index + 1)
                 {
-                    // consume the dot and identifier
-                    stream.consume()?;
-                    let (component, component_span) = stream.expect_identifier()?;
+                    // Only consume if it's a valid single-character register component
+                    // Exclude multi-character .b* patterns (e.g., .b0, .b3210) which are instruction-specific modifiers
+                    if matches!(component_name.as_str(), "x" | "y" | "z" | "w" | "r" | "g" | "b" | "a") {
+                        // consume the dot and identifier
+                        stream.consume()?;
+                        let (component, component_span) = stream.expect_identifier()?;
 
-                    name.push('.');
-                    name.push_str(&component);
+                        name.push('.');
+                        name.push_str(&component);
 
-                    span.end = component_span.end;
+                        span.end = component_span.end;
+                    } else {
+                        // Not a valid register component, stop parsing
+                        break;
+                    }
                 } else {
                     break;
                 }
@@ -307,10 +314,14 @@ impl PtxParser for Immediate {
                 Ok(Immediate(literal))
             }
             None => {
-                // If we consumed a minus, we need to restore position
+                // If we consumed a minus, we need to restore position by going back one token
                 if has_minus {
-                    let current_pos = stream.position();
-                    stream.set_position(current_pos - 1);
+                    let mut current_pos = stream.position();
+                    if current_pos.index > 0 {
+                        current_pos.index -= 1;
+                        current_pos.char_offset = 0;
+                        stream.set_position(current_pos);
+                    }
                 }
                 Err(unexpected_value(
                     span.clone(),
@@ -566,71 +577,157 @@ impl PtxParser for SpecialRegister {
 
 impl PtxParser for Operand {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        if stream.check(|token| matches!(token, PtxToken::LBrace)) {
-            let ( _, brace_span) = stream.consume()?; // consume '{'
-            let mut elements = Vec::new();
-            loop {
-                elements.push(Operand::parse(stream)?);
-                if stream
-                    .consume_if(|token| matches!(token, PtxToken::Comma))
-                    .is_some()
-                {
-                    continue;
-                }
-                break;
-            }
-            stream.expect(&PtxToken::RBrace)?;
-            match elements.len() {
-                1 => Ok(Operand::Vector1(Box::new(elements.remove(0)))),
-                2 => {
-                    let mut iter = elements.into_iter();
-                    Ok(Operand::Vector2(Box::new([
-                        iter.next().unwrap(),
-                        iter.next().unwrap(),
-                    ])))
-                }
-                3 => {
-                    let mut iter = elements.into_iter();
-                    Ok(Operand::Vector3(Box::new([
-                        iter.next().unwrap(),
-                        iter.next().unwrap(),
-                        iter.next().unwrap(),
-                    ])))
-                }
-                4 => {
-                    let mut iter = elements.into_iter();
-                    Ok(Operand::Vector4(Box::new([
-                        iter.next().unwrap(),
-                        iter.next().unwrap(),
-                        iter.next().unwrap(),
-                        iter.next().unwrap(),
-                    ])))
-                }
-                other => Err(invalid_literal(
-                    brace_span.clone(),
-                    format!("expected operand vector of length 1..=4, found {other}"),
-                )),
-            }
-        } else if stream.check(|token| matches!(token, PtxToken::Register(_))) {
-            Ok(Operand::Register(RegisterOperand::parse(stream)?))
-        } else {
-            let saved = stream.position();
-            if let Ok(immediate) = Immediate::parse(stream) {
-                return Ok(Operand::Immediate(immediate));
-            }
-            stream.set_position(saved);
-            if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
-                let (identifier, _) = stream.expect_identifier()?;
-                Ok(Operand::Symbol(identifier))
-            } else {
-                let (token, span) = stream.peek()?;
-                Err(unexpected_value(
-                    span.clone(),
-                    &["operand"],
-                    format!("{token:?}"),
-                ))
-            }
+        let saved_pos = stream.position();
+        if let Ok(immediate) = Immediate::parse(stream) {
+            return Ok(Operand::Immediate(immediate));
         }
+        stream.set_position(saved_pos);
+
+        if stream.check(|token| matches!(token, PtxToken::Register(_))) {
+            return Ok(Operand::Register(RegisterOperand::parse(stream)?));
+        }
+
+        if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
+            let (identifier, _) = stream.expect_identifier()?;
+            
+            // Check for arithmetic expression: identifier + immediate
+            let saved_pos_after_ident = stream.position();
+            if stream.expect(&PtxToken::Plus).is_ok() {
+                if let Ok(offset) = Immediate::parse(stream) {
+                    return Ok(Operand::SymbolOffset(identifier, offset));
+                }
+                // If parsing offset failed, backtrack
+                stream.set_position(saved_pos_after_ident);
+            }
+            
+            return Ok(Operand::Symbol(identifier));
+        }
+
+        let (token, span) = stream.peek()?;
+        Err(unexpected_value(
+            span.clone(),
+            &["operand"],
+            format!("{token:?}"),
+        ))
+    }
+}
+
+impl PtxParser for VectorOperand {
+    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let (_, brace_span) = stream.expect(&PtxToken::LBrace)?;
+        let mut operands = Vec::new();
+
+        loop {
+            operands.push(Operand::parse(stream)?);
+            if stream
+                .consume_if(|token| matches!(token, PtxToken::Comma))
+                .is_some()
+            {
+                continue;
+            }
+            break;
+        }
+
+        stream.expect(&PtxToken::RBrace)?;
+
+        match operands.len() {
+            1 => Ok(VectorOperand::Vector1(operands.remove(0))),
+            2 => Ok(VectorOperand::Vector2([
+                operands.remove(0),
+                operands.remove(0),
+            ])),
+            3 => Ok(VectorOperand::Vector3([
+                operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+            ])),
+            4 => Ok(VectorOperand::Vector4([
+                operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+            ])),
+            8 => Ok(VectorOperand::Vector8([
+                operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+            ])),
+            other => Err(invalid_literal(
+                brace_span.clone(),
+                format!("expected operand vector of length 1..=4 or 8, found {other}"),
+            )),
+        }
+    }
+}
+
+impl PtxParser for GeneralOperand {
+    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        if stream.check(|token| matches!(token, PtxToken::LBrace)) {
+            Ok(GeneralOperand::Vec(VectorOperand::parse(stream)?))
+        } else {
+            Ok(GeneralOperand::Single(Operand::parse(stream)?))
+        }
+    }
+}
+
+impl PtxParser for TexHandler2 {
+    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        stream.expect(&PtxToken::LBracket)?;
+        let first = GeneralOperand::parse(stream)?;
+        stream.expect(&PtxToken::Comma)?;
+        let second = GeneralOperand::parse(stream)?;
+        stream.expect(&PtxToken::RBracket)?;
+        Ok(TexHandler2([first, second]))
+    }
+}
+
+impl PtxParser for TexHandler3 {
+    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        stream.expect(&PtxToken::LBracket)?;
+        let handle = GeneralOperand::parse(stream)?;
+        stream.expect(&PtxToken::Comma)?;
+        let sampler = GeneralOperand::parse(stream)?;
+        stream.expect(&PtxToken::Comma)?;
+        let coords = GeneralOperand::parse(stream)?;
+        stream.expect(&PtxToken::RBracket)?;
+
+        Ok(TexHandler3 {
+            handle,
+            sampler,
+            coords,
+        })
+    }
+}
+
+impl PtxParser for TexHandler3Optional {
+    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        stream.expect(&PtxToken::LBracket)?;
+        let handle = GeneralOperand::parse(stream)?;
+        stream.expect(&PtxToken::Comma)?;
+        let second = GeneralOperand::parse(stream)?;
+
+        let (sampler, coords) = if stream
+            .consume_if(|token| matches!(token, PtxToken::Comma))
+            .is_some()
+        {
+            let coords = GeneralOperand::parse(stream)?;
+            (Some(second), coords)
+        } else {
+            (None, second)
+        };
+
+        stream.expect(&PtxToken::RBracket)?;
+
+        Ok(TexHandler3Optional {
+            handle,
+            sampler,
+            coords,
+        })
     }
 }
 

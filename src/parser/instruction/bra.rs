@@ -21,7 +21,11 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
-            let tgt = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let tgt = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BraUni {
                 uni,
                 tgt,
@@ -38,7 +42,11 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
-            let tgt = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let tgt = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BraUni1 {
                 uni,
                 tgt,

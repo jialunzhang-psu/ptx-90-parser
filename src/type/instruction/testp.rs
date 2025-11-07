@@ -14,12 +14,12 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Op {
-        Finite, // .finite
-        Infinite, // .infinite
-        Number, // .number
         Notanumber, // .notanumber
-        Normal, // .normal
         Subnormal, // .subnormal
+        Infinite, // .infinite
+        Finite, // .finite
+        Number, // .number
+        Normal, // .normal
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -32,8 +32,8 @@ pub mod section_0 {
     pub struct TestpOpType {
         pub op: Op, // .op
         pub type_: Type, // .type
-        pub p: Operand, // p
-        pub a: Operand, // a
+        pub p: GeneralOperand, // p
+        pub a: GeneralOperand, // a
     }
 
 }

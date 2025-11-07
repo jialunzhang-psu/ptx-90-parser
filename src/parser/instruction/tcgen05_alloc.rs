@@ -51,21 +51,31 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".alloc")?;
             let alloc = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let shared_cta = stream.expect_string(".shared::cta").is_ok();
             if !shared_cta {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
+            stream.expect_complete()?;
             let dst = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let ncols = Operand::parse(stream)?;
+            let ncols = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05AllocCtaGroupSyncAlignedSharedCtaB32 {
                 alloc,
                 cta_group,
@@ -85,16 +95,25 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".dealloc")?;
             let dealloc = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let taddr = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let taddr = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let ncols = Operand::parse(stream)?;
+            let ncols = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05DeallocCtaGroupSyncAlignedB32 {
                 dealloc,
                 cta_group,
@@ -113,11 +132,17 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".relinquish_alloc_permit")?;
             let relinquish_alloc_permit = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05RelinquishAllocPermitCtaGroupSyncAligned {
                 relinquish_alloc_permit,
                 cta_group,

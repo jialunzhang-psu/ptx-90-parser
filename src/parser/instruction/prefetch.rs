@@ -23,33 +23,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Space {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Space::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Local
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".local").is_ok() {
-                    return Ok(Space::Local);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".global", ".local"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Level {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try L1
@@ -79,15 +52,6 @@ pub mod section_0 {
 
     impl PtxParser for LevelEvictionPriority {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2EvictLast
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_last").is_ok() {
-                    return Ok(LevelEvictionPriority::L2EvictLast);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
             // Try L2EvictNormal
             {
                 let saved_pos = stream.position();
@@ -96,9 +60,45 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try L2EvictLast
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::evict_last").is_ok() {
+                    return Ok(LevelEvictionPriority::L2EvictLast);
+                }
+                stream.set_position(saved_pos);
+            }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::evict_last", ".L2::evict_normal"];
+            let expected = &[".L2::evict_normal", ".L2::evict_last"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Space {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Global
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".global").is_ok() {
+                    return Ok(Space::Global);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Local
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".local").is_ok() {
+                    return Ok(Space::Local);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".global", ".local"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -142,8 +142,13 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let level = Level::parse(stream)?;
+            stream.expect_complete()?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(PrefetchSpaceLevel {
                 space,
                 level,
@@ -158,8 +163,13 @@ pub mod section_0 {
             stream.expect_string("prefetch")?;
             stream.expect_string(".global")?;
             let global = ();
+            stream.expect_complete()?;
             let level_eviction_priority = LevelEvictionPriority::parse(stream)?;
+            stream.expect_complete()?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(PrefetchGlobalLevelEvictionPriority {
                 global,
                 level_eviction_priority,
@@ -174,7 +184,11 @@ pub mod section_0 {
             stream.expect_string("prefetchu")?;
             stream.expect_string(".L1")?;
             let l1 = ();
+            stream.expect_complete()?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(PrefetchuL1 {
                 l1,
                 a,
@@ -194,9 +208,14 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".tensormap")?;
             let tensormap = ();
+            stream.expect_complete()?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(PrefetchTensormapSpaceTensormap {
                 tensormap_space,
                 tensormap,

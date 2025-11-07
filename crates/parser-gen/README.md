@@ -22,3 +22,4 @@ The following specifications are considered important in terms of their syntax. 
 # WARNING
 
 - In `ptx_syntax/red.txt`, the syntax for reduction operations is different from the official PTX documentation in the order of modifiers to match the real generated PTX files.
+- In `ptx_syntax/tex.txt`, we changed `tex.geom.v4.dtype.ctype  d, [a, c] {, e} {, f};` to `tex.geom.v4.dtype.ctype  d{|p}, [a, c] {, e} {, f};` to accommodate an example that is given in the document.

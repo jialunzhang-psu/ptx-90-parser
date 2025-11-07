@@ -27,6 +27,9 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "min");
                     match &self.atype {
+                            Atype::U16x2 => {
+                                    push_directive(tokens, "u16x2");
+                            }
                             Atype::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -35,9 +38,6 @@ pub mod section_0 {
                             }
                             Atype::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Atype::U16x2 => {
-                                    push_directive(tokens, "u16x2");
                             }
                             Atype::S16 => {
                                     push_directive(tokens, "s16");

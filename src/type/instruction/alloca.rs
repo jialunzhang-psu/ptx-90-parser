@@ -18,9 +18,9 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct AllocaType {
         pub type_: Type, // .type
-        pub ptr: Operand, // ptr
-        pub size: Operand, // size
-        pub immalign: Option<Operand>, // {, immAlign}
+        pub ptr: GeneralOperand, // ptr
+        pub size: GeneralOperand, // size
+        pub immalign: Option<GeneralOperand>, // {, immAlign}
     }
 
 }

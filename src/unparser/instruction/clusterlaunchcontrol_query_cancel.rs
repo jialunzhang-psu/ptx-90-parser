@@ -36,16 +36,7 @@ pub mod section_0 {
                     push_directive(tokens, "v4");
                     push_directive(tokens, "b32");
                     push_directive(tokens, "b128");
-                    tokens.push(PtxToken::LBrace);
-                    let &( ref group_0_0, ref group_0_1, ref group_0_2, ref group_0_3) = &self.xdim;
-                    group_0_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_0_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_0_2.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_0_3.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBrace);
+                    self.xdim.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.try_cancel_response.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
@@ -56,8 +47,8 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "clusterlaunchcontrol");
                     push_directive(tokens, "query_cancel");
-                    if let Some(get_first_ctaid_dimension_1) = self.get_first_ctaid_dimension.as_ref() {
-                            match get_first_ctaid_dimension_1 {
+                    if let Some(get_first_ctaid_dimension_0) = self.get_first_ctaid_dimension.as_ref() {
+                            match get_first_ctaid_dimension_0 {
                                     GetFirstCtaidDimension::GetFirstCtaidX => {
                                             push_directive(tokens, "get_first_ctaid::x");
                                     }

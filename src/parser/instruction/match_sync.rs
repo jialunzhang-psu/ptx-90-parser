@@ -50,14 +50,22 @@ pub mod section_0 {
             stream.expect_string("match")?;
             stream.expect_string(".any")?;
             let any = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let membermask = Operand::parse(stream)?;
+            let membermask = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MatchAnySyncType {
                 any,
                 sync,
@@ -75,21 +83,29 @@ pub mod section_0 {
             stream.expect_string("match")?;
             stream.expect_string(".all")?;
             let all = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
             let saved_pos = stream.position();
             let p = if stream.consume_if(|t| matches!(t, PtxToken::Pipe)).is_some() {
-                Some(Operand::parse(stream)?)
+                Some(GeneralOperand::parse(stream)?)
             } else {
                 stream.set_position(saved_pos);
                 None
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let membermask = Operand::parse(stream)?;
+            let membermask = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MatchAllSyncType {
                 all,
                 sync,

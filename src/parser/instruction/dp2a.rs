@@ -18,33 +18,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Mode {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Lo
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".lo").is_ok() {
-                    return Ok(Mode::Lo);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Hi
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".hi").is_ok() {
-                    return Ok(Mode::Hi);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".lo", ".hi"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Atype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try U32
@@ -99,19 +72,55 @@ pub mod section_0 {
         }
     }
 
+    impl PtxParser for Mode {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Lo
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".lo").is_ok() {
+                    return Ok(Mode::Lo);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Hi
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".hi").is_ok() {
+                    return Ok(Mode::Hi);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".lo", ".hi"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Dp2aModeAtypeBtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("dp2a")?;
             let mode = Mode::parse(stream)?;
+            stream.expect_complete()?;
             let atype = Atype::parse(stream)?;
+            stream.expect_complete()?;
             let btype = Btype::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Dp2aModeAtypeBtype {
                 mode,
                 atype,

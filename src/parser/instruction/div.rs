@@ -142,11 +142,17 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("div")?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(DivType {
                 type_,
                 d,
@@ -162,18 +168,26 @@ pub mod section_0 {
             stream.expect_string("div")?;
             stream.expect_string(".approx")?;
             let approx = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(DivApproxFtzF32 {
                 approx,
                 ftz,
@@ -191,18 +205,26 @@ pub mod section_0 {
             stream.expect_string("div")?;
             stream.expect_string(".full")?;
             let full = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(DivFullFtzF32 {
                 full,
                 ftz,
@@ -219,18 +241,26 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("div")?;
             let rnd = Rnd::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(DivRndFtzF32 {
                 rnd,
                 ftz,
@@ -247,13 +277,20 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("div")?;
             let rnd = Rnd::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".f64")?;
             let f64 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(DivRndF64 {
                 rnd,
                 f64,

@@ -19,9 +19,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Mode {
+        Wide, // .wide
         Hi, // .hi
         Lo, // .lo
-        Wide, // .wide
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -46,10 +46,10 @@ pub mod section_0 {
     pub struct MadModeType {
         pub mode: Mode, // .mode
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -57,10 +57,10 @@ pub mod section_0 {
         pub hi: (), // .hi
         pub sat: (), // .sat
         pub s32: (), // .s32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -68,10 +68,10 @@ pub mod section_0 {
         pub ftz: bool, // {.ftz}
         pub sat: bool, // {.sat}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -80,20 +80,20 @@ pub mod section_0 {
         pub ftz: bool, // {.ftz}
         pub sat: bool, // {.sat}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MadRndF64 {
         pub rnd: Rnd, // .rnd
         pub f64: (), // .f64
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }

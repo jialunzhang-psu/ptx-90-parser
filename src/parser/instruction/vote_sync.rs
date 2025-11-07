@@ -60,15 +60,23 @@ pub mod section_0 {
             stream.expect_string("vote")?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             let mode = Mode::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".pred")?;
             let pred = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let membermask = Operand::parse(stream)?;
+            let membermask = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(VoteSyncModePred {
                 sync,
                 mode,
@@ -87,16 +95,24 @@ pub mod section_0 {
             stream.expect_string("vote")?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".ballot")?;
             let ballot = ();
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let membermask = Operand::parse(stream)?;
+            let membermask = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(VoteSyncBallotB32 {
                 sync,
                 ballot,

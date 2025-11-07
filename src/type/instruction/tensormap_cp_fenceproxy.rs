@@ -18,8 +18,21 @@ pub mod section_0 {
     }
 
     #[derive(Debug, Clone, PartialEq)]
+    pub enum ToProxyFromProxy {
+        TensormapGeneric, // .tensormap::generic
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum Scope {
+        Cluster, // .cluster
+        Cta, // .cta
+        Gpu, // .gpu
+        Sys, // .sys
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
     pub enum FenceQualifiers {
-        ToProxyFromProxyReleaseScope, // .to_proxy::from_proxy.release.scope
+        ToProxyFromProxyReleaseScope(ToProxyFromProxy, (), Scope), // .to_proxy::from_proxy.release.scope
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -31,7 +44,7 @@ pub mod section_0 {
         pub aligned: (), // .aligned
         pub dst: AddressOperand, // [dst]
         pub src: AddressOperand, // [src]
-        pub size: Operand, // size
+        pub size: GeneralOperand, // size
     }
 
 }

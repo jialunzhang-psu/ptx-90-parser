@@ -14,7 +14,7 @@ pub mod section_0 {
         pub bulk: (), // .bulk
         pub wait_group: (), // .wait_group
         pub read: bool, // {.read}
-        pub n: Operand, // N
+        pub n: GeneralOperand, // N
     }
 
 }

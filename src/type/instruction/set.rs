@@ -49,6 +49,14 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Cmpop {
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
         Eq, // .eq
         Ne, // .ne
         Lt, // .lt
@@ -59,14 +67,6 @@ pub mod section_0 {
         Ls, // .ls
         Hi, // .hi
         Hs, // .hs
-        Equ, // .equ
-        Neu, // .neu
-        Ltu, // .ltu
-        Leu, // .leu
-        Gtu, // .gtu
-        Geu, // .geu
-        Num, // .num
-        Nan, // .nan
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -94,8 +94,8 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Boolop {
         And, // .and
-        Or, // .or
         Xor, // .xor
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -104,9 +104,9 @@ pub mod section_0 {
         pub ftz: bool, // {.ftz}
         pub dtype: Dtype, // .dtype
         pub stype: Stype, // .stype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -116,11 +116,11 @@ pub mod section_0 {
         pub ftz: bool, // {.ftz}
         pub dtype: Dtype, // .dtype
         pub stype: Stype, // .stype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
 }
@@ -130,6 +130,14 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Cmpop {
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
         Eq, // .eq
         Ne, // .ne
         Lt, // .lt
@@ -140,14 +148,6 @@ pub mod section_1 {
         Ls, // .ls
         Hi, // .hi
         Hs, // .hs
-        Equ, // .equ
-        Neu, // .neu
-        Ltu, // .ltu
-        Leu, // .leu
-        Gtu, // .gtu
-        Geu, // .geu
-        Num, // .num
-        Nan, // .nan
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -168,8 +168,8 @@ pub mod section_1 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Boolop {
         And, // .and
-        Or, // .or
         Xor, // .xor
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -186,9 +186,9 @@ pub mod section_1 {
         pub ftz: bool, // {.ftz}
         pub f16: (), // .f16
         pub stype: Stype, // .stype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -198,11 +198,11 @@ pub mod section_1 {
         pub ftz: bool, // {.ftz}
         pub f16: (), // .f16
         pub stype: Stype, // .stype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -210,9 +210,9 @@ pub mod section_1 {
         pub cmpop: Cmpop, // .CmpOp
         pub bf16: (), // .bf16
         pub stype: Stype, // .stype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -221,11 +221,11 @@ pub mod section_1 {
         pub boolop: Boolop, // .BoolOp
         pub bf16: (), // .bf16
         pub stype: Stype, // .stype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -234,9 +234,9 @@ pub mod section_1 {
         pub ftz: bool, // {.ftz}
         pub dtype: Dtype, // .dtype
         pub f16: (), // .f16
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -246,11 +246,11 @@ pub mod section_1 {
         pub ftz: bool, // {.ftz}
         pub dtype: Dtype, // .dtype
         pub f16: (), // .f16
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
 }
@@ -260,6 +260,14 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Cmpop {
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
         Eq, // .eq
         Ne, // .ne
         Lt, // .lt
@@ -270,14 +278,6 @@ pub mod section_2 {
         Ls, // .ls
         Hi, // .hi
         Hs, // .hs
-        Equ, // .equ
-        Neu, // .neu
-        Ltu, // .ltu
-        Leu, // .leu
-        Gtu, // .gtu
-        Geu, // .geu
-        Num, // .num
-        Nan, // .nan
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -291,8 +291,8 @@ pub mod section_2 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Boolop {
         And, // .and
-        Or, // .or
         Xor, // .xor
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -300,9 +300,9 @@ pub mod section_2 {
         pub cmpop: Cmpop, // .CmpOp
         pub dtype: Dtype, // .dtype
         pub bf16: (), // .bf16
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -311,11 +311,11 @@ pub mod section_2 {
         pub boolop: Boolop, // .BoolOp
         pub dtype: Dtype, // .dtype
         pub bf16: (), // .bf16
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
 }
@@ -325,6 +325,14 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Cmpop {
+        Equ, // .equ
+        Neu, // .neu
+        Ltu, // .ltu
+        Leu, // .leu
+        Gtu, // .gtu
+        Geu, // .geu
+        Num, // .num
+        Nan, // .nan
         Eq, // .eq
         Ne, // .ne
         Lt, // .lt
@@ -335,14 +343,6 @@ pub mod section_3 {
         Ls, // .ls
         Hi, // .hi
         Hs, // .hs
-        Equ, // .equ
-        Neu, // .neu
-        Ltu, // .ltu
-        Leu, // .leu
-        Gtu, // .gtu
-        Geu, // .geu
-        Num, // .num
-        Nan, // .nan
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -355,8 +355,8 @@ pub mod section_3 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Boolop {
         And, // .and
-        Or, // .or
         Xor, // .xor
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -365,9 +365,9 @@ pub mod section_3 {
         pub ftz: bool, // {.ftz}
         pub dtype: Dtype, // .dtype
         pub f16x2: (), // .f16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -377,11 +377,11 @@ pub mod section_3 {
         pub ftz: bool, // {.ftz}
         pub dtype: Dtype, // .dtype
         pub f16x2: (), // .f16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
 }
@@ -391,12 +391,6 @@ pub mod section_4 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Cmpop {
-        Eq, // .eq
-        Ne, // .ne
-        Lt, // .lt
-        Le, // .le
-        Gt, // .gt
-        Ge, // .ge
         Equ, // .equ
         Neu, // .neu
         Ltu, // .ltu
@@ -405,6 +399,12 @@ pub mod section_4 {
         Geu, // .geu
         Num, // .num
         Nan, // .nan
+        Eq, // .eq
+        Ne, // .ne
+        Lt, // .lt
+        Le, // .le
+        Gt, // .gt
+        Ge, // .ge
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -417,8 +417,8 @@ pub mod section_4 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Boolop {
         And, // .and
-        Or, // .or
         Xor, // .xor
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -426,9 +426,9 @@ pub mod section_4 {
         pub cmpop: Cmpop, // .CmpOp
         pub dtype: Dtype, // .dtype
         pub bf16x2: (), // .bf16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -437,11 +437,11 @@ pub mod section_4 {
         pub boolop: Boolop, // .BoolOp
         pub dtype: Dtype, // .dtype
         pub bf16x2: (), // .bf16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
 }

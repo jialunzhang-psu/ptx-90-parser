@@ -13,7 +13,7 @@ pub mod section_0 {
     pub struct CpAsyncWaitGroup {
         pub async_: (), // .async
         pub wait_group: (), // .wait_group
-        pub n: Operand, // N
+        pub n: GeneralOperand, // N
     }
 
     #[derive(Debug, Clone, PartialEq)]

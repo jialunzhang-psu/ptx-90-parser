@@ -11,22 +11,22 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Mode {
+        Rc16, // .rc16
         F4e, // .f4e
         B4e, // .b4e
         Rc8, // .rc8
         Ecl, // .ecl
         Ecr, // .ecr
-        Rc16, // .rc16
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct PrmtB32Mode {
         pub b32: (), // .b32
         pub mode: Option<Mode>, // {.mode}
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }

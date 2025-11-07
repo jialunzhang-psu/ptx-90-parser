@@ -33,194 +33,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Vec {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try V2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v2").is_ok() {
-                    return Ok(Vec::V2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try V4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v4").is_ok() {
-                    return Ok(Vec::V4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try V8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v8").is_ok() {
-                    return Ok(Vec::V8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".v2", ".v4", ".v8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for LevelCacheHint {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2CacheHint
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::cache_hint").is_ok() {
-                    return Ok(LevelCacheHint::L2CacheHint);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::cache_hint"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Level2EvictionPriority {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2EvictNormal
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_normal").is_ok() {
-                    return Ok(Level2EvictionPriority::L2EvictNormal);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try L2EvictFirst
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_first").is_ok() {
-                    return Ok(Level2EvictionPriority::L2EvictFirst);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try L2EvictLast
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_last").is_ok() {
-                    return Ok(Level2EvictionPriority::L2EvictLast);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::evict_normal", ".L2::evict_first", ".L2::evict_last"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Const
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".const").is_ok() {
-                    return Ok(Ss::Const);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Local
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".local").is_ok() {
-                    return Ok(Ss::Local);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try ParamEntry
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".param::entry").is_ok() {
-                    return Ok(Ss::ParamEntry);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try ParamFunc
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".param::func").is_ok() {
-                    return Ok(Ss::ParamFunc);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Param
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".param").is_ok() {
-                    return Ok(Ss::Param);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Ss::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Ss::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try SharedCluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cluster").is_ok() {
-                    return Ok(Ss::SharedCluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".const", ".global", ".local", ".param::entry", ".param::func", ".param", ".shared", ".shared::cta", ".shared::cluster"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Cop {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Ca
@@ -278,17 +90,119 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for LevelPrefetchSize {
+    impl PtxParser for Level1EvictionPriority {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L264b
+            // Try L1EvictUnchanged
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".L2::64B").is_ok() {
-                    return Ok(LevelPrefetchSize::L264b);
+                if stream.expect_string(".L1::evict_unchanged").is_ok() {
+                    return Ok(Level1EvictionPriority::L1EvictUnchanged);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
+            // Try L1EvictNormal
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L1::evict_normal").is_ok() {
+                    return Ok(Level1EvictionPriority::L1EvictNormal);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try L1EvictFirst
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L1::evict_first").is_ok() {
+                    return Ok(Level1EvictionPriority::L1EvictFirst);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try L1NoAllocate
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L1::no_allocate").is_ok() {
+                    return Ok(Level1EvictionPriority::L1NoAllocate);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try L1EvictLast
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L1::evict_last").is_ok() {
+                    return Ok(Level1EvictionPriority::L1EvictLast);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".L1::evict_unchanged", ".L1::evict_normal", ".L1::evict_first", ".L1::no_allocate", ".L1::evict_last"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Level2EvictionPriority {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try L2EvictNormal
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::evict_normal").is_ok() {
+                    return Ok(Level2EvictionPriority::L2EvictNormal);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try L2EvictFirst
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::evict_first").is_ok() {
+                    return Ok(Level2EvictionPriority::L2EvictFirst);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try L2EvictLast
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::evict_last").is_ok() {
+                    return Ok(Level2EvictionPriority::L2EvictLast);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".L2::evict_normal", ".L2::evict_first", ".L2::evict_last"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for LevelCacheHint {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try L2CacheHint
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::cache_hint").is_ok() {
+                    return Ok(LevelCacheHint::L2CacheHint);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".L2::cache_hint"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for LevelPrefetchSize {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try L2128b
             {
                 let saved_pos = stream.position();
@@ -297,7 +211,6 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try L2256b
             {
@@ -308,8 +221,162 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try L264b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::64B").is_ok() {
+                    return Ok(LevelPrefetchSize::L264b);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::64B", ".L2::128B", ".L2::256B"];
+            let expected = &[".L2::128B", ".L2::256B", ".L2::64B"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Scope {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Cluster
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cluster").is_ok() {
+                    return Ok(Scope::Cluster);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Cta
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta").is_ok() {
+                    return Ok(Scope::Cta);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Gpu
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".gpu").is_ok() {
+                    return Ok(Scope::Gpu);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Sys
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".sys").is_ok() {
+                    return Ok(Scope::Sys);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".cluster", ".cta", ".gpu", ".sys"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Ss {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try SharedCluster
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared::cluster").is_ok() {
+                    return Ok(Ss::SharedCluster);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try ParamEntry
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".param::entry").is_ok() {
+                    return Ok(Ss::ParamEntry);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try ParamFunc
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".param::func").is_ok() {
+                    return Ok(Ss::ParamFunc);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try SharedCta
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared::cta").is_ok() {
+                    return Ok(Ss::SharedCta);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Global
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".global").is_ok() {
+                    return Ok(Ss::Global);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Shared
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared").is_ok() {
+                    return Ok(Ss::Shared);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Const
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".const").is_ok() {
+                    return Ok(Ss::Const);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Local
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".local").is_ok() {
+                    return Ok(Ss::Local);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Param
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".param").is_ok() {
+                    return Ok(Ss::Param);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".shared::cluster", ".param::entry", ".param::func", ".shared::cta", ".global", ".shared", ".const", ".local", ".param"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -317,11 +384,11 @@ pub mod section_0 {
 
     impl PtxParser for Type {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B8
+            // Try B128
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".b8").is_ok() {
-                    return Ok(Type::B8);
+                if stream.expect_string(".b128").is_ok() {
+                    return Ok(Type::B128);
                 }
                 stream.set_position(saved_pos);
             }
@@ -356,26 +423,6 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try B128
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b128").is_ok() {
-                    return Ok(Type::B128);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u8").is_ok() {
-                    return Ok(Type::U8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try U16
             {
                 let saved_pos = stream.position();
@@ -401,16 +448,6 @@ pub mod section_0 {
                 let saved_pos = stream.position();
                 if stream.expect_string(".u64").is_ok() {
                     return Ok(Type::U64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s8").is_ok() {
-                    return Ok(Type::S8);
                 }
                 stream.set_position(saved_pos);
             }
@@ -465,112 +502,75 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b8").is_ok() {
+                    return Ok(Type::B8);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u8").is_ok() {
+                    return Ok(Type::U8);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s8").is_ok() {
+                    return Ok(Type::S8);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b8", ".b16", ".b32", ".b64", ".b128", ".u8", ".u16", ".u32", ".u64", ".s8", ".s16", ".s32", ".s64", ".f32", ".f64"];
+            let expected = &[".b128", ".b16", ".b32", ".b64", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64", ".f32", ".f64", ".b8", ".u8", ".s8"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
 
-    impl PtxParser for Level1EvictionPriority {
+    impl PtxParser for Vec {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L1EvictNormal
+            // Try V2
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".L1::evict_normal").is_ok() {
-                    return Ok(Level1EvictionPriority::L1EvictNormal);
+                if stream.expect_string(".v2").is_ok() {
+                    return Ok(Vec::V2);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try L1EvictUnchanged
+            // Try V4
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".L1::evict_unchanged").is_ok() {
-                    return Ok(Level1EvictionPriority::L1EvictUnchanged);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try L1EvictFirst
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L1::evict_first").is_ok() {
-                    return Ok(Level1EvictionPriority::L1EvictFirst);
+                if stream.expect_string(".v4").is_ok() {
+                    return Ok(Vec::V4);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try L1EvictLast
+            // Try V8
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".L1::evict_last").is_ok() {
-                    return Ok(Level1EvictionPriority::L1EvictLast);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try L1NoAllocate
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L1::no_allocate").is_ok() {
-                    return Ok(Level1EvictionPriority::L1NoAllocate);
+                if stream.expect_string(".v8").is_ok() {
+                    return Ok(Vec::V8);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L1::evict_normal", ".L1::evict_unchanged", ".L1::evict_first", ".L1::evict_last", ".L1::no_allocate"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Scope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Scope::Cta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Cluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cluster").is_ok() {
-                    return Ok(Scope::Cluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Gpu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".gpu").is_ok() {
-                    return Ok(Scope::Gpu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Sys
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sys").is_ok() {
-                    return Ok(Scope::Sys);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta", ".cluster", ".gpu", ".sys"];
+            let expected = &[".v2", ".v4", ".v8"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -584,6 +584,7 @@ pub mod section_0 {
             if !weak {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -592,6 +593,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let cop = match Cop::parse(stream) {
                 Ok(val) => Some(val),
@@ -600,6 +602,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_cache_hint = match LevelCacheHint::parse(stream) {
                 Ok(val) => Some(val),
@@ -608,6 +611,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_prefetch_size = match LevelPrefetchSize::parse(stream) {
                 Ok(val) => Some(val),
@@ -616,6 +620,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let vec = match Vec::parse(stream) {
                 Ok(val) => Some(val),
@@ -624,8 +629,11 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a = AddressOperand::parse(stream)?;
             let saved_pos = stream.position();
@@ -633,19 +641,23 @@ pub mod section_0 {
             if !unified {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let cache_policy = match Operand::parse(stream) {
+            let cache_policy = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(LdWeakSsCopLevelCacheHintLevelPrefetchSizeVecType {
                 weak,
                 ss,
@@ -671,6 +683,7 @@ pub mod section_0 {
             if !weak {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -679,6 +692,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level1_eviction_priority = match Level1EvictionPriority::parse(stream) {
                 Ok(val) => Some(val),
@@ -687,6 +701,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level2_eviction_priority = match Level2EvictionPriority::parse(stream) {
                 Ok(val) => Some(val),
@@ -695,6 +710,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_cache_hint = match LevelCacheHint::parse(stream) {
                 Ok(val) => Some(val),
@@ -703,6 +719,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_prefetch_size = match LevelPrefetchSize::parse(stream) {
                 Ok(val) => Some(val),
@@ -711,6 +728,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let vec = match Vec::parse(stream) {
                 Ok(val) => Some(val),
@@ -719,8 +737,11 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a = AddressOperand::parse(stream)?;
             let saved_pos = stream.position();
@@ -728,19 +749,23 @@ pub mod section_0 {
             if !unified {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let cache_policy = match Operand::parse(stream) {
+            let cache_policy = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(LdWeakSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType {
                 weak,
                 ss,
@@ -764,6 +789,7 @@ pub mod section_0 {
             stream.expect_string("ld")?;
             stream.expect_string(".volatile")?;
             let volatile = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -772,6 +798,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_prefetch_size = match LevelPrefetchSize::parse(stream) {
                 Ok(val) => Some(val),
@@ -780,6 +807,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let vec = match Vec::parse(stream) {
                 Ok(val) => Some(val),
@@ -788,10 +816,16 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(LdVolatileSsLevelPrefetchSizeVecType {
                 volatile,
                 ss,
@@ -810,7 +844,9 @@ pub mod section_0 {
             stream.expect_string("ld")?;
             stream.expect_string(".relaxed")?;
             let relaxed = ();
+            stream.expect_complete()?;
             let scope = Scope::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -819,6 +855,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level1_eviction_priority = match Level1EvictionPriority::parse(stream) {
                 Ok(val) => Some(val),
@@ -827,6 +864,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level2_eviction_priority = match Level2EvictionPriority::parse(stream) {
                 Ok(val) => Some(val),
@@ -835,6 +873,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_cache_hint = match LevelCacheHint::parse(stream) {
                 Ok(val) => Some(val),
@@ -843,6 +882,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_prefetch_size = match LevelPrefetchSize::parse(stream) {
                 Ok(val) => Some(val),
@@ -851,6 +891,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let vec = match Vec::parse(stream) {
                 Ok(val) => Some(val),
@@ -859,23 +900,30 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let cache_policy = match Operand::parse(stream) {
+            let cache_policy = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(LdRelaxedScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType {
                 relaxed,
                 scope,
@@ -899,7 +947,9 @@ pub mod section_0 {
             stream.expect_string("ld")?;
             stream.expect_string(".acquire")?;
             let acquire = ();
+            stream.expect_complete()?;
             let scope = Scope::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -908,6 +958,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level1_eviction_priority = match Level1EvictionPriority::parse(stream) {
                 Ok(val) => Some(val),
@@ -916,6 +967,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level2_eviction_priority = match Level2EvictionPriority::parse(stream) {
                 Ok(val) => Some(val),
@@ -924,6 +976,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_cache_hint = match LevelCacheHint::parse(stream) {
                 Ok(val) => Some(val),
@@ -932,6 +985,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_prefetch_size = match LevelPrefetchSize::parse(stream) {
                 Ok(val) => Some(val),
@@ -940,6 +994,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let vec = match Vec::parse(stream) {
                 Ok(val) => Some(val),
@@ -948,23 +1003,30 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let cache_policy = match Operand::parse(stream) {
+            let cache_policy = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(LdAcquireScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType {
                 acquire,
                 scope,
@@ -988,19 +1050,28 @@ pub mod section_0 {
             stream.expect_string("ld")?;
             stream.expect_string(".mmio")?;
             let mmio = ();
+            stream.expect_complete()?;
             stream.expect_string(".relaxed")?;
             let relaxed = ();
+            stream.expect_complete()?;
             stream.expect_string(".sys")?;
             let sys = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let global = stream.expect_string(".global").is_ok();
             if !global {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(LdMmioRelaxedSysGlobalType {
                 mmio,
                 relaxed,

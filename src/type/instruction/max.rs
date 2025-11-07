@@ -23,10 +23,10 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Atype {
+        U16x2, // .u16x2
         U16, // .u16
         U32, // .u32
         U64, // .u64
-        U16x2, // .u16x2
         S16, // .s16
         S64, // .s64
     }
@@ -40,18 +40,18 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct MaxAtype {
         pub atype: Atype, // .atype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MaxReluBtype {
         pub relu: bool, // {.relu}
         pub btype: Btype, // .btype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -60,9 +60,9 @@ pub mod section_0 {
         pub nan: bool, // {.NaN}
         pub xorsign_abs: bool, // {.xorsign.abs}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -71,18 +71,18 @@ pub mod section_0 {
         pub nan: bool, // {.NaN}
         pub abs: bool, // {.abs}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MaxF64 {
         pub f64: (), // .f64
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -91,9 +91,9 @@ pub mod section_0 {
         pub nan: bool, // {.NaN}
         pub xorsign_abs: bool, // {.xorsign.abs}
         pub f16: (), // .f16
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -102,9 +102,9 @@ pub mod section_0 {
         pub nan: bool, // {.NaN}
         pub xorsign_abs: bool, // {.xorsign.abs}
         pub f16x2: (), // .f16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -112,9 +112,9 @@ pub mod section_0 {
         pub nan: bool, // {.NaN}
         pub xorsign_abs: bool, // {.xorsign.abs}
         pub bf16: (), // .bf16
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -122,9 +122,9 @@ pub mod section_0 {
         pub nan: bool, // {.NaN}
         pub xorsign_abs: bool, // {.xorsign.abs}
         pub bf16x2: (), // .bf16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
 }

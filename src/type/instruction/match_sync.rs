@@ -21,9 +21,9 @@ pub mod section_0 {
         pub any: (), // .any
         pub sync: (), // .sync
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub membermask: Operand, // membermask
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub membermask: GeneralOperand, // membermask
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -31,10 +31,10 @@ pub mod section_0 {
         pub all: (), // .all
         pub sync: (), // .sync
         pub type_: Type, // .type
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: Operand, // a
-        pub membermask: Operand, // membermask
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: GeneralOperand, // a
+        pub membermask: GeneralOperand, // membermask
     }
 
 }

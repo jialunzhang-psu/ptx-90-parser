@@ -1,7 +1,7 @@
 //! Original PTX specification:
 //!
-//! pmevent       a;    // trigger a single performance monitor event
-//! pmevent.mask  a;    // trigger one or more performance monitor events
+//! pmevent a;         // trigger a single performance monitor event
+//! pmevent.mask a;    // trigger one or more performance monitor events
 
 #![allow(unused)]
 

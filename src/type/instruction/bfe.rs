@@ -20,10 +20,10 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct BfeType {
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }

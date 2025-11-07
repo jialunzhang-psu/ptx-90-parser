@@ -48,13 +48,20 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setmaxnreg")?;
             let action = Action::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
             stream.expect_string(".u32")?;
             let u32 = ();
-            let imm_reg_count = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let imm_reg_count = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetmaxnregActionSyncAlignedU32 {
                 action,
                 sync,

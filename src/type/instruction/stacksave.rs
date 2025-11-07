@@ -18,7 +18,7 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct StacksaveType {
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
     }
 
 }

@@ -28,13 +28,13 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCluster, // .shared::cluster
+        ParamFunc, // .param::func
+        SharedCta, // .shared::cta
         Global, // .global
+        Shared, // .shared
         Local, // .local
         Param, // .param
-        ParamFunc, // .param::func
-        Shared, // .shared
-        SharedCta, // .shared::cta
-        SharedCluster, // .shared::cluster
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -59,30 +59,30 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Type {
-        B8, // .b8
+        B128, // .b128
         B16, // .b16
         B32, // .b32
         B64, // .b64
-        B128, // .b128
-        U8, // .u8
         U16, // .u16
         U32, // .u32
         U64, // .u64
-        S8, // .s8
         S16, // .s16
         S32, // .s32
         S64, // .s64
         F32, // .f32
         F64, // .f64
+        B8, // .b8
+        U8, // .u8
+        S8, // .s8
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Level1EvictionPriority {
-        L1EvictNormal, // .L1::evict_normal
         L1EvictUnchanged, // .L1::evict_unchanged
+        L1EvictNormal, // .L1::evict_normal
         L1EvictFirst, // .L1::evict_first
-        L1EvictLast, // .L1::evict_last
         L1NoAllocate, // .L1::no_allocate
+        L1EvictLast, // .L1::evict_last
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -94,8 +94,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
-        Cta, // .cta
         Cluster, // .cluster
+        Cta, // .cta
         Gpu, // .gpu
         Sys, // .sys
     }
@@ -109,8 +109,8 @@ pub mod section_0 {
         pub vec: Option<Vec>, // {.vec}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -123,8 +123,8 @@ pub mod section_0 {
         pub vec: Option<Vec>, // {.vec}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -134,7 +134,7 @@ pub mod section_0 {
         pub vec: Option<Vec>, // {.vec}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -148,8 +148,8 @@ pub mod section_0 {
         pub vec: Option<Vec>, // {.vec}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -163,8 +163,8 @@ pub mod section_0 {
         pub vec: Option<Vec>, // {.vec}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -175,7 +175,7 @@ pub mod section_0 {
         pub global: bool, // {.global}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
     }
 
 }

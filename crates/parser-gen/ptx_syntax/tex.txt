@@ -1,4 +1,4 @@
-tex.geom.v4.dtype.ctype  d, [a, c] {, e} {, f};
+tex.geom.v4.dtype.ctype  d{|p}, [a, c] {, e} {, f};
 tex.geom.v4.dtype.ctype  d{|p}, [a, b, c] {, e} {, f};  // explicit sampler
 tex.geom.v2.f16x2.ctype  d{|p}, [a, c] {, e} {, f};
 tex.geom.v2.f16x2.ctype  d{|p}, [a, b, c] {, e} {, f};  // explicit sampler

@@ -46,8 +46,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
-        Cta, // .cta
         Cluster, // .cluster
+        Cta, // .cta
         Gpu, // .gpu
         Sys, // .sys
     }
@@ -63,8 +63,8 @@ pub mod section_0 {
         Max, // .max
         Add, // .add
         And, // .and
-        Or, // .or
         Xor, // .xor
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -97,7 +97,7 @@ pub mod section_0 {
         pub ss: Option<Ss>, // {.ss}
         pub op: Op, // .op
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
     }
 
@@ -108,7 +108,7 @@ pub mod section_0 {
         pub ss: Option<Ss>, // {.ss}
         pub op: Op, // .op
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
     }
 
@@ -120,7 +120,7 @@ pub mod section_0 {
         pub ss: Option<Ss>, // {.ss}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -130,7 +130,7 @@ pub mod section_0 {
         pub ss: Option<Ss>, // {.ss}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -142,7 +142,7 @@ pub mod section_0 {
         pub op: Op, // .op
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
     }
 
 }
@@ -158,8 +158,8 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
-        Cta, // .cta
         Cluster, // .cluster
+        Cta, // .cta
         Gpu, // .gpu
         Sys, // .sys
     }
@@ -191,18 +191,18 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Type {
-        F16, // .f16
-        F16x2, // .f16x2
-        Bf16, // .bf16
         Bf16x2, // .bf16x2
-        F32, // .f32
-        F64, // .f64
-        E5m2, // .e5m2
         E5m2x2, // .e5m2x2
         E5m2x4, // .e5m2x4
-        E4m3, // .e4m3
         E4m3x2, // .e4m3x2
         E4m3x4, // .e4m3x4
+        F16x2, // .f16x2
+        Bf16, // .bf16
+        E5m2, // .e5m2
+        E4m3, // .e4m3
+        F16, // .f16
+        F32, // .f32
+        F64, // .f64
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -224,10 +224,10 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Redtype {
-        F16, // .f16
+        Bf16x2, // .bf16x2
         F16x2, // .f16x2
         Bf16, // .bf16
-        Bf16x2, // .bf16x2
+        F16, // .f16
         F32, // .f32
         F64, // .f64
     }
@@ -242,7 +242,7 @@ pub mod section_1 {
         pub acc_prec: Option<AccPrec>, // {.acc_prec}
         pub vec: Option<Vec>, // {.vec}
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
     }
 
@@ -255,7 +255,7 @@ pub mod section_1 {
         pub acc_prec: Option<AccPrec>, // {.acc_prec}
         pub vec: Option<Vec>, // {.vec}
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
     }
 
@@ -268,7 +268,7 @@ pub mod section_1 {
         pub vec: Option<Vec>, // {.vec}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -279,7 +279,7 @@ pub mod section_1 {
         pub vec: Option<Vec>, // {.vec}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -292,7 +292,7 @@ pub mod section_1 {
         pub vec: Option<Vec>, // {.vec}
         pub redtype: Redtype, // .redtype
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
     }
 
 }

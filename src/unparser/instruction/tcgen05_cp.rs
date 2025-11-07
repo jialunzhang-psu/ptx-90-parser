@@ -28,20 +28,20 @@ pub mod section_0 {
                             }
                     }
                     match &self.shape {
-                            Shape::_128x256b => {
-                                    push_directive(tokens, "128x256b");
-                            }
-                            Shape::_4x256b => {
-                                    push_directive(tokens, "4x256b");
-                            }
-                            Shape::_128x128b => {
-                                    push_directive(tokens, "128x128b");
+                            Shape::_32x128b => {
+                                    push_directive(tokens, "32x128b***");
                             }
                             Shape::_64x128b => {
                                     push_directive(tokens, "64x128b**");
                             }
-                            Shape::_32x128b => {
-                                    push_directive(tokens, "32x128b***");
+                            Shape::_128x256b => {
+                                    push_directive(tokens, "128x256b");
+                            }
+                            Shape::_128x128b => {
+                                    push_directive(tokens, "128x128b");
+                            }
+                            Shape::_4x256b => {
+                                    push_directive(tokens, "4x256b");
                             }
                     }
                     if let Some(multicast_0) = self.multicast.as_ref() {

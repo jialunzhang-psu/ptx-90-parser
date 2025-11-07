@@ -29,8 +29,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
-        Global, // .global
         SharedCta, // .shared::cta
+        Global, // .global
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -41,19 +41,19 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Field2 {
-        BoxDim, // .box_dim
-        GlobalDim, // .global_dim
-        GlobalStride, // .global_stride
         ElementStride, // .element_stride
+        GlobalStride, // .global_stride
+        GlobalDim, // .global_dim
+        BoxDim, // .box_dim
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Field3 {
-        Elemtype, // .elemtype
         InterleaveLayout, // .interleave_layout
-        SwizzleMode, // .swizzle_mode
         SwizzleAtomicity, // .swizzle_atomicity
+        SwizzleMode, // .swizzle_mode
         FillMode, // .fill_mode
+        Elemtype, // .elemtype
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -65,7 +65,7 @@ pub mod section_0 {
         pub b1024: (), // .b1024
         pub type_: Type, // .type
         pub addr: AddressOperand, // [addr]
-        pub new_val: Operand, // new_val
+        pub new_val: GeneralOperand, // new_val
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -77,8 +77,8 @@ pub mod section_0 {
         pub b1024: (), // .b1024
         pub type_: Type, // .type
         pub addr: AddressOperand, // [addr]
-        pub ord: Operand, // ord
-        pub new_val: Operand, // new_val
+        pub ord: GeneralOperand, // ord
+        pub new_val: GeneralOperand, // new_val
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -90,7 +90,7 @@ pub mod section_0 {
         pub b1024: (), // .b1024
         pub type_: Type, // .type
         pub addr: AddressOperand, // [addr]
-        pub new_val: Operand, // new_val
+        pub new_val: GeneralOperand, // new_val
     }
 
 }

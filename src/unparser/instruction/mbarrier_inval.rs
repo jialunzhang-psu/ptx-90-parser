@@ -18,11 +18,11 @@ pub mod section_0 {
                     push_directive(tokens, "inval");
                     if let Some(state_0) = self.state.as_ref() {
                             match state_0 {
-                                    State::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
                                     State::SharedCta => {
                                             push_directive(tokens, "shared::cta");
+                                    }
+                                    State::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                             }
                     }

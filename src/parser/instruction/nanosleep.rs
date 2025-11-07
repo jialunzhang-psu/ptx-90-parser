@@ -17,7 +17,11 @@ pub mod section_0 {
             stream.expect_string("nanosleep")?;
             stream.expect_string(".u32")?;
             let u32 = ();
-            let t = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let t = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(NanosleepU32 {
                 u32,
                 t,

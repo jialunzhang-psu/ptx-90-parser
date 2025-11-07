@@ -1,8 +1,8 @@
 //! Original PTX specification:
 //!
-//! sust.b.dim{.cop}.vec.ctype.mode [a, b], c;  // unformatted
-//! sust.p.dim.vec.b32.mode       [a, b], c;  // formatted
-//! sust.b.adim{.cop}.vec.ctype.mode   [a, b], c;  // unformatted
+//! sust.b.dim{.cop}.vec.ctype{.mode} [a, b], c;  // unformatted
+//! sust.p.dim.vec.b32{.mode}       [a, b], c;  // formatted
+//! sust.b.adim{.cop}.vec.ctype{.mode}   [a, b], c;  // unformatted
 //! .cop   = { .wb, .cg, .cs, .wt };                     // cache operation
 //! .vec   = { none, .v2, .v4 };
 //! .ctype = { .b8 , .b16, .b32, .b64 };
@@ -62,9 +62,6 @@ pub mod section_0 {
                             }
                     }
                     match &self.ctype {
-                            Ctype::B8 => {
-                                    push_directive(tokens, "b8");
-                            }
                             Ctype::B16 => {
                                     push_directive(tokens, "b16");
                             }
@@ -74,24 +71,24 @@ pub mod section_0 {
                             Ctype::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                    }
-                    match &self.mode {
-                            Mode::Trap => {
-                                    push_directive(tokens, "trap");
-                            }
-                            Mode::Clamp => {
-                                    push_directive(tokens, "clamp");
-                            }
-                            Mode::Zero => {
-                                    push_directive(tokens, "zero");
+                            Ctype::B8 => {
+                                    push_directive(tokens, "b8");
                             }
                     }
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_1_0, ref group_1_1) = &self.a;
-                    group_1_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_1_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    if let Some(mode_1) = self.mode.as_ref() {
+                            match mode_1 {
+                                    Mode::Clamp => {
+                                            push_directive(tokens, "clamp");
+                                    }
+                                    Mode::Trap => {
+                                            push_directive(tokens, "trap");
+                                    }
+                                    Mode::Zero => {
+                                            push_directive(tokens, "zero");
+                                    }
+                            }
+                    }
+                    self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
@@ -125,23 +122,20 @@ pub mod section_0 {
                             }
                     }
                     push_directive(tokens, "b32");
-                    match &self.mode {
-                            Mode::Trap => {
-                                    push_directive(tokens, "trap");
-                            }
-                            Mode::Clamp => {
-                                    push_directive(tokens, "clamp");
-                            }
-                            Mode::Zero => {
-                                    push_directive(tokens, "zero");
+                    if let Some(mode_2) = self.mode.as_ref() {
+                            match mode_2 {
+                                    Mode::Clamp => {
+                                            push_directive(tokens, "clamp");
+                                    }
+                                    Mode::Trap => {
+                                            push_directive(tokens, "trap");
+                                    }
+                                    Mode::Zero => {
+                                            push_directive(tokens, "zero");
+                                    }
                             }
                     }
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_2_0, ref group_2_1) = &self.a;
-                    group_2_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_2_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
@@ -188,9 +182,6 @@ pub mod section_0 {
                             }
                     }
                     match &self.ctype {
-                            Ctype::B8 => {
-                                    push_directive(tokens, "b8");
-                            }
                             Ctype::B16 => {
                                     push_directive(tokens, "b16");
                             }
@@ -200,24 +191,24 @@ pub mod section_0 {
                             Ctype::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                    }
-                    match &self.mode {
-                            Mode::Trap => {
-                                    push_directive(tokens, "trap");
-                            }
-                            Mode::Clamp => {
-                                    push_directive(tokens, "clamp");
-                            }
-                            Mode::Zero => {
-                                    push_directive(tokens, "zero");
+                            Ctype::B8 => {
+                                    push_directive(tokens, "b8");
                             }
                     }
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_4_0, ref group_4_1) = &self.a;
-                    group_4_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_4_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    if let Some(mode_4) = self.mode.as_ref() {
+                            match mode_4 {
+                                    Mode::Clamp => {
+                                            push_directive(tokens, "clamp");
+                                    }
+                                    Mode::Trap => {
+                                            push_directive(tokens, "trap");
+                                    }
+                                    Mode::Zero => {
+                                            push_directive(tokens, "zero");
+                                    }
+                            }
+                    }
+                    self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);

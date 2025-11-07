@@ -37,6 +37,33 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Atype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Atype::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Atype::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".s32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Bsel {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try B00
@@ -684,6 +711,33 @@ pub mod section_0 {
         }
     }
 
+    impl PtxParser for Btype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Btype::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Btype::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".s32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Cmp {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Eq
@@ -751,54 +805,8 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Btype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Btype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Mask {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B0
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b0").is_ok() {
-                    return Ok(Mask::B0);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b1").is_ok() {
-                    return Ok(Mask::B1);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try B10B2
             {
                 let saved_pos = stream.position();
@@ -807,23 +815,12 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try B20
+            // Try B3210
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".b20").is_ok() {
-                    return Ok(Mask::B20);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B21
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b21").is_ok() {
-                    return Ok(Mask::B21);
+                if stream.expect_string(".b3210").is_ok() {
+                    return Ok(Mask::B3210);
                 }
                 stream.set_position(saved_pos);
             }
@@ -839,51 +836,11 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try B3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b3").is_ok() {
-                    return Ok(Mask::B3);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B30
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b30").is_ok() {
-                    return Ok(Mask::B30);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B31
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b31").is_ok() {
-                    return Ok(Mask::B31);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try B310
             {
                 let saved_pos = stream.position();
                 if stream.expect_string(".b310").is_ok() {
                     return Ok(Mask::B310);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b32").is_ok() {
-                    return Ok(Mask::B32);
                 }
                 stream.set_position(saved_pos);
             }
@@ -909,44 +866,87 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try B3210
+            // Try B20
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".b3210").is_ok() {
-                    return Ok(Mask::B3210);
+                if stream.expect_string(".b20").is_ok() {
+                    return Ok(Mask::B20);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b0", ".b1", ".b10.b2", ".b20", ".b21", ".b210", ".b3", ".b30", ".b31", ".b310", ".b32", ".b320", ".b321", ".b3210"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Atype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
             let saved_pos = stream.position();
-            // Try S32
+            // Try B21
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Atype::S32);
+                if stream.expect_string(".b21").is_ok() {
+                    return Ok(Mask::B21);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B30
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b30").is_ok() {
+                    return Ok(Mask::B30);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B31
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b31").is_ok() {
+                    return Ok(Mask::B31);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b32").is_ok() {
+                    return Ok(Mask::B32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B0
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b0").is_ok() {
+                    return Ok(Mask::B0);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B1
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b1").is_ok() {
+                    return Ok(Mask::B1);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try B3
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b3").is_ok() {
+                    return Ok(Mask::B3);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32"];
+            let expected = &[".b10.b2", ".b3210", ".b210", ".b310", ".b320", ".b321", ".b20", ".b21", ".b30", ".b31", ".b32", ".b0", ".b1", ".b3"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -956,9 +956,12 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("vset4")?;
             let atype = Atype::parse(stream)?;
+            stream.expect_complete()?;
             let btype = Btype::parse(stream)?;
+            stream.expect_complete()?;
             let cmp = Cmp::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
             let saved_pos = stream.position();
             let mask = match Mask::parse(stream) {
                 Ok(val) => Some(val),
@@ -967,15 +970,17 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
             let saved_pos = stream.position();
             let asel = stream.expect_string(".asel").is_ok();
             if !asel {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
             let saved_pos = stream.position();
             let bsel = match Bsel::parse(stream) {
                 Ok(val) => Some(val),
@@ -984,8 +989,12 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Vset4AtypeBtypeCmp {
                 atype,
                 btype,
@@ -1006,11 +1015,15 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("vset4")?;
             let atype = Atype::parse(stream)?;
+            stream.expect_complete()?;
             let btype = Btype::parse(stream)?;
+            stream.expect_complete()?;
             let cmp = Cmp::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".add")?;
             let add = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
             let saved_pos = stream.position();
             let mask = match Mask::parse(stream) {
                 Ok(val) => Some(val),
@@ -1019,15 +1032,17 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
             let saved_pos = stream.position();
             let asel = stream.expect_string(".asel").is_ok();
             if !asel {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
             let saved_pos = stream.position();
             let bsel = match Bsel::parse(stream) {
                 Ok(val) => Some(val),
@@ -1036,8 +1051,12 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Vset4AtypeBtypeCmpAdd {
                 atype,
                 btype,

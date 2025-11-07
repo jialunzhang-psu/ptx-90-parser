@@ -24,60 +24,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b32").is_ok() {
-                    return Ok(Type::B32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b64").is_ok() {
-                    return Ok(Type::B64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b32", ".b64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Ss::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".global", ".shared::cta"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Field1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try GlobalAddress
@@ -107,24 +53,14 @@ pub mod section_0 {
 
     impl PtxParser for Field2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try BoxDim
+            // Try ElementStride
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".box_dim").is_ok() {
-                    return Ok(Field2::BoxDim);
+                if stream.expect_string(".element_stride").is_ok() {
+                    return Ok(Field2::ElementStride);
                 }
                 stream.set_position(saved_pos);
             }
-            let saved_pos = stream.position();
-            // Try GlobalDim
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global_dim").is_ok() {
-                    return Ok(Field2::GlobalDim);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try GlobalStride
             {
@@ -136,17 +72,84 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try ElementStride
+            // Try GlobalDim
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".element_stride").is_ok() {
-                    return Ok(Field2::ElementStride);
+                if stream.expect_string(".global_dim").is_ok() {
+                    return Ok(Field2::GlobalDim);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try BoxDim
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".box_dim").is_ok() {
+                    return Ok(Field2::BoxDim);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".box_dim", ".global_dim", ".global_stride", ".element_stride"];
+            let expected = &[".element_stride", ".global_stride", ".global_dim", ".box_dim"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Field3 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try InterleaveLayout
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".interleave_layout").is_ok() {
+                    return Ok(Field3::InterleaveLayout);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try SwizzleAtomicity
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".swizzle_atomicity").is_ok() {
+                    return Ok(Field3::SwizzleAtomicity);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try SwizzleMode
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".swizzle_mode").is_ok() {
+                    return Ok(Field3::SwizzleMode);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try FillMode
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".fill_mode").is_ok() {
+                    return Ok(Field3::FillMode);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Elemtype
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".elemtype").is_ok() {
+                    return Ok(Field3::Elemtype);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".interleave_layout", ".swizzle_atomicity", ".swizzle_mode", ".fill_mode", ".elemtype"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -169,58 +172,55 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Field3 {
+    impl PtxParser for Ss {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Elemtype
+            // Try SharedCta
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".elemtype").is_ok() {
-                    return Ok(Field3::Elemtype);
+                if stream.expect_string(".shared::cta").is_ok() {
+                    return Ok(Ss::SharedCta);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try InterleaveLayout
+            // Try Global
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".interleave_layout").is_ok() {
-                    return Ok(Field3::InterleaveLayout);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try SwizzleMode
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".swizzle_mode").is_ok() {
-                    return Ok(Field3::SwizzleMode);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try SwizzleAtomicity
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".swizzle_atomicity").is_ok() {
-                    return Ok(Field3::SwizzleAtomicity);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try FillMode
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".fill_mode").is_ok() {
-                    return Ok(Field3::FillMode);
+                if stream.expect_string(".global").is_ok() {
+                    return Ok(Ss::Global);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".elemtype", ".interleave_layout", ".swizzle_mode", ".swizzle_atomicity", ".fill_mode"];
+            let expected = &[".shared::cta", ".global"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try B32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b32").is_ok() {
+                    return Ok(Type::B32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try B64
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".b64").is_ok() {
+                    return Ok(Type::B64);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".b32", ".b64"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -231,8 +231,11 @@ pub mod section_0 {
             stream.expect_string("tensormap")?;
             stream.expect_string(".replace")?;
             let replace = ();
+            stream.expect_complete()?;
             let mode = Mode::parse(stream)?;
+            stream.expect_complete()?;
             let field1 = Field1::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -241,12 +244,19 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b1024")?;
             let b1024 = ();
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
+            stream.expect_complete()?;
             let addr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let new_val = Operand::parse(stream)?;
+            let new_val = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(TensormapReplaceModeField1SsB1024Type {
                 replace,
                 mode,
@@ -266,8 +276,11 @@ pub mod section_0 {
             stream.expect_string("tensormap")?;
             stream.expect_string(".replace")?;
             let replace = ();
+            stream.expect_complete()?;
             let mode = Mode::parse(stream)?;
+            stream.expect_complete()?;
             let field2 = Field2::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -276,14 +289,22 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b1024")?;
             let b1024 = ();
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
+            stream.expect_complete()?;
             let addr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let ord = Operand::parse(stream)?;
+            let ord = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let new_val = Operand::parse(stream)?;
+            let new_val = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(TensormapReplaceModeField2SsB1024Type {
                 replace,
                 mode,
@@ -304,8 +325,11 @@ pub mod section_0 {
             stream.expect_string("tensormap")?;
             stream.expect_string(".replace")?;
             let replace = ();
+            stream.expect_complete()?;
             let mode = Mode::parse(stream)?;
+            stream.expect_complete()?;
             let field3 = Field3::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -314,12 +338,19 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b1024")?;
             let b1024 = ();
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
+            stream.expect_complete()?;
             let addr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let new_val = Operand::parse(stream)?;
+            let new_val = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(TensormapReplaceModeField3SsB1024Type {
                 replace,
                 mode,

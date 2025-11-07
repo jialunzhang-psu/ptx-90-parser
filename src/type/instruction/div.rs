@@ -37,9 +37,9 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct DivType {
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -47,9 +47,9 @@ pub mod section_0 {
         pub approx: (), // .approx
         pub ftz: bool, // {.ftz}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -57,9 +57,9 @@ pub mod section_0 {
         pub full: (), // .full
         pub ftz: bool, // {.ftz}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -67,18 +67,18 @@ pub mod section_0 {
         pub rnd: Rnd, // .rnd
         pub ftz: bool, // {.ftz}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct DivRndF64 {
         pub rnd: Rnd, // .rnd
         pub f64: (), // .f64
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
 }

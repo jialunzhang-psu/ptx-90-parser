@@ -54,6 +54,30 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -83,30 +107,6 @@ pub mod section_0 {
                             }
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
-                            }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
                             }
                     }
                     if self.ftz {
@@ -171,6 +171,30 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -201,40 +225,16 @@ pub mod section_0 {
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
                             }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
                     }
                     match &self.boolop {
                             Boolop::And => {
                                     push_directive(tokens, "and");
                             }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Boolop::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Boolop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     if self.ftz {
@@ -308,6 +308,30 @@ pub mod section_1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -337,30 +361,6 @@ pub mod section_1 {
                             }
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
-                            }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
                             }
                     }
                     if self.ftz {
@@ -415,6 +415,30 @@ pub mod section_1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -445,40 +469,16 @@ pub mod section_1 {
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
                             }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
                     }
                     match &self.boolop {
                             Boolop::And => {
                                     push_directive(tokens, "and");
                             }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Boolop::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Boolop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     if self.ftz {
@@ -536,6 +536,30 @@ pub mod section_1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -565,30 +589,6 @@ pub mod section_1 {
                             }
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
-                            }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
                             }
                     }
                     push_directive(tokens, "bf16");
@@ -640,6 +640,30 @@ pub mod section_1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -670,40 +694,16 @@ pub mod section_1 {
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
                             }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
                     }
                     match &self.boolop {
                             Boolop::And => {
                                     push_directive(tokens, "and");
                             }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Boolop::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Boolop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     push_directive(tokens, "bf16");
@@ -758,6 +758,30 @@ pub mod section_1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -787,30 +811,6 @@ pub mod section_1 {
                             }
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
-                            }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
                             }
                     }
                     if self.ftz {
@@ -844,6 +844,30 @@ pub mod section_1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -874,40 +898,16 @@ pub mod section_1 {
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
                             }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
                     }
                     match &self.boolop {
                             Boolop::And => {
                                     push_directive(tokens, "and");
                             }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Boolop::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Boolop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     if self.ftz {
@@ -950,6 +950,30 @@ pub mod section_2 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -979,30 +1003,6 @@ pub mod section_2 {
                             }
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
-                            }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
                             }
                     }
                     match &self.dtype {
@@ -1033,6 +1033,30 @@ pub mod section_2 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -1063,40 +1087,16 @@ pub mod section_2 {
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
                             }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
                     }
                     match &self.boolop {
                             Boolop::And => {
                                     push_directive(tokens, "and");
                             }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Boolop::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Boolop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     match &self.dtype {
@@ -1136,6 +1136,30 @@ pub mod section_3 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -1165,30 +1189,6 @@ pub mod section_3 {
                             }
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
-                            }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
                             }
                     }
                     if self.ftz {
@@ -1219,6 +1219,30 @@ pub mod section_3 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
+                            Cmpop::Equ => {
+                                    push_directive(tokens, "equ");
+                            }
+                            Cmpop::Neu => {
+                                    push_directive(tokens, "neu");
+                            }
+                            Cmpop::Ltu => {
+                                    push_directive(tokens, "ltu");
+                            }
+                            Cmpop::Leu => {
+                                    push_directive(tokens, "leu");
+                            }
+                            Cmpop::Gtu => {
+                                    push_directive(tokens, "gtu");
+                            }
+                            Cmpop::Geu => {
+                                    push_directive(tokens, "geu");
+                            }
+                            Cmpop::Num => {
+                                    push_directive(tokens, "num");
+                            }
+                            Cmpop::Nan => {
+                                    push_directive(tokens, "nan");
+                            }
                             Cmpop::Eq => {
                                     push_directive(tokens, "eq");
                             }
@@ -1249,40 +1273,16 @@ pub mod section_3 {
                             Cmpop::Hs => {
                                     push_directive(tokens, "hs");
                             }
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
                     }
                     match &self.boolop {
                             Boolop::And => {
                                     push_directive(tokens, "and");
                             }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Boolop::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Boolop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     if self.ftz {
@@ -1322,24 +1322,6 @@ pub mod section_4 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
                             Cmpop::Equ => {
                                     push_directive(tokens, "equ");
                             }
@@ -1363,6 +1345,24 @@ pub mod section_4 {
                             }
                             Cmpop::Nan => {
                                     push_directive(tokens, "nan");
+                            }
+                            Cmpop::Eq => {
+                                    push_directive(tokens, "eq");
+                            }
+                            Cmpop::Ne => {
+                                    push_directive(tokens, "ne");
+                            }
+                            Cmpop::Lt => {
+                                    push_directive(tokens, "lt");
+                            }
+                            Cmpop::Le => {
+                                    push_directive(tokens, "le");
+                            }
+                            Cmpop::Gt => {
+                                    push_directive(tokens, "gt");
+                            }
+                            Cmpop::Ge => {
+                                    push_directive(tokens, "ge");
                             }
                     }
                     match &self.dtype {
@@ -1390,24 +1390,6 @@ pub mod section_4 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "set");
                     match &self.cmpop {
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
                             Cmpop::Equ => {
                                     push_directive(tokens, "equ");
                             }
@@ -1432,16 +1414,34 @@ pub mod section_4 {
                             Cmpop::Nan => {
                                     push_directive(tokens, "nan");
                             }
+                            Cmpop::Eq => {
+                                    push_directive(tokens, "eq");
+                            }
+                            Cmpop::Ne => {
+                                    push_directive(tokens, "ne");
+                            }
+                            Cmpop::Lt => {
+                                    push_directive(tokens, "lt");
+                            }
+                            Cmpop::Le => {
+                                    push_directive(tokens, "le");
+                            }
+                            Cmpop::Gt => {
+                                    push_directive(tokens, "gt");
+                            }
+                            Cmpop::Ge => {
+                                    push_directive(tokens, "ge");
+                            }
                     }
                     match &self.boolop {
                             Boolop::And => {
                                     push_directive(tokens, "and");
                             }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Boolop::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Boolop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     match &self.dtype {

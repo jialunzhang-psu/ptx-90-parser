@@ -16,9 +16,6 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "shfl");
                     match &self.mode {
-                            Mode::Up => {
-                                    push_directive(tokens, "up");
-                            }
                             Mode::Down => {
                                     push_directive(tokens, "down");
                             }
@@ -28,9 +25,16 @@ pub mod section_0 {
                             Mode::Idx => {
                                     push_directive(tokens, "idx");
                             }
+                            Mode::Up => {
+                                    push_directive(tokens, "up");
+                            }
                     }
                     push_directive(tokens, "b32");
                     self.d.unparse_tokens(tokens);
+                    if let Some(p_0) = self.p.as_ref() {
+                        tokens.push(PtxToken::Pipe);
+                        p_0.unparse_tokens(tokens);
+                    }
             tokens.push(PtxToken::Comma);
                     self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);

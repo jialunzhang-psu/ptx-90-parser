@@ -29,10 +29,10 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Geom {
-        _2d, // .2d
-        A2d, // .a2d
-        Cube, // .cube
         Acube, // .acube
+        Cube, // .cube
+        A2d, // .a2d
+        _2d, // .2d
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -42,11 +42,11 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub f32: (), // .f32
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand), // [a, c]
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler2, // [a, c]
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -56,11 +56,11 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub dtype: Dtype, // .dtype
         pub f32: (), // .f32
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: (Operand, Operand, Operand), // [a, b, c]
-        pub e: Option<Operand>, // {, e}
-        pub f: Option<Operand>, // {, f}
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: TexHandler3, // [a, b, c]
+        pub e: Option<GeneralOperand>, // {, e}
+        pub f: Option<GeneralOperand>, // {, f}
     }
 
 }

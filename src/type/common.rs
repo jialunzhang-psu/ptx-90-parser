@@ -225,14 +225,26 @@ pub enum SpecialRegister {
 
 /// Texture handler with 2 operands, e.g. [%r1, %r2]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct TexHandler2([GeneralOperand; 2]);
+pub struct TexHandler2(pub [GeneralOperand; 2]);
 
-/// Texture handler with 3 operands, e.g. [%r1{, %r2}, %r3] and [%r1, %r2, %r3]
+/// Texture handler with optional sampler operand, e.g. `[tex, coords]` or `[tex, sampler, coords]`
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct TexHandler3([GeneralOperand; 3]);
+pub struct TexHandler3Optional {
+    pub handle: GeneralOperand,
+    pub sampler: Option<GeneralOperand>,
+    pub coords: GeneralOperand,
+}
+
+/// Texture handler with optional sampler operand, e.g. `[tex, coords]` or `[tex, sampler, coords]`
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TexHandler3 {
+    pub handle: GeneralOperand,
+    pub sampler: GeneralOperand,
+    pub coords: GeneralOperand,
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum GeneralOperand{
+pub enum GeneralOperand {
     Vec(VectorOperand),
     Single(Operand),
 }
@@ -247,6 +259,8 @@ pub enum VectorOperand {
     Vector3([Operand; 3]),
     /// {%r1, %r2, %r3, %r4}
     Vector4([Operand; 4]),
+    /// {%r1, %r2, %r3, %r4, %r5, %r6, %r7, %r8}
+    Vector8([Operand; 8]),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -257,6 +271,8 @@ pub enum Operand {
     Immediate(Immediate),
     /// foo
     Symbol(String),
+    /// foo + 4 (symbol + immediate offset)
+    SymbolOffset(String, Immediate),
 }
 
 /// Register operand starting with % (e.g., `%r1`).

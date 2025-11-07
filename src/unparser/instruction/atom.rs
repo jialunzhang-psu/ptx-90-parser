@@ -60,11 +60,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_1) = self.scope.as_ref() {
                             match scope_1 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -76,35 +76,32 @@ pub mod section_0 {
                     }
                     if let Some(space_2) = self.space.as_ref() {
                             match space_2 {
+                                    Space::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Space::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Space::Global => {
                                             push_directive(tokens, "global");
                                     }
                                     Space::Shared => {
                                             push_directive(tokens, "shared");
                                     }
-                                    Space::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
-                                    }
                             }
                     }
                     match &self.op {
+                            Op::Exch => {
+                                    push_directive(tokens, "exch");
+                            }
                             Op::And => {
                                     push_directive(tokens, "and");
-                            }
-                            Op::Or => {
-                                    push_directive(tokens, "or");
                             }
                             Op::Xor => {
                                     push_directive(tokens, "xor");
                             }
                             Op::Cas => {
                                     push_directive(tokens, "cas");
-                            }
-                            Op::Exch => {
-                                    push_directive(tokens, "exch");
                             }
                             Op::Add => {
                                     push_directive(tokens, "add");
@@ -120,6 +117,9 @@ pub mod section_0 {
                             }
                             Op::Max => {
                                     push_directive(tokens, "max");
+                            }
+                            Op::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     if let Some(level_cache_hint_3) = self.level_cache_hint.as_ref() {
@@ -189,11 +189,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_6) = self.scope.as_ref() {
                             match scope_6 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -205,35 +205,32 @@ pub mod section_0 {
                     }
                     if let Some(space_7) = self.space.as_ref() {
                             match space_7 {
+                                    Space::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Space::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Space::Global => {
                                             push_directive(tokens, "global");
                                     }
                                     Space::Shared => {
                                             push_directive(tokens, "shared");
                                     }
-                                    Space::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
-                                    }
                             }
                     }
                     match &self.op {
+                            Op::Exch => {
+                                    push_directive(tokens, "exch");
+                            }
                             Op::And => {
                                     push_directive(tokens, "and");
-                            }
-                            Op::Or => {
-                                    push_directive(tokens, "or");
                             }
                             Op::Xor => {
                                     push_directive(tokens, "xor");
                             }
                             Op::Cas => {
                                     push_directive(tokens, "cas");
-                            }
-                            Op::Exch => {
-                                    push_directive(tokens, "exch");
                             }
                             Op::Add => {
                                     push_directive(tokens, "add");
@@ -249,6 +246,9 @@ pub mod section_0 {
                             }
                             Op::Max => {
                                     push_directive(tokens, "max");
+                            }
+                            Op::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     match &self.type_ {
@@ -309,11 +309,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_9) = self.scope.as_ref() {
                             match scope_9 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -325,17 +325,17 @@ pub mod section_0 {
                     }
                     if let Some(space_10) = self.space.as_ref() {
                             match space_10 {
+                                    Space::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Space::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Space::Global => {
                                             push_directive(tokens, "global");
                                     }
                                     Space::Shared => {
                                             push_directive(tokens, "shared");
-                                    }
-                                    Space::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
                                     }
                             }
                     }
@@ -373,11 +373,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_12) = self.scope.as_ref() {
                             match scope_12 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -389,17 +389,17 @@ pub mod section_0 {
                     }
                     if let Some(space_13) = self.space.as_ref() {
                             match space_13 {
+                                    Space::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Space::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Space::Global => {
                                             push_directive(tokens, "global");
                                     }
                                     Space::Shared => {
                                             push_directive(tokens, "shared");
-                                    }
-                                    Space::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
                                     }
                             }
                     }
@@ -437,11 +437,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_15) = self.scope.as_ref() {
                             match scope_15 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -453,17 +453,17 @@ pub mod section_0 {
                     }
                     if let Some(space_16) = self.space.as_ref() {
                             match space_16 {
+                                    Space::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Space::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Space::Global => {
                                             push_directive(tokens, "global");
                                     }
                                     Space::Shared => {
                                             push_directive(tokens, "shared");
-                                    }
-                                    Space::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
                                     }
                             }
                     }
@@ -510,11 +510,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_20) = self.scope.as_ref() {
                             match scope_20 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -526,17 +526,17 @@ pub mod section_0 {
                     }
                     if let Some(space_21) = self.space.as_ref() {
                             match space_21 {
+                                    Space::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Space::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Space::Global => {
                                             push_directive(tokens, "global");
                                     }
                                     Space::Shared => {
                                             push_directive(tokens, "shared");
-                                    }
-                                    Space::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
                                     }
                             }
                     }
@@ -584,11 +584,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_25) = self.scope.as_ref() {
                             match scope_25 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -600,17 +600,17 @@ pub mod section_0 {
                     }
                     if let Some(space_26) = self.space.as_ref() {
                             match space_26 {
+                                    Space::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Space::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Space::Global => {
                                             push_directive(tokens, "global");
                                     }
                                     Space::Shared => {
                                             push_directive(tokens, "shared");
-                                    }
-                                    Space::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
                                     }
                             }
                     }
@@ -658,11 +658,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_30) = self.scope.as_ref() {
                             match scope_30 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -674,17 +674,17 @@ pub mod section_0 {
                     }
                     if let Some(space_31) = self.space.as_ref() {
                             match space_31 {
+                                    Space::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Space::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Space::Global => {
                                             push_directive(tokens, "global");
                                     }
                                     Space::Shared => {
                                             push_directive(tokens, "shared");
-                                    }
-                                    Space::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
                                     }
                             }
                     }
@@ -732,11 +732,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_35) = self.scope.as_ref() {
                             match scope_35 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -748,17 +748,17 @@ pub mod section_0 {
                     }
                     if let Some(space_36) = self.space.as_ref() {
                             match space_36 {
+                                    Space::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Space::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Space::Global => {
                                             push_directive(tokens, "global");
                                     }
                                     Space::Shared => {
                                             push_directive(tokens, "shared");
-                                    }
-                                    Space::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
                                     }
                             }
                     }
@@ -812,11 +812,11 @@ pub mod section_1 {
                     }
                     if let Some(scope_40) = self.scope.as_ref() {
                             match scope_40 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -880,11 +880,11 @@ pub mod section_1 {
                     }
                     if let Some(scope_44) = self.scope.as_ref() {
                             match scope_44 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -928,11 +928,11 @@ pub mod section_1 {
                             }
                     }
                     match &self.half_word_type {
-                            HalfWordType::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
                             HalfWordType::Bf16 => {
                                     push_directive(tokens, "bf16");
+                            }
+                            HalfWordType::F16 => {
+                                    push_directive(tokens, "f16");
                             }
                     }
                     self.d.unparse_tokens(tokens);
@@ -969,11 +969,11 @@ pub mod section_1 {
                     }
                     if let Some(scope_48) = self.scope.as_ref() {
                             match scope_48 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -1014,11 +1014,11 @@ pub mod section_1 {
                             }
                     }
                     match &self.packed_type {
-                            PackedType::F16x2 => {
-                                    push_directive(tokens, "f16x2");
-                            }
                             PackedType::Bf16x2 => {
                                     push_directive(tokens, "bf16x2");
+                            }
+                            PackedType::F16x2 => {
+                                    push_directive(tokens, "f16x2");
                             }
                     }
                     self.d.unparse_tokens(tokens);

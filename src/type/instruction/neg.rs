@@ -27,53 +27,53 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct NegType {
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct NegFtzF32 {
         pub ftz: bool, // {.ftz}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct NegF64 {
         pub f64: (), // .f64
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct NegFtzF16 {
         pub ftz: bool, // {.ftz}
         pub f16: (), // .f16
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct NegFtzF16x2 {
         pub ftz: bool, // {.ftz}
         pub f16x2: (), // .f16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct NegBf16 {
         pub bf16: (), // .bf16
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct NegBf16x2 {
         pub bf16x2: (), // .bf16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
 }

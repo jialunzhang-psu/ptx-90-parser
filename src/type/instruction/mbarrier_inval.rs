@@ -11,8 +11,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum State {
-        Shared, // .shared
         SharedCta, // .shared::cta
+        Shared, // .shared
     }
 
     #[derive(Debug, Clone, PartialEq)]

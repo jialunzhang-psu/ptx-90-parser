@@ -35,7 +35,7 @@ impl UnparserGenerator {
         let mut struct_names = Vec::new();
         let mut impl_output = String::new();
 
-        for instr in &section.0 {
+        for instr in &section.instructions {
             let struct_name = instr.rust_name.clone();
             struct_names.push(struct_name.clone());
             let impl_code = self.generate_instruction_unparser(instr);
@@ -82,10 +82,7 @@ impl UnparserGenerator {
 
         output.push_str(&format!("impl PtxUnparser for {} {{\n", struct_name));
         output.push_str("    fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {\n");
-        output.push_str(&format!(
-            "        push_opcode(tokens, \"{}\");\n",
-            opcode
-        ));
+        output.push_str(&format!("        push_opcode(tokens, \"{}\");\n", opcode));
 
         for (modifier, rust_name) in &instr.head.modifiers {
             output.push_str(&self.generate_modifier_field_unparse(modifier, rust_name, 2));
@@ -119,11 +116,7 @@ impl UnparserGenerator {
                         self.indent(indent),
                         field_name
                     ));
-                    code.push_str(&self.generate_modifier_value_unparse(
-                        inner_mod,
-                        "",
-                        indent + 1,
-                    ));
+                    code.push_str(&self.generate_modifier_value_unparse(inner_mod, "", indent + 1));
                     code.push_str(&format!("{}}}\n", self.indent(indent)));
                     code
                 } else {
@@ -175,11 +168,7 @@ impl UnparserGenerator {
                     value_expr.to_string()
                 };
                 let mut code = String::new();
-                code.push_str(&format!(
-                    "{}match {} {{\n",
-                    self.indent(indent),
-                    match_expr
-                ));
+                code.push_str(&format!("{}match {} {{\n", self.indent(indent), match_expr));
                 for (option, variant_name) in options {
                     code.push_str(&self.generate_choice_arm(
                         enum_name,
@@ -207,9 +196,9 @@ impl UnparserGenerator {
     ) -> String {
         let indent_str = self.indent(indent);
         let mut code = String::new();
-        let pattern = self.choice_variant_pattern(enum_name, variant_name, option);
+        let (pattern, bindings) = self.choice_variant_pattern_with_bindings(enum_name, variant_name, option);
         code.push_str(&format!("{}{} => {{\n", indent_str, pattern));
-        code.push_str(&self.emit_literal_from_modifier(option, indent + 1));
+        code.push_str(&self.emit_literal_from_modifier_with_bindings(option, &bindings, indent + 1));
         code.push_str(&format!("{}}}\n", indent_str));
         code
     }
@@ -297,57 +286,47 @@ impl UnparserGenerator {
                 ));
                 code.push_str(&format!("{}tokens.push(PtxToken::RParen);\n", indent_str));
             }
-            AnalyzedOperandElement::PipeChoice(_) | AnalyzedOperandElement::PipeOptionalChoice(_) => {
+            AnalyzedOperandElement::PipeChoice(((_, first_name), (_, second_name))) => {
+                // d|p outputs: d.unparse_tokens(), Pipe, p.unparse_tokens()
+                code.push_str(&format!(
+                    "{}self.{}.unparse_tokens(tokens);\n",
+                    indent_str, first_name
+                ));
+                code.push_str(&format!("{}tokens.push(PtxToken::Pipe);\n", indent_str));
+                code.push_str(&format!(
+                    "{}self.{}.unparse_tokens(tokens);\n",
+                    indent_str, second_name
+                ));
+            }
+            AnalyzedOperandElement::PipeOptionalChoice(((_, _first_name), (_, second_name))) => {
+                // Base operand
+                code.push_str(&format!(
+                    "{}{}.unparse_tokens(tokens);\n",
+                    indent_str, value_expr
+                ));
+
+                // Optional guard
+                let binding = self.unique_binding(second_name);
+                code.push_str(&format!(
+                    "{}if let Some({}) = self.{}.as_ref() {{\n",
+                    indent_str, binding, second_name
+                ));
+                code.push_str(&format!("{}    tokens.push(PtxToken::Pipe);\n", indent_str));
+                code.push_str(&format!(
+                    "{}    {}.unparse_tokens(tokens);\n",
+                    indent_str, binding
+                ));
+                code.push_str(&format!("{}}}\n", indent_str));
+            }
+            AnalyzedOperandElement::SquareGroup(_) | AnalyzedOperandElement::CurlyGroup(_) => {
                 code.push_str(&format!(
                     "{}{}.unparse_tokens(tokens);\n",
                     indent_str, value_expr
                 ));
             }
-            AnalyzedOperandElement::SquareGroup(items) | AnalyzedOperandElement::CurlyGroup(items) => {
-                let (open, close) = match element {
-                    AnalyzedOperandElement::SquareGroup(_) => ("LBracket", "RBracket"),
-                    _ => ("LBrace", "RBrace"),
-                };
-                code.push_str(&format!(
-                    "{}tokens.push(PtxToken::{});\n",
-                    indent_str, open
-                ));
-                if !items.is_empty() {
-                    let binding_base = self.unique_binding("group");
-                    let pattern = items
-                        .iter()
-                        .enumerate()
-                        .map(|(idx, _)| format!("ref {}_{}", binding_base, idx))
-                        .collect::<Vec<_>>()
-                        .join(", ");
-                    code.push_str(&format!(
-                        "{}let &( {}) = &{};\n",
-                        indent_str, pattern, value_expr
-                    ));
-                    for (idx, _) in items.iter().enumerate() {
-                        if idx > 0 {
-                            code.push_str(&format!(
-                                "{}tokens.push(PtxToken::Comma);\n",
-                                indent_str
-                            ));
-                        }
-                        code.push_str(&format!(
-                            "{}{}_{}.unparse_tokens(tokens);\n",
-                            indent_str, binding_base, idx
-                        ));
-                    }
-                }
-                code.push_str(&format!(
-                    "{}tokens.push(PtxToken::{});\n",
-                    indent_str, close
-                ));
-            }
             AnalyzedOperandElement::ParamList(_) => {
                 let binding = self.unique_binding("params");
-                code.push_str(&format!(
-                    "{}tokens.push(PtxToken::LParen);\n",
-                    indent_str
-                ));
+                code.push_str(&format!("{}tokens.push(PtxToken::LParen);\n", indent_str));
                 code.push_str(&format!(
                     "{}for (idx, operand) in {}.iter().enumerate() {{\n",
                     indent_str, value_expr
@@ -361,10 +340,7 @@ impl UnparserGenerator {
                     indent_str
                 ));
                 code.push_str(&format!("{}}}\n", indent_str));
-                code.push_str(&format!(
-                    "{}tokens.push(PtxToken::RParen);\n",
-                    indent_str
-                ));
+                code.push_str(&format!("{}tokens.push(PtxToken::RParen);\n", indent_str));
                 let _ = binding;
             }
             AnalyzedOperandElement::ImmediateNumber((num, _)) => {
@@ -375,17 +351,13 @@ impl UnparserGenerator {
             }
             AnalyzedOperandElement::Choice { base, options } => {
                 let enum_name = &base.1;
-                code.push_str(&format!(
-                    "{}match &{} {{\n",
-                    indent_str, value_expr
-                ));
-                for option in options {
-                    let variant = naming::sanitize_variant_name(option);
+                code.push_str(&format!("{}match &{} {{\n", indent_str, value_expr));
+                for (option_ident, variant_name) in options {
                     code.push_str(&format!(
                         "{}    {}::{} => {{\n",
-                        indent_str, enum_name, variant
+                        indent_str, enum_name, variant_name
                     ));
-                    code.push_str(&self.emit_operand_choice_literal(option, indent + 2));
+                    code.push_str(&self.emit_operand_choice_literal(option_ident, indent + 2));
                     code.push_str(&format!("{}    }}\n", indent_str));
                 }
                 code.push_str(&format!("{}}}\n", indent_str));
@@ -419,16 +391,18 @@ impl UnparserGenerator {
             | AnalyzedOperandElement::Address((_, rust_name))
             | AnalyzedOperandElement::Optional((_, rust_name))
             | AnalyzedOperandElement::ParenthesizedOperand((_, rust_name)) => rust_name.clone(),
-            AnalyzedOperandElement::PipeChoice((( _, first_name), _))
-            | AnalyzedOperandElement::PipeOptionalChoice((( _, first_name), _)) => {
+            AnalyzedOperandElement::PipeChoice(((_, first_name), _))
+            | AnalyzedOperandElement::PipeOptionalChoice(((_, first_name), _)) => {
                 first_name.clone()
             }
-            AnalyzedOperandElement::CurlyGroup(items) | AnalyzedOperandElement::SquareGroup(items) => {
-                items
-                    .first()
-                    .map(|(_, name)| name.clone())
-                    .unwrap_or_else(|| "group".to_string())
-            }
+            AnalyzedOperandElement::CurlyGroup(items) => items
+                .first()
+                .map(|(_, name)| name.clone())
+                .unwrap_or_else(|| "group".to_string()),
+            AnalyzedOperandElement::SquareGroup(items) => items
+                .first()
+                .map(|(_, name, _)| name.clone())
+                .unwrap_or_else(|| "group".to_string()),
             AnalyzedOperandElement::ImmediateNumber((_, rust_name)) => rust_name.clone(),
             AnalyzedOperandElement::ParamList(rust_name) => rust_name.clone(),
             AnalyzedOperandElement::Choice { base, .. } => naming::to_snake_case(&base.1),
@@ -451,11 +425,7 @@ impl UnparserGenerator {
         code
     }
 
-    fn emit_literal_from_modifier(
-        &mut self,
-        modifier: &AnalyzedModifier,
-        indent: usize,
-    ) -> String {
+    fn emit_literal_from_modifier(&mut self, modifier: &AnalyzedModifier, indent: usize) -> String {
         match modifier {
             AnalyzedModifier::Atom((ident, _)) => format!(
                 "{}{}\n",
@@ -510,43 +480,144 @@ impl UnparserGenerator {
         variant_name: &str,
         option: &AnalyzedModifier,
     ) -> String {
+        self.choice_variant_pattern_with_bindings(enum_name, variant_name, option).0
+    }
+
+    fn choice_variant_pattern_with_bindings(
+        &self,
+        enum_name: &str,
+        variant_name: &str,
+        option: &AnalyzedModifier,
+    ) -> (String, Vec<String>) {
         match option {
             AnalyzedModifier::Sequence(items) => {
                 if items.is_empty() {
-                    format!("{}::{}()", enum_name, variant_name)
+                    (format!("{}::{}()", enum_name, variant_name), vec![])
                 } else {
-                    let args = (0..items.len())
-                        .map(|_| "_")
-                        .collect::<Vec<_>>()
-                        .join(", ");
-                    format!("{}::{}({})", enum_name, variant_name, args)
+                    // Check if this is a .b.n.n.n.n pattern that needs special handling
+                    let needs_bindings = self.is_combinable_sequence(items);
+                    
+                    if needs_bindings {
+                        // Bind the actual values so we can combine them
+                        let bindings: Vec<String> = (0..items.len())
+                            .map(|i| if i == 0 { "_".to_string() } else { format!("n{}", i) })
+                            .collect();
+                        let args = bindings.join(", ");
+                        (format!("{}::{}({})", enum_name, variant_name, args), bindings)
+                    } else {
+                        // No bindings needed for regular sequences
+                        let args = (0..items.len()).map(|_| "_").collect::<Vec<_>>().join(", ");
+                        (format!("{}::{}({})", enum_name, variant_name, args), vec![])
+                    }
                 }
             }
             AnalyzedModifier::Optional(inner) => {
-                let inner_pattern = self.choice_variant_pattern(enum_name, variant_name, &inner.0);
+                let (inner_pattern, bindings) = self.choice_variant_pattern_with_bindings(enum_name, variant_name, &inner.0);
                 if inner_pattern.contains("(") {
-                    inner_pattern
+                    (inner_pattern, bindings)
                 } else {
-                    format!("{}::{}(..)", enum_name, variant_name)
+                    (format!("{}::{}(..)", enum_name, variant_name), vec![])
                 }
             }
-            AnalyzedModifier::Choice { .. } => format!("{}::{}(..)", enum_name, variant_name),
-            _ => format!("{}::{}", enum_name, variant_name),
+            AnalyzedModifier::Choice { .. } => (format!("{}::{}(..)", enum_name, variant_name), vec![]),
+            _ => (format!("{}::{}", enum_name, variant_name), vec![]),
+        }
+    }
+
+    /// Check if a sequence needs to be combined into a single identifier
+    /// Returns true for patterns like .b.n.n.n.n where we have a directive followed by placeholders
+    fn is_combinable_sequence(&self, items: &[(AnalyzedModifier, String)]) -> bool {
+        if items.len() < 2 {
+            return false;
+        }
+        
+        // First item should be a directive starting with .
+        let first_is_directive = matches!(&items[0].0, AnalyzedModifier::Atom((ident, _)) if ident.starts_with('.'));
+        
+        // Rest should be Choice items (like .n = { 0, 1, 2, ... })
+        let rest_are_choices = items[1..].iter().all(|(modifier, _)| {
+            matches!(modifier, AnalyzedModifier::Choice { .. })
+        });
+        
+        first_is_directive && rest_are_choices
+    }
+
+    /// Generate code to convert an enum value to a character and append to `combined`
+    /// The enum type should have variants that end with the character they represent
+    /// (e.g., _0, _1, etc. or Buffer, Op, etc.)
+    fn generate_enum_to_char(&self, binding: &str, indent: usize) -> String {
+        let indent_str = self.indent(indent);
+        // Extract the last character/digit from the debug representation of the enum variant
+        // For _0 -> "0", for _7 -> "7", for Buffer -> "r", etc.
+        format!("{}combined.push_str(format!(\"{{:?}}\", {}).trim_start_matches('_'));\n", indent_str, binding)
+    }
+
+    fn emit_literal_from_modifier_with_bindings(
+        &mut self,
+        modifier: &AnalyzedModifier,
+        bindings: &[String],
+        indent: usize,
+    ) -> String {
+        match modifier {
+            AnalyzedModifier::Atom((ident, _)) => format!(
+                "{}{}\n",
+                self.indent(indent),
+                self.format_literal_push(ident)
+            ),
+            AnalyzedModifier::Sequence(seq) => {
+                // Check if this is a combinable sequence (like .b.n.n.n.n)
+                if self.is_combinable_sequence(seq) && !bindings.is_empty() {
+                    // Generate code to combine into a single identifier
+                    let directive_name = if let AnalyzedModifier::Atom((ident, _)) = &seq[0].0 {
+                        Self::directive_name(ident)
+                    } else {
+                        "b".to_string()  // fallback
+                    };
+                    
+                    let mut code = String::new();
+                    let indent_str = self.indent(indent);
+                    
+                    // Build the combined string by converting each enum value to its string representation
+                    // We'll build it piece by piece
+                    code.push_str(&format!("{}let mut combined = String::new();\n", indent_str));
+                    
+                    for binding in &bindings[1..] {  // Skip first binding which is "_"
+                        // Each binding is an enum, we need to match it and convert to string
+                        code.push_str(&self.generate_enum_to_char(binding, indent));
+                    }
+                    
+                    // Push as DOT + identifier (two tokens)
+                    code.push_str(&format!("{}tokens.push(PtxToken::Dot);\n", indent_str));
+                    code.push_str(&format!("{}tokens.push(PtxToken::Identifier(format!(\"{{}}{{}}\", \"{}\", combined).into()));\n", indent_str, directive_name));
+                    code
+                } else {
+                    self.emit_modifier_literal(seq, indent)
+                }
+            },
+            AnalyzedModifier::Optional(inner) => {
+                let (nested, _) = inner.as_ref();
+                self.emit_literal_from_modifier_with_bindings(nested, bindings, indent)
+            }
+            AnalyzedModifier::Choice { options, .. } => {
+                let mut code = String::new();
+                for (option, _) in options {
+                    code.push_str(&self.emit_literal_from_modifier_with_bindings(option, bindings, indent));
+                }
+                code
+            }
         }
     }
 }
 
 /// Generate the content for `src/unparser/instruction/mod.rs`.
-pub fn generate_unparser_mod_rs_content(
-    modules: &[(String, Vec<(String, String)>)],
-) -> String {
+pub fn generate_unparser_mod_rs_content(modules: &[(String, Vec<(String, String)>)]) -> String {
     let mut output = String::new();
     output.push_str("// Auto-generated module declarations\n");
     output.push_str("// DO NOT EDIT MANUALLY\n");
     output.push_str("#![allow(unused)]\n\n");
     output.push_str("use crate::lexer::PtxToken;\n");
     output.push_str("use crate::unparser::PtxUnparser;\n");
-    output.push_str("use crate::r#type::instruction::Instruction;\n\n");
+    output.push_str("use crate::r#type::instruction::{Instruction, InstructionWithPredicate, Predicate};\n\n");
 
     for (module_name, _) in modules {
         output.push_str(&format!("pub mod {};\n", module_name));
@@ -567,6 +638,24 @@ pub fn generate_unparser_mod_rs_content(
     }
 
     output.push_str("        }\n");
+    output.push_str("    }\n");
+    output.push_str("}\n");
+    output.push_str("\n");
+
+    // Generate unparser for InstructionWithPredicate
+    output.push_str("impl PtxUnparser for InstructionWithPredicate {\n");
+    output.push_str("    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {\n");
+    output.push_str("        // Emit predicate if present\n");
+    output.push_str("        if let Some(predicate) = &self.predicate {\n");
+    output.push_str("            tokens.push(PtxToken::At);\n");
+    output.push_str("            if predicate.negated {\n");
+    output.push_str("                tokens.push(PtxToken::Exclaim);\n");
+    output.push_str("            }\n");
+    output.push_str("            predicate.operand.unparse_tokens(tokens);\n");
+    output.push_str("        }\n");
+    output.push_str("        \n");
+    output.push_str("        // Emit the instruction\n");
+    output.push_str("        self.instruction.unparse_tokens(tokens);\n");
     output.push_str("    }\n");
     output.push_str("}\n");
 

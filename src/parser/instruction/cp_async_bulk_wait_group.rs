@@ -17,16 +17,23 @@ pub mod section_0 {
             stream.expect_string("cp")?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             stream.expect_string(".bulk")?;
             let bulk = ();
+            stream.expect_complete()?;
             stream.expect_string(".wait_group")?;
             let wait_group = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let read = stream.expect_string(".read").is_ok();
             if !read {
                 stream.set_position(saved_pos);
             }
-            let n = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let n = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CpAsyncBulkWaitGroupRead {
                 async_,
                 bulk,

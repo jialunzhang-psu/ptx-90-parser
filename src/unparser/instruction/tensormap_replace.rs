@@ -38,11 +38,11 @@ pub mod section_0 {
                     }
                     if let Some(ss_0) = self.ss.as_ref() {
                             match ss_0 {
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
                                     Ss::SharedCta => {
                                             push_directive(tokens, "shared::cta");
+                                    }
+                                    Ss::Global => {
+                                            push_directive(tokens, "global");
                                     }
                             }
                     }
@@ -72,26 +72,26 @@ pub mod section_0 {
                             }
                     }
                     match &self.field2 {
-                            Field2::BoxDim => {
-                                    push_directive(tokens, "box_dim");
-                            }
-                            Field2::GlobalDim => {
-                                    push_directive(tokens, "global_dim");
+                            Field2::ElementStride => {
+                                    push_directive(tokens, "element_stride");
                             }
                             Field2::GlobalStride => {
                                     push_directive(tokens, "global_stride");
                             }
-                            Field2::ElementStride => {
-                                    push_directive(tokens, "element_stride");
+                            Field2::GlobalDim => {
+                                    push_directive(tokens, "global_dim");
+                            }
+                            Field2::BoxDim => {
+                                    push_directive(tokens, "box_dim");
                             }
                     }
                     if let Some(ss_1) = self.ss.as_ref() {
                             match ss_1 {
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
                                     Ss::SharedCta => {
                                             push_directive(tokens, "shared::cta");
+                                    }
+                                    Ss::Global => {
+                                            push_directive(tokens, "global");
                                     }
                             }
                     }
@@ -123,29 +123,29 @@ pub mod section_0 {
                             }
                     }
                     match &self.field3 {
-                            Field3::Elemtype => {
-                                    push_directive(tokens, "elemtype");
-                            }
                             Field3::InterleaveLayout => {
                                     push_directive(tokens, "interleave_layout");
-                            }
-                            Field3::SwizzleMode => {
-                                    push_directive(tokens, "swizzle_mode");
                             }
                             Field3::SwizzleAtomicity => {
                                     push_directive(tokens, "swizzle_atomicity");
                             }
+                            Field3::SwizzleMode => {
+                                    push_directive(tokens, "swizzle_mode");
+                            }
                             Field3::FillMode => {
                                     push_directive(tokens, "fill_mode");
+                            }
+                            Field3::Elemtype => {
+                                    push_directive(tokens, "elemtype");
                             }
                     }
                     if let Some(ss_2) = self.ss.as_ref() {
                             match ss_2 {
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
                                     Ss::SharedCta => {
                                             push_directive(tokens, "shared::cta");
+                                    }
+                                    Ss::Global => {
+                                            push_directive(tokens, "global");
                                     }
                             }
                     }

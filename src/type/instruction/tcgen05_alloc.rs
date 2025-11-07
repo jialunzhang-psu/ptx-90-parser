@@ -26,7 +26,7 @@ pub mod section_0 {
         pub shared_cta: bool, // {.shared::cta}
         pub b32: (), // .b32
         pub dst: AddressOperand, // [dst]
-        pub ncols: Operand, // nCols
+        pub ncols: GeneralOperand, // nCols
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -36,8 +36,8 @@ pub mod section_0 {
         pub sync: (), // .sync
         pub aligned: (), // .aligned
         pub b32: (), // .b32
-        pub taddr: Operand, // taddr
-        pub ncols: Operand, // nCols
+        pub taddr: GeneralOperand, // taddr
+        pub ncols: GeneralOperand, // nCols
     }
 
     #[derive(Debug, Clone, PartialEq)]

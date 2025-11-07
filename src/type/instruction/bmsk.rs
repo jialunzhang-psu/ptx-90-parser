@@ -19,9 +19,9 @@ pub mod section_0 {
     pub struct BmskModeB32 {
         pub mode: Mode, // .mode
         pub b32: (), // .b32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
 }

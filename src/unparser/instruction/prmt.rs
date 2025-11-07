@@ -18,6 +18,9 @@ pub mod section_0 {
                     push_directive(tokens, "b32");
                     if let Some(mode_0) = self.mode.as_ref() {
                             match mode_0 {
+                                    Mode::Rc16 => {
+                                            push_directive(tokens, "rc16");
+                                    }
                                     Mode::F4e => {
                                             push_directive(tokens, "f4e");
                                     }
@@ -32,9 +35,6 @@ pub mod section_0 {
                                     }
                                     Mode::Ecr => {
                                             push_directive(tokens, "ecr");
-                                    }
-                                    Mode::Rc16 => {
-                                            push_directive(tokens, "rc16");
                                     }
                             }
                     }

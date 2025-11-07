@@ -71,16 +71,23 @@ pub mod section_0 {
             stream.expect_string("sqrt")?;
             stream.expect_string(".approx")?;
             let approx = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SqrtApproxFtzF32 {
                 approx,
                 ftz,
@@ -96,16 +103,23 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("sqrt")?;
             let rnd = Rnd::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SqrtRndFtzF32 {
                 rnd,
                 ftz,
@@ -121,11 +135,17 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("sqrt")?;
             let rnd = Rnd::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".f64")?;
             let f64 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SqrtRndF64 {
                 rnd,
                 f64,

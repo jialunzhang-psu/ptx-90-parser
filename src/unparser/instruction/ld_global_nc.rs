@@ -51,20 +51,20 @@ pub mod section_0 {
                     }
                     if let Some(level_prefetch_size_2) = self.level_prefetch_size.as_ref() {
                             match level_prefetch_size_2 {
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
                                     LevelPrefetchSize::L2128b => {
                                             push_directive(tokens, "L2::128B");
                                     }
                                     LevelPrefetchSize::L2256b => {
                                             push_directive(tokens, "L2::256B");
                                     }
+                                    LevelPrefetchSize::L264b => {
+                                            push_directive(tokens, "L2::64B");
+                                    }
                             }
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
                             }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
@@ -75,12 +75,6 @@ pub mod section_0 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -89,9 +83,6 @@ pub mod section_0 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -107,6 +98,15 @@ pub mod section_0 {
                             }
                             Type::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.d.unparse_tokens(tokens);
@@ -147,14 +147,14 @@ pub mod section_0 {
                     }
                     if let Some(level_prefetch_size_6) = self.level_prefetch_size.as_ref() {
                             match level_prefetch_size_6 {
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
                                     LevelPrefetchSize::L2128b => {
                                             push_directive(tokens, "L2::128B");
                                     }
                                     LevelPrefetchSize::L2256b => {
                                             push_directive(tokens, "L2::256B");
+                                    }
+                                    LevelPrefetchSize::L264b => {
+                                            push_directive(tokens, "L2::64B");
                                     }
                             }
                     }
@@ -170,8 +170,8 @@ pub mod section_0 {
                             }
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
                             }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
@@ -182,12 +182,6 @@ pub mod section_0 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -196,9 +190,6 @@ pub mod section_0 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -214,6 +205,15 @@ pub mod section_0 {
                             }
                             Type::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.d.unparse_tokens(tokens);
@@ -234,20 +234,20 @@ pub mod section_0 {
                     push_directive(tokens, "nc");
                     if let Some(level1_eviction_priority_8) = self.level1_eviction_priority.as_ref() {
                             match level1_eviction_priority_8 {
-                                    Level1EvictionPriority::L1EvictNormal => {
-                                            push_directive(tokens, "L1::evict_normal");
-                                    }
                                     Level1EvictionPriority::L1EvictUnchanged => {
                                             push_directive(tokens, "L1::evict_unchanged");
+                                    }
+                                    Level1EvictionPriority::L1EvictNormal => {
+                                            push_directive(tokens, "L1::evict_normal");
                                     }
                                     Level1EvictionPriority::L1EvictFirst => {
                                             push_directive(tokens, "L1::evict_first");
                                     }
-                                    Level1EvictionPriority::L1EvictLast => {
-                                            push_directive(tokens, "L1::evict_last");
-                                    }
                                     Level1EvictionPriority::L1NoAllocate => {
                                             push_directive(tokens, "L1::no_allocate");
+                                    }
+                                    Level1EvictionPriority::L1EvictLast => {
+                                            push_directive(tokens, "L1::evict_last");
                                     }
                             }
                     }
@@ -273,20 +273,20 @@ pub mod section_0 {
                     }
                     if let Some(level_prefetch_size_11) = self.level_prefetch_size.as_ref() {
                             match level_prefetch_size_11 {
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
                                     LevelPrefetchSize::L2128b => {
                                             push_directive(tokens, "L2::128B");
                                     }
                                     LevelPrefetchSize::L2256b => {
                                             push_directive(tokens, "L2::256B");
                                     }
+                                    LevelPrefetchSize::L264b => {
+                                            push_directive(tokens, "L2::64B");
+                                    }
                             }
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
                             }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
@@ -297,12 +297,6 @@ pub mod section_0 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -311,9 +305,6 @@ pub mod section_0 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -329,6 +320,15 @@ pub mod section_0 {
                             }
                             Type::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.d.unparse_tokens(tokens);
@@ -349,20 +349,20 @@ pub mod section_0 {
                     push_directive(tokens, "nc");
                     if let Some(level1_eviction_priority_13) = self.level1_eviction_priority.as_ref() {
                             match level1_eviction_priority_13 {
-                                    Level1EvictionPriority::L1EvictNormal => {
-                                            push_directive(tokens, "L1::evict_normal");
-                                    }
                                     Level1EvictionPriority::L1EvictUnchanged => {
                                             push_directive(tokens, "L1::evict_unchanged");
+                                    }
+                                    Level1EvictionPriority::L1EvictNormal => {
+                                            push_directive(tokens, "L1::evict_normal");
                                     }
                                     Level1EvictionPriority::L1EvictFirst => {
                                             push_directive(tokens, "L1::evict_first");
                                     }
-                                    Level1EvictionPriority::L1EvictLast => {
-                                            push_directive(tokens, "L1::evict_last");
-                                    }
                                     Level1EvictionPriority::L1NoAllocate => {
                                             push_directive(tokens, "L1::no_allocate");
+                                    }
+                                    Level1EvictionPriority::L1EvictLast => {
+                                            push_directive(tokens, "L1::evict_last");
                                     }
                             }
                     }
@@ -388,14 +388,14 @@ pub mod section_0 {
                     }
                     if let Some(level_prefetch_size_16) = self.level_prefetch_size.as_ref() {
                             match level_prefetch_size_16 {
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
                                     LevelPrefetchSize::L2128b => {
                                             push_directive(tokens, "L2::128B");
                                     }
                                     LevelPrefetchSize::L2256b => {
                                             push_directive(tokens, "L2::256B");
+                                    }
+                                    LevelPrefetchSize::L264b => {
+                                            push_directive(tokens, "L2::64B");
                                     }
                             }
                     }
@@ -411,8 +411,8 @@ pub mod section_0 {
                             }
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
                             }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
@@ -423,12 +423,6 @@ pub mod section_0 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -437,9 +431,6 @@ pub mod section_0 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -455,6 +446,15 @@ pub mod section_0 {
                             }
                             Type::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.d.unparse_tokens(tokens);

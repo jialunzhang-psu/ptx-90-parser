@@ -91,42 +91,6 @@ pub mod section_0 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k16 => {
-                                    push_directive(tokens, "m64n8k16");
-                            }
-                            Shape::M64n16k16 => {
-                                    push_directive(tokens, "m64n16k16");
-                            }
-                            Shape::M64n24k16 => {
-                                    push_directive(tokens, "m64n24k16");
-                            }
-                            Shape::M64n32k16 => {
-                                    push_directive(tokens, "m64n32k16");
-                            }
-                            Shape::M64n40k16 => {
-                                    push_directive(tokens, "m64n40k16");
-                            }
-                            Shape::M64n48k16 => {
-                                    push_directive(tokens, "m64n48k16");
-                            }
-                            Shape::M64n56k16 => {
-                                    push_directive(tokens, "m64n56k16");
-                            }
-                            Shape::M64n64k16 => {
-                                    push_directive(tokens, "m64n64k16");
-                            }
-                            Shape::M64n72k16 => {
-                                    push_directive(tokens, "m64n72k16");
-                            }
-                            Shape::M64n80k16 => {
-                                    push_directive(tokens, "m64n80k16");
-                            }
-                            Shape::M64n88k16 => {
-                                    push_directive(tokens, "m64n88k16");
-                            }
-                            Shape::M64n96k16 => {
-                                    push_directive(tokens, "m64n96k16");
-                            }
                             Shape::M64n104k16 => {
                                     push_directive(tokens, "m64n104k16");
                             }
@@ -186,6 +150,42 @@ pub mod section_0 {
                             }
                             Shape::M64n256k16 => {
                                     push_directive(tokens, "m64n256k16");
+                            }
+                            Shape::M64n16k16 => {
+                                    push_directive(tokens, "m64n16k16");
+                            }
+                            Shape::M64n24k16 => {
+                                    push_directive(tokens, "m64n24k16");
+                            }
+                            Shape::M64n32k16 => {
+                                    push_directive(tokens, "m64n32k16");
+                            }
+                            Shape::M64n40k16 => {
+                                    push_directive(tokens, "m64n40k16");
+                            }
+                            Shape::M64n48k16 => {
+                                    push_directive(tokens, "m64n48k16");
+                            }
+                            Shape::M64n56k16 => {
+                                    push_directive(tokens, "m64n56k16");
+                            }
+                            Shape::M64n64k16 => {
+                                    push_directive(tokens, "m64n64k16");
+                            }
+                            Shape::M64n72k16 => {
+                                    push_directive(tokens, "m64n72k16");
+                            }
+                            Shape::M64n80k16 => {
+                                    push_directive(tokens, "m64n80k16");
+                            }
+                            Shape::M64n88k16 => {
+                                    push_directive(tokens, "m64n88k16");
+                            }
+                            Shape::M64n96k16 => {
+                                    push_directive(tokens, "m64n96k16");
+                            }
+                            Shape::M64n8k16 => {
+                                    push_directive(tokens, "m64n8k16");
                             }
                     }
                     match &self.dtype {
@@ -224,42 +224,6 @@ pub mod section_0 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k16 => {
-                                    push_directive(tokens, "m64n8k16");
-                            }
-                            Shape::M64n16k16 => {
-                                    push_directive(tokens, "m64n16k16");
-                            }
-                            Shape::M64n24k16 => {
-                                    push_directive(tokens, "m64n24k16");
-                            }
-                            Shape::M64n32k16 => {
-                                    push_directive(tokens, "m64n32k16");
-                            }
-                            Shape::M64n40k16 => {
-                                    push_directive(tokens, "m64n40k16");
-                            }
-                            Shape::M64n48k16 => {
-                                    push_directive(tokens, "m64n48k16");
-                            }
-                            Shape::M64n56k16 => {
-                                    push_directive(tokens, "m64n56k16");
-                            }
-                            Shape::M64n64k16 => {
-                                    push_directive(tokens, "m64n64k16");
-                            }
-                            Shape::M64n72k16 => {
-                                    push_directive(tokens, "m64n72k16");
-                            }
-                            Shape::M64n80k16 => {
-                                    push_directive(tokens, "m64n80k16");
-                            }
-                            Shape::M64n88k16 => {
-                                    push_directive(tokens, "m64n88k16");
-                            }
-                            Shape::M64n96k16 => {
-                                    push_directive(tokens, "m64n96k16");
-                            }
                             Shape::M64n104k16 => {
                                     push_directive(tokens, "m64n104k16");
                             }
@@ -319,6 +283,42 @@ pub mod section_0 {
                             }
                             Shape::M64n256k16 => {
                                     push_directive(tokens, "m64n256k16");
+                            }
+                            Shape::M64n16k16 => {
+                                    push_directive(tokens, "m64n16k16");
+                            }
+                            Shape::M64n24k16 => {
+                                    push_directive(tokens, "m64n24k16");
+                            }
+                            Shape::M64n32k16 => {
+                                    push_directive(tokens, "m64n32k16");
+                            }
+                            Shape::M64n40k16 => {
+                                    push_directive(tokens, "m64n40k16");
+                            }
+                            Shape::M64n48k16 => {
+                                    push_directive(tokens, "m64n48k16");
+                            }
+                            Shape::M64n56k16 => {
+                                    push_directive(tokens, "m64n56k16");
+                            }
+                            Shape::M64n64k16 => {
+                                    push_directive(tokens, "m64n64k16");
+                            }
+                            Shape::M64n72k16 => {
+                                    push_directive(tokens, "m64n72k16");
+                            }
+                            Shape::M64n80k16 => {
+                                    push_directive(tokens, "m64n80k16");
+                            }
+                            Shape::M64n88k16 => {
+                                    push_directive(tokens, "m64n88k16");
+                            }
+                            Shape::M64n96k16 => {
+                                    push_directive(tokens, "m64n96k16");
+                            }
+                            Shape::M64n8k16 => {
+                                    push_directive(tokens, "m64n8k16");
                             }
                     }
                     match &self.dtype {
@@ -361,42 +361,6 @@ pub mod section_1 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k16 => {
-                                    push_directive(tokens, "m64n8k16");
-                            }
-                            Shape::M64n16k16 => {
-                                    push_directive(tokens, "m64n16k16");
-                            }
-                            Shape::M64n24k16 => {
-                                    push_directive(tokens, "m64n24k16");
-                            }
-                            Shape::M64n32k16 => {
-                                    push_directive(tokens, "m64n32k16");
-                            }
-                            Shape::M64n40k16 => {
-                                    push_directive(tokens, "m64n40k16");
-                            }
-                            Shape::M64n48k16 => {
-                                    push_directive(tokens, "m64n48k16");
-                            }
-                            Shape::M64n56k16 => {
-                                    push_directive(tokens, "m64n56k16");
-                            }
-                            Shape::M64n64k16 => {
-                                    push_directive(tokens, "m64n64k16");
-                            }
-                            Shape::M64n72k16 => {
-                                    push_directive(tokens, "m64n72k16");
-                            }
-                            Shape::M64n80k16 => {
-                                    push_directive(tokens, "m64n80k16");
-                            }
-                            Shape::M64n88k16 => {
-                                    push_directive(tokens, "m64n88k16");
-                            }
-                            Shape::M64n96k16 => {
-                                    push_directive(tokens, "m64n96k16");
-                            }
                             Shape::M64n104k16 => {
                                     push_directive(tokens, "m64n104k16");
                             }
@@ -456,6 +420,42 @@ pub mod section_1 {
                             }
                             Shape::M64n256k16 => {
                                     push_directive(tokens, "m64n256k16");
+                            }
+                            Shape::M64n16k16 => {
+                                    push_directive(tokens, "m64n16k16");
+                            }
+                            Shape::M64n24k16 => {
+                                    push_directive(tokens, "m64n24k16");
+                            }
+                            Shape::M64n32k16 => {
+                                    push_directive(tokens, "m64n32k16");
+                            }
+                            Shape::M64n40k16 => {
+                                    push_directive(tokens, "m64n40k16");
+                            }
+                            Shape::M64n48k16 => {
+                                    push_directive(tokens, "m64n48k16");
+                            }
+                            Shape::M64n56k16 => {
+                                    push_directive(tokens, "m64n56k16");
+                            }
+                            Shape::M64n64k16 => {
+                                    push_directive(tokens, "m64n64k16");
+                            }
+                            Shape::M64n72k16 => {
+                                    push_directive(tokens, "m64n72k16");
+                            }
+                            Shape::M64n80k16 => {
+                                    push_directive(tokens, "m64n80k16");
+                            }
+                            Shape::M64n88k16 => {
+                                    push_directive(tokens, "m64n88k16");
+                            }
+                            Shape::M64n96k16 => {
+                                    push_directive(tokens, "m64n96k16");
+                            }
+                            Shape::M64n8k16 => {
+                                    push_directive(tokens, "m64n8k16");
                             }
                     }
                     match &self.dtype {
@@ -491,42 +491,6 @@ pub mod section_1 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k16 => {
-                                    push_directive(tokens, "m64n8k16");
-                            }
-                            Shape::M64n16k16 => {
-                                    push_directive(tokens, "m64n16k16");
-                            }
-                            Shape::M64n24k16 => {
-                                    push_directive(tokens, "m64n24k16");
-                            }
-                            Shape::M64n32k16 => {
-                                    push_directive(tokens, "m64n32k16");
-                            }
-                            Shape::M64n40k16 => {
-                                    push_directive(tokens, "m64n40k16");
-                            }
-                            Shape::M64n48k16 => {
-                                    push_directive(tokens, "m64n48k16");
-                            }
-                            Shape::M64n56k16 => {
-                                    push_directive(tokens, "m64n56k16");
-                            }
-                            Shape::M64n64k16 => {
-                                    push_directive(tokens, "m64n64k16");
-                            }
-                            Shape::M64n72k16 => {
-                                    push_directive(tokens, "m64n72k16");
-                            }
-                            Shape::M64n80k16 => {
-                                    push_directive(tokens, "m64n80k16");
-                            }
-                            Shape::M64n88k16 => {
-                                    push_directive(tokens, "m64n88k16");
-                            }
-                            Shape::M64n96k16 => {
-                                    push_directive(tokens, "m64n96k16");
-                            }
                             Shape::M64n104k16 => {
                                     push_directive(tokens, "m64n104k16");
                             }
@@ -586,6 +550,42 @@ pub mod section_1 {
                             }
                             Shape::M64n256k16 => {
                                     push_directive(tokens, "m64n256k16");
+                            }
+                            Shape::M64n16k16 => {
+                                    push_directive(tokens, "m64n16k16");
+                            }
+                            Shape::M64n24k16 => {
+                                    push_directive(tokens, "m64n24k16");
+                            }
+                            Shape::M64n32k16 => {
+                                    push_directive(tokens, "m64n32k16");
+                            }
+                            Shape::M64n40k16 => {
+                                    push_directive(tokens, "m64n40k16");
+                            }
+                            Shape::M64n48k16 => {
+                                    push_directive(tokens, "m64n48k16");
+                            }
+                            Shape::M64n56k16 => {
+                                    push_directive(tokens, "m64n56k16");
+                            }
+                            Shape::M64n64k16 => {
+                                    push_directive(tokens, "m64n64k16");
+                            }
+                            Shape::M64n72k16 => {
+                                    push_directive(tokens, "m64n72k16");
+                            }
+                            Shape::M64n80k16 => {
+                                    push_directive(tokens, "m64n80k16");
+                            }
+                            Shape::M64n88k16 => {
+                                    push_directive(tokens, "m64n88k16");
+                            }
+                            Shape::M64n96k16 => {
+                                    push_directive(tokens, "m64n96k16");
+                            }
+                            Shape::M64n8k16 => {
+                                    push_directive(tokens, "m64n8k16");
                             }
                     }
                     match &self.dtype {
@@ -625,42 +625,6 @@ pub mod section_2 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k8 => {
-                                    push_directive(tokens, "m64n8k8");
-                            }
-                            Shape::M64n16k8 => {
-                                    push_directive(tokens, "m64n16k8");
-                            }
-                            Shape::M64n24k8 => {
-                                    push_directive(tokens, "m64n24k8");
-                            }
-                            Shape::M64n32k8 => {
-                                    push_directive(tokens, "m64n32k8");
-                            }
-                            Shape::M64n40k8 => {
-                                    push_directive(tokens, "m64n40k8");
-                            }
-                            Shape::M64n48k8 => {
-                                    push_directive(tokens, "m64n48k8");
-                            }
-                            Shape::M64n56k8 => {
-                                    push_directive(tokens, "m64n56k8");
-                            }
-                            Shape::M64n64k8 => {
-                                    push_directive(tokens, "m64n64k8");
-                            }
-                            Shape::M64n72k8 => {
-                                    push_directive(tokens, "m64n72k8");
-                            }
-                            Shape::M64n80k8 => {
-                                    push_directive(tokens, "m64n80k8");
-                            }
-                            Shape::M64n88k8 => {
-                                    push_directive(tokens, "m64n88k8");
-                            }
-                            Shape::M64n96k8 => {
-                                    push_directive(tokens, "m64n96k8");
-                            }
                             Shape::M64n104k8 => {
                                     push_directive(tokens, "m64n104k8");
                             }
@@ -720,6 +684,42 @@ pub mod section_2 {
                             }
                             Shape::M64n256k8 => {
                                     push_directive(tokens, "m64n256k8");
+                            }
+                            Shape::M64n16k8 => {
+                                    push_directive(tokens, "m64n16k8");
+                            }
+                            Shape::M64n24k8 => {
+                                    push_directive(tokens, "m64n24k8");
+                            }
+                            Shape::M64n32k8 => {
+                                    push_directive(tokens, "m64n32k8");
+                            }
+                            Shape::M64n40k8 => {
+                                    push_directive(tokens, "m64n40k8");
+                            }
+                            Shape::M64n48k8 => {
+                                    push_directive(tokens, "m64n48k8");
+                            }
+                            Shape::M64n56k8 => {
+                                    push_directive(tokens, "m64n56k8");
+                            }
+                            Shape::M64n64k8 => {
+                                    push_directive(tokens, "m64n64k8");
+                            }
+                            Shape::M64n72k8 => {
+                                    push_directive(tokens, "m64n72k8");
+                            }
+                            Shape::M64n80k8 => {
+                                    push_directive(tokens, "m64n80k8");
+                            }
+                            Shape::M64n88k8 => {
+                                    push_directive(tokens, "m64n88k8");
+                            }
+                            Shape::M64n96k8 => {
+                                    push_directive(tokens, "m64n96k8");
+                            }
+                            Shape::M64n8k8 => {
+                                    push_directive(tokens, "m64n8k8");
                             }
                     }
                     match &self.dtype {
@@ -751,42 +751,6 @@ pub mod section_2 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k8 => {
-                                    push_directive(tokens, "m64n8k8");
-                            }
-                            Shape::M64n16k8 => {
-                                    push_directive(tokens, "m64n16k8");
-                            }
-                            Shape::M64n24k8 => {
-                                    push_directive(tokens, "m64n24k8");
-                            }
-                            Shape::M64n32k8 => {
-                                    push_directive(tokens, "m64n32k8");
-                            }
-                            Shape::M64n40k8 => {
-                                    push_directive(tokens, "m64n40k8");
-                            }
-                            Shape::M64n48k8 => {
-                                    push_directive(tokens, "m64n48k8");
-                            }
-                            Shape::M64n56k8 => {
-                                    push_directive(tokens, "m64n56k8");
-                            }
-                            Shape::M64n64k8 => {
-                                    push_directive(tokens, "m64n64k8");
-                            }
-                            Shape::M64n72k8 => {
-                                    push_directive(tokens, "m64n72k8");
-                            }
-                            Shape::M64n80k8 => {
-                                    push_directive(tokens, "m64n80k8");
-                            }
-                            Shape::M64n88k8 => {
-                                    push_directive(tokens, "m64n88k8");
-                            }
-                            Shape::M64n96k8 => {
-                                    push_directive(tokens, "m64n96k8");
-                            }
                             Shape::M64n104k8 => {
                                     push_directive(tokens, "m64n104k8");
                             }
@@ -846,6 +810,42 @@ pub mod section_2 {
                             }
                             Shape::M64n256k8 => {
                                     push_directive(tokens, "m64n256k8");
+                            }
+                            Shape::M64n16k8 => {
+                                    push_directive(tokens, "m64n16k8");
+                            }
+                            Shape::M64n24k8 => {
+                                    push_directive(tokens, "m64n24k8");
+                            }
+                            Shape::M64n32k8 => {
+                                    push_directive(tokens, "m64n32k8");
+                            }
+                            Shape::M64n40k8 => {
+                                    push_directive(tokens, "m64n40k8");
+                            }
+                            Shape::M64n48k8 => {
+                                    push_directive(tokens, "m64n48k8");
+                            }
+                            Shape::M64n56k8 => {
+                                    push_directive(tokens, "m64n56k8");
+                            }
+                            Shape::M64n64k8 => {
+                                    push_directive(tokens, "m64n64k8");
+                            }
+                            Shape::M64n72k8 => {
+                                    push_directive(tokens, "m64n72k8");
+                            }
+                            Shape::M64n80k8 => {
+                                    push_directive(tokens, "m64n80k8");
+                            }
+                            Shape::M64n88k8 => {
+                                    push_directive(tokens, "m64n88k8");
+                            }
+                            Shape::M64n96k8 => {
+                                    push_directive(tokens, "m64n96k8");
+                            }
+                            Shape::M64n8k8 => {
+                                    push_directive(tokens, "m64n8k8");
                             }
                     }
                     match &self.dtype {
@@ -883,42 +883,6 @@ pub mod section_3 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k32 => {
-                                    push_directive(tokens, "m64n8k32");
-                            }
-                            Shape::M64n16k32 => {
-                                    push_directive(tokens, "m64n16k32");
-                            }
-                            Shape::M64n24k32 => {
-                                    push_directive(tokens, "m64n24k32");
-                            }
-                            Shape::M64n32k32 => {
-                                    push_directive(tokens, "m64n32k32");
-                            }
-                            Shape::M64n40k32 => {
-                                    push_directive(tokens, "m64n40k32");
-                            }
-                            Shape::M64n48k32 => {
-                                    push_directive(tokens, "m64n48k32");
-                            }
-                            Shape::M64n56k32 => {
-                                    push_directive(tokens, "m64n56k32");
-                            }
-                            Shape::M64n64k32 => {
-                                    push_directive(tokens, "m64n64k32");
-                            }
-                            Shape::M64n72k32 => {
-                                    push_directive(tokens, "m64n72k32");
-                            }
-                            Shape::M64n80k32 => {
-                                    push_directive(tokens, "m64n80k32");
-                            }
-                            Shape::M64n88k32 => {
-                                    push_directive(tokens, "m64n88k32");
-                            }
-                            Shape::M64n96k32 => {
-                                    push_directive(tokens, "m64n96k32");
-                            }
                             Shape::M64n104k32 => {
                                     push_directive(tokens, "m64n104k32");
                             }
@@ -978,6 +942,42 @@ pub mod section_3 {
                             }
                             Shape::M64n256k32 => {
                                     push_directive(tokens, "m64n256k32");
+                            }
+                            Shape::M64n16k32 => {
+                                    push_directive(tokens, "m64n16k32");
+                            }
+                            Shape::M64n24k32 => {
+                                    push_directive(tokens, "m64n24k32");
+                            }
+                            Shape::M64n32k32 => {
+                                    push_directive(tokens, "m64n32k32");
+                            }
+                            Shape::M64n40k32 => {
+                                    push_directive(tokens, "m64n40k32");
+                            }
+                            Shape::M64n48k32 => {
+                                    push_directive(tokens, "m64n48k32");
+                            }
+                            Shape::M64n56k32 => {
+                                    push_directive(tokens, "m64n56k32");
+                            }
+                            Shape::M64n64k32 => {
+                                    push_directive(tokens, "m64n64k32");
+                            }
+                            Shape::M64n72k32 => {
+                                    push_directive(tokens, "m64n72k32");
+                            }
+                            Shape::M64n80k32 => {
+                                    push_directive(tokens, "m64n80k32");
+                            }
+                            Shape::M64n88k32 => {
+                                    push_directive(tokens, "m64n88k32");
+                            }
+                            Shape::M64n96k32 => {
+                                    push_directive(tokens, "m64n96k32");
+                            }
+                            Shape::M64n8k32 => {
+                                    push_directive(tokens, "m64n8k32");
                             }
                     }
                     match &self.dtype {
@@ -1026,42 +1026,6 @@ pub mod section_3 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k32 => {
-                                    push_directive(tokens, "m64n8k32");
-                            }
-                            Shape::M64n16k32 => {
-                                    push_directive(tokens, "m64n16k32");
-                            }
-                            Shape::M64n24k32 => {
-                                    push_directive(tokens, "m64n24k32");
-                            }
-                            Shape::M64n32k32 => {
-                                    push_directive(tokens, "m64n32k32");
-                            }
-                            Shape::M64n40k32 => {
-                                    push_directive(tokens, "m64n40k32");
-                            }
-                            Shape::M64n48k32 => {
-                                    push_directive(tokens, "m64n48k32");
-                            }
-                            Shape::M64n56k32 => {
-                                    push_directive(tokens, "m64n56k32");
-                            }
-                            Shape::M64n64k32 => {
-                                    push_directive(tokens, "m64n64k32");
-                            }
-                            Shape::M64n72k32 => {
-                                    push_directive(tokens, "m64n72k32");
-                            }
-                            Shape::M64n80k32 => {
-                                    push_directive(tokens, "m64n80k32");
-                            }
-                            Shape::M64n88k32 => {
-                                    push_directive(tokens, "m64n88k32");
-                            }
-                            Shape::M64n96k32 => {
-                                    push_directive(tokens, "m64n96k32");
-                            }
                             Shape::M64n104k32 => {
                                     push_directive(tokens, "m64n104k32");
                             }
@@ -1121,6 +1085,42 @@ pub mod section_3 {
                             }
                             Shape::M64n256k32 => {
                                     push_directive(tokens, "m64n256k32");
+                            }
+                            Shape::M64n16k32 => {
+                                    push_directive(tokens, "m64n16k32");
+                            }
+                            Shape::M64n24k32 => {
+                                    push_directive(tokens, "m64n24k32");
+                            }
+                            Shape::M64n32k32 => {
+                                    push_directive(tokens, "m64n32k32");
+                            }
+                            Shape::M64n40k32 => {
+                                    push_directive(tokens, "m64n40k32");
+                            }
+                            Shape::M64n48k32 => {
+                                    push_directive(tokens, "m64n48k32");
+                            }
+                            Shape::M64n56k32 => {
+                                    push_directive(tokens, "m64n56k32");
+                            }
+                            Shape::M64n64k32 => {
+                                    push_directive(tokens, "m64n64k32");
+                            }
+                            Shape::M64n72k32 => {
+                                    push_directive(tokens, "m64n72k32");
+                            }
+                            Shape::M64n80k32 => {
+                                    push_directive(tokens, "m64n80k32");
+                            }
+                            Shape::M64n88k32 => {
+                                    push_directive(tokens, "m64n88k32");
+                            }
+                            Shape::M64n96k32 => {
+                                    push_directive(tokens, "m64n96k32");
+                            }
+                            Shape::M64n8k32 => {
+                                    push_directive(tokens, "m64n8k32");
                             }
                     }
                     match &self.dtype {
@@ -1175,30 +1175,6 @@ pub mod section_4 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k32 => {
-                                    push_directive(tokens, "m64n8k32");
-                            }
-                            Shape::M64n16k32 => {
-                                    push_directive(tokens, "m64n16k32");
-                            }
-                            Shape::M64n24k32 => {
-                                    push_directive(tokens, "m64n24k32");
-                            }
-                            Shape::M64n32k32 => {
-                                    push_directive(tokens, "m64n32k32");
-                            }
-                            Shape::M64n48k32 => {
-                                    push_directive(tokens, "m64n48k32");
-                            }
-                            Shape::M64n64k32 => {
-                                    push_directive(tokens, "m64n64k32");
-                            }
-                            Shape::M64n80k32 => {
-                                    push_directive(tokens, "m64n80k32");
-                            }
-                            Shape::M64n96k32 => {
-                                    push_directive(tokens, "m64n96k32");
-                            }
                             Shape::M64n112k32 => {
                                     push_directive(tokens, "m64n112k32");
                             }
@@ -1222,6 +1198,30 @@ pub mod section_4 {
                             }
                             Shape::M64n224k32 => {
                                     push_directive(tokens, "m64n224k32");
+                            }
+                            Shape::M64n16k32 => {
+                                    push_directive(tokens, "m64n16k32");
+                            }
+                            Shape::M64n24k32 => {
+                                    push_directive(tokens, "m64n24k32");
+                            }
+                            Shape::M64n32k32 => {
+                                    push_directive(tokens, "m64n32k32");
+                            }
+                            Shape::M64n48k32 => {
+                                    push_directive(tokens, "m64n48k32");
+                            }
+                            Shape::M64n64k32 => {
+                                    push_directive(tokens, "m64n64k32");
+                            }
+                            Shape::M64n80k32 => {
+                                    push_directive(tokens, "m64n80k32");
+                            }
+                            Shape::M64n96k32 => {
+                                    push_directive(tokens, "m64n96k32");
+                            }
+                            Shape::M64n8k32 => {
+                                    push_directive(tokens, "m64n8k32");
                             }
                     }
                     if self.satfinite {
@@ -1262,30 +1262,6 @@ pub mod section_4 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k32 => {
-                                    push_directive(tokens, "m64n8k32");
-                            }
-                            Shape::M64n16k32 => {
-                                    push_directive(tokens, "m64n16k32");
-                            }
-                            Shape::M64n24k32 => {
-                                    push_directive(tokens, "m64n24k32");
-                            }
-                            Shape::M64n32k32 => {
-                                    push_directive(tokens, "m64n32k32");
-                            }
-                            Shape::M64n48k32 => {
-                                    push_directive(tokens, "m64n48k32");
-                            }
-                            Shape::M64n64k32 => {
-                                    push_directive(tokens, "m64n64k32");
-                            }
-                            Shape::M64n80k32 => {
-                                    push_directive(tokens, "m64n80k32");
-                            }
-                            Shape::M64n96k32 => {
-                                    push_directive(tokens, "m64n96k32");
-                            }
                             Shape::M64n112k32 => {
                                     push_directive(tokens, "m64n112k32");
                             }
@@ -1309,6 +1285,30 @@ pub mod section_4 {
                             }
                             Shape::M64n224k32 => {
                                     push_directive(tokens, "m64n224k32");
+                            }
+                            Shape::M64n16k32 => {
+                                    push_directive(tokens, "m64n16k32");
+                            }
+                            Shape::M64n24k32 => {
+                                    push_directive(tokens, "m64n24k32");
+                            }
+                            Shape::M64n32k32 => {
+                                    push_directive(tokens, "m64n32k32");
+                            }
+                            Shape::M64n48k32 => {
+                                    push_directive(tokens, "m64n48k32");
+                            }
+                            Shape::M64n64k32 => {
+                                    push_directive(tokens, "m64n64k32");
+                            }
+                            Shape::M64n80k32 => {
+                                    push_directive(tokens, "m64n80k32");
+                            }
+                            Shape::M64n96k32 => {
+                                    push_directive(tokens, "m64n96k32");
+                            }
+                            Shape::M64n8k32 => {
+                                    push_directive(tokens, "m64n8k32");
                             }
                     }
                     if self.satfinite {
@@ -1355,30 +1355,6 @@ pub mod section_5 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k256 => {
-                                    push_directive(tokens, "m64n8k256");
-                            }
-                            Shape::M64n16k256 => {
-                                    push_directive(tokens, "m64n16k256");
-                            }
-                            Shape::M64n24k256 => {
-                                    push_directive(tokens, "m64n24k256");
-                            }
-                            Shape::M64n32k256 => {
-                                    push_directive(tokens, "m64n32k256");
-                            }
-                            Shape::M64n48k256 => {
-                                    push_directive(tokens, "m64n48k256");
-                            }
-                            Shape::M64n64k256 => {
-                                    push_directive(tokens, "m64n64k256");
-                            }
-                            Shape::M64n80k256 => {
-                                    push_directive(tokens, "m64n80k256");
-                            }
-                            Shape::M64n96k256 => {
-                                    push_directive(tokens, "m64n96k256");
-                            }
                             Shape::M64n112k256 => {
                                     push_directive(tokens, "m64n112k256");
                             }
@@ -1408,6 +1384,30 @@ pub mod section_5 {
                             }
                             Shape::M64n256k256 => {
                                     push_directive(tokens, "m64n256k256");
+                            }
+                            Shape::M64n16k256 => {
+                                    push_directive(tokens, "m64n16k256");
+                            }
+                            Shape::M64n24k256 => {
+                                    push_directive(tokens, "m64n24k256");
+                            }
+                            Shape::M64n32k256 => {
+                                    push_directive(tokens, "m64n32k256");
+                            }
+                            Shape::M64n48k256 => {
+                                    push_directive(tokens, "m64n48k256");
+                            }
+                            Shape::M64n64k256 => {
+                                    push_directive(tokens, "m64n64k256");
+                            }
+                            Shape::M64n80k256 => {
+                                    push_directive(tokens, "m64n80k256");
+                            }
+                            Shape::M64n96k256 => {
+                                    push_directive(tokens, "m64n96k256");
+                            }
+                            Shape::M64n8k256 => {
+                                    push_directive(tokens, "m64n8k256");
                             }
                     }
                     push_directive(tokens, "s32");
@@ -1437,30 +1437,6 @@ pub mod section_5 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M64n8k256 => {
-                                    push_directive(tokens, "m64n8k256");
-                            }
-                            Shape::M64n16k256 => {
-                                    push_directive(tokens, "m64n16k256");
-                            }
-                            Shape::M64n24k256 => {
-                                    push_directive(tokens, "m64n24k256");
-                            }
-                            Shape::M64n32k256 => {
-                                    push_directive(tokens, "m64n32k256");
-                            }
-                            Shape::M64n48k256 => {
-                                    push_directive(tokens, "m64n48k256");
-                            }
-                            Shape::M64n64k256 => {
-                                    push_directive(tokens, "m64n64k256");
-                            }
-                            Shape::M64n80k256 => {
-                                    push_directive(tokens, "m64n80k256");
-                            }
-                            Shape::M64n96k256 => {
-                                    push_directive(tokens, "m64n96k256");
-                            }
                             Shape::M64n112k256 => {
                                     push_directive(tokens, "m64n112k256");
                             }
@@ -1490,6 +1466,30 @@ pub mod section_5 {
                             }
                             Shape::M64n256k256 => {
                                     push_directive(tokens, "m64n256k256");
+                            }
+                            Shape::M64n16k256 => {
+                                    push_directive(tokens, "m64n16k256");
+                            }
+                            Shape::M64n24k256 => {
+                                    push_directive(tokens, "m64n24k256");
+                            }
+                            Shape::M64n32k256 => {
+                                    push_directive(tokens, "m64n32k256");
+                            }
+                            Shape::M64n48k256 => {
+                                    push_directive(tokens, "m64n48k256");
+                            }
+                            Shape::M64n64k256 => {
+                                    push_directive(tokens, "m64n64k256");
+                            }
+                            Shape::M64n80k256 => {
+                                    push_directive(tokens, "m64n80k256");
+                            }
+                            Shape::M64n96k256 => {
+                                    push_directive(tokens, "m64n96k256");
+                            }
+                            Shape::M64n8k256 => {
+                                    push_directive(tokens, "m64n8k256");
                             }
                     }
                     push_directive(tokens, "s32");

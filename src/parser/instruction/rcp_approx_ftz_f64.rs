@@ -17,13 +17,20 @@ pub mod section_0 {
             stream.expect_string("rcp")?;
             stream.expect_string(".approx")?;
             let approx = ();
+            stream.expect_complete()?;
             stream.expect_string(".ftz")?;
             let ftz = ();
+            stream.expect_complete()?;
             stream.expect_string(".f64")?;
             let f64 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(RcpApproxFtzF64 {
                 approx,
                 ftz,

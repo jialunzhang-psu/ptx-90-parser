@@ -62,14 +62,14 @@ pub mod section_0 {
                     self.d.unparse_tokens(tokens);
                     if let Some(mask_0) = self.mask.as_ref() {
                             match mask_0 {
+                                    Mask::H10 => {
+                                            push_directive(tokens, "h10");
+                                    }
                                     Mask::H0 => {
                                             push_directive(tokens, "h0");
                                     }
                                     Mask::H1 => {
                                             push_directive(tokens, "h1");
-                                    }
-                                    Mask::H10 => {
-                                            push_directive(tokens, "h10");
                                     }
                             }
                     }
@@ -230,14 +230,14 @@ pub mod section_0 {
                     self.d.unparse_tokens(tokens);
                     if let Some(mask_3) = self.mask.as_ref() {
                             match mask_3 {
+                                    Mask::H10 => {
+                                            push_directive(tokens, "h10");
+                                    }
                                     Mask::H0 => {
                                             push_directive(tokens, "h0");
                                     }
                                     Mask::H1 => {
                                             push_directive(tokens, "h1");
-                                    }
-                                    Mask::H10 => {
-                                            push_directive(tokens, "h10");
                                     }
                             }
                     }

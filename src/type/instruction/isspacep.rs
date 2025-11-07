@@ -11,21 +11,21 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Space {
-        Const, // .const
-        Global, // .global
-        Local, // .local
-        Shared, // .shared
-        SharedCta, // .shared::cta
         SharedCluster, // .shared::cluster
-        Param, // .param
         ParamEntry, // .param::entry
+        SharedCta, // .shared::cta
+        Global, // .global
+        Shared, // .shared
+        Const, // .const
+        Local, // .local
+        Param, // .param
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct IsspacepSpace {
         pub space: Space, // .space
-        pub p: Operand, // p
-        pub a: Operand, // a
+        pub p: GeneralOperand, // p
+        pub a: GeneralOperand, // a
     }
 
 }

@@ -220,8 +220,7 @@ tex.grad.geom.v2.f16x2.ctype   d[|p], [a, {b,} c], dPdx, dPdy {, e} {, f};
  tex.a2d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a,{idx,f1,f2}], {f5,f6};
 
  // Example of 2d mipmap texture lookup with offset, unified texturing mode
- tex.level.2d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a,{f1,f2}],
-                          flvl, {r7, r8};
+ tex.level.2d.v4.s32.f32  {r1,r2,r3,r4}, [tex_a,{f1,f2}], flvl, {r7, r8};
 
  // Example of 2d depth texture lookup with compare, unified texturing mode
  tex.1d.v4.f32.f32  {f1,f2,f3,f4}, [tex_a, {f1}], f0;

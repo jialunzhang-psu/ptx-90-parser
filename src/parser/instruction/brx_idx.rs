@@ -18,14 +18,20 @@ pub mod section_0 {
             stream.expect_string("brx")?;
             stream.expect_string(".idx")?;
             let idx = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let uni = stream.expect_string(".uni").is_ok();
             if !uni {
                 stream.set_position(saved_pos);
             }
-            let index = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let index = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let tlist = Operand::parse(stream)?;
+            let tlist = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BrxIdxUni {
                 idx,
                 uni,
@@ -41,14 +47,20 @@ pub mod section_0 {
             stream.expect_string("brx")?;
             stream.expect_string(".idx")?;
             let idx = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let uni = stream.expect_string(".uni").is_ok();
             if !uni {
                 stream.set_position(saved_pos);
             }
-            let index = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let index = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let tlist = Operand::parse(stream)?;
+            let tlist = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BrxIdxUni1 {
                 idx,
                 uni,

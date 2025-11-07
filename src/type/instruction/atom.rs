@@ -46,32 +46,32 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
-        Cta, // .cta
         Cluster, // .cluster
+        Cta, // .cta
         Gpu, // .gpu
         Sys, // .sys
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Space {
+        SharedCluster, // .shared::cluster
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
-        SharedCluster, // .shared::cluster
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Op {
+        Exch, // .exch
         And, // .and
-        Or, // .or
         Xor, // .xor
         Cas, // .cas
-        Exch, // .exch
         Add, // .add
         Inc, // .inc
         Dec, // .dec
         Min, // .min
         Max, // .max
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -99,10 +99,10 @@ pub mod section_0 {
         pub op: Op, // .op
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -112,10 +112,10 @@ pub mod section_0 {
         pub space: Option<Space>, // {.space}
         pub op: Op, // .op
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -125,10 +125,10 @@ pub mod section_0 {
         pub space: Option<Space>, // {.space}
         pub cas: (), // .cas
         pub b16: (), // .b16
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -138,10 +138,10 @@ pub mod section_0 {
         pub space: Option<Space>, // {.space}
         pub cas: (), // .cas
         pub b128: (), // .b128
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -152,10 +152,10 @@ pub mod section_0 {
         pub exch: (), // .exch
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub b128: (), // .b128
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -167,10 +167,10 @@ pub mod section_0 {
         pub noftz: (), // .noftz
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub f16: (), // .f16
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -182,10 +182,10 @@ pub mod section_0 {
         pub noftz: (), // .noftz
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub f16x2: (), // .f16x2
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -197,10 +197,10 @@ pub mod section_0 {
         pub noftz: (), // .noftz
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub bf16: (), // .bf16
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -212,10 +212,10 @@ pub mod section_0 {
         pub noftz: (), // .noftz
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub bf16x2: (), // .bf16x2
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }
@@ -233,8 +233,8 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
-        Cta, // .cta
         Cluster, // .cluster
+        Cta, // .cta
         Gpu, // .gpu
         Sys, // .sys
     }
@@ -266,14 +266,14 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum HalfWordType {
-        F16, // .f16
         Bf16, // .bf16
+        F16, // .f16
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum PackedType {
-        F16x2, // .f16x2
         Bf16x2, // .bf16x2
+        F16x2, // .f16x2
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -285,10 +285,10 @@ pub mod section_1 {
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub vec_32_bit: Vec32Bit, // .vec_32_bit
         pub f32: (), // .f32
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -301,10 +301,10 @@ pub mod section_1 {
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub vec_16_bit: Vec16Bit, // .vec_16_bit
         pub half_word_type: HalfWordType, // .half_word_type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -317,10 +317,10 @@ pub mod section_1 {
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub vec_32_bit: Vec32Bit, // .vec_32_bit
         pub packed_type: PackedType, // .packed_type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub b: GeneralOperand, // b
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }

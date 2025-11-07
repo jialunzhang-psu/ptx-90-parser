@@ -32,144 +32,16 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Shape1 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try _16x64b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".16x64b").is_ok() {
-                    return Ok(Shape1::_16x64b);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try _16x128b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".16x128b").is_ok() {
-                    return Ok(Shape1::_16x128b);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try _16x256b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".16x256b").is_ok() {
-                    return Ok(Shape1::_16x256b);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try _32x32b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".32x32b").is_ok() {
-                    return Ok(Shape1::_32x32b);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".16x64b", ".16x128b", ".16x256b", ".32x32b"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Pack {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Pack16b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".pack::16b").is_ok() {
-                    return Ok(Pack::Pack16b);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".pack::16b"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Shape4 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try _16x32bx2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".16x32bx2").is_ok() {
-                    return Ok(Shape4::_16x32bx2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".16x32bx2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Shape3 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try _32x32b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".32x32b").is_ok() {
-                    return Ok(Shape3::_32x32b);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".32x32b"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Num {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try X1
+            // Try X128
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".x1").is_ok() {
-                    return Ok(Num::X1);
+                if stream.expect_string(".x128").is_ok() {
+                    return Ok(Num::X128);
                 }
                 stream.set_position(saved_pos);
             }
-            let saved_pos = stream.position();
-            // Try X2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".x2").is_ok() {
-                    return Ok(Num::X2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try X4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".x4").is_ok() {
-                    return Ok(Num::X4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try X8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".x8").is_ok() {
-                    return Ok(Num::X8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try X16
             {
@@ -201,17 +73,138 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try X128
+            // Try X1
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".x128").is_ok() {
-                    return Ok(Num::X128);
+                if stream.expect_string(".x1").is_ok() {
+                    return Ok(Num::X1);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try X2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".x2").is_ok() {
+                    return Ok(Num::X2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try X4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".x4").is_ok() {
+                    return Ok(Num::X4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try X8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".x8").is_ok() {
+                    return Ok(Num::X8);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".x1", ".x2", ".x4", ".x8", ".x16", ".x32", ".x64", ".x128"];
+            let expected = &[".x128", ".x16", ".x32", ".x64", ".x1", ".x2", ".x4", ".x8"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Pack {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Pack16b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".pack::16b").is_ok() {
+                    return Ok(Pack::Pack16b);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".pack::16b"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Redop {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Min
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".min").is_ok() {
+                    return Ok(Redop::Min);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Max
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".max").is_ok() {
+                    return Ok(Redop::Max);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".min", ".max"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Shape1 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try _16x128b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".16x128b").is_ok() {
+                    return Ok(Shape1::_16x128b);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try _16x256b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".16x256b").is_ok() {
+                    return Ok(Shape1::_16x256b);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try _16x64b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".16x64b").is_ok() {
+                    return Ok(Shape1::_16x64b);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try _32x32b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".32x32b").is_ok() {
+                    return Ok(Shape1::_32x32b);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".16x128b", ".16x256b", ".16x64b", ".32x32b"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -224,6 +217,40 @@ pub mod section_0 {
                 let saved_pos = stream.position();
                 if stream.expect_string(".16x32bx2").is_ok() {
                     return Ok(Shape2::_16x32bx2);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".16x32bx2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Shape3 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try _32x32b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".32x32b").is_ok() {
+                    return Ok(Shape3::_32x32b);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".32x32b"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Shape4 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try _16x32bx2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".16x32bx2").is_ok() {
+                    return Ok(Shape4::_16x32bx2);
                 }
                 stream.set_position(saved_pos);
             }
@@ -261,44 +288,22 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Redop {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Min
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".min").is_ok() {
-                    return Ok(Redop::Min);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Max
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".max").is_ok() {
-                    return Ok(Redop::Max);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".min", ".max"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Tcgen05LdSyncAlignedShape1NumPackB32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".ld")?;
             let ld = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
             let shape1 = Shape1::parse(stream)?;
+            stream.expect_complete()?;
             let num = Num::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let pack = match Pack::parse(stream) {
                 Ok(val) => Some(val),
@@ -307,11 +312,17 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let r = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let r = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let taddr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05LdSyncAlignedShape1NumPackB32 {
                 ld,
                 sync,
@@ -332,12 +343,17 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".ld")?;
             let ld = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
             let shape2 = Shape2::parse(stream)?;
+            stream.expect_complete()?;
             let num = Num::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let pack = match Pack::parse(stream) {
                 Ok(val) => Some(val),
@@ -346,13 +362,20 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let r = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let r = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let taddr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let immhalfsplitoff = Operand::parse(stream)?;
+            let immhalfsplitoff = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05LdSyncAlignedShape2NumPackB32 {
                 ld,
                 sync,
@@ -374,32 +397,47 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".ld")?;
             let ld = ();
+            stream.expect_complete()?;
             stream.expect_string(".red")?;
             let red = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
             let shape3 = Shape3::parse(stream)?;
+            stream.expect_complete()?;
             let num = Num::parse(stream)?;
+            stream.expect_complete()?;
             let redop = Redop::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let abs = stream.expect_string(".abs").is_ok();
             if !abs {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let nan = stream.expect_string(".NaN").is_ok();
             if !nan {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let r = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let r = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let redval = Operand::parse(stream)?;
+            let redval = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let taddr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05LdRedSyncAlignedShape3NumRedopAbsNanF32 {
                 ld,
                 red,
@@ -424,34 +462,50 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".ld")?;
             let ld = ();
+            stream.expect_complete()?;
             stream.expect_string(".red")?;
             let red = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
             let shape4 = Shape4::parse(stream)?;
+            stream.expect_complete()?;
             let num = Num::parse(stream)?;
+            stream.expect_complete()?;
             let redop = Redop::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let abs = stream.expect_string(".abs").is_ok();
             if !abs {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let nan = stream.expect_string(".NaN").is_ok();
             if !nan {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let r = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let r = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let redval = Operand::parse(stream)?;
+            let redval = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let taddr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let immhalfsplitoff = Operand::parse(stream)?;
+            let immhalfsplitoff = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05LdRedSyncAlignedShape4NumRedopAbsNanF32 {
                 ld,
                 red,
@@ -477,21 +531,34 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".ld")?;
             let ld = ();
+            stream.expect_complete()?;
             stream.expect_string(".red")?;
             let red = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
             let shape3 = Shape3::parse(stream)?;
+            stream.expect_complete()?;
             let num = Num::parse(stream)?;
+            stream.expect_complete()?;
             let redop = Redop::parse(stream)?;
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let r = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let r = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let redval = Operand::parse(stream)?;
+            let redval = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let taddr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05LdRedSyncAlignedShape3NumRedopType {
                 ld,
                 red,
@@ -514,23 +581,37 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".ld")?;
             let ld = ();
+            stream.expect_complete()?;
             stream.expect_string(".red")?;
             let red = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
             let shape4 = Shape4::parse(stream)?;
+            stream.expect_complete()?;
             let num = Num::parse(stream)?;
+            stream.expect_complete()?;
             let redop = Redop::parse(stream)?;
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let r = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let r = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let redval = Operand::parse(stream)?;
+            let redval = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let taddr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let immhalfsplitoff = Operand::parse(stream)?;
+            let immhalfsplitoff = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05LdRedSyncAlignedShape4NumRedopType {
                 ld,
                 red,

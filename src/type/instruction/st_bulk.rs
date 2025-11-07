@@ -14,8 +14,8 @@ pub mod section_0 {
         pub weak: bool, // {.weak}
         pub shared_cta: bool, // {.shared::cta}
         pub a: AddressOperand, // [a]
-        pub size: Operand, // size
-        pub initval: Operand, // initval
+        pub size: GeneralOperand, // size
+        pub initval: GeneralOperand, // initval
     }
 
 }

@@ -34,8 +34,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scale {
-        Shr7, // .shr7
         Shr15, // .shr15
+        Shr7, // .shr7
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -65,15 +65,15 @@ pub mod section_0 {
         pub btype: Btype, // .btype
         pub sat: bool, // {.sat}
         pub scale: Option<Scale>, // {.scale}
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a_op: bool, // {-} operator
-        pub a: Operand, // {-}a
+        pub a: GeneralOperand, // {-}a
         pub asel: Option<Asel>, // {.asel}
         pub b_op: bool, // {-} operator
-        pub b: Operand, // {-}b
+        pub b: GeneralOperand, // {-}b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c_op: bool, // {-} operator
-        pub c: Operand, // {-}c
+        pub c: GeneralOperand, // {-}c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -84,12 +84,12 @@ pub mod section_0 {
         pub po: (), // .po
         pub sat: bool, // {.sat}
         pub scale: Option<Scale>, // {.scale}
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: Operand, // c
+        pub c: GeneralOperand, // c
     }
 
 }

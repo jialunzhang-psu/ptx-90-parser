@@ -17,11 +17,16 @@ pub mod section_0 {
             stream.expect_string("elect")?;
             stream.expect_string(".sync")?;
             let sync = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
             stream.expect(&PtxToken::Pipe)?;
-            let p = Operand::parse(stream)?;
+            let p = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let membermask = Operand::parse(stream)?;
+            let membermask = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ElectSync {
                 sync,
                 d,

@@ -42,10 +42,16 @@ pub mod section_0 {
             if !global {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let level = Level::parse(stream)?;
+            stream.expect_complete()?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let size = Operand::parse(stream)?;
+            let size = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(DiscardGlobalLevel {
                 global,
                 level,

@@ -31,6 +31,15 @@ pub mod section_0 {
 
     impl PtxParser for Atype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U16x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u16x2").is_ok() {
+                    return Ok(Atype::U16x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
             // Try U16
             {
                 let saved_pos = stream.position();
@@ -39,6 +48,7 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
+            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try U32
             {
@@ -55,16 +65,6 @@ pub mod section_0 {
                 let saved_pos = stream.position();
                 if stream.expect_string(".u64").is_ok() {
                     return Ok(Atype::U64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U16x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u16x2").is_ok() {
-                    return Ok(Atype::U16x2);
                 }
                 stream.set_position(saved_pos);
             }
@@ -90,7 +90,7 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u16", ".u32", ".u64", ".u16x2", ".s16", ".s64"];
+            let expected = &[".u16x2", ".u16", ".u32", ".u64", ".s16", ".s64"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -127,11 +127,17 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("max")?;
             let atype = Atype::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MaxAtype {
                 atype,
                 d,
@@ -150,12 +156,19 @@ pub mod section_0 {
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let btype = Btype::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MaxReluBtype {
                 relu,
                 btype,
@@ -175,23 +188,32 @@ pub mod section_0 {
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let nan = stream.expect_string(".NaN").is_ok();
             if !nan {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
             if !xorsign_abs {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MaxFtzNanXorsignAbsF32 {
                 ftz,
                 nan,
@@ -213,25 +235,35 @@ pub mod section_0 {
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let nan = stream.expect_string(".NaN").is_ok();
             if !nan {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let abs = stream.expect_string(".abs").is_ok();
             if !abs {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MaxFtzNanAbsF32 {
                 ftz,
                 nan,
@@ -251,11 +283,17 @@ pub mod section_0 {
             stream.expect_string("max")?;
             stream.expect_string(".f64")?;
             let f64 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MaxF64 {
                 f64,
                 d,
@@ -274,23 +312,32 @@ pub mod section_0 {
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let nan = stream.expect_string(".NaN").is_ok();
             if !nan {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
             if !xorsign_abs {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16")?;
             let f16 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MaxFtzNanXorsignAbsF16 {
                 ftz,
                 nan,
@@ -312,23 +359,32 @@ pub mod section_0 {
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let nan = stream.expect_string(".NaN").is_ok();
             if !nan {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
             if !xorsign_abs {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16x2")?;
             let f16x2 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MaxFtzNanXorsignAbsF16x2 {
                 ftz,
                 nan,
@@ -350,18 +406,26 @@ pub mod section_0 {
             if !nan {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
             if !xorsign_abs {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".bf16")?;
             let bf16 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MaxNanXorsignAbsBf16 {
                 nan,
                 xorsign_abs,
@@ -382,18 +446,26 @@ pub mod section_0 {
             if !nan {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
             if !xorsign_abs {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".bf16x2")?;
             let bf16x2 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MaxNanXorsignAbsBf16x2 {
                 nan,
                 xorsign_abs,

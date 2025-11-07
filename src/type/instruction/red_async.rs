@@ -89,7 +89,7 @@ pub mod section_0 {
         pub op: Op, // .op
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub mbar: AddressOperand, // [mbar]
     }
 
@@ -140,7 +140,7 @@ pub mod section_1 {
         pub op: Op, // .op
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub mbar: AddressOperand, // [mbar]
     }
 
@@ -172,8 +172,8 @@ pub mod section_2 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Op {
         And, // .and
-        Or, // .or
         Xor, // .xor
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -191,7 +191,7 @@ pub mod section_2 {
         pub op: Op, // .op
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub mbar: AddressOperand, // [mbar]
     }
 
@@ -237,7 +237,7 @@ pub mod section_3 {
         pub add: (), // .add
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub mbar: AddressOperand, // [mbar]
     }
 
@@ -253,8 +253,8 @@ pub mod section_4 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
-        Gpu, // .gpu
         Cluster, // .cluster
+        Gpu, // .gpu
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -280,7 +280,7 @@ pub mod section_4 {
         pub add: (), // .add
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
     }
 
 }

@@ -17,9 +17,14 @@ pub mod section_0 {
             stream.expect_string("bar")?;
             stream.expect_string(".warp")?;
             let warp = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
-            let membermask = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let membermask = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarWarpSync {
                 warp,
                 sync,

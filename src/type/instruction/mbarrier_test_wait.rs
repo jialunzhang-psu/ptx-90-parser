@@ -22,14 +22,14 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
-        Cta, // .cta
         Cluster, // .cluster
+        Cta, // .cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum State {
-        Shared, // .shared
         SharedCta, // .shared::cta
+        Shared, // .shared
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -39,9 +39,9 @@ pub mod section_0 {
         pub scope: Option<Scope>, // {.scope}
         pub state: Option<State>, // {.state}
         pub b64: (), // .b64
-        pub waitcomplete: Operand, // waitComplete
+        pub waitcomplete: GeneralOperand, // waitComplete
         pub addr: AddressOperand, // [addr]
-        pub state2: Operand, // state
+        pub state2: GeneralOperand, // state
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -52,9 +52,9 @@ pub mod section_0 {
         pub scope: Option<Scope>, // {.scope}
         pub state: Option<State>, // {.state}
         pub b64: (), // .b64
-        pub waitcomplete: Operand, // waitComplete
+        pub waitcomplete: GeneralOperand, // waitComplete
         pub addr: AddressOperand, // [addr]
-        pub phaseparity: Operand, // phaseParity
+        pub phaseparity: GeneralOperand, // phaseParity
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -64,10 +64,10 @@ pub mod section_0 {
         pub scope: Option<Scope>, // {.scope}
         pub state: Option<State>, // {.state}
         pub b64: (), // .b64
-        pub waitcomplete: Operand, // waitComplete
+        pub waitcomplete: GeneralOperand, // waitComplete
         pub addr: AddressOperand, // [addr]
-        pub state2: Operand, // state
-        pub suspendtimehint: Option<Operand>, // {, suspendTimeHint}
+        pub state2: GeneralOperand, // state
+        pub suspendtimehint: Option<GeneralOperand>, // {, suspendTimeHint}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -78,10 +78,10 @@ pub mod section_0 {
         pub scope: Option<Scope>, // {.scope}
         pub state: Option<State>, // {.state}
         pub b64: (), // .b64
-        pub waitcomplete: Operand, // waitComplete
+        pub waitcomplete: GeneralOperand, // waitComplete
         pub addr: AddressOperand, // [addr]
-        pub phaseparity: Operand, // phaseParity
-        pub suspendtimehint: Option<Operand>, // {, suspendTimeHint}
+        pub phaseparity: GeneralOperand, // phaseParity
+        pub suspendtimehint: Option<GeneralOperand>, // {, suspendTimeHint}
     }
 
 }

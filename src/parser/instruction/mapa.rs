@@ -26,6 +26,23 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Space {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try SharedCluster
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared::cluster").is_ok() {
+                    return Ok(Space::SharedCluster);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".shared::cluster"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Type {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try U32
@@ -53,23 +70,6 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Space {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cluster").is_ok() {
-                    return Ok(Space::SharedCluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cluster"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for MapaSpaceType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("mapa")?;
@@ -81,12 +81,19 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MapaSpaceType {
                 space,
                 type_,

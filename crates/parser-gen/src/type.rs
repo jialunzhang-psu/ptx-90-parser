@@ -37,6 +37,19 @@ pub struct InstructionRule {
     pub raw: String,
 }
 
+impl Default for InstructionRule {
+    fn default() -> Self {
+        InstructionRule {
+            head: InstructionHead {
+                opcode: String::new(),
+                modifiers: Vec::new(),
+            },
+            operands: Vec::new(),
+            raw: String::new(),
+        }
+    }
+}
+
 /// Parameter definition of the form `.name = { choices };`.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParameterRule {
@@ -57,10 +70,8 @@ pub struct InstructionHead {
 /// `.shared{::cta, ::cluster}` and `{.sem}{.scope}`.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Modifier {
-    /// Literal modifier segment (e.g. `.f32`, `::cache_hint`).
+    /// Literal modifier segment (e.g. `.f32`, `::cache_hint`, `16`).
     Atom(IdentifierToken),
-    /// Immediate Number
-    ImmediateNumber(String),
     /// Ordered sequence of identifier tokens (e.g., `::buffer`, `::op`).
     Sequence(Vec<IdentifierToken>),
     /// Optional modifier wrapped in `{ ... }`. Always contains a simple identifier.
@@ -82,7 +93,7 @@ pub enum OperandElement {
     Item(IdentifierToken),
     /// {xdim, ydim, zdim, ...}
     CurlyGroup(Vec<Operand>),
-    /// [xdim, ydim, zdim, ...]
+    /// tex-related
     SquareGroup(Vec<Operand>),
     /// (param-list)
     ParamList,

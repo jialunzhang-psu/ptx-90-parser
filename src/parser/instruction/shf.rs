@@ -50,16 +50,25 @@ pub mod section_0 {
             stream.expect_string("shf")?;
             stream.expect_string(".l")?;
             let l = ();
+            stream.expect_complete()?;
             let mode = Mode::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ShfLModeB32 {
                 l,
                 mode,
@@ -78,16 +87,25 @@ pub mod section_0 {
             stream.expect_string("shf")?;
             stream.expect_string(".r")?;
             let r = ();
+            stream.expect_complete()?;
             let mode = Mode::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ShfRModeB32 {
                 r,
                 mode,

@@ -12,7 +12,7 @@ pub mod section_0 {
     pub struct BarWarpSync {
         pub warp: (), // .warp
         pub sync: (), // .sync
-        pub membermask: Operand, // membermask
+        pub membermask: GeneralOperand, // membermask
     }
 
 }

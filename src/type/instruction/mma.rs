@@ -110,10 +110,10 @@ pub mod section_0 {
         pub f16: (), // .f16
         pub f162: (), // .f16
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -127,10 +127,10 @@ pub mod section_0 {
         pub f16: (), // .f16
         pub f162: (), // .f16
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -144,10 +144,10 @@ pub mod section_0 {
         pub f16: (), // .f16
         pub f162: (), // .f16
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -186,12 +186,6 @@ pub mod section_1 {
     }
 
     #[derive(Debug, Clone, PartialEq)]
-    pub enum F8type1 {
-        E4m3, // .e4m3
-        E5m2, // .e5m2
-    }
-
-    #[derive(Debug, Clone, PartialEq)]
     pub enum Ctype {
         F16, // .f16
         F32, // .f32
@@ -212,15 +206,6 @@ pub mod section_1 {
     }
 
     #[derive(Debug, Clone, PartialEq)]
-    pub enum F8f6f4type1 {
-        E4m3, // .e4m3
-        E5m2, // .e5m2
-        E3m2, // .e3m2
-        E2m3, // .e2m3
-        E2m1, // .e2m1
-    }
-
-    #[derive(Debug, Clone, PartialEq)]
     pub struct MmaSyncAlignedM16n8k4RowColF32Tf32Tf32F32 {
         pub sync: (), // .sync
         pub aligned: (), // .aligned
@@ -231,10 +216,10 @@ pub mod section_1 {
         pub tf32: (), // .tf32
         pub tf322: (), // .tf32
         pub f322: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -248,10 +233,10 @@ pub mod section_1 {
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
         pub f322: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -265,10 +250,10 @@ pub mod section_1 {
         pub bf16: (), // .bf16
         pub bf162: (), // .bf16
         pub f322: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -280,12 +265,12 @@ pub mod section_1 {
         pub col: (), // .col
         pub dtype: Dtype, // .dtype
         pub f8type: F8type, // .f8type
-        pub f8type1: F8type1, // .f8type
+        pub f8type1: F8type, // .f8type
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -298,12 +283,12 @@ pub mod section_1 {
         pub kind: Kind, // .kind
         pub dtype: Dtype, // .dtype
         pub f8f6f4type: F8f6f4type, // .f8f6f4type
-        pub f8f6f4type1: F8f6f4type1, // .f8f6f4type
+        pub f8f6f4type1: F8f6f4type, // .f8f6f4type
         pub ctype: Ctype, // .ctype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -341,14 +326,14 @@ pub mod section_2 {
         pub e2m12: (), // .e2m1
         pub f322: (), // .f32
         pub stype: Stype, // .stype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
-        pub scale_a_data: Operand, // scale-a-data
-        pub byte_id_a: (Operand, Operand), // {byte-id-a, thread-id-a}
-        pub scale_b_data: Operand, // scale-b-data
-        pub byte_id_b: (Operand, Operand), // {byte-id-b, thread-id-b}
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
+        pub scale_a_data: GeneralOperand, // scale-a-data
+        pub byte_id_a: VectorOperand, // {byte-id-a, thread-id-a}
+        pub scale_b_data: GeneralOperand, // scale-b-data
+        pub byte_id_b: VectorOperand, // {byte-id-b, thread-id-b}
     }
 
 }
@@ -388,14 +373,14 @@ pub mod section_3 {
         pub e2m12: (), // .e2m1
         pub f322: (), // .f32
         pub stype: Stype, // .stype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
-        pub scale_a_data: Operand, // scale-a-data
-        pub byte_id_a: (Operand, Operand), // {byte-id-a, thread-id-a}
-        pub scale_b_data: Operand, // scale-b-data
-        pub byte_id_b: (Operand, Operand), // {byte-id-b, thread-id-b}
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
+        pub scale_a_data: GeneralOperand, // scale-a-data
+        pub byte_id_a: VectorOperand, // {byte-id-a, thread-id-a}
+        pub scale_b_data: GeneralOperand, // scale-b-data
+        pub byte_id_b: VectorOperand, // {byte-id-b, thread-id-b}
     }
 
 }
@@ -423,15 +408,6 @@ pub mod section_4 {
     }
 
     #[derive(Debug, Clone, PartialEq)]
-    pub enum F8f6f4type1 {
-        E4m3, // .e4m3
-        E5m2, // .e5m2
-        E3m2, // .e3m2
-        E2m3, // .e2m3
-        E2m1, // .e2m1
-    }
-
-    #[derive(Debug, Clone, PartialEq)]
     pub enum Stype {
         Ue8m0, // .ue8m0
     }
@@ -448,17 +424,17 @@ pub mod section_4 {
         pub scale_vec_size: Option<ScaleVecSize>, // {.scale_vec_size}
         pub f32: (), // .f32
         pub f8f6f4type: F8f6f4type, // .f8f6f4type
-        pub f8f6f4type1: F8f6f4type1, // .f8f6f4type
+        pub f8f6f4type1: F8f6f4type, // .f8f6f4type
         pub f322: (), // .f32
         pub stype: Stype, // .stype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
-        pub scale_a_data: Operand, // scale-a-data
-        pub byte_id_a: (Operand, Operand), // {byte-id-a, thread-id-a}
-        pub scale_b_data: Operand, // scale-b-data
-        pub byte_id_b: (Operand, Operand), // {byte-id-b, thread-id-b}
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
+        pub scale_a_data: GeneralOperand, // scale-a-data
+        pub byte_id_a: VectorOperand, // {byte-id-a, thread-id-a}
+        pub scale_b_data: GeneralOperand, // scale-b-data
+        pub byte_id_b: VectorOperand, // {byte-id-b, thread-id-b}
     }
 
 }
@@ -468,10 +444,10 @@ pub mod section_5 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M8n84, // .m8n84
+        M16n8k16, // .m16n8k16
         M16n8k4, // .m16n8k4
         M16n8k8, // .m16n8k8
-        M16n8k16, // .m16n8k16
+        M8n84, // .m8n84
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -485,10 +461,10 @@ pub mod section_5 {
         pub f642: (), // .f64
         pub f644: (), // .f64
         pub f646: (), // .f64
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -498,9 +474,9 @@ pub mod section_6 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M8n8k16, // .m8n8k16
         M16n8k16, // .m16n8k16
         M16n8k32, // .m16n8k32
+        M8n8k16, // .m8n8k16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -527,10 +503,10 @@ pub mod section_6 {
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
         pub s322: (), // .s32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -540,9 +516,9 @@ pub mod section_7 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M8n8k32, // .m8n8k32
         M16n8k32, // .m16n8k32
         M16n8k64, // .m16n8k64
+        M8n8k32, // .m8n8k32
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -569,10 +545,10 @@ pub mod section_7 {
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
         pub s322: (), // .s32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -582,9 +558,9 @@ pub mod section_8 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M8n8k128, // .m8n8k128
         M16n8k128, // .m16n8k128
         M16n8k256, // .m16n8k256
+        M8n8k128, // .m8n8k128
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -606,10 +582,10 @@ pub mod section_8 {
         pub s322: (), // .s32
         pub bitop: Bitop, // .bitOp
         pub popc: (), // .popc
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }

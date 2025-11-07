@@ -47,13 +47,12 @@ pub mod section_0 {
                     }
                     push_directive(tokens, "f32");
                     self.d.unparse_tokens(tokens);
+                    if let Some(p_0) = self.p.as_ref() {
+                        tokens.push(PtxToken::Pipe);
+                        p_0.unparse_tokens(tokens);
+                    }
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_0_0, ref group_0_1) = &self.a;
-                    group_0_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_0_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    self.a.unparse_tokens(tokens);
             if self.e.is_some() { tokens.push(PtxToken::Comma); }
                     if let Some(opt_1) = self.e.as_ref() {
                         opt_1.unparse_tokens(tokens);
@@ -84,17 +83,17 @@ pub mod section_0 {
                             }
                     }
                     match &self.geom {
-                            Geom::_2d => {
-                                    push_directive(tokens, "2d");
-                            }
-                            Geom::A2d => {
-                                    push_directive(tokens, "a2d");
+                            Geom::Acube => {
+                                    push_directive(tokens, "acube");
                             }
                             Geom::Cube => {
                                     push_directive(tokens, "cube");
                             }
-                            Geom::Acube => {
-                                    push_directive(tokens, "acube");
+                            Geom::A2d => {
+                                    push_directive(tokens, "a2d");
+                            }
+                            Geom::_2d => {
+                                    push_directive(tokens, "2d");
                             }
                     }
                     push_directive(tokens, "v4");
@@ -111,15 +110,12 @@ pub mod section_0 {
                     }
                     push_directive(tokens, "f32");
                     self.d.unparse_tokens(tokens);
+                    if let Some(p_3) = self.p.as_ref() {
+                        tokens.push(PtxToken::Pipe);
+                        p_3.unparse_tokens(tokens);
+                    }
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_3_0, ref group_3_1, ref group_3_2) = &self.a;
-                    group_3_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_3_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_3_2.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    self.a.unparse_tokens(tokens);
             if self.e.is_some() { tokens.push(PtxToken::Comma); }
                     if let Some(opt_4) = self.e.as_ref() {
                         opt_4.unparse_tokens(tokens);

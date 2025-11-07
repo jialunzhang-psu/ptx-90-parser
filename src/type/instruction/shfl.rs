@@ -11,21 +11,21 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Mode {
-        Up, // .up
         Down, // .down
         Bfly, // .bfly
         Idx, // .idx
+        Up, // .up
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct ShflModeB32 {
         pub mode: Mode, // .mode
         pub b32: (), // .b32
-        pub d: Operand, // first operand of d{|p}
-        pub p: Option<Operand>, // optional second operand of d{|p}
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // first operand of d{|p}
+        pub p: Option<GeneralOperand>, // optional second operand of d{|p}
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }

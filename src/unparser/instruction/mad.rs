@@ -24,14 +24,14 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mad");
                     match &self.mode {
+                            Mode::Wide => {
+                                    push_directive(tokens, "wide");
+                            }
                             Mode::Hi => {
                                     push_directive(tokens, "hi");
                             }
                             Mode::Lo => {
                                     push_directive(tokens, "lo");
-                            }
-                            Mode::Wide => {
-                                    push_directive(tokens, "wide");
                             }
                     }
                     match &self.type_ {

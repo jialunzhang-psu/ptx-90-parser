@@ -71,20 +71,20 @@ pub mod section_0 {
                             Redop::And => {
                                     push_directive(tokens, "and");
                             }
-                            Redop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Redop::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Redop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     if let Some(load_mode_0) = self.load_mode.as_ref() {
                             match load_mode_0 {
-                                    LoadMode::Tile => {
-                                            push_directive(tokens, "tile");
-                                    }
                                     LoadMode::Im2colNoOffs => {
                                             push_directive(tokens, "im2col_no_offs");
+                                    }
+                                    LoadMode::Tile => {
+                                            push_directive(tokens, "tile");
                                     }
                             }
                     }
@@ -96,17 +96,12 @@ pub mod section_0 {
                     if self.level_cache_hint {
                             push_directive(tokens, "level::cache_hint");
                     }
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_1_0, ref group_1_1) = &self.tensormap;
-                    group_1_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_1_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    self.tensormap.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.srcmem.unparse_tokens(tokens);
             if self.cache_policy.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_2) = self.cache_policy.as_ref() {
-                        opt_2.unparse_tokens(tokens);
+                    if let Some(opt_1) = self.cache_policy.as_ref() {
+                        opt_1.unparse_tokens(tokens);
                     }
             tokens.push(PtxToken::Semicolon);
         }

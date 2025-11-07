@@ -22,20 +22,40 @@ pub mod section_0 {
 
     impl PtxParser for Op {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Finite
+            // Try Notanumber
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".finite").is_ok() {
-                    return Ok(Op::Finite);
+                if stream.expect_string(".notanumber").is_ok() {
+                    return Ok(Op::Notanumber);
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try Subnormal
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".subnormal").is_ok() {
+                    return Ok(Op::Subnormal);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try Infinite
             {
                 let saved_pos = stream.position();
                 if stream.expect_string(".infinite").is_ok() {
                     return Ok(Op::Infinite);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Finite
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".finite").is_ok() {
+                    return Ok(Op::Finite);
                 }
                 stream.set_position(saved_pos);
             }
@@ -51,16 +71,6 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try Notanumber
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".notanumber").is_ok() {
-                    return Ok(Op::Notanumber);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try Normal
             {
                 let saved_pos = stream.position();
@@ -70,18 +80,8 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Subnormal
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".subnormal").is_ok() {
-                    return Ok(Op::Subnormal);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".finite", ".infinite", ".number", ".notanumber", ".normal", ".subnormal"];
+            let expected = &[".notanumber", ".subnormal", ".infinite", ".finite", ".number", ".normal"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -118,10 +118,16 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("testp")?;
             let op = Op::parse(stream)?;
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(TestpOpType {
                 op,
                 type_,

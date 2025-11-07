@@ -17,11 +17,17 @@ pub mod section_0 {
             stream.expect_string("mbarrier")?;
             stream.expect_string(".pending_count")?;
             let pending_count = ();
+            stream.expect_complete()?;
             stream.expect_string(".b64")?;
             let b64 = ();
-            let count = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let count = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let state = Operand::parse(stream)?;
+            let state = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MbarrierPendingCountB64 {
                 pending_count,
                 b64,

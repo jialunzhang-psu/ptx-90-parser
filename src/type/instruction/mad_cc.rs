@@ -29,10 +29,10 @@ pub mod section_0 {
         pub hilo: Hilo, // .hilo
         pub cc: (), // .cc
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }

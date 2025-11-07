@@ -19,15 +19,6 @@ pub mod section_0 {
 
     impl PtxParser for State {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(State::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
             // Try SharedCta
             {
                 let saved_pos = stream.position();
@@ -36,9 +27,18 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try Shared
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared").is_ok() {
+                    return Ok(State::Shared);
+                }
+                stream.set_position(saved_pos);
+            }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared", ".shared::cta"];
+            let expected = &[".shared::cta", ".shared"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -49,6 +49,7 @@ pub mod section_0 {
             stream.expect_string("mbarrier")?;
             stream.expect_string(".inval")?;
             let inval = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let state = match State::parse(stream) {
                 Ok(val) => Some(val),
@@ -57,9 +58,14 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b64")?;
             let b64 = ();
+            stream.expect_complete()?;
             let addr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MbarrierInvalStateB64 {
                 inval,
                 state,

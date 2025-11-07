@@ -134,9 +134,7 @@ fn parses_address_operands() {
         parse::<AddressOperand>("[%r2+%r3]"),
         AddressOperand::Offset(
             AddressBase::Register(RegisterOperand("%r2".into())),
-            Some(AddressOffset::Register(RegisterOperand(
-                "%r3".into()
-            )))
+            Some(AddressOffset::Register(RegisterOperand("%r3".into())))
         )
     );
     assert_roundtrip::<AddressOperand>("[%r2+%r3]");
@@ -168,48 +166,101 @@ fn parses_address_operands() {
 #[test]
 fn parses_generic_operand() {
     assert_eq!(
-        parse::<Operand>("%r1"),
-        Operand::Register(RegisterOperand("%r1".into()))
+        parse::<GeneralOperand>("%r1"),
+        GeneralOperand::Single(Operand::Register(RegisterOperand("%r1".into())))
     );
-    assert_roundtrip::<Operand>("%r1");
+    assert_roundtrip::<GeneralOperand>("%r1");
     assert_eq!(
-        parse::<Operand>("123"),
-        Operand::Immediate(Immediate("123".into()))
+        parse::<GeneralOperand>("123"),
+        GeneralOperand::Single(Operand::Immediate(Immediate("123".into())))
     );
-    assert_roundtrip::<Operand>("123");
+    assert_roundtrip::<GeneralOperand>("123");
 }
 
 #[test]
 fn parses_operand_vectors() {
     assert_eq!(
-        parse::<Operand>("{%r1,%r2}"),
-        Operand::Vector2(Box::new([
+        parse::<VectorOperand>("{%r1,%r2}"),
+        VectorOperand::Vector2([
             Operand::Register(RegisterOperand("%r1".into())),
             Operand::Register(RegisterOperand("%r2".into())),
-        ]))
+        ])
     );
-    assert_roundtrip::<Operand>("{%r1,%r2}");
+    assert_roundtrip::<VectorOperand>("{%r1,%r2}");
 
     assert_eq!(
-        parse::<Operand>("{a,b,c}"),
-        Operand::Vector3(Box::new([
+        parse::<VectorOperand>("{a,b,c}"),
+        VectorOperand::Vector3([
             Operand::Symbol("a".into()),
             Operand::Symbol("b".into()),
             Operand::Symbol("c".into()),
-        ]))
+        ])
     );
-    assert_roundtrip::<Operand>("{a,b,c}");
+    assert_roundtrip::<VectorOperand>("{a,b,c}");
 
     assert_eq!(
-        parse::<Operand>("{1,2,3,4}"),
-        Operand::Vector4(Box::new([
+        parse::<VectorOperand>("{1,2,3,4}"),
+        VectorOperand::Vector4([
             Operand::Immediate(Immediate("1".into())),
             Operand::Immediate(Immediate("2".into())),
             Operand::Immediate(Immediate("3".into())),
             Operand::Immediate(Immediate("4".into())),
-        ]))
+        ])
     );
-    assert_roundtrip::<Operand>("{1,2,3,4}");
+    assert_roundtrip::<VectorOperand>("{1,2,3,4}");
+
+    assert_eq!(
+        parse::<VectorOperand>("{a,b,c,d,e,f,g,h}"),
+        VectorOperand::Vector8([
+            Operand::Symbol("a".into()),
+            Operand::Symbol("b".into()),
+            Operand::Symbol("c".into()),
+            Operand::Symbol("d".into()),
+            Operand::Symbol("e".into()),
+            Operand::Symbol("f".into()),
+            Operand::Symbol("g".into()),
+            Operand::Symbol("h".into()),
+        ])
+    );
+    assert_roundtrip::<VectorOperand>("{a,b,c,d,e,f,g,h}");
+}
+
+#[test]
+fn parses_tex_handlers() {
+    assert_eq!(
+        parse::<TexHandler2>("[surf_B, {x}]"),
+        TexHandler2([
+            GeneralOperand::Single(Operand::Symbol("surf_B".into())),
+            GeneralOperand::Vec(VectorOperand::Vector1(Operand::Symbol("x".into()))),
+        ])
+    );
+    assert_roundtrip::<TexHandler2>("[surf_B, {x}]");
+
+    assert_eq!(
+        parse::<TexHandler3>("[tex_a, {f1,f2}, {f3}]"),
+        TexHandler3 {
+            handle: GeneralOperand::Single(Operand::Symbol("tex_a".into())),
+            sampler: GeneralOperand::Vec(VectorOperand::Vector2([
+                Operand::Symbol("f1".into()),
+                Operand::Symbol("f2".into()),
+            ])),
+            coords: GeneralOperand::Vec(VectorOperand::Vector1(Operand::Symbol("f3".into()))),
+        }
+    );
+    assert_roundtrip::<TexHandler3>("[tex_a, {f1,f2}, {f3}]");
+
+    assert_eq!(
+        parse::<TexHandler3Optional>("[tex_a, {f1,f2}]"),
+        TexHandler3Optional {
+            handle: GeneralOperand::Single(Operand::Symbol("tex_a".into())),
+            sampler: None,
+            coords: GeneralOperand::Vec(VectorOperand::Vector2([
+                Operand::Symbol("f1".into()),
+                Operand::Symbol("f2".into()),
+            ])),
+        }
+    );
+    assert_roundtrip::<TexHandler3Optional>("[tex_a, {f1,f2}]");
 }
 
 #[test]
@@ -230,4 +281,27 @@ fn parses_address_space_variants() {
     assert_roundtrip::<AddressSpace>(".global");
     assert_roundtrip::<AddressSpace>(".shared");
     assert_roundtrip::<AddressSpace>(".reg");
+}
+
+#[test]
+fn parses_arithmetic_expressions() {
+    // Test symbol + immediate
+    assert_eq!(
+        parse::<Operand>("sh + 4"),
+        Operand::SymbolOffset("sh".into(), Immediate("4".into()))
+    );
+    assert_roundtrip::<Operand>("sh + 4");
+    
+    assert_eq!(
+        parse::<Operand>("var + 0x10"),
+        Operand::SymbolOffset("var".into(), Immediate("0x10".into()))
+    );
+    assert_roundtrip::<Operand>("var + 0x10");
+    
+    // Test that plain symbols still work
+    assert_eq!(
+        parse::<Operand>("symbol"),
+        Operand::Symbol("symbol".into())
+    );
+    assert_roundtrip::<Operand>("symbol");
 }

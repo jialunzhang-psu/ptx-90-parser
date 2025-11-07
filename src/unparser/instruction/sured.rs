@@ -71,22 +71,17 @@ pub mod section_0 {
                             }
                     }
                     match &self.mode {
-                            Mode::Trap => {
-                                    push_directive(tokens, "trap");
-                            }
                             Mode::Clamp => {
                                     push_directive(tokens, "clamp");
+                            }
+                            Mode::Trap => {
+                                    push_directive(tokens, "trap");
                             }
                             Mode::Zero => {
                                     push_directive(tokens, "zero");
                             }
                     }
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_0_0, ref group_0_1) = &self.a;
-                    group_0_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_0_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
@@ -140,22 +135,17 @@ pub mod section_1 {
                             }
                     }
                     match &self.mode {
-                            Mode::Trap => {
-                                    push_directive(tokens, "trap");
-                            }
                             Mode::Clamp => {
                                     push_directive(tokens, "clamp");
+                            }
+                            Mode::Trap => {
+                                    push_directive(tokens, "trap");
                             }
                             Mode::Zero => {
                                     push_directive(tokens, "zero");
                             }
                     }
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_1_0, ref group_1_1) = &self.a;
-                    group_1_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_1_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);

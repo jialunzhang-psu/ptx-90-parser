@@ -64,9 +64,9 @@ pub mod section_0 {
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub dstmem: AddressOperand, // [dstMem]
         pub srcmem: AddressOperand, // [srcMem]
-        pub size: Operand, // size
+        pub size: GeneralOperand, // size
         pub mbar: AddressOperand, // [mbar]
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }
@@ -110,10 +110,10 @@ pub mod section_1 {
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub dstmem: AddressOperand, // [dstMem]
         pub srcmem: AddressOperand, // [srcMem]
-        pub size: Operand, // size
+        pub size: GeneralOperand, // size
         pub mbar: AddressOperand, // [mbar]
-        pub ctamask: Option<Operand>, // {, ctaMask}
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub ctamask: Option<GeneralOperand>, // {, ctaMask}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }
@@ -145,7 +145,7 @@ pub mod section_2 {
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
         pub dstmem: AddressOperand, // [dstMem]
         pub srcmem: AddressOperand, // [srcMem]
-        pub size: Operand, // size
+        pub size: GeneralOperand, // size
         pub mbar: AddressOperand, // [mbar]
     }
 
@@ -185,9 +185,9 @@ pub mod section_3 {
         pub cp_mask: bool, // {.cp_mask}
         pub dstmem: AddressOperand, // [dstMem]
         pub srcmem: AddressOperand, // [srcMem]
-        pub size: Operand, // size
-        pub cache_policy: Option<Operand>, // {, cache-policy}
-        pub bytemask: Option<Operand>, // {, byteMask}
+        pub size: GeneralOperand, // size
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub bytemask: Option<GeneralOperand>, // {, byteMask}
     }
 
 }

@@ -31,11 +31,14 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect(&PtxToken::LParen)?;
-            let ret_param = Operand::parse(stream)?;
+            let ret_param = GeneralOperand::parse(stream)?;
             stream.expect(&PtxToken::RParen)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let func = Operand::parse(stream)?;
+            let func = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             stream.expect(&PtxToken::LParen)?;
             let mut param_list = Vec::new();
@@ -43,7 +46,7 @@ pub mod section_0 {
             loop {
                 // Try to parse an operand
                 let saved_pos = stream.position();
-                match Operand::parse(stream) {
+                match GeneralOperand::parse(stream) {
                     Ok(operand) => {
                         param_list.push(operand);
                         // Check for comma
@@ -58,6 +61,9 @@ pub mod section_0 {
                 }
             }
             stream.expect(&PtxToken::RParen)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CallUni {
                 uni,
                 ret_param,
@@ -76,7 +82,9 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
-            let func = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let func = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             stream.expect(&PtxToken::LParen)?;
             let mut param_list = Vec::new();
@@ -84,7 +92,7 @@ pub mod section_0 {
             loop {
                 // Try to parse an operand
                 let saved_pos = stream.position();
-                match Operand::parse(stream) {
+                match GeneralOperand::parse(stream) {
                     Ok(operand) => {
                         param_list.push(operand);
                         // Check for comma
@@ -99,6 +107,9 @@ pub mod section_0 {
                 }
             }
             stream.expect(&PtxToken::RParen)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CallUni1 {
                 uni,
                 func,
@@ -116,7 +127,11 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
-            let func = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let func = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CallUni2 {
                 uni,
                 func,
@@ -133,11 +148,14 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect(&PtxToken::LParen)?;
-            let ret_param = Operand::parse(stream)?;
+            let ret_param = GeneralOperand::parse(stream)?;
             stream.expect(&PtxToken::RParen)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let fptr = Operand::parse(stream)?;
+            let fptr = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             stream.expect(&PtxToken::LParen)?;
             let mut param_list = Vec::new();
@@ -145,7 +163,7 @@ pub mod section_0 {
             loop {
                 // Try to parse an operand
                 let saved_pos = stream.position();
-                match Operand::parse(stream) {
+                match GeneralOperand::parse(stream) {
                     Ok(operand) => {
                         param_list.push(operand);
                         // Check for comma
@@ -160,8 +178,12 @@ pub mod section_0 {
                 }
             }
             stream.expect(&PtxToken::RParen)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let flist = Operand::parse(stream)?;
+            let flist = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CallUni3 {
                 uni,
                 ret_param,
@@ -181,7 +203,9 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
-            let fptr = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let fptr = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             stream.expect(&PtxToken::LParen)?;
             let mut param_list = Vec::new();
@@ -189,7 +213,7 @@ pub mod section_0 {
             loop {
                 // Try to parse an operand
                 let saved_pos = stream.position();
-                match Operand::parse(stream) {
+                match GeneralOperand::parse(stream) {
                     Ok(operand) => {
                         param_list.push(operand);
                         // Check for comma
@@ -204,8 +228,12 @@ pub mod section_0 {
                 }
             }
             stream.expect(&PtxToken::RParen)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let flist = Operand::parse(stream)?;
+            let flist = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CallUni4 {
                 uni,
                 fptr,
@@ -224,9 +252,14 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
-            let fptr = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let fptr = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let flist = Operand::parse(stream)?;
+            let flist = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CallUni5 {
                 uni,
                 fptr,
@@ -244,11 +277,14 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect(&PtxToken::LParen)?;
-            let ret_param = Operand::parse(stream)?;
+            let ret_param = GeneralOperand::parse(stream)?;
             stream.expect(&PtxToken::RParen)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let fptr = Operand::parse(stream)?;
+            let fptr = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             stream.expect(&PtxToken::LParen)?;
             let mut param_list = Vec::new();
@@ -256,7 +292,7 @@ pub mod section_0 {
             loop {
                 // Try to parse an operand
                 let saved_pos = stream.position();
-                match Operand::parse(stream) {
+                match GeneralOperand::parse(stream) {
                     Ok(operand) => {
                         param_list.push(operand);
                         // Check for comma
@@ -271,8 +307,12 @@ pub mod section_0 {
                 }
             }
             stream.expect(&PtxToken::RParen)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let fproto = Operand::parse(stream)?;
+            let fproto = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CallUni6 {
                 uni,
                 ret_param,
@@ -292,7 +332,9 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
-            let fptr = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let fptr = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             stream.expect(&PtxToken::LParen)?;
             let mut param_list = Vec::new();
@@ -300,7 +342,7 @@ pub mod section_0 {
             loop {
                 // Try to parse an operand
                 let saved_pos = stream.position();
-                match Operand::parse(stream) {
+                match GeneralOperand::parse(stream) {
                     Ok(operand) => {
                         param_list.push(operand);
                         // Check for comma
@@ -315,8 +357,12 @@ pub mod section_0 {
                 }
             }
             stream.expect(&PtxToken::RParen)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let fproto = Operand::parse(stream)?;
+            let fproto = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CallUni7 {
                 uni,
                 fptr,
@@ -335,9 +381,14 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
-            let fptr = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let fptr = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let fproto = Operand::parse(stream)?;
+            let fproto = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CallUni8 {
                 uni,
                 fptr,

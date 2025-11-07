@@ -19,6 +19,15 @@ pub mod section_0 {
 
     impl PtxParser for Mode {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Rc16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rc16").is_ok() {
+                    return Ok(Mode::Rc16);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
             // Try F4e
             {
                 let saved_pos = stream.position();
@@ -27,6 +36,7 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
+            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try B4e
             {
@@ -67,18 +77,8 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Rc16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rc16").is_ok() {
-                    return Ok(Mode::Rc16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f4e", ".b4e", ".rc8", ".ecl", ".ecr", ".rc16"];
+            let expected = &[".rc16", ".f4e", ".b4e", ".rc8", ".ecl", ".ecr"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -89,6 +89,7 @@ pub mod section_0 {
             stream.expect_string("prmt")?;
             stream.expect_string(".b32")?;
             let b32 = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let mode = match Mode::parse(stream) {
                 Ok(val) => Some(val),
@@ -97,13 +98,20 @@ pub mod section_0 {
                     None
                 }
             };
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(PrmtB32Mode {
                 b32,
                 mode,

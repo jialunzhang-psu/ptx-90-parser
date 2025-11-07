@@ -11,10 +11,10 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct FnsB32 {
         pub b32: (), // .b32
-        pub d: Operand, // d
-        pub mask: Operand, // mask
-        pub base: Operand, // base
-        pub offset: Operand, // offset
+        pub d: GeneralOperand, // d
+        pub mask: GeneralOperand, // mask
+        pub base: GeneralOperand, // base
+        pub offset: GeneralOperand, // offset
     }
 
 }

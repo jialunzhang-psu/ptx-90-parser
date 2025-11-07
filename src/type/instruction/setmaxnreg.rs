@@ -21,7 +21,7 @@ pub mod section_0 {
         pub sync: (), // .sync
         pub aligned: (), // .aligned
         pub u32: (), // .u32
-        pub imm_reg_count: Operand, // imm-reg-count
+        pub imm_reg_count: GeneralOperand, // imm-reg-count
     }
 
 }

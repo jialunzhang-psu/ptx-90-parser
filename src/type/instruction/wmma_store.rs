@@ -45,9 +45,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -68,8 +68,8 @@ pub mod section_0 {
         pub ss: Option<Ss>, // {.ss}
         pub type_: Type, // .type
         pub p: AddressOperand, // [p]
-        pub r: Operand, // r
-        pub stride: Option<Operand>, // {, stride}
+        pub r: GeneralOperand, // r
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
 }
@@ -85,15 +85,15 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M8n8k32, // .m8n8k32
         M8n8k128, // .m8n8k128
+        M8n8k32, // .m8n8k32
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -112,8 +112,8 @@ pub mod section_1 {
         pub ss: Option<Ss>, // {.ss}
         pub type_: Type, // .type
         pub p: AddressOperand, // [p]
-        pub r: Operand, // r
-        pub stride: Option<Operand>, // {, stride}
+        pub r: GeneralOperand, // r
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
 }
@@ -134,9 +134,9 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -155,8 +155,8 @@ pub mod section_2 {
         pub ss: Option<Ss>, // {.ss}
         pub type_: Type, // .type
         pub p: AddressOperand, // [p]
-        pub r: Operand, // r
-        pub stride: Option<Operand>, // {, stride}
+        pub r: GeneralOperand, // r
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
 }
@@ -177,9 +177,9 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -198,8 +198,8 @@ pub mod section_3 {
         pub ss: Option<Ss>, // {.ss}
         pub type_: Type, // .type
         pub p: AddressOperand, // [p]
-        pub r: Operand, // r
-        pub stride: Option<Operand>, // {, stride}
+        pub r: GeneralOperand, // r
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
 }

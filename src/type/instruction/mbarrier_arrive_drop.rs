@@ -23,14 +23,14 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
-        Cta, // .cta
         Cluster, // .cluster
+        Cta, // .cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum State {
-        Shared, // .shared
         SharedCta, // .shared::cta
+        Shared, // .shared
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -40,9 +40,9 @@ pub mod section_0 {
         pub scope: Option<Scope>, // {.scope}
         pub state: Option<State>, // {.state}
         pub b64: (), // .b64
-        pub state2: Operand, // state
+        pub state2: GeneralOperand, // state
         pub addr: AddressOperand, // [addr]
-        pub count: Option<Operand>, // {, count}
+        pub count: Option<GeneralOperand>, // {, count}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -52,9 +52,9 @@ pub mod section_0 {
         pub scope: Option<Scope>, // {.scope}
         pub shared_cluster: bool, // {.shared::cluster}
         pub b64: (), // .b64
-        pub operand: Operand, // _
+        pub operand: GeneralOperand, // _
         pub addr: AddressOperand, // [addr]
-        pub count: Option<Operand>, // {, count}
+        pub count: Option<GeneralOperand>, // {, count}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -65,9 +65,9 @@ pub mod section_0 {
         pub sem: Option<Sem>, // {.sem}
         pub scope: Option<Scope>, // {.scope}
         pub b64: (), // .b64
-        pub state2: Operand, // state
+        pub state2: GeneralOperand, // state
         pub addr: AddressOperand, // [addr]
-        pub tx_count: Operand, // tx_count
+        pub tx_count: GeneralOperand, // tx_count
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -78,9 +78,9 @@ pub mod section_0 {
         pub sem: Option<Sem>, // {.sem}
         pub scope: Option<Scope>, // {.scope}
         pub b64: (), // .b64
-        pub operand: Operand, // _
+        pub operand: GeneralOperand, // _
         pub addr: AddressOperand, // [addr]
-        pub tx_count: Operand, // tx_count
+        pub tx_count: GeneralOperand, // tx_count
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -91,9 +91,9 @@ pub mod section_0 {
         pub cta: bool, // {.cta}
         pub state: Option<State>, // {.state}
         pub b64: (), // .b64
-        pub state2: Operand, // state
+        pub state2: GeneralOperand, // state
         pub addr: AddressOperand, // [addr]
-        pub count: Operand, // count
+        pub count: GeneralOperand, // count
     }
 
 }

@@ -140,9 +140,6 @@ pub mod section_1 {
                             }
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
-                            }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
                             }
@@ -152,9 +149,6 @@ pub mod section_1 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -163,9 +157,6 @@ pub mod section_1 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -181,6 +172,15 @@ pub mod section_1 {
                             }
                             Type::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.a.unparse_tokens(tokens);

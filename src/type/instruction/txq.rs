@@ -19,21 +19,21 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Tquery {
-        Width, // .width
-        Height, // .height
-        Depth, // .depth
         ChannelDataType, // .channel_data_type
-        ChannelOrder, // .channel_order
         NormalizedCoords, // .normalized_coords
-        ArraySize, // .array_size
         NumMipmapLevels, // .num_mipmap_levels
+        ChannelOrder, // .channel_order
         NumSamples, // .num_samples
+        ArraySize, // .array_size
+        Height, // .height
+        Width, // .width
+        Depth, // .depth
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Tlquery {
-        Width, // .width
         Height, // .height
+        Width, // .width
         Depth, // .depth
     }
 
@@ -50,7 +50,7 @@ pub mod section_0 {
     pub struct TxqTqueryB32 {
         pub tquery: Tquery, // .tquery
         pub b32: (), // .b32
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
     }
 
@@ -59,16 +59,16 @@ pub mod section_0 {
         pub level: (), // .level
         pub tlquery: Tlquery, // .tlquery
         pub b32: (), // .b32
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub lod: Operand, // lod
+        pub lod: GeneralOperand, // lod
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct TxqSqueryB32 {
         pub squery: Squery, // .squery
         pub b32: (), // .b32
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
     }
 

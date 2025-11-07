@@ -20,11 +20,11 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        _128x256b, // .128x256b
-        _4x256b, // .4x256b
-        _128x128b, // .128x128b
-        _64x128b, // .64x128b**
         _32x128b, // .32x128b***
+        _64x128b, // .64x128b**
+        _128x256b, // .128x256b
+        _128x128b, // .128x128b
+        _4x256b, // .4x256b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -48,7 +48,7 @@ pub mod section_0 {
         pub multicast: Option<Multicast>, // {.multicast}
         pub dst_src_fmt: Option<DstSrcFmt>, // {.dst_src_fmt}
         pub taddr: AddressOperand, // [taddr]
-        pub s_desc: Operand, // s-desc
+        pub s_desc: GeneralOperand, // s-desc
     }
 
 }

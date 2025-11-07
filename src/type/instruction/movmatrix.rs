@@ -27,8 +27,8 @@ pub mod section_0 {
         pub shape: Shape, // .shape
         pub trans: (), // .trans
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
 }

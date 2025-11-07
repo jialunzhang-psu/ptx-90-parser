@@ -23,6 +23,23 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for CompletionMechanism {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try BulkGroup
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".bulk_group").is_ok() {
+                    return Ok(CompletionMechanism::BulkGroup);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".bulk_group"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Dim {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try _1d
@@ -80,18 +97,45 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Src {
+    impl PtxParser for Dst {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCta
+            // Try Global
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Src::SharedCta);
+                if stream.expect_string(".global").is_ok() {
+                    return Ok(Dst::Global);
                 }
                 stream.set_position(saved_pos);
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cta"];
+            let expected = &[".global"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for LoadMode {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Im2colNoOffs
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".im2col_no_offs").is_ok() {
+                    return Ok(LoadMode::Im2colNoOffs);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Tile
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".tile").is_ok() {
+                    return Ok(LoadMode::Tile);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".im2col_no_offs", ".tile"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -158,16 +202,6 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try Or
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".or").is_ok() {
-                    return Ok(Redop::Or);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try Xor
             {
                 let saved_pos = stream.position();
@@ -177,69 +211,35 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".add", ".min", ".max", ".inc", ".dec", ".and", ".or", ".xor"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for LoadMode {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Tile
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".tile").is_ok() {
-                    return Ok(LoadMode::Tile);
-                }
-                stream.set_position(saved_pos);
-            }
             let saved_pos = stream.position();
-            // Try Im2colNoOffs
+            // Try Or
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".im2col_no_offs").is_ok() {
-                    return Ok(LoadMode::Im2colNoOffs);
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Redop::Or);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".tile", ".im2col_no_offs"];
+            let expected = &[".add", ".min", ".max", ".inc", ".dec", ".and", ".xor", ".or"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
 
-    impl PtxParser for CompletionMechanism {
+    impl PtxParser for Src {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try BulkGroup
+            // Try SharedCta
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".bulk_group").is_ok() {
-                    return Ok(CompletionMechanism::BulkGroup);
+                if stream.expect_string(".shared::cta").is_ok() {
+                    return Ok(Src::SharedCta);
                 }
                 stream.set_position(saved_pos);
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".bulk_group"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Dst {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Dst::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".global"];
+            let expected = &[".shared::cta"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -250,16 +250,24 @@ pub mod section_0 {
             stream.expect_string("cp")?;
             stream.expect_string(".reduce")?;
             let reduce = ();
+            stream.expect_complete()?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             stream.expect_string(".bulk")?;
             let bulk = ();
+            stream.expect_complete()?;
             stream.expect_string(".tensor")?;
             let tensor = ();
+            stream.expect_complete()?;
             let dim = Dim::parse(stream)?;
+            stream.expect_complete()?;
             let dst = Dst::parse(stream)?;
+            stream.expect_complete()?;
             let src = Src::parse(stream)?;
+            stream.expect_complete()?;
             let redop = Redop::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let load_mode = match LoadMode::parse(stream) {
                 Ok(val) => Some(val),
@@ -268,33 +276,36 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let completion_mechanism = CompletionMechanism::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_cache_hint = stream.expect_string(".level::cache_hint").is_ok();
             if !level_cache_hint {
                 stream.set_position(saved_pos);
             }
-            stream.expect(&PtxToken::LBracket)?;
-            let tensormap = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let tensorcoords = Operand::parse(stream)?;
-            stream.expect(&PtxToken::RBracket)?;
-            let tensormap = (tensormap, tensorcoords);
+            stream.expect_complete()?;
+            let tensormap = TexHandler2::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let srcmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let cache_policy = match Operand::parse(stream) {
+            let cache_policy = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CpReduceAsyncBulkTensorDimDstSrcRedopLoadModeCompletionMechanismLevelCacheHint {
                 reduce,
                 async_,

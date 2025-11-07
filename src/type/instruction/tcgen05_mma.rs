@@ -79,9 +79,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Kind {
-        KindF16, // .kind::f16
-        KindTf32, // .kind::tf32
         KindF8f6f4, // .kind::f8f6f4
+        KindTf32, // .kind::tf32
+        KindF16, // .kind::f16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -90,12 +90,12 @@ pub mod section_0 {
         pub cta_group: CtaGroup, // .cta_group
         pub kind: Kind, // .kind
         pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
-        pub disable_output_lane: Option<Operand>, // {, disable-output-lane}
-        pub enable_input_d: Operand, // enable-input-d
-        pub scale_input_d: Option<Operand>, // {, scale-input-d}
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
+        pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
+        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub scale_input_d: Option<GeneralOperand>, // {, scale-input-d}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -105,11 +105,11 @@ pub mod section_0 {
         pub kind: Kind, // .kind
         pub d_tmem: AddressOperand, // [d-tmem]
         pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
-        pub disable_output_lane: Option<Operand>, // {, disable-output-lane}
-        pub enable_input_d: Operand, // enable-input-d
-        pub scale_input_d: Option<Operand>, // {, scale-input-d}
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
+        pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
+        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub scale_input_d: Option<GeneralOperand>, // {, scale-input-d}
     }
 
 }
@@ -126,8 +126,8 @@ pub mod section_1 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Kind {
         KindMxf8f6f4, // .kind::mxf8f6f4
-        KindMxf4, // .kind::mxf4
         KindMxf4nvf4, // .kind::mxf4nvf4
+        KindMxf4, // .kind::mxf4
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -147,12 +147,12 @@ pub mod section_1 {
         pub block_scale: (), // .block_scale
         pub scale_vectorsize: Option<ScaleVectorsize>, // {.scale_vectorsize}
         pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
         pub scale_a_tmem: AddressOperand, // [scale-A-tmem]
         pub scale_b_tmem: AddressOperand, // [scale-B-tmem]
-        pub enable_input_d: Operand, // enable-input-d
+        pub enable_input_d: GeneralOperand, // enable-input-d
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -164,11 +164,11 @@ pub mod section_1 {
         pub scale_vectorsize: Option<ScaleVectorsize>, // {.scale_vectorsize}
         pub d_tmem: AddressOperand, // [d-tmem]
         pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
         pub scale_a_tmem: AddressOperand, // [scale-A-tmem]
         pub scale_b_tmem: AddressOperand, // [scale-B-tmem]
-        pub enable_input_d: Operand, // enable-input-d
+        pub enable_input_d: GeneralOperand, // enable-input-d
     }
 
 }
@@ -184,9 +184,9 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Kind {
-        KindF16, // .kind::f16
-        KindTf32, // .kind::tf32
         KindF8f6f4, // .kind::f8f6f4
+        KindTf32, // .kind::tf32
+        KindF16, // .kind::f16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -196,10 +196,10 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Op {
+        Discard, // ::discard*
+        Lastuse, // ::lastuse
         Fill, // ::fill
         Use, // ::use
-        Lastuse, // ::lastuse
-        Discard, // ::discard*
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -214,12 +214,12 @@ pub mod section_2 {
         pub kind: Kind, // .kind
         pub collector_usage: CollectorUsage, // .collector_usage
         pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
-        pub disable_output_lane: Option<Operand>, // {, disable-output-lane}
-        pub enable_input_d: Operand, // enable-input-d
-        pub scale_input_d: Option<Operand>, // {, scale-input-d}
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
+        pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
+        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub scale_input_d: Option<GeneralOperand>, // {, scale-input-d}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -231,11 +231,11 @@ pub mod section_2 {
         pub collector_usage: CollectorUsage, // .collector_usage
         pub d_tmem: AddressOperand, // [d-tmem]
         pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
-        pub disable_output_lane: Option<Operand>, // {, disable-output-lane}
-        pub enable_input_d: Operand, // enable-input-d
-        pub scale_input_d: Option<Operand>, // {, scale-input-d}
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
+        pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
+        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub scale_input_d: Option<GeneralOperand>, // {, scale-input-d}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -247,11 +247,11 @@ pub mod section_2 {
         pub collector_usage: Option<CollectorUsage>, // {.collector_usage}
         pub d_tmem: AddressOperand, // [d-tmem]
         pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
-        pub disable_output_lane: Option<Operand>, // {, disable-output-lane}
-        pub enable_input_d: Operand, // enable-input-d
-        pub scale_input_d: Option<Operand>, // {, scale-input-d}
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
+        pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
+        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub scale_input_d: Option<GeneralOperand>, // {, scale-input-d}
     }
 
 }
@@ -268,8 +268,8 @@ pub mod section_3 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Kind {
         KindMxf8f6f4, // .kind::mxf8f6f4
-        KindMxf4, // .kind::mxf4
         KindMxf4nvf4, // .kind::mxf4nvf4
+        KindMxf4, // .kind::mxf4
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -288,10 +288,10 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Op {
+        Discard, // ::discard*
+        Lastuse, // ::lastuse
         Fill, // ::fill
         Use, // ::use
-        Lastuse, // ::lastuse
-        Discard, // ::discard*
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -308,12 +308,12 @@ pub mod section_3 {
         pub scale_vectorsize: Option<ScaleVectorsize>, // {.scale_vectorsize}
         pub collector_usage: CollectorUsage, // .collector_usage
         pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
         pub scale_a_tmem: AddressOperand, // [scale-A-tmem]
         pub scale_b_tmem: AddressOperand, // [scale-B-tmem]
-        pub enable_input_d: Operand, // enable-input-d
+        pub enable_input_d: GeneralOperand, // enable-input-d
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -326,11 +326,11 @@ pub mod section_3 {
         pub collector_usage: CollectorUsage, // .collector_usage
         pub d_tmem: AddressOperand, // [d-tmem]
         pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
         pub scale_a_tmem: AddressOperand, // [scale-A-tmem]
         pub scale_b_tmem: AddressOperand, // [scale-B-tmem]
-        pub enable_input_d: Operand, // enable-input-d
+        pub enable_input_d: GeneralOperand, // enable-input-d
     }
 
 }
@@ -350,11 +350,11 @@ pub mod section_4 {
         pub cta_group: CtaGroup, // .cta_group
         pub kind_i8: (), // .kind::i8
         pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
-        pub disable_output_lane: Option<Operand>, // {, disable-output-lane}
-        pub enable_input_d: Operand, // enable-input-d
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
+        pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
+        pub enable_input_d: GeneralOperand, // enable-input-d
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -364,10 +364,10 @@ pub mod section_4 {
         pub kind_i8: (), // .kind::i8
         pub d_tmem: AddressOperand, // [d-tmem]
         pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
-        pub disable_output_lane: Option<Operand>, // {, disable-output-lane}
-        pub enable_input_d: Operand, // enable-input-d
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
+        pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
+        pub enable_input_d: GeneralOperand, // enable-input-d
     }
 
 }
@@ -388,10 +388,10 @@ pub mod section_5 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Op {
+        Discard, // ::discard*
+        Lastuse, // ::lastuse
         Fill, // ::fill
         Use, // ::use
-        Lastuse, // ::lastuse
-        Discard, // ::discard*
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -406,11 +406,11 @@ pub mod section_5 {
         pub kind_i8: (), // .kind::i8
         pub collector_usage: CollectorUsage, // .collector_usage
         pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
-        pub disable_output_lane: Option<Operand>, // {, disable-output-lane}
-        pub enable_input_d: Operand, // enable-input-d
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
+        pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
+        pub enable_input_d: GeneralOperand, // enable-input-d
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -422,10 +422,10 @@ pub mod section_5 {
         pub collector_usage: Option<CollectorUsage>, // {.collector_usage}
         pub d_tmem: AddressOperand, // [d-tmem]
         pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
-        pub disable_output_lane: Option<Operand>, // {, disable-output-lane}
-        pub enable_input_d: Operand, // enable-input-d
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
+        pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
+        pub enable_input_d: GeneralOperand, // enable-input-d
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -437,10 +437,10 @@ pub mod section_5 {
         pub collector_usage: CollectorUsage, // .collector_usage
         pub d_tmem: AddressOperand, // [d-tmem]
         pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: Operand, // b-desc
-        pub idesc: Operand, // idesc
-        pub disable_output_lane: Option<Operand>, // {, disable-output-lane}
-        pub enable_input_d: Operand, // enable-input-d
+        pub b_desc: GeneralOperand, // b-desc
+        pub idesc: GeneralOperand, // idesc
+        pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
+        pub enable_input_d: GeneralOperand, // enable-input-d
     }
 
 }

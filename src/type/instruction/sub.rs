@@ -39,18 +39,18 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct SubType {
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct SubSatS32 {
         pub sat: bool, // {.sat}
         pub s32: (), // .s32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
 }
@@ -72,9 +72,9 @@ pub mod section_1 {
         pub ftz: bool, // {.ftz}
         pub sat: bool, // {.sat}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -82,18 +82,18 @@ pub mod section_1 {
         pub rnd: Option<Rnd>, // {.rnd}
         pub ftz: bool, // {.ftz}
         pub f32x2: (), // .f32x2
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct SubRndF64 {
         pub rnd: Option<Rnd>, // {.rnd}
         pub f64: (), // .f64
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
 }
@@ -112,9 +112,9 @@ pub mod section_2 {
         pub ftz: bool, // {.ftz}
         pub sat: bool, // {.sat}
         pub f16: (), // .f16
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -123,27 +123,27 @@ pub mod section_2 {
         pub ftz: bool, // {.ftz}
         pub sat: bool, // {.sat}
         pub f16x2: (), // .f16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct SubRndBf16 {
         pub rnd: Option<Rnd>, // {.rnd}
         pub bf16: (), // .bf16
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct SubRndBf16x2 {
         pub rnd: Option<Rnd>, // {.rnd}
         pub bf16x2: (), // .bf16x2
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
 }
@@ -161,8 +161,8 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Atype {
-        F16, // .f16
         Bf16, // .bf16
+        F16, // .f16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -171,9 +171,9 @@ pub mod section_3 {
         pub sat: bool, // {.sat}
         pub f32: (), // .f32
         pub atype: Atype, // .atype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub c: GeneralOperand, // c
     }
 
 }

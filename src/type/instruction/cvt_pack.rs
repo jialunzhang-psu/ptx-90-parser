@@ -32,9 +32,9 @@ pub mod section_0 {
         pub sat: (), // .sat
         pub converttype: Converttype, // .convertType
         pub abtype: Abtype, // .abType
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
 }
@@ -69,10 +69,10 @@ pub mod section_1 {
         pub converttype: Converttype, // .convertType
         pub abtype: Abtype, // .abType
         pub ctype: Ctype, // .cType
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }

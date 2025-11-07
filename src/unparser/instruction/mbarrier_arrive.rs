@@ -34,21 +34,21 @@ pub mod section_0 {
                     }
                     if let Some(scope_1) = self.scope.as_ref() {
                             match scope_1 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                             }
                     }
                     if let Some(state_2) = self.state.as_ref() {
                             match state_2 {
-                                    State::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
                                     State::SharedCta => {
                                             push_directive(tokens, "shared::cta");
+                                    }
+                                    State::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                             }
                     }
@@ -80,11 +80,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_5) = self.scope.as_ref() {
                             match scope_5 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                             }
                     }
@@ -120,21 +120,21 @@ pub mod section_0 {
                     }
                     if let Some(scope_8) = self.scope.as_ref() {
                             match scope_8 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                             }
                     }
                     if let Some(state_9) = self.state.as_ref() {
                             match state_9 {
-                                    State::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
                                     State::SharedCta => {
                                             push_directive(tokens, "shared::cta");
+                                    }
+                                    State::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                             }
                     }
@@ -165,11 +165,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_11) = self.scope.as_ref() {
                             match scope_11 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                             }
                     }
@@ -199,11 +199,11 @@ pub mod section_0 {
                     }
                     if let Some(state_12) = self.state.as_ref() {
                             match state_12 {
-                                    State::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
                                     State::SharedCta => {
                                             push_directive(tokens, "shared::cta");
+                                    }
+                                    State::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                             }
                     }

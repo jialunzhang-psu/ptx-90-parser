@@ -74,7 +74,7 @@ pub mod section_0 {
         pub vec: Option<Vec>, // {.vec}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub mbar: AddressOperand, // [mbar]
     }
 
@@ -101,20 +101,20 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Type {
-        B8, // .b8
         B16, // .b16
         B32, // .b32
         B64, // .b64
-        U8, // .u8
         U16, // .u16
         U32, // .u32
         U64, // .u64
-        S8, // .s8
         S16, // .s16
         S32, // .s32
         S64, // .s64
         F32, // .f32
         F64, // .f64
+        B8, // .b8
+        U8, // .u8
+        S8, // .s8
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -126,7 +126,7 @@ pub mod section_1 {
         pub ss: Option<Ss>, // {.ss}
         pub type_: Type, // .type
         pub a: AddressOperand, // [a]
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
     }
 
 }

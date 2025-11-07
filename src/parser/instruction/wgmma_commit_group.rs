@@ -17,10 +17,15 @@ pub mod section_0 {
             stream.expect_string("wgmma")?;
             stream.expect_string(".commit_group")?;
             let commit_group = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(WgmmaCommitGroupSyncAligned {
                 commit_group,
                 sync,

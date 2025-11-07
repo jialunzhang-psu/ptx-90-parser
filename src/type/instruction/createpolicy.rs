@@ -20,16 +20,16 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LevelPrimaryPriority {
-        L2EvictLast, // .L2::evict_last
+        L2EvictUnchanged, // .L2::evict_unchanged
         L2EvictNormal, // .L2::evict_normal
         L2EvictFirst, // .L2::evict_first
-        L2EvictUnchanged, // .L2::evict_unchanged
+        L2EvictLast, // .L2::evict_last
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LevelSecondaryPriority {
-        L2EvictFirst, // .L2::evict_first
         L2EvictUnchanged, // .L2::evict_unchanged
+        L2EvictFirst, // .L2::evict_first
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -39,10 +39,10 @@ pub mod section_0 {
         pub level_primary_priority: LevelPrimaryPriority, // .level::primary_priority
         pub level_secondary_priority: Option<LevelSecondaryPriority>, // {.level::secondary_priority}
         pub b64: (), // .b64
-        pub cache_policy: Operand, // cache-policy
+        pub cache_policy: GeneralOperand, // cache-policy
         pub a: AddressOperand, // [a]
-        pub primary_size: Operand, // primary-size
-        pub total_size: Operand, // total-size
+        pub primary_size: GeneralOperand, // primary-size
+        pub total_size: GeneralOperand, // total-size
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -51,8 +51,8 @@ pub mod section_0 {
         pub level_primary_priority: LevelPrimaryPriority, // .level::primary_priority
         pub level_secondary_priority: Option<LevelSecondaryPriority>, // {.level::secondary_priority}
         pub b64: (), // .b64
-        pub cache_policy: Operand, // cache-policy
-        pub fraction: Option<Operand>, // {, fraction}
+        pub cache_policy: GeneralOperand, // cache-policy
+        pub fraction: Option<GeneralOperand>, // {, fraction}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -60,8 +60,8 @@ pub mod section_0 {
         pub cvt: (), // .cvt
         pub l2: (), // .L2
         pub b64: (), // .b64
-        pub cache_policy: Operand, // cache-policy
-        pub access_property: Operand, // access-property
+        pub cache_policy: GeneralOperand, // cache-policy
+        pub access_property: GeneralOperand, // access-property
     }
 
 }

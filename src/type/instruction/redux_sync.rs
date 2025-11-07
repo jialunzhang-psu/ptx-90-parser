@@ -36,9 +36,9 @@ pub mod section_0 {
         pub sync: (), // .sync
         pub op: Op, // .op
         pub type_: Type, // .type
-        pub dst: Operand, // dst
-        pub src: Operand, // src
-        pub membermask: Operand, // membermask
+        pub dst: GeneralOperand, // dst
+        pub src: GeneralOperand, // src
+        pub membermask: GeneralOperand, // membermask
     }
 
 }
@@ -49,8 +49,8 @@ pub mod section_1 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Op {
         And, // .and
-        Or, // .or
         Xor, // .xor
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -58,9 +58,9 @@ pub mod section_1 {
         pub sync: (), // .sync
         pub op: Op, // .op
         pub b32: (), // .b32
-        pub dst: Operand, // dst
-        pub src: Operand, // src
-        pub membermask: Operand, // membermask
+        pub dst: GeneralOperand, // dst
+        pub src: GeneralOperand, // src
+        pub membermask: GeneralOperand, // membermask
     }
 
 }
@@ -81,9 +81,9 @@ pub mod section_2 {
         pub abs: bool, // {.abs}
         pub nan: bool, // {.NaN}
         pub f32: (), // .f32
-        pub dst: Operand, // dst
-        pub src: Operand, // src
-        pub membermask: Operand, // membermask
+        pub dst: GeneralOperand, // dst
+        pub src: GeneralOperand, // src
+        pub membermask: GeneralOperand, // membermask
     }
 
 }

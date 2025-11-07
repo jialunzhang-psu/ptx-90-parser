@@ -45,8 +45,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Mode {
-        Trap, // .trap
         Clamp, // .clamp
+        Trap, // .trap
         Zero, // .zero
     }
 
@@ -57,8 +57,8 @@ pub mod section_0 {
         pub geom: Geom, // .geom
         pub ctype: Ctype, // .ctype
         pub mode: Mode, // .mode
-        pub a: (Operand, Operand), // [a, b]
-        pub c: Operand, // c
+        pub a: TexHandler2, // [a, b]
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -90,8 +90,8 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Mode {
-        Trap, // .trap
         Clamp, // .clamp
+        Trap, // .trap
         Zero, // .zero
     }
 
@@ -102,8 +102,8 @@ pub mod section_1 {
         pub geom: Geom, // .geom
         pub ctype: Ctype, // .ctype
         pub mode: Mode, // .mode
-        pub a: (Operand, Operand), // [a, b]
-        pub c: Operand, // c
+        pub a: TexHandler2, // [a, b]
+        pub c: GeneralOperand, // c
     }
 
 }

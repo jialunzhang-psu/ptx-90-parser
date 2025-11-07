@@ -37,26 +37,26 @@ pub mod section_0 {
                     }
                     if let Some(ss_0) = self.ss.as_ref() {
                             match ss_0 {
+                                    Ss::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Ss::ParamFunc => {
+                                            push_directive(tokens, "param::func");
+                                    }
+                                    Ss::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Ss::Global => {
                                             push_directive(tokens, "global");
+                                    }
+                                    Ss::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                                     Ss::Local => {
                                             push_directive(tokens, "local");
                                     }
                                     Ss::Param => {
                                             push_directive(tokens, "param");
-                                    }
-                                    Ss::ParamFunc => {
-                                            push_directive(tokens, "param::func");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
                                     }
                             }
                     }
@@ -97,8 +97,8 @@ pub mod section_0 {
                             }
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
                             }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
@@ -109,12 +109,6 @@ pub mod section_0 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -123,9 +117,6 @@ pub mod section_0 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -141,6 +132,15 @@ pub mod section_0 {
                             }
                             Type::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.a.unparse_tokens(tokens);
@@ -162,8 +162,20 @@ pub mod section_0 {
                     }
                     if let Some(ss_5) = self.ss.as_ref() {
                             match ss_5 {
+                                    Ss::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Ss::ParamFunc => {
+                                            push_directive(tokens, "param::func");
+                                    }
+                                    Ss::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Ss::Global => {
                                             push_directive(tokens, "global");
+                                    }
+                                    Ss::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                                     Ss::Local => {
                                             push_directive(tokens, "local");
@@ -171,36 +183,24 @@ pub mod section_0 {
                                     Ss::Param => {
                                             push_directive(tokens, "param");
                                     }
-                                    Ss::ParamFunc => {
-                                            push_directive(tokens, "param::func");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
-                                    }
                             }
                     }
                     if let Some(level1_eviction_priority_6) = self.level1_eviction_priority.as_ref() {
                             match level1_eviction_priority_6 {
-                                    Level1EvictionPriority::L1EvictNormal => {
-                                            push_directive(tokens, "L1::evict_normal");
-                                    }
                                     Level1EvictionPriority::L1EvictUnchanged => {
                                             push_directive(tokens, "L1::evict_unchanged");
+                                    }
+                                    Level1EvictionPriority::L1EvictNormal => {
+                                            push_directive(tokens, "L1::evict_normal");
                                     }
                                     Level1EvictionPriority::L1EvictFirst => {
                                             push_directive(tokens, "L1::evict_first");
                                     }
-                                    Level1EvictionPriority::L1EvictLast => {
-                                            push_directive(tokens, "L1::evict_last");
-                                    }
                                     Level1EvictionPriority::L1NoAllocate => {
                                             push_directive(tokens, "L1::no_allocate");
+                                    }
+                                    Level1EvictionPriority::L1EvictLast => {
+                                            push_directive(tokens, "L1::evict_last");
                                     }
                             }
                     }
@@ -238,8 +238,8 @@ pub mod section_0 {
                             }
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
                             }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
@@ -250,12 +250,6 @@ pub mod section_0 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -264,9 +258,6 @@ pub mod section_0 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -282,6 +273,15 @@ pub mod section_0 {
                             }
                             Type::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.a.unparse_tokens(tokens);
@@ -301,26 +301,26 @@ pub mod section_0 {
                     push_directive(tokens, "volatile");
                     if let Some(ss_11) = self.ss.as_ref() {
                             match ss_11 {
+                                    Ss::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Ss::ParamFunc => {
+                                            push_directive(tokens, "param::func");
+                                    }
+                                    Ss::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Ss::Global => {
                                             push_directive(tokens, "global");
+                                    }
+                                    Ss::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                                     Ss::Local => {
                                             push_directive(tokens, "local");
                                     }
                                     Ss::Param => {
                                             push_directive(tokens, "param");
-                                    }
-                                    Ss::ParamFunc => {
-                                            push_directive(tokens, "param::func");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
                                     }
                             }
                     }
@@ -338,8 +338,8 @@ pub mod section_0 {
                             }
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
                             }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
@@ -350,12 +350,6 @@ pub mod section_0 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -364,9 +358,6 @@ pub mod section_0 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -383,6 +374,15 @@ pub mod section_0 {
                             Type::F64 => {
                                     push_directive(tokens, "f64");
                             }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
+                            }
                     }
                     self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
@@ -396,11 +396,11 @@ pub mod section_0 {
             push_opcode(tokens, "st");
                     push_directive(tokens, "relaxed");
                     match &self.scope {
-                            Scope::Cta => {
-                                    push_directive(tokens, "cta");
-                            }
                             Scope::Cluster => {
                                     push_directive(tokens, "cluster");
+                            }
+                            Scope::Cta => {
+                                    push_directive(tokens, "cta");
                             }
                             Scope::Gpu => {
                                     push_directive(tokens, "gpu");
@@ -411,8 +411,20 @@ pub mod section_0 {
                     }
                     if let Some(ss_13) = self.ss.as_ref() {
                             match ss_13 {
+                                    Ss::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Ss::ParamFunc => {
+                                            push_directive(tokens, "param::func");
+                                    }
+                                    Ss::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Ss::Global => {
                                             push_directive(tokens, "global");
+                                    }
+                                    Ss::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                                     Ss::Local => {
                                             push_directive(tokens, "local");
@@ -420,36 +432,24 @@ pub mod section_0 {
                                     Ss::Param => {
                                             push_directive(tokens, "param");
                                     }
-                                    Ss::ParamFunc => {
-                                            push_directive(tokens, "param::func");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
-                                    }
                             }
                     }
                     if let Some(level1_eviction_priority_14) = self.level1_eviction_priority.as_ref() {
                             match level1_eviction_priority_14 {
-                                    Level1EvictionPriority::L1EvictNormal => {
-                                            push_directive(tokens, "L1::evict_normal");
-                                    }
                                     Level1EvictionPriority::L1EvictUnchanged => {
                                             push_directive(tokens, "L1::evict_unchanged");
+                                    }
+                                    Level1EvictionPriority::L1EvictNormal => {
+                                            push_directive(tokens, "L1::evict_normal");
                                     }
                                     Level1EvictionPriority::L1EvictFirst => {
                                             push_directive(tokens, "L1::evict_first");
                                     }
-                                    Level1EvictionPriority::L1EvictLast => {
-                                            push_directive(tokens, "L1::evict_last");
-                                    }
                                     Level1EvictionPriority::L1NoAllocate => {
                                             push_directive(tokens, "L1::no_allocate");
+                                    }
+                                    Level1EvictionPriority::L1EvictLast => {
+                                            push_directive(tokens, "L1::evict_last");
                                     }
                             }
                     }
@@ -487,8 +487,8 @@ pub mod section_0 {
                             }
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
                             }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
@@ -499,12 +499,6 @@ pub mod section_0 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -513,9 +507,6 @@ pub mod section_0 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -531,6 +522,15 @@ pub mod section_0 {
                             }
                             Type::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.a.unparse_tokens(tokens);
@@ -549,11 +549,11 @@ pub mod section_0 {
             push_opcode(tokens, "st");
                     push_directive(tokens, "release");
                     match &self.scope {
-                            Scope::Cta => {
-                                    push_directive(tokens, "cta");
-                            }
                             Scope::Cluster => {
                                     push_directive(tokens, "cluster");
+                            }
+                            Scope::Cta => {
+                                    push_directive(tokens, "cta");
                             }
                             Scope::Gpu => {
                                     push_directive(tokens, "gpu");
@@ -564,8 +564,20 @@ pub mod section_0 {
                     }
                     if let Some(ss_19) = self.ss.as_ref() {
                             match ss_19 {
+                                    Ss::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
+                                    }
+                                    Ss::ParamFunc => {
+                                            push_directive(tokens, "param::func");
+                                    }
+                                    Ss::SharedCta => {
+                                            push_directive(tokens, "shared::cta");
+                                    }
                                     Ss::Global => {
                                             push_directive(tokens, "global");
+                                    }
+                                    Ss::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                                     Ss::Local => {
                                             push_directive(tokens, "local");
@@ -573,36 +585,24 @@ pub mod section_0 {
                                     Ss::Param => {
                                             push_directive(tokens, "param");
                                     }
-                                    Ss::ParamFunc => {
-                                            push_directive(tokens, "param::func");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
-                                    }
                             }
                     }
                     if let Some(level1_eviction_priority_20) = self.level1_eviction_priority.as_ref() {
                             match level1_eviction_priority_20 {
-                                    Level1EvictionPriority::L1EvictNormal => {
-                                            push_directive(tokens, "L1::evict_normal");
-                                    }
                                     Level1EvictionPriority::L1EvictUnchanged => {
                                             push_directive(tokens, "L1::evict_unchanged");
+                                    }
+                                    Level1EvictionPriority::L1EvictNormal => {
+                                            push_directive(tokens, "L1::evict_normal");
                                     }
                                     Level1EvictionPriority::L1EvictFirst => {
                                             push_directive(tokens, "L1::evict_first");
                                     }
-                                    Level1EvictionPriority::L1EvictLast => {
-                                            push_directive(tokens, "L1::evict_last");
-                                    }
                                     Level1EvictionPriority::L1NoAllocate => {
                                             push_directive(tokens, "L1::no_allocate");
+                                    }
+                                    Level1EvictionPriority::L1EvictLast => {
+                                            push_directive(tokens, "L1::evict_last");
                                     }
                             }
                     }
@@ -640,8 +640,8 @@ pub mod section_0 {
                             }
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
                             }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
@@ -652,12 +652,6 @@ pub mod section_0 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -666,9 +660,6 @@ pub mod section_0 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -684,6 +675,15 @@ pub mod section_0 {
                             }
                             Type::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.a.unparse_tokens(tokens);
@@ -707,8 +707,8 @@ pub mod section_0 {
                             push_directive(tokens, "global");
                     }
                     match &self.type_ {
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
                             }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
@@ -719,12 +719,6 @@ pub mod section_0 {
                             Type::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -733,9 +727,6 @@ pub mod section_0 {
                             }
                             Type::U64 => {
                                     push_directive(tokens, "u64");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
                             }
                             Type::S16 => {
                                     push_directive(tokens, "s16");
@@ -751,6 +742,15 @@ pub mod section_0 {
                             }
                             Type::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Type::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
+                            Type::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Type::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.a.unparse_tokens(tokens);

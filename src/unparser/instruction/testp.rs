@@ -19,23 +19,23 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "testp");
                     match &self.op {
-                            Op::Finite => {
-                                    push_directive(tokens, "finite");
+                            Op::Notanumber => {
+                                    push_directive(tokens, "notanumber");
+                            }
+                            Op::Subnormal => {
+                                    push_directive(tokens, "subnormal");
                             }
                             Op::Infinite => {
                                     push_directive(tokens, "infinite");
                             }
+                            Op::Finite => {
+                                    push_directive(tokens, "finite");
+                            }
                             Op::Number => {
                                     push_directive(tokens, "number");
                             }
-                            Op::Notanumber => {
-                                    push_directive(tokens, "notanumber");
-                            }
                             Op::Normal => {
                                     push_directive(tokens, "normal");
-                            }
-                            Op::Subnormal => {
-                                    push_directive(tokens, "subnormal");
                             }
                     }
                     match &self.type_ {

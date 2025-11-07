@@ -49,10 +49,16 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".shift")?;
             let shift = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".down")?;
             let down = ();
+            stream.expect_complete()?;
             let taddr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05ShiftCtaGroupDown {
                 shift,
                 cta_group,

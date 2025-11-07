@@ -38,9 +38,6 @@ pub mod section_0 {
             push_opcode(tokens, "fence");
                     if let Some(sem_0) = self.sem.as_ref() {
                             match sem_0 {
-                                    Sem::Sc => {
-                                            push_directive(tokens, "sc");
-                                    }
                                     Sem::AcqRel => {
                                             push_directive(tokens, "acq_rel");
                                     }
@@ -50,14 +47,17 @@ pub mod section_0 {
                                     Sem::Release => {
                                             push_directive(tokens, "release");
                                     }
+                                    Sem::Sc => {
+                                            push_directive(tokens, "sc");
+                                    }
                             }
                     }
                     match &self.scope {
-                            Scope::Cta => {
-                                    push_directive(tokens, "cta");
-                            }
                             Scope::Cluster => {
                                     push_directive(tokens, "cluster");
+                            }
+                            Scope::Cta => {
+                                    push_directive(tokens, "cta");
                             }
                             Scope::Gpu => {
                                     push_directive(tokens, "gpu");
@@ -109,20 +109,20 @@ pub mod section_0 {
             push_opcode(tokens, "fence");
                     push_directive(tokens, "proxy");
                     match &self.proxykind {
+                            Proxykind::AsyncSharedCluster => {
+                                    push_directive(tokens, "async.shared::cluster");
+                            }
+                            Proxykind::AsyncSharedCta => {
+                                    push_directive(tokens, "async.shared::cta");
+                            }
+                            Proxykind::AsyncGlobal => {
+                                    push_directive(tokens, "async.global");
+                            }
                             Proxykind::Alias => {
                                     push_directive(tokens, "alias");
                             }
                             Proxykind::Async => {
                                     push_directive(tokens, "async");
-                            }
-                            Proxykind::AsyncGlobal => {
-                                    push_directive(tokens, "async.global");
-                            }
-                            Proxykind::AsyncSharedCta => {
-                                    push_directive(tokens, "async.shared::cta");
-                            }
-                            Proxykind::AsyncSharedCluster => {
-                                    push_directive(tokens, "async.shared::cluster");
                             }
                     }
             tokens.push(PtxToken::Semicolon);
@@ -140,11 +140,11 @@ pub mod section_0 {
                     }
                     push_directive(tokens, "release");
                     match &self.scope {
-                            Scope::Cta => {
-                                    push_directive(tokens, "cta");
-                            }
                             Scope::Cluster => {
                                     push_directive(tokens, "cluster");
+                            }
+                            Scope::Cta => {
+                                    push_directive(tokens, "cta");
                             }
                             Scope::Gpu => {
                                     push_directive(tokens, "gpu");
@@ -168,11 +168,11 @@ pub mod section_0 {
                     }
                     push_directive(tokens, "acquire");
                     match &self.scope {
-                            Scope::Cta => {
-                                    push_directive(tokens, "cta");
-                            }
                             Scope::Cluster => {
                                     push_directive(tokens, "cluster");
+                            }
+                            Scope::Cta => {
+                                    push_directive(tokens, "cta");
                             }
                             Scope::Gpu => {
                                     push_directive(tokens, "gpu");
@@ -219,11 +219,11 @@ pub mod section_0 {
                             Level::Cta => {
                                     push_directive(tokens, "cta");
                             }
-                            Level::Gl => {
-                                    push_directive(tokens, "gl");
-                            }
                             Level::Sys => {
                                     push_directive(tokens, "sys");
+                            }
+                            Level::Gl => {
+                                    push_directive(tokens, "gl");
                             }
                     }
             tokens.push(PtxToken::Semicolon);
@@ -235,20 +235,20 @@ pub mod section_0 {
             push_opcode(tokens, "membar");
                     push_directive(tokens, "proxy");
                     match &self.proxykind {
+                            Proxykind::AsyncSharedCluster => {
+                                    push_directive(tokens, "async.shared::cluster");
+                            }
+                            Proxykind::AsyncSharedCta => {
+                                    push_directive(tokens, "async.shared::cta");
+                            }
+                            Proxykind::AsyncGlobal => {
+                                    push_directive(tokens, "async.global");
+                            }
                             Proxykind::Alias => {
                                     push_directive(tokens, "alias");
                             }
                             Proxykind::Async => {
                                     push_directive(tokens, "async");
-                            }
-                            Proxykind::AsyncGlobal => {
-                                    push_directive(tokens, "async.global");
-                            }
-                            Proxykind::AsyncSharedCta => {
-                                    push_directive(tokens, "async.shared::cta");
-                            }
-                            Proxykind::AsyncSharedCluster => {
-                                    push_directive(tokens, "async.shared::cluster");
                             }
                     }
             tokens.push(PtxToken::Semicolon);

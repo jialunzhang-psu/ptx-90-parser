@@ -17,8 +17,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum State {
-        Shared, // .shared
         SharedCta, // .shared::cta
+        Shared, // .shared
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -28,16 +28,16 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LevelPrefetchSize {
-        L264b, // .L2::64B
         L2128b, // .L2::128B
         L2256b, // .L2::256B
+        L264b, // .L2::64B
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum CpSize {
+        _16, // 16
         _4, // 4
         _8, // 8
-        _16, // 16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -51,8 +51,8 @@ pub mod section_0 {
         pub dst: AddressOperand, // [dst]
         pub src: AddressOperand, // [src]
         pub cp_size: CpSize, // cp-size
-        pub src_size: Option<Operand>, // {, src-size}
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub src_size: Option<GeneralOperand>, // {, src-size}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -66,8 +66,8 @@ pub mod section_0 {
         pub dst: AddressOperand, // [dst]
         pub src: AddressOperand, // [src]
         pub imm_16: (), // 16
-        pub src_size: Option<Operand>, // {, src-size}
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub src_size: Option<GeneralOperand>, // {, src-size}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -81,8 +81,8 @@ pub mod section_0 {
         pub dst: AddressOperand, // [dst]
         pub src: AddressOperand, // [src]
         pub cp_size: CpSize, // cp-size
-        pub ignore_src: Option<Operand>, // {, ignore-src}
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub ignore_src: Option<GeneralOperand>, // {, ignore-src}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -96,8 +96,8 @@ pub mod section_0 {
         pub dst: AddressOperand, // [dst]
         pub src: AddressOperand, // [src]
         pub imm_16: (), // 16
-        pub ignore_src: Option<Operand>, // {, ignore-src}
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub ignore_src: Option<GeneralOperand>, // {, ignore-src}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }

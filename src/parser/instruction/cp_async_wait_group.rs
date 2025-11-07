@@ -18,9 +18,14 @@ pub mod section_0 {
             stream.expect_string("cp")?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             stream.expect_string(".wait_group")?;
             let wait_group = ();
-            let n = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let n = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CpAsyncWaitGroup {
                 async_,
                 wait_group,
@@ -35,8 +40,12 @@ pub mod section_0 {
             stream.expect_string("cp")?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             stream.expect_string(".wait_all")?;
             let wait_all = ();
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CpAsyncWaitAll {
                 async_,
                 wait_all,

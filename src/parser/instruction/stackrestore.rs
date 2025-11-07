@@ -48,7 +48,11 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("stackrestore")?;
             let type_ = Type::parse(stream)?;
-            let a = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(StackrestoreType {
                 type_,
                 a,

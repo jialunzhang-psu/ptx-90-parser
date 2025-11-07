@@ -42,10 +42,16 @@ pub mod section_0 {
             if !global {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let level_eviction_priority = LevelEvictionPriority::parse(stream)?;
+            stream.expect_complete()?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let size = Operand::parse(stream)?;
+            let size = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ApplypriorityGlobalLevelEvictionPriority {
                 global,
                 level_eviction_priority,

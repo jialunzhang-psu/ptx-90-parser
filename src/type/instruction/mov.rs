@@ -42,36 +42,36 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct MovType {
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MovU32 {
         pub u32: (), // .u32
-        pub d: Operand, // d
-        pub fname: Operand, // fname
+        pub d: GeneralOperand, // d
+        pub fname: GeneralOperand, // fname
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MovU64 {
         pub u64: (), // .u64
-        pub d: Operand, // d
-        pub fname: Operand, // fname
+        pub d: GeneralOperand, // d
+        pub fname: GeneralOperand, // fname
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MovU321 {
         pub u32: (), // .u32
-        pub d: Operand, // d
-        pub kernel: Operand, // kernel
+        pub d: GeneralOperand, // d
+        pub kernel: GeneralOperand, // kernel
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MovU641 {
         pub u64: (), // .u64
-        pub d: Operand, // d
-        pub kernel: Operand, // kernel
+        pub d: GeneralOperand, // d
+        pub kernel: GeneralOperand, // kernel
     }
 
 }
@@ -81,17 +81,17 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Type {
+        B128, // .b128
         B16, // .b16
         B32, // .b32
         B64, // .b64
-        B128, // .b128
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MovType1 {
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
 }

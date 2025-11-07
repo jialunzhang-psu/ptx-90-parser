@@ -13,16 +13,16 @@ pub mod section_0 {
     pub struct BrxIdxUni {
         pub idx: (), // .idx
         pub uni: bool, // {.uni}
-        pub index: Operand, // index
-        pub tlist: Operand, // tlist
+        pub index: GeneralOperand, // index
+        pub tlist: GeneralOperand, // tlist
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BrxIdxUni1 {
         pub idx: (), // .idx
         pub uni: bool, // {.uni}
-        pub index: Operand, // index
-        pub tlist: Operand, // tlist
+        pub index: GeneralOperand, // index
+        pub tlist: GeneralOperand, // tlist
     }
 
 }

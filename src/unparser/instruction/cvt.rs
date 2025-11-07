@@ -72,8 +72,8 @@ pub mod section_0 {
                             push_directive(tokens, "sat");
                     }
                     match &self.dtype {
-                            Dtype::U8 => {
-                                    push_directive(tokens, "u8");
+                            Dtype::Bf16 => {
+                                    push_directive(tokens, "bf16");
                             }
                             Dtype::U16 => {
                                     push_directive(tokens, "u16");
@@ -84,9 +84,6 @@ pub mod section_0 {
                             Dtype::U64 => {
                                     push_directive(tokens, "u64");
                             }
-                            Dtype::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
                             Dtype::S16 => {
                                     push_directive(tokens, "s16");
                             }
@@ -95,9 +92,6 @@ pub mod section_0 {
                             }
                             Dtype::S64 => {
                                     push_directive(tokens, "s64");
-                            }
-                            Dtype::Bf16 => {
-                                    push_directive(tokens, "bf16");
                             }
                             Dtype::F16 => {
                                     push_directive(tokens, "f16");
@@ -108,10 +102,16 @@ pub mod section_0 {
                             Dtype::F64 => {
                                     push_directive(tokens, "f64");
                             }
+                            Dtype::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Dtype::S8 => {
+                                    push_directive(tokens, "s8");
+                            }
                     }
                     match &self.atype {
-                            Atype::U8 => {
-                                    push_directive(tokens, "u8");
+                            Atype::Bf16 => {
+                                    push_directive(tokens, "bf16");
                             }
                             Atype::U16 => {
                                     push_directive(tokens, "u16");
@@ -122,9 +122,6 @@ pub mod section_0 {
                             Atype::U64 => {
                                     push_directive(tokens, "u64");
                             }
-                            Atype::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
                             Atype::S16 => {
                                     push_directive(tokens, "s16");
                             }
@@ -134,9 +131,6 @@ pub mod section_0 {
                             Atype::S64 => {
                                     push_directive(tokens, "s64");
                             }
-                            Atype::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
                             Atype::F16 => {
                                     push_directive(tokens, "f16");
                             }
@@ -145,6 +139,12 @@ pub mod section_0 {
                             }
                             Atype::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Atype::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Atype::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.d.unparse_tokens(tokens);
@@ -180,8 +180,8 @@ pub mod section_0 {
                             push_directive(tokens, "sat");
                     }
                     match &self.dtype {
-                            Dtype::U8 => {
-                                    push_directive(tokens, "u8");
+                            Dtype::Bf16 => {
+                                    push_directive(tokens, "bf16");
                             }
                             Dtype::U16 => {
                                     push_directive(tokens, "u16");
@@ -192,9 +192,6 @@ pub mod section_0 {
                             Dtype::U64 => {
                                     push_directive(tokens, "u64");
                             }
-                            Dtype::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
                             Dtype::S16 => {
                                     push_directive(tokens, "s16");
                             }
@@ -203,9 +200,6 @@ pub mod section_0 {
                             }
                             Dtype::S64 => {
                                     push_directive(tokens, "s64");
-                            }
-                            Dtype::Bf16 => {
-                                    push_directive(tokens, "bf16");
                             }
                             Dtype::F16 => {
                                     push_directive(tokens, "f16");
@@ -216,10 +210,16 @@ pub mod section_0 {
                             Dtype::F64 => {
                                     push_directive(tokens, "f64");
                             }
+                            Dtype::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Dtype::S8 => {
+                                    push_directive(tokens, "s8");
+                            }
                     }
                     match &self.atype {
-                            Atype::U8 => {
-                                    push_directive(tokens, "u8");
+                            Atype::Bf16 => {
+                                    push_directive(tokens, "bf16");
                             }
                             Atype::U16 => {
                                     push_directive(tokens, "u16");
@@ -230,9 +230,6 @@ pub mod section_0 {
                             Atype::U64 => {
                                     push_directive(tokens, "u64");
                             }
-                            Atype::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
                             Atype::S16 => {
                                     push_directive(tokens, "s16");
                             }
@@ -242,9 +239,6 @@ pub mod section_0 {
                             Atype::S64 => {
                                     push_directive(tokens, "s64");
                             }
-                            Atype::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
                             Atype::F16 => {
                                     push_directive(tokens, "f16");
                             }
@@ -253,6 +247,12 @@ pub mod section_0 {
                             }
                             Atype::F64 => {
                                     push_directive(tokens, "f64");
+                            }
+                            Atype::U8 => {
+                                    push_directive(tokens, "u8");
+                            }
+                            Atype::S8 => {
+                                    push_directive(tokens, "s8");
                             }
                     }
                     self.d.unparse_tokens(tokens);
@@ -550,16 +550,7 @@ pub mod section_0 {
                     push_directive(tokens, "f32");
                     self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBrace);
-                    let &( ref group_2_0, ref group_2_1, ref group_2_2, ref group_2_3) = &self.a;
-                    group_2_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_2_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_2_2.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_2_3.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBrace);
+                    self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.rbits.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
@@ -625,16 +616,7 @@ pub mod section_0 {
                     push_directive(tokens, "f32");
                     self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBrace);
-                    let &( ref group_3_0, ref group_3_1, ref group_3_2, ref group_3_3) = &self.a;
-                    group_3_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_3_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_3_2.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_3_3.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBrace);
+                    self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.rbits.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
@@ -709,16 +691,7 @@ pub mod section_0 {
                     push_directive(tokens, "f32");
                     self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBrace);
-                    let &( ref group_4_0, ref group_4_1, ref group_4_2, ref group_4_3) = &self.a;
-                    group_4_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_4_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_4_2.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_4_3.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBrace);
+                    self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.rbits.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);

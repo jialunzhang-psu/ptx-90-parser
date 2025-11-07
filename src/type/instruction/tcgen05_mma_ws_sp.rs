@@ -28,9 +28,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Kind {
-        KindF16, // .kind::f16
-        KindTf32, // .kind::tf32
         KindF8f6f4, // .kind::f8f6f4
+        KindTf32, // .kind::tf32
+        KindF16, // .kind::f16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -42,12 +42,12 @@ pub mod section_0 {
         pub kind: Kind, // .kind
         pub collector_usage: bool, // {.collector_usage}
         pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
         pub sp_meta_tmem: AddressOperand, // [sp-meta-tmem]
-        pub idesc: Operand, // idesc
-        pub enable_input_d: Operand, // enable-input-d
-        pub zero_column_mask_desc: Option<Operand>, // {, zero-column-mask-desc}
+        pub idesc: GeneralOperand, // idesc
+        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -60,11 +60,11 @@ pub mod section_0 {
         pub collector_usage: bool, // {.collector_usage}
         pub d_tmem: AddressOperand, // [d-tmem]
         pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: Operand, // b-desc
+        pub b_desc: GeneralOperand, // b-desc
         pub sp_meta_tmem: AddressOperand, // [sp-meta-tmem]
-        pub idesc: Operand, // idesc
-        pub enable_input_d: Operand, // enable-input-d
-        pub zero_column_mask_desc: Option<Operand>, // {, zero-column-mask-desc}
+        pub idesc: GeneralOperand, // idesc
+        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
     }
 
 }
@@ -82,10 +82,10 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Op {
-        Fill, // ::fill
-        Use, // ::use
         Lastuse, // ::lastuse
         Discard, // ::discard
+        Fill, // ::fill
+        Use, // ::use
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -102,12 +102,12 @@ pub mod section_1 {
         pub kind_i8: (), // .kind::i8
         pub collector_usage: Option<CollectorUsage>, // {.collector_usage}
         pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
         pub sp_meta_tmem: AddressOperand, // [sp-meta-tmem]
-        pub idesc: Operand, // idesc
-        pub enable_input_d: Operand, // enable-input-d
-        pub zero_column_mask_desc: Option<Operand>, // {, zero-column-mask-desc}
+        pub idesc: GeneralOperand, // idesc
+        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -120,11 +120,11 @@ pub mod section_1 {
         pub collector_usage: Option<CollectorUsage>, // {.collector_usage}
         pub d_tmem: AddressOperand, // [d-tmem]
         pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: Operand, // b-desc
+        pub b_desc: GeneralOperand, // b-desc
         pub sp_meta_tmem: AddressOperand, // [sp-meta-tmem]
-        pub idesc: Operand, // idesc
-        pub enable_input_d: Operand, // enable-input-d
-        pub zero_column_mask_desc: Option<Operand>, // {, zero-column-mask-desc}
+        pub idesc: GeneralOperand, // idesc
+        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
     }
 
 }

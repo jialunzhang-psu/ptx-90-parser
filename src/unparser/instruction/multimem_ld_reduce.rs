@@ -57,11 +57,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_1) = self.scope.as_ref() {
                             match scope_1 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -91,11 +91,11 @@ pub mod section_0 {
                             Op::And => {
                                     push_directive(tokens, "and");
                             }
-                            Op::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Op::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Op::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     match &self.type_ {
@@ -150,11 +150,11 @@ pub mod section_0 {
                             Op::And => {
                                     push_directive(tokens, "and");
                             }
-                            Op::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Op::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Op::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     match &self.type_ {
@@ -200,11 +200,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_5) = self.scope.as_ref() {
                             match scope_5 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -303,11 +303,11 @@ pub mod section_0 {
                     }
                     if let Some(scope_9) = self.scope.as_ref() {
                             match scope_9 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -337,11 +337,11 @@ pub mod section_0 {
                             Op::And => {
                                     push_directive(tokens, "and");
                             }
-                            Op::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Op::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Op::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     match &self.type_ {
@@ -393,11 +393,11 @@ pub mod section_1 {
                     }
                     if let Some(scope_12) = self.scope.as_ref() {
                             match scope_12 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -449,26 +449,8 @@ pub mod section_1 {
                             }
                     }
                     match &self.type_ {
-                            Type::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Type::F16x2 => {
-                                    push_directive(tokens, "f16x2");
-                            }
-                            Type::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
                             Type::Bf16x2 => {
                                     push_directive(tokens, "bf16x2");
-                            }
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Type::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Type::E5m2 => {
-                                    push_directive(tokens, "e5m2");
                             }
                             Type::E5m2x2 => {
                                     push_directive(tokens, "e5m2x2");
@@ -476,14 +458,32 @@ pub mod section_1 {
                             Type::E5m2x4 => {
                                     push_directive(tokens, "e5m2x4");
                             }
-                            Type::E4m3 => {
-                                    push_directive(tokens, "e4m3");
-                            }
                             Type::E4m3x2 => {
                                     push_directive(tokens, "e4m3x2");
                             }
                             Type::E4m3x4 => {
                                     push_directive(tokens, "e4m3x4");
+                            }
+                            Type::F16x2 => {
+                                    push_directive(tokens, "f16x2");
+                            }
+                            Type::Bf16 => {
+                                    push_directive(tokens, "bf16");
+                            }
+                            Type::E5m2 => {
+                                    push_directive(tokens, "e5m2");
+                            }
+                            Type::E4m3 => {
+                                    push_directive(tokens, "e4m3");
+                            }
+                            Type::F16 => {
+                                    push_directive(tokens, "f16");
+                            }
+                            Type::F32 => {
+                                    push_directive(tokens, "f32");
+                            }
+                            Type::F64 => {
+                                    push_directive(tokens, "f64");
                             }
                     }
                     self.d.unparse_tokens(tokens);
@@ -540,26 +540,8 @@ pub mod section_1 {
                             }
                     }
                     match &self.type_ {
-                            Type::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Type::F16x2 => {
-                                    push_directive(tokens, "f16x2");
-                            }
-                            Type::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
                             Type::Bf16x2 => {
                                     push_directive(tokens, "bf16x2");
-                            }
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Type::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Type::E5m2 => {
-                                    push_directive(tokens, "e5m2");
                             }
                             Type::E5m2x2 => {
                                     push_directive(tokens, "e5m2x2");
@@ -567,14 +549,32 @@ pub mod section_1 {
                             Type::E5m2x4 => {
                                     push_directive(tokens, "e5m2x4");
                             }
-                            Type::E4m3 => {
-                                    push_directive(tokens, "e4m3");
-                            }
                             Type::E4m3x2 => {
                                     push_directive(tokens, "e4m3x2");
                             }
                             Type::E4m3x4 => {
                                     push_directive(tokens, "e4m3x4");
+                            }
+                            Type::F16x2 => {
+                                    push_directive(tokens, "f16x2");
+                            }
+                            Type::Bf16 => {
+                                    push_directive(tokens, "bf16");
+                            }
+                            Type::E5m2 => {
+                                    push_directive(tokens, "e5m2");
+                            }
+                            Type::E4m3 => {
+                                    push_directive(tokens, "e4m3");
+                            }
+                            Type::F16 => {
+                                    push_directive(tokens, "f16");
+                            }
+                            Type::F32 => {
+                                    push_directive(tokens, "f32");
+                            }
+                            Type::F64 => {
+                                    push_directive(tokens, "f64");
                             }
                     }
                     self.d.unparse_tokens(tokens);
@@ -600,11 +600,11 @@ pub mod section_1 {
                     }
                     if let Some(scope_20) = self.scope.as_ref() {
                             match scope_20 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -635,26 +635,8 @@ pub mod section_1 {
                             }
                     }
                     match &self.type_ {
-                            Type::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Type::F16x2 => {
-                                    push_directive(tokens, "f16x2");
-                            }
-                            Type::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
                             Type::Bf16x2 => {
                                     push_directive(tokens, "bf16x2");
-                            }
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Type::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Type::E5m2 => {
-                                    push_directive(tokens, "e5m2");
                             }
                             Type::E5m2x2 => {
                                     push_directive(tokens, "e5m2x2");
@@ -662,14 +644,32 @@ pub mod section_1 {
                             Type::E5m2x4 => {
                                     push_directive(tokens, "e5m2x4");
                             }
-                            Type::E4m3 => {
-                                    push_directive(tokens, "e4m3");
-                            }
                             Type::E4m3x2 => {
                                     push_directive(tokens, "e4m3x2");
                             }
                             Type::E4m3x4 => {
                                     push_directive(tokens, "e4m3x4");
+                            }
+                            Type::F16x2 => {
+                                    push_directive(tokens, "f16x2");
+                            }
+                            Type::Bf16 => {
+                                    push_directive(tokens, "bf16");
+                            }
+                            Type::E5m2 => {
+                                    push_directive(tokens, "e5m2");
+                            }
+                            Type::E4m3 => {
+                                    push_directive(tokens, "e4m3");
+                            }
+                            Type::F16 => {
+                                    push_directive(tokens, "f16");
+                            }
+                            Type::F32 => {
+                                    push_directive(tokens, "f32");
+                            }
+                            Type::F64 => {
+                                    push_directive(tokens, "f64");
                             }
                     }
                     self.a.unparse_tokens(tokens);
@@ -705,26 +705,8 @@ pub mod section_1 {
                             }
                     }
                     match &self.type_ {
-                            Type::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Type::F16x2 => {
-                                    push_directive(tokens, "f16x2");
-                            }
-                            Type::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
                             Type::Bf16x2 => {
                                     push_directive(tokens, "bf16x2");
-                            }
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Type::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Type::E5m2 => {
-                                    push_directive(tokens, "e5m2");
                             }
                             Type::E5m2x2 => {
                                     push_directive(tokens, "e5m2x2");
@@ -732,14 +714,32 @@ pub mod section_1 {
                             Type::E5m2x4 => {
                                     push_directive(tokens, "e5m2x4");
                             }
-                            Type::E4m3 => {
-                                    push_directive(tokens, "e4m3");
-                            }
                             Type::E4m3x2 => {
                                     push_directive(tokens, "e4m3x2");
                             }
                             Type::E4m3x4 => {
                                     push_directive(tokens, "e4m3x4");
+                            }
+                            Type::F16x2 => {
+                                    push_directive(tokens, "f16x2");
+                            }
+                            Type::Bf16 => {
+                                    push_directive(tokens, "bf16");
+                            }
+                            Type::E5m2 => {
+                                    push_directive(tokens, "e5m2");
+                            }
+                            Type::E4m3 => {
+                                    push_directive(tokens, "e4m3");
+                            }
+                            Type::F16 => {
+                                    push_directive(tokens, "f16");
+                            }
+                            Type::F32 => {
+                                    push_directive(tokens, "f32");
+                            }
+                            Type::F64 => {
+                                    push_directive(tokens, "f64");
                             }
                     }
                     self.a.unparse_tokens(tokens);
@@ -765,11 +765,11 @@ pub mod section_1 {
                     }
                     if let Some(scope_26) = self.scope.as_ref() {
                             match scope_26 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                                     Scope::Gpu => {
                                             push_directive(tokens, "gpu");
@@ -805,8 +805,8 @@ pub mod section_1 {
                             }
                     }
                     match &self.redtype {
-                            Redtype::F16 => {
-                                    push_directive(tokens, "f16");
+                            Redtype::Bf16x2 => {
+                                    push_directive(tokens, "bf16x2");
                             }
                             Redtype::F16x2 => {
                                     push_directive(tokens, "f16x2");
@@ -814,8 +814,8 @@ pub mod section_1 {
                             Redtype::Bf16 => {
                                     push_directive(tokens, "bf16");
                             }
-                            Redtype::Bf16x2 => {
-                                    push_directive(tokens, "bf16x2");
+                            Redtype::F16 => {
+                                    push_directive(tokens, "f16");
                             }
                             Redtype::F32 => {
                                     push_directive(tokens, "f32");

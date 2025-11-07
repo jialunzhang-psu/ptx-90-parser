@@ -21,15 +21,6 @@ pub mod section_0 {
 
     impl PtxParser for Scope {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Scope::Cta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
             // Try Cluster
             {
                 let saved_pos = stream.position();
@@ -38,9 +29,18 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try Cta
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta").is_ok() {
+                    return Ok(Scope::Cta);
+                }
+                stream.set_position(saved_pos);
+            }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta", ".cluster"];
+            let expected = &[".cluster", ".cta"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -65,11 +65,11 @@ pub mod section_0 {
 
     impl PtxParser for Space {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Shared
+            // Try SharedCluster
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Space::Shared);
+                if stream.expect_string(".shared::cluster").is_ok() {
+                    return Ok(Space::SharedCluster);
                 }
                 stream.set_position(saved_pos);
             }
@@ -84,17 +84,17 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try SharedCluster
+            // Try Shared
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".shared::cluster").is_ok() {
-                    return Ok(Space::SharedCluster);
+                if stream.expect_string(".shared").is_ok() {
+                    return Ok(Space::Shared);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared", ".shared::cta", ".shared::cluster"];
+            let expected = &[".shared::cluster", ".shared::cta", ".shared"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -105,6 +105,7 @@ pub mod section_0 {
             stream.expect_string("mbarrier")?;
             stream.expect_string(".expect_tx")?;
             let expect_tx = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let sem = match Sem::parse(stream) {
                 Ok(val) => Some(val),
@@ -113,6 +114,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let scope = match Scope::parse(stream) {
                 Ok(val) => Some(val),
@@ -121,6 +123,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let space = match Space::parse(stream) {
                 Ok(val) => Some(val),
@@ -129,11 +132,17 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b64")?;
             let b64 = ();
+            stream.expect_complete()?;
             let addr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let txcount = Operand::parse(stream)?;
+            let txcount = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MbarrierExpectTxSemScopeSpaceB64 {
                 expect_tx,
                 sem,

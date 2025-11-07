@@ -24,11 +24,11 @@ pub mod section_0 {
                     push_directive(tokens, "async");
                     push_directive(tokens, "ca");
                     match &self.state {
-                            State::Shared => {
-                                    push_directive(tokens, "shared");
-                            }
                             State::SharedCta => {
                                     push_directive(tokens, "shared::cta");
+                            }
+                            State::Shared => {
+                                    push_directive(tokens, "shared");
                             }
                     }
                     push_directive(tokens, "global");
@@ -41,14 +41,14 @@ pub mod section_0 {
                     }
                     if let Some(level_prefetch_size_1) = self.level_prefetch_size.as_ref() {
                             match level_prefetch_size_1 {
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
                                     LevelPrefetchSize::L2128b => {
                                             push_directive(tokens, "L2::128B");
                                     }
                                     LevelPrefetchSize::L2256b => {
                                             push_directive(tokens, "L2::256B");
+                                    }
+                                    LevelPrefetchSize::L264b => {
+                                            push_directive(tokens, "L2::64B");
                                     }
                             }
                     }
@@ -57,14 +57,14 @@ pub mod section_0 {
                     self.src.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     match &self.cp_size {
+                        CpSize::_16 => {
+                                    push_token_from_str(tokens, "16");
+                        }
                         CpSize::_4 => {
                                     push_token_from_str(tokens, "4");
                         }
                         CpSize::_8 => {
                                     push_token_from_str(tokens, "8");
-                        }
-                        CpSize::_16 => {
-                                    push_token_from_str(tokens, "16");
                         }
                     }
             if self.src_size.is_some() { tokens.push(PtxToken::Comma); }
@@ -85,11 +85,11 @@ pub mod section_0 {
                     push_directive(tokens, "async");
                     push_directive(tokens, "cg");
                     match &self.state {
-                            State::Shared => {
-                                    push_directive(tokens, "shared");
-                            }
                             State::SharedCta => {
                                     push_directive(tokens, "shared::cta");
+                            }
+                            State::Shared => {
+                                    push_directive(tokens, "shared");
                             }
                     }
                     push_directive(tokens, "global");
@@ -102,14 +102,14 @@ pub mod section_0 {
                     }
                     if let Some(level_prefetch_size_5) = self.level_prefetch_size.as_ref() {
                             match level_prefetch_size_5 {
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
                                     LevelPrefetchSize::L2128b => {
                                             push_directive(tokens, "L2::128B");
                                     }
                                     LevelPrefetchSize::L2256b => {
                                             push_directive(tokens, "L2::256B");
+                                    }
+                                    LevelPrefetchSize::L264b => {
+                                            push_directive(tokens, "L2::64B");
                                     }
                             }
                     }
@@ -136,11 +136,11 @@ pub mod section_0 {
                     push_directive(tokens, "async");
                     push_directive(tokens, "ca");
                     match &self.state {
-                            State::Shared => {
-                                    push_directive(tokens, "shared");
-                            }
                             State::SharedCta => {
                                     push_directive(tokens, "shared::cta");
+                            }
+                            State::Shared => {
+                                    push_directive(tokens, "shared");
                             }
                     }
                     push_directive(tokens, "global");
@@ -153,14 +153,14 @@ pub mod section_0 {
                     }
                     if let Some(level_prefetch_size_9) = self.level_prefetch_size.as_ref() {
                             match level_prefetch_size_9 {
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
                                     LevelPrefetchSize::L2128b => {
                                             push_directive(tokens, "L2::128B");
                                     }
                                     LevelPrefetchSize::L2256b => {
                                             push_directive(tokens, "L2::256B");
+                                    }
+                                    LevelPrefetchSize::L264b => {
+                                            push_directive(tokens, "L2::64B");
                                     }
                             }
                     }
@@ -169,14 +169,14 @@ pub mod section_0 {
                     self.src.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     match &self.cp_size {
+                        CpSize::_16 => {
+                                    push_token_from_str(tokens, "16");
+                        }
                         CpSize::_4 => {
                                     push_token_from_str(tokens, "4");
                         }
                         CpSize::_8 => {
                                     push_token_from_str(tokens, "8");
-                        }
-                        CpSize::_16 => {
-                                    push_token_from_str(tokens, "16");
                         }
                     }
             if self.ignore_src.is_some() { tokens.push(PtxToken::Comma); }
@@ -197,11 +197,11 @@ pub mod section_0 {
                     push_directive(tokens, "async");
                     push_directive(tokens, "cg");
                     match &self.state {
-                            State::Shared => {
-                                    push_directive(tokens, "shared");
-                            }
                             State::SharedCta => {
                                     push_directive(tokens, "shared::cta");
+                            }
+                            State::Shared => {
+                                    push_directive(tokens, "shared");
                             }
                     }
                     push_directive(tokens, "global");
@@ -214,14 +214,14 @@ pub mod section_0 {
                     }
                     if let Some(level_prefetch_size_13) = self.level_prefetch_size.as_ref() {
                             match level_prefetch_size_13 {
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
                                     LevelPrefetchSize::L2128b => {
                                             push_directive(tokens, "L2::128B");
                                     }
                                     LevelPrefetchSize::L2256b => {
                                             push_directive(tokens, "L2::256B");
+                                    }
+                                    LevelPrefetchSize::L264b => {
+                                            push_directive(tokens, "L2::64B");
                                     }
                             }
                     }

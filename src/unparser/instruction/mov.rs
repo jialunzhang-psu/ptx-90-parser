@@ -128,6 +128,9 @@ pub mod section_1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mov");
                     match &self.type_ {
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
+                            }
                             Type::B16 => {
                                     push_directive(tokens, "b16");
                             }
@@ -136,9 +139,6 @@ pub mod section_1 {
                             }
                             Type::B64 => {
                                     push_directive(tokens, "b64");
-                            }
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
                             }
                     }
                     self.d.unparse_tokens(tokens);

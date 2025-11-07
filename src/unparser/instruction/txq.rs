@@ -24,32 +24,32 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "txq");
                     match &self.tquery {
-                            Tquery::Width => {
-                                    push_directive(tokens, "width");
-                            }
-                            Tquery::Height => {
-                                    push_directive(tokens, "height");
-                            }
-                            Tquery::Depth => {
-                                    push_directive(tokens, "depth");
-                            }
                             Tquery::ChannelDataType => {
                                     push_directive(tokens, "channel_data_type");
-                            }
-                            Tquery::ChannelOrder => {
-                                    push_directive(tokens, "channel_order");
                             }
                             Tquery::NormalizedCoords => {
                                     push_directive(tokens, "normalized_coords");
                             }
-                            Tquery::ArraySize => {
-                                    push_directive(tokens, "array_size");
-                            }
                             Tquery::NumMipmapLevels => {
                                     push_directive(tokens, "num_mipmap_levels");
                             }
+                            Tquery::ChannelOrder => {
+                                    push_directive(tokens, "channel_order");
+                            }
                             Tquery::NumSamples => {
                                     push_directive(tokens, "num_samples");
+                            }
+                            Tquery::ArraySize => {
+                                    push_directive(tokens, "array_size");
+                            }
+                            Tquery::Height => {
+                                    push_directive(tokens, "height");
+                            }
+                            Tquery::Width => {
+                                    push_directive(tokens, "width");
+                            }
+                            Tquery::Depth => {
+                                    push_directive(tokens, "depth");
                             }
                     }
                     push_directive(tokens, "b32");
@@ -65,11 +65,11 @@ pub mod section_0 {
             push_opcode(tokens, "txq");
                     push_directive(tokens, "level");
                     match &self.tlquery {
-                            Tlquery::Width => {
-                                    push_directive(tokens, "width");
-                            }
                             Tlquery::Height => {
                                     push_directive(tokens, "height");
+                            }
+                            Tlquery::Width => {
+                                    push_directive(tokens, "width");
                             }
                             Tlquery::Depth => {
                                     push_directive(tokens, "depth");

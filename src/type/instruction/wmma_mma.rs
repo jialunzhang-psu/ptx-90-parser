@@ -65,10 +65,10 @@ pub mod section_0 {
         pub shape: (), // .shape
         pub dtype: (), // .dtype
         pub ctype: (), // .ctype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -120,10 +120,10 @@ pub mod section_1 {
         pub btype: Btype, // .btype
         pub s322: (), // .s32
         pub satfinite: bool, // {.satfinite}
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -172,10 +172,10 @@ pub mod section_2 {
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
         pub f322: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -222,10 +222,10 @@ pub mod section_3 {
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
         pub f322: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -271,10 +271,10 @@ pub mod section_4 {
         pub f642: (), // .f64
         pub f644: (), // .f64
         pub f646: (), // .f64
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -312,10 +312,10 @@ pub mod section_5 {
         pub btype: Btype, // .btype
         pub s322: (), // .s32
         pub satfinite: bool, // {.satfinite}
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }
@@ -358,10 +358,10 @@ pub mod section_6 {
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
         pub s322: (), // .s32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Operand, // b
-        pub c: Operand, // c
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
+        pub c: GeneralOperand, // c
     }
 
 }

@@ -192,11 +192,11 @@ pub mod section_2 {
                             Op::And => {
                                     push_directive(tokens, "and");
                             }
-                            Op::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Op::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Op::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     match &self.type_ {
@@ -285,11 +285,11 @@ pub mod section_4 {
                             }
                     }
                     match &self.scope {
-                            Scope::Gpu => {
-                                    push_directive(tokens, "gpu");
-                            }
                             Scope::Cluster => {
                                     push_directive(tokens, "cluster");
+                            }
+                            Scope::Gpu => {
+                                    push_directive(tokens, "gpu");
                             }
                     }
                     if let Some(ss_4) = self.ss.as_ref() {

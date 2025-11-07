@@ -61,11 +61,6 @@ pub enum PtxSpecToken {
     #[token("@")]
     At,
 
-    // Directives (start with dot followed by identifier)
-    // This must come before Dot token to match properly
-    #[regex(r"\.[a-zA-Z0-9][a-zA-Z0-9_-]*", |lex| lex.slice()[1..].to_string())]
-    Directive(String),
-
     // Numbers - order matters! More specific patterns first
 
     // Hexadecimal floating point (0F... or 0D...)
@@ -174,7 +169,6 @@ pub fn token_to_string(token: &PtxSpecToken) -> String {
         PtxSpecToken::Caret => "^".to_string(),
         PtxSpecToken::Tilde => "~".to_string(),
         PtxSpecToken::At => "@".to_string(),
-        PtxSpecToken::Directive(s) => format!(".{}", s),
         PtxSpecToken::HexFloat(s) => s.clone(),
         PtxSpecToken::HexInteger(s) => s.clone(),
         PtxSpecToken::BinaryInteger(s) => s.clone(),

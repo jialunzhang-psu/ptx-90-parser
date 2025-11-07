@@ -2,9 +2,9 @@
 
 use clap::{Parser, Subcommand};
 use parser_gen::analyzer::Analyzer;
+use parser_gen::parser_generator::ParserGenerator;
 use parser_gen::r#type::{Modifier, Rule, Section};
 use parser_gen::type_generator::TypeGenerator;
-use parser_gen::parser_generator::ParserGenerator;
 use parser_gen::unparser_generator::UnparserGenerator;
 use ptx_parser_gen as parser_gen;
 use std::collections::BTreeSet;
@@ -87,13 +87,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let pretty = parser_gen::parse_spec_to_treesitter(&spec)?;
             println!("{}", pretty.trim_end());
         }
-        Command::GenerateType { input_dir, output_dir } => {
+        Command::GenerateType {
+            input_dir,
+            output_dir,
+        } => {
             generate_types(&input_dir, &output_dir)?;
         }
-        Command::GenerateParser { input_dir, output_dir } => {
+        Command::GenerateParser {
+            input_dir,
+            output_dir,
+        } => {
             generate_parsers(&input_dir, &output_dir)?;
         }
-        Command::GenerateUnparser { input_dir, output_dir } => {
+        Command::GenerateUnparser {
+            input_dir,
+            output_dir,
+        } => {
             generate_unparsers(&input_dir, &output_dir)?;
         }
     }
@@ -172,7 +181,11 @@ fn parse_directory(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
         }
 
         eprintln!("{}", "=".repeat(80));
-        Err(format!("Processing failed: {} errors, {} panics", error_count, panic_count).into())
+        Err(format!(
+            "Processing failed: {} errors, {} panics",
+            error_count, panic_count
+        )
+        .into())
     } else {
         Ok(())
     }
@@ -209,7 +222,6 @@ fn format_list(items: &BTreeSet<String>) -> String {
 fn modifier_label(modifier: &Modifier) -> String {
     match modifier {
         Modifier::Atom(id) => id.clone(),
-        Modifier::ImmediateNumber(num) => num.clone(),
         Modifier::Optional(id) => format!("?{}", id),
         Modifier::Sequence(items) => {
             let parts = items.join(" -> ");
@@ -226,8 +238,7 @@ fn generate_types(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn std
     let mut entries: Vec<_> = fs::read_dir(input_dir)?
         .filter_map(Result::ok)
         .filter(|entry| {
-            entry.path().is_file()
-                && entry.path().extension().map_or(false, |ext| ext == "txt")
+            entry.path().is_file() && entry.path().extension().map_or(false, |ext| ext == "txt")
         })
         .collect();
     entries.sort_unstable_by(|a, b| a.path().cmp(&b.path()));
@@ -256,7 +267,10 @@ fn generate_types(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn std
         }
     }
 
-    eprintln!("\nSummary: {} succeeded, {} failed", success_count, error_count);
+    eprintln!(
+        "\nSummary: {} succeeded, {} failed",
+        success_count, error_count
+    );
 
     if error_count > 0 {
         return Err(format!("Generation failed: {} errors", error_count).into());
@@ -267,9 +281,7 @@ fn generate_types(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn std
     // Convert ModuleInfo to the format expected by type_generator
     let modules: Vec<(String, Vec<(String, String)>)> = module_info
         .iter()
-        .map(|info| {
-            (info.module_name.clone(), info.instruction_structs.clone())
-        })
+        .map(|info| (info.module_name.clone(), info.instruction_structs.clone()))
         .collect();
     let content = parser_gen::type_generator::generate_mod_rs_content_v2(&modules);
     let mod_path = output_dir.join("mod.rs");
@@ -279,7 +291,10 @@ fn generate_types(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn std
     Ok(())
 }
 
-fn process_file(input_path: &Path, output_dir: &Path) -> Result<ModuleInfo, Box<dyn std::error::Error>> {
+fn process_file(
+    input_path: &Path,
+    output_dir: &Path,
+) -> Result<ModuleInfo, Box<dyn std::error::Error>> {
     // Read the file
     let content = fs::read_to_string(input_path)?;
     let file_name = input_path.file_name().unwrap().to_string_lossy();
@@ -328,9 +343,10 @@ fn process_file(input_path: &Path, output_dir: &Path) -> Result<ModuleInfo, Box<
         .iter()
         .flat_map(|output| {
             let section_name = output.module_name.clone();
-            output.instruction_structs.iter().map(move |struct_name| {
-                (section_name.clone(), struct_name.clone())
-            })
+            output
+                .instruction_structs
+                .iter()
+                .map(move |struct_name| (section_name.clone(), struct_name.clone()))
         })
         .collect();
 
@@ -384,11 +400,7 @@ fn generate_parsers(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn s
     let mut entries: Vec<_> = fs::read_dir(input_dir)?
         .filter_map(Result::ok)
         .filter(|entry| {
-            entry.path().is_file()
-                && entry
-                    .path()
-                    .extension()
-                    .map_or(false, |ext| ext == "txt")
+            entry.path().is_file() && entry.path().extension().map_or(false, |ext| ext == "txt")
         })
         .collect();
     entries.sort_unstable_by(|a, b| a.path().cmp(&b.path()));
@@ -417,7 +429,10 @@ fn generate_parsers(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn s
         }
     }
 
-    eprintln!("\nSummary: {} succeeded, {} failed", success_count, error_count);
+    eprintln!(
+        "\nSummary: {} succeeded, {} failed",
+        success_count, error_count
+    );
 
     if error_count > 0 {
         return Err(format!("Generation failed: {} errors", error_count).into());
@@ -427,7 +442,13 @@ fn generate_parsers(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn s
     // Extract module info with opcodes and structs
     let modules: Vec<(String, Vec<String>, Vec<(String, String)>)> = module_info
         .iter()
-        .map(|info| (info.module_name.clone(), info.opcodes.clone(), info.instruction_structs.clone()))
+        .map(|info| {
+            (
+                info.module_name.clone(),
+                info.opcodes.clone(),
+                info.instruction_structs.clone(),
+            )
+        })
         .collect();
     let content = parser_gen::parser_generator::generate_parser_mod_rs_content(&modules);
     let mod_path = output_dir.join("mod.rs");
@@ -437,7 +458,10 @@ fn generate_parsers(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn s
     Ok(())
 }
 
-fn process_parser_file(input_path: &Path, output_dir: &Path) -> Result<ParserModuleInfo, Box<dyn std::error::Error>> {
+fn process_parser_file(
+    input_path: &Path,
+    output_dir: &Path,
+) -> Result<ParserModuleInfo, Box<dyn std::error::Error>> {
     let content = fs::read_to_string(input_path)?;
     let file_name = input_path.file_name().unwrap().to_string_lossy();
 
@@ -457,12 +481,11 @@ fn process_parser_file(input_path: &Path, output_dir: &Path) -> Result<ParserMod
 
     // Collect ALL unique opcodes from ALL instructions in the file
     // This is needed for files like bar.txt which contain both "bar" and "barrier" instructions
-    use std::collections::HashSet;
+    use std::collections::BTreeSet;
     let opcodes: Vec<String> = analyzed_sections
         .iter()
-        .flat_map(|section| &section.0)
-        .map(|instr| instr.head.opcode.clone())
-        .collect::<HashSet<_>>()
+        .flat_map(|section| section.opcodes.iter().cloned())
+        .collect::<BTreeSet<_>>()
         .into_iter()
         .collect();
 
@@ -494,12 +517,12 @@ fn process_parser_file(input_path: &Path, output_dir: &Path) -> Result<ParserMod
     }
 
     // Collect all instruction structs with their section info
-    let all_instruction_structs: Vec<(String, String)> = all_outputs
+    let all_instruction_structs: Vec<(String, String)> = analyzed_sections
         .iter()
-        .flat_map(|output| {
-            let section_name = output.module_name.clone();
-            output.instruction_structs.iter().map(move |struct_name| {
-                (section_name.clone(), struct_name.clone())
+        .flat_map(|section| {
+            let section_name = format!("section_{}", analyzed_sections.iter().position(|s| std::ptr::eq(s, section)).unwrap());
+            section.instructions.iter().map(move |instr| {
+                (section_name.clone(), instr.rust_name.clone())
             })
         })
         .collect();
@@ -515,7 +538,7 @@ fn process_parser_file(input_path: &Path, output_dir: &Path) -> Result<ParserMod
     output.push_str("\n");
     output.push_str("#![allow(unused)]\n");
     output.push_str("\n");
-    
+
     // Add imports once
     output.push_str(&ParserGenerator::generate_imports());
     output.push_str("\n\n");
@@ -542,17 +565,16 @@ fn process_parser_file(input_path: &Path, output_dir: &Path) -> Result<ParserMod
     })
 }
 
-fn generate_unparsers(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
+fn generate_unparsers(
+    input_dir: &Path,
+    output_dir: &Path,
+) -> Result<(), Box<dyn std::error::Error>> {
     fs::create_dir_all(output_dir)?;
 
     let mut entries: Vec<_> = fs::read_dir(input_dir)?
         .filter_map(Result::ok)
         .filter(|entry| {
-            entry.path().is_file()
-                && entry
-                    .path()
-                    .extension()
-                    .map_or(false, |ext| ext == "txt")
+            entry.path().is_file() && entry.path().extension().map_or(false, |ext| ext == "txt")
         })
         .collect();
     entries.sort_unstable_by(|a, b| a.path().cmp(&b.path()));
@@ -581,7 +603,10 @@ fn generate_unparsers(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn
         }
     }
 
-    eprintln!("\nSummary: {} succeeded, {} failed", success_count, error_count);
+    eprintln!(
+        "\nSummary: {} succeeded, {} failed",
+        success_count, error_count
+    );
 
     if error_count > 0 {
         return Err(format!("Generation failed: {} errors", error_count).into());
@@ -600,7 +625,10 @@ fn generate_unparsers(input_dir: &Path, output_dir: &Path) -> Result<(), Box<dyn
     Ok(())
 }
 
-fn process_unparser_file(input_path: &Path, output_dir: &Path) -> Result<ModuleInfo, Box<dyn std::error::Error>> {
+fn process_unparser_file(
+    input_path: &Path,
+    output_dir: &Path,
+) -> Result<ModuleInfo, Box<dyn std::error::Error>> {
     let content = fs::read_to_string(input_path)?;
     let file_name = input_path.file_name().unwrap().to_string_lossy();
 

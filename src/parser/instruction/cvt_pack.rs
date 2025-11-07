@@ -23,6 +23,23 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Abtype {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Abtype::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".s32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for Converttype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try U16
@@ -50,37 +67,29 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Abtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Abtype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".s32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for CvtPackSatConverttypeAbtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("cvt")?;
             stream.expect_string(".pack")?;
             let pack = ();
+            stream.expect_complete()?;
             stream.expect_string(".sat")?;
             let sat = ();
+            stream.expect_complete()?;
             let converttype = Converttype::parse(stream)?;
+            stream.expect_complete()?;
             let abtype = Abtype::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtPackSatConverttypeAbtype {
                 pack,
                 sat,
@@ -104,18 +113,18 @@ pub mod section_1 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Ctype {
+    impl PtxParser for Abtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B32
+            // Try S32
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".b32").is_ok() {
-                    return Ok(Ctype::B32);
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Abtype::S32);
                 }
                 stream.set_position(saved_pos);
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b32"];
+            let expected = &[".s32"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -188,18 +197,18 @@ pub mod section_1 {
         }
     }
 
-    impl PtxParser for Abtype {
+    impl PtxParser for Ctype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try S32
+            // Try B32
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Abtype::S32);
+                if stream.expect_string(".b32").is_ok() {
+                    return Ok(Ctype::B32);
                 }
                 stream.set_position(saved_pos);
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".s32"];
+            let expected = &[".b32"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -210,18 +219,29 @@ pub mod section_1 {
             stream.expect_string("cvt")?;
             stream.expect_string(".pack")?;
             let pack = ();
+            stream.expect_complete()?;
             stream.expect_string(".sat")?;
             let sat = ();
+            stream.expect_complete()?;
             let converttype = Converttype::parse(stream)?;
+            stream.expect_complete()?;
             let abtype = Abtype::parse(stream)?;
+            stream.expect_complete()?;
             let ctype = Ctype::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtPackSatConverttypeAbtypeCtype {
                 pack,
                 sat,

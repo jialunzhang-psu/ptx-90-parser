@@ -20,6 +20,9 @@ pub mod section_0 {
             if !uni {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(RetUni {
                 uni,
             })

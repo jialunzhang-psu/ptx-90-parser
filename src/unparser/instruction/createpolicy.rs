@@ -29,8 +29,8 @@ pub mod section_0 {
                             push_directive(tokens, "global");
                     }
                     match &self.level_primary_priority {
-                            LevelPrimaryPriority::L2EvictLast => {
-                                    push_directive(tokens, "L2::evict_last");
+                            LevelPrimaryPriority::L2EvictUnchanged => {
+                                    push_directive(tokens, "L2::evict_unchanged");
                             }
                             LevelPrimaryPriority::L2EvictNormal => {
                                     push_directive(tokens, "L2::evict_normal");
@@ -38,17 +38,17 @@ pub mod section_0 {
                             LevelPrimaryPriority::L2EvictFirst => {
                                     push_directive(tokens, "L2::evict_first");
                             }
-                            LevelPrimaryPriority::L2EvictUnchanged => {
-                                    push_directive(tokens, "L2::evict_unchanged");
+                            LevelPrimaryPriority::L2EvictLast => {
+                                    push_directive(tokens, "L2::evict_last");
                             }
                     }
                     if let Some(level_secondary_priority_0) = self.level_secondary_priority.as_ref() {
                             match level_secondary_priority_0 {
-                                    LevelSecondaryPriority::L2EvictFirst => {
-                                            push_directive(tokens, "L2::evict_first");
-                                    }
                                     LevelSecondaryPriority::L2EvictUnchanged => {
                                             push_directive(tokens, "L2::evict_unchanged");
+                                    }
+                                    LevelSecondaryPriority::L2EvictFirst => {
+                                            push_directive(tokens, "L2::evict_first");
                                     }
                             }
                     }
@@ -69,8 +69,8 @@ pub mod section_0 {
             push_opcode(tokens, "createpolicy");
                     push_directive(tokens, "fractional");
                     match &self.level_primary_priority {
-                            LevelPrimaryPriority::L2EvictLast => {
-                                    push_directive(tokens, "L2::evict_last");
+                            LevelPrimaryPriority::L2EvictUnchanged => {
+                                    push_directive(tokens, "L2::evict_unchanged");
                             }
                             LevelPrimaryPriority::L2EvictNormal => {
                                     push_directive(tokens, "L2::evict_normal");
@@ -78,17 +78,17 @@ pub mod section_0 {
                             LevelPrimaryPriority::L2EvictFirst => {
                                     push_directive(tokens, "L2::evict_first");
                             }
-                            LevelPrimaryPriority::L2EvictUnchanged => {
-                                    push_directive(tokens, "L2::evict_unchanged");
+                            LevelPrimaryPriority::L2EvictLast => {
+                                    push_directive(tokens, "L2::evict_last");
                             }
                     }
                     if let Some(level_secondary_priority_1) = self.level_secondary_priority.as_ref() {
                             match level_secondary_priority_1 {
-                                    LevelSecondaryPriority::L2EvictFirst => {
-                                            push_directive(tokens, "L2::evict_first");
-                                    }
                                     LevelSecondaryPriority::L2EvictUnchanged => {
                                             push_directive(tokens, "L2::evict_unchanged");
+                                    }
+                                    LevelSecondaryPriority::L2EvictFirst => {
+                                            push_directive(tokens, "L2::evict_first");
                                     }
                             }
                     }

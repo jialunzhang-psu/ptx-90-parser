@@ -59,27 +59,34 @@ pub mod section_0 {
             if !cta {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let aligned = stream.expect_string(".aligned").is_ok();
             if !aligned {
                 stream.set_position(saved_pos);
             }
-            let a = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let b = match Operand::parse(stream) {
+            let b = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarrierCtaSyncAligned {
                 cta,
                 sync,
@@ -99,16 +106,23 @@ pub mod section_0 {
             if !cta {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".arrive")?;
             let arrive = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let aligned = stream.expect_string(".aligned").is_ok();
             if !aligned {
                 stream.set_position(saved_pos);
             }
-            let a = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarrierCtaArriveAligned {
                 cta,
                 arrive,
@@ -128,36 +142,47 @@ pub mod section_0 {
             if !cta {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".red")?;
             let red = ();
+            stream.expect_complete()?;
             stream.expect_string(".popc")?;
             let popc = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let aligned = stream.expect_string(".aligned").is_ok();
             if !aligned {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".u32")?;
             let u32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let b = match Operand::parse(stream) {
+            let b = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarrierCtaRedPopcAlignedU32 {
                 cta,
                 red,
@@ -182,35 +207,46 @@ pub mod section_0 {
             if !cta {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".red")?;
             let red = ();
+            stream.expect_complete()?;
             let op = Op::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let aligned = stream.expect_string(".aligned").is_ok();
             if !aligned {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".pred")?;
             let pred = ();
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let b = match Operand::parse(stream) {
+            let b = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarrierCtaRedOpAlignedPred {
                 cta,
                 red,
@@ -235,22 +271,28 @@ pub mod section_0 {
             if !cta {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
-            let a = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let b = match Operand::parse(stream) {
+            let b = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarCtaSync {
                 cta,
                 sync,
@@ -269,11 +311,17 @@ pub mod section_0 {
             if !cta {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".arrive")?;
             let arrive = ();
-            let a = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarCtaArrive {
                 cta,
                 arrive,
@@ -292,31 +340,41 @@ pub mod section_0 {
             if !cta {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".red")?;
             let red = ();
+            stream.expect_complete()?;
             stream.expect_string(".popc")?;
             let popc = ();
+            stream.expect_complete()?;
             stream.expect_string(".u32")?;
             let u32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let b = match Operand::parse(stream) {
+            let b = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarCtaRedPopcU32 {
                 cta,
                 red,
@@ -340,30 +398,40 @@ pub mod section_0 {
             if !cta {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".red")?;
             let red = ();
+            stream.expect_complete()?;
             let op = Op::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".pred")?;
             let pred = ();
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let b = match Operand::parse(stream) {
+            let b = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(BarCtaRedOpPred {
                 cta,
                 red,

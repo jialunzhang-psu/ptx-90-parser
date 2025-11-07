@@ -83,18 +83,6 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M64n8k16, // .m64n8k16
-        M64n16k16, // .m64n16k16
-        M64n24k16, // .m64n24k16
-        M64n32k16, // .m64n32k16
-        M64n40k16, // .m64n40k16
-        M64n48k16, // .m64n48k16
-        M64n56k16, // .m64n56k16
-        M64n64k16, // .m64n64k16
-        M64n72k16, // .m64n72k16
-        M64n80k16, // .m64n80k16
-        M64n88k16, // .m64n88k16
-        M64n96k16, // .m64n96k16
         M64n104k16, // .m64n104k16
         M64n112k16, // .m64n112k16
         M64n120k16, // .m64n120k16
@@ -115,6 +103,18 @@ pub mod section_0 {
         M64n240k16, // .m64n240k16
         M64n248k16, // .m64n248k16
         M64n256k16, // .m64n256k16
+        M64n16k16, // .m64n16k16
+        M64n24k16, // .m64n24k16
+        M64n32k16, // .m64n32k16
+        M64n40k16, // .m64n40k16
+        M64n48k16, // .m64n48k16
+        M64n56k16, // .m64n56k16
+        M64n64k16, // .m64n64k16
+        M64n72k16, // .m64n72k16
+        M64n80k16, // .m64n80k16
+        M64n88k16, // .m64n88k16
+        M64n96k16, // .m64n96k16
+        M64n8k16, // .m64n8k16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -132,14 +132,14 @@ pub mod section_0 {
         pub dtype: Dtype, // .dtype
         pub f16: (), // .f16
         pub f162: (), // .f16
-        pub d: Operand, // d
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
-        pub imm_scale_a: Operand, // imm-scale-a
-        pub imm_scale_b: Operand, // imm-scale-b
-        pub imm_trans_a: Operand, // imm-trans-a
-        pub imm_trans_b: Operand, // imm-trans-b
+        pub d: GeneralOperand, // d
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
+        pub imm_scale_a: GeneralOperand, // imm-scale-a
+        pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub imm_trans_a: GeneralOperand, // imm-trans-a
+        pub imm_trans_b: GeneralOperand, // imm-trans-b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -151,13 +151,13 @@ pub mod section_0 {
         pub dtype: Dtype, // .dtype
         pub f16: (), // .f16
         pub f162: (), // .f16
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
-        pub imm_scale_a: Operand, // imm-scale-a
-        pub imm_scale_b: Operand, // imm-scale-b
-        pub imm_trans_b: Operand, // imm-trans-b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
+        pub imm_scale_a: GeneralOperand, // imm-scale-a
+        pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub imm_trans_b: GeneralOperand, // imm-trans-b
     }
 
 }
@@ -167,18 +167,6 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M64n8k16, // .m64n8k16
-        M64n16k16, // .m64n16k16
-        M64n24k16, // .m64n24k16
-        M64n32k16, // .m64n32k16
-        M64n40k16, // .m64n40k16
-        M64n48k16, // .m64n48k16
-        M64n56k16, // .m64n56k16
-        M64n64k16, // .m64n64k16
-        M64n72k16, // .m64n72k16
-        M64n80k16, // .m64n80k16
-        M64n88k16, // .m64n88k16
-        M64n96k16, // .m64n96k16
         M64n104k16, // .m64n104k16
         M64n112k16, // .m64n112k16
         M64n120k16, // .m64n120k16
@@ -199,6 +187,18 @@ pub mod section_1 {
         M64n240k16, // .m64n240k16
         M64n248k16, // .m64n248k16
         M64n256k16, // .m64n256k16
+        M64n16k16, // .m64n16k16
+        M64n24k16, // .m64n24k16
+        M64n32k16, // .m64n32k16
+        M64n40k16, // .m64n40k16
+        M64n48k16, // .m64n48k16
+        M64n56k16, // .m64n56k16
+        M64n64k16, // .m64n64k16
+        M64n72k16, // .m64n72k16
+        M64n80k16, // .m64n80k16
+        M64n88k16, // .m64n88k16
+        M64n96k16, // .m64n96k16
+        M64n8k16, // .m64n8k16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -215,14 +215,14 @@ pub mod section_1 {
         pub dtype: Dtype, // .dtype
         pub bf16: (), // .bf16
         pub bf162: (), // .bf16
-        pub d: Operand, // d
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
-        pub imm_scale_a: Operand, // imm-scale-a
-        pub imm_scale_b: Operand, // imm-scale-b
-        pub imm_trans_a: Operand, // imm-trans-a
-        pub imm_trans_b: Operand, // imm-trans-b
+        pub d: GeneralOperand, // d
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
+        pub imm_scale_a: GeneralOperand, // imm-scale-a
+        pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub imm_trans_a: GeneralOperand, // imm-trans-a
+        pub imm_trans_b: GeneralOperand, // imm-trans-b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -234,13 +234,13 @@ pub mod section_1 {
         pub dtype: Dtype, // .dtype
         pub bf16: (), // .bf16
         pub bf162: (), // .bf16
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
-        pub imm_scale_a: Operand, // imm-scale-a
-        pub imm_scale_b: Operand, // imm-scale-b
-        pub imm_trans_b: Operand, // imm-trans-b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
+        pub imm_scale_a: GeneralOperand, // imm-scale-a
+        pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub imm_trans_b: GeneralOperand, // imm-trans-b
     }
 
 }
@@ -250,18 +250,6 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M64n8k8, // .m64n8k8
-        M64n16k8, // .m64n16k8
-        M64n24k8, // .m64n24k8
-        M64n32k8, // .m64n32k8
-        M64n40k8, // .m64n40k8
-        M64n48k8, // .m64n48k8
-        M64n56k8, // .m64n56k8
-        M64n64k8, // .m64n64k8
-        M64n72k8, // .m64n72k8
-        M64n80k8, // .m64n80k8
-        M64n88k8, // .m64n88k8
-        M64n96k8, // .m64n96k8
         M64n104k8, // .m64n104k8
         M64n112k8, // .m64n112k8
         M64n120k8, // .m64n120k8
@@ -282,6 +270,18 @@ pub mod section_2 {
         M64n240k8, // .m64n240k8
         M64n248k8, // .m64n248k8
         M64n256k8, // .m64n256k8
+        M64n16k8, // .m64n16k8
+        M64n24k8, // .m64n24k8
+        M64n32k8, // .m64n32k8
+        M64n40k8, // .m64n40k8
+        M64n48k8, // .m64n48k8
+        M64n56k8, // .m64n56k8
+        M64n64k8, // .m64n64k8
+        M64n72k8, // .m64n72k8
+        M64n80k8, // .m64n80k8
+        M64n88k8, // .m64n88k8
+        M64n96k8, // .m64n96k8
+        M64n8k8, // .m64n8k8
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -298,12 +298,12 @@ pub mod section_2 {
         pub dtype: Dtype, // .dtype
         pub tf32: (), // .tf32
         pub tf322: (), // .tf32
-        pub d: Operand, // d
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
-        pub imm_scale_a: Operand, // imm-scale-a
-        pub imm_scale_b: Operand, // imm-scale-b
+        pub d: GeneralOperand, // d
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
+        pub imm_scale_a: GeneralOperand, // imm-scale-a
+        pub imm_scale_b: GeneralOperand, // imm-scale-b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -315,12 +315,12 @@ pub mod section_2 {
         pub dtype: Dtype, // .dtype
         pub tf32: (), // .tf32
         pub tf322: (), // .tf32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
-        pub imm_scale_a: Operand, // imm-scale-a
-        pub imm_scale_b: Operand, // imm-scale-b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
+        pub imm_scale_a: GeneralOperand, // imm-scale-a
+        pub imm_scale_b: GeneralOperand, // imm-scale-b
     }
 
 }
@@ -330,18 +330,6 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M64n8k32, // .m64n8k32
-        M64n16k32, // .m64n16k32
-        M64n24k32, // .m64n24k32
-        M64n32k32, // .m64n32k32
-        M64n40k32, // .m64n40k32
-        M64n48k32, // .m64n48k32
-        M64n56k32, // .m64n56k32
-        M64n64k32, // .m64n64k32
-        M64n72k32, // .m64n72k32
-        M64n80k32, // .m64n80k32
-        M64n88k32, // .m64n88k32
-        M64n96k32, // .m64n96k32
         M64n104k32, // .m64n104k32
         M64n112k32, // .m64n112k32
         M64n120k32, // .m64n120k32
@@ -362,6 +350,18 @@ pub mod section_3 {
         M64n240k32, // .m64n240k32
         M64n248k32, // .m64n248k32
         M64n256k32, // .m64n256k32
+        M64n16k32, // .m64n16k32
+        M64n24k32, // .m64n24k32
+        M64n32k32, // .m64n32k32
+        M64n40k32, // .m64n40k32
+        M64n48k32, // .m64n48k32
+        M64n56k32, // .m64n56k32
+        M64n64k32, // .m64n64k32
+        M64n72k32, // .m64n72k32
+        M64n80k32, // .m64n80k32
+        M64n88k32, // .m64n88k32
+        M64n96k32, // .m64n96k32
+        M64n8k32, // .m64n8k32
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -391,12 +391,12 @@ pub mod section_3 {
         pub dtype: Dtype, // .dtype
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
-        pub d: Operand, // d
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
-        pub imm_scale_a: Operand, // imm-scale-a
-        pub imm_scale_b: Operand, // imm-scale-b
+        pub d: GeneralOperand, // d
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
+        pub imm_scale_a: GeneralOperand, // imm-scale-a
+        pub imm_scale_b: GeneralOperand, // imm-scale-b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -408,12 +408,12 @@ pub mod section_3 {
         pub dtype: Dtype, // .dtype
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
-        pub imm_scale_a: Operand, // imm-scale-a
-        pub imm_scale_b: Operand, // imm-scale-b
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
+        pub imm_scale_a: GeneralOperand, // imm-scale-a
+        pub imm_scale_b: GeneralOperand, // imm-scale-b
     }
 
 }
@@ -423,14 +423,6 @@ pub mod section_4 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M64n8k32, // .m64n8k32
-        M64n16k32, // .m64n16k32
-        M64n24k32, // .m64n24k32
-        M64n32k32, // .m64n32k32
-        M64n48k32, // .m64n48k32
-        M64n64k32, // .m64n64k32
-        M64n80k32, // .m64n80k32
-        M64n96k32, // .m64n96k32
         M64n112k32, // .m64n112k32
         M64n128k32, // .m64n128k32
         M64n144k32, // .m64n144k32
@@ -439,6 +431,14 @@ pub mod section_4 {
         M64n192k32, // .m64n192k32
         M64n208k32, // .m64n208k32
         M64n224k32, // .m64n224k32
+        M64n16k32, // .m64n16k32
+        M64n24k32, // .m64n24k32
+        M64n32k32, // .m64n32k32
+        M64n48k32, // .m64n48k32
+        M64n64k32, // .m64n64k32
+        M64n80k32, // .m64n80k32
+        M64n96k32, // .m64n96k32
+        M64n8k32, // .m64n8k32
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -463,10 +463,10 @@ pub mod section_4 {
         pub s32: (), // .s32
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
-        pub d: Operand, // d
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
+        pub d: GeneralOperand, // d
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -479,10 +479,10 @@ pub mod section_4 {
         pub s32: (), // .s32
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
     }
 
 }
@@ -492,14 +492,6 @@ pub mod section_5 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M64n8k256, // .m64n8k256
-        M64n16k256, // .m64n16k256
-        M64n24k256, // .m64n24k256
-        M64n32k256, // .m64n32k256
-        M64n48k256, // .m64n48k256
-        M64n64k256, // .m64n64k256
-        M64n80k256, // .m64n80k256
-        M64n96k256, // .m64n96k256
         M64n112k256, // .m64n112k256
         M64n128k256, // .m64n128k256
         M64n144k256, // .m64n144k256
@@ -510,6 +502,14 @@ pub mod section_5 {
         M64n224k256, // .m64n224k256
         M64n240k256, // .m64n240k256
         M64n256k256, // .m64n256k256
+        M64n16k256, // .m64n16k256
+        M64n24k256, // .m64n24k256
+        M64n32k256, // .m64n32k256
+        M64n48k256, // .m64n48k256
+        M64n64k256, // .m64n64k256
+        M64n80k256, // .m64n80k256
+        M64n96k256, // .m64n96k256
+        M64n8k256, // .m64n8k256
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -528,10 +528,10 @@ pub mod section_5 {
         pub b12: (), // .b1
         pub op: Op, // .op
         pub popc: (), // .popc
-        pub d: Operand, // d
-        pub a_desc: Operand, // a-desc
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
+        pub d: GeneralOperand, // d
+        pub a_desc: GeneralOperand, // a-desc
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -545,10 +545,10 @@ pub mod section_5 {
         pub b12: (), // .b1
         pub op: Op, // .op
         pub popc: (), // .popc
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b_desc: Operand, // b-desc
-        pub scale_d: Operand, // scale-d
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b_desc: GeneralOperand, // b-desc
+        pub scale_d: GeneralOperand, // scale-d
     }
 
 }

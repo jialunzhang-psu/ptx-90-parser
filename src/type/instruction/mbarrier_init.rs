@@ -11,8 +11,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum State {
-        Shared, // .shared
         SharedCta, // .shared::cta
+        Shared, // .shared
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -21,7 +21,7 @@ pub mod section_0 {
         pub state: Option<State>, // {.state}
         pub b64: (), // .b64
         pub addr: AddressOperand, // [addr]
-        pub count: Operand, // count
+        pub count: GeneralOperand, // count
     }
 
 }

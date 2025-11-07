@@ -87,14 +87,14 @@ pub mod section_0 {
                             }
                     }
                     match &self.kind {
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
+                            Kind::KindF8f6f4 => {
+                                    push_directive(tokens, "kind::f8f6f4");
                             }
                             Kind::KindTf32 => {
                                     push_directive(tokens, "kind::tf32");
                             }
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
+                            Kind::KindF16 => {
+                                    push_directive(tokens, "kind::f16");
                             }
                     }
                     self.d_tmem.unparse_tokens(tokens);
@@ -131,14 +131,14 @@ pub mod section_0 {
                             }
                     }
                     match &self.kind {
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
+                            Kind::KindF8f6f4 => {
+                                    push_directive(tokens, "kind::f8f6f4");
                             }
                             Kind::KindTf32 => {
                                     push_directive(tokens, "kind::tf32");
                             }
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
+                            Kind::KindF16 => {
+                                    push_directive(tokens, "kind::f16");
                             }
                     }
                     self.d_tmem.unparse_tokens(tokens);
@@ -184,11 +184,11 @@ pub mod section_1 {
                             Kind::KindMxf8f6f4 => {
                                     push_directive(tokens, "kind::mxf8f6f4");
                             }
-                            Kind::KindMxf4 => {
-                                    push_directive(tokens, "kind::mxf4");
-                            }
                             Kind::KindMxf4nvf4 => {
                                     push_directive(tokens, "kind::mxf4nvf4");
+                            }
+                            Kind::KindMxf4 => {
+                                    push_directive(tokens, "kind::mxf4");
                             }
                     }
                     push_directive(tokens, "block_scale");
@@ -244,11 +244,11 @@ pub mod section_1 {
                             Kind::KindMxf8f6f4 => {
                                     push_directive(tokens, "kind::mxf8f6f4");
                             }
-                            Kind::KindMxf4 => {
-                                    push_directive(tokens, "kind::mxf4");
-                            }
                             Kind::KindMxf4nvf4 => {
                                     push_directive(tokens, "kind::mxf4nvf4");
+                            }
+                            Kind::KindMxf4 => {
+                                    push_directive(tokens, "kind::mxf4");
                             }
                     }
                     push_directive(tokens, "block_scale");
@@ -307,24 +307,23 @@ pub mod section_2 {
                             }
                     }
                     match &self.kind {
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
+                            Kind::KindF8f6f4 => {
+                                    push_directive(tokens, "kind::f8f6f4");
                             }
                             Kind::KindTf32 => {
                                     push_directive(tokens, "kind::tf32");
                             }
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
+                            Kind::KindF16 => {
+                                    push_directive(tokens, "kind::f16");
                             }
                     }
                     match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, _, _) => {
-                                    push_directive(tokens, "collector");
-                                    push_token_from_str(tokens, "::a");
-                                    push_token_from_str(tokens, "::fill");
-                                    push_token_from_str(tokens, "::use");
-                                    push_token_from_str(tokens, "::lastuse");
-                                    push_token_from_str(tokens, "::discard*");
+                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                    let mut combined = String::new();
+                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                    tokens.push(PtxToken::Dot);
+                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
                             }
                     }
                     self.d_tmem.unparse_tokens(tokens);
@@ -361,27 +360,26 @@ pub mod section_2 {
                             }
                     }
                     match &self.kind {
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
+                            Kind::KindF8f6f4 => {
+                                    push_directive(tokens, "kind::f8f6f4");
                             }
                             Kind::KindTf32 => {
                                     push_directive(tokens, "kind::tf32");
                             }
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
+                            Kind::KindF16 => {
+                                    push_directive(tokens, "kind::f16");
                             }
                     }
                     if self.ashift {
                             push_directive(tokens, "ashift");
                     }
                     match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, _, _) => {
-                                    push_directive(tokens, "collector");
-                                    push_token_from_str(tokens, "::a");
-                                    push_token_from_str(tokens, "::fill");
-                                    push_token_from_str(tokens, "::use");
-                                    push_token_from_str(tokens, "::lastuse");
-                                    push_token_from_str(tokens, "::discard*");
+                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                    let mut combined = String::new();
+                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                    tokens.push(PtxToken::Dot);
+                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
                             }
                     }
                     self.d_tmem.unparse_tokens(tokens);
@@ -418,26 +416,25 @@ pub mod section_2 {
                             }
                     }
                     match &self.kind {
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
+                            Kind::KindF8f6f4 => {
+                                    push_directive(tokens, "kind::f8f6f4");
                             }
                             Kind::KindTf32 => {
                                     push_directive(tokens, "kind::tf32");
                             }
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
+                            Kind::KindF16 => {
+                                    push_directive(tokens, "kind::f16");
                             }
                     }
                     push_directive(tokens, "ashift");
                     if let Some(collector_usage_10) = self.collector_usage.as_ref() {
                             match collector_usage_10 {
-                                    CollectorUsage::CollectorBufferOp(_, _, _) => {
-                                            push_directive(tokens, "collector");
-                                            push_token_from_str(tokens, "::a");
-                                            push_token_from_str(tokens, "::fill");
-                                            push_token_from_str(tokens, "::use");
-                                            push_token_from_str(tokens, "::lastuse");
-                                            push_token_from_str(tokens, "::discard*");
+                                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                            let mut combined = String::new();
+                                            combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                            combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                            tokens.push(PtxToken::Dot);
+                                            tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
                                     }
                             }
                     }
@@ -484,11 +481,11 @@ pub mod section_3 {
                             Kind::KindMxf8f6f4 => {
                                     push_directive(tokens, "kind::mxf8f6f4");
                             }
-                            Kind::KindMxf4 => {
-                                    push_directive(tokens, "kind::mxf4");
-                            }
                             Kind::KindMxf4nvf4 => {
                                     push_directive(tokens, "kind::mxf4nvf4");
+                            }
+                            Kind::KindMxf4 => {
+                                    push_directive(tokens, "kind::mxf4");
                             }
                     }
                     push_directive(tokens, "block_scale");
@@ -512,13 +509,12 @@ pub mod section_3 {
                             }
                     }
                     match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, _, _) => {
-                                    push_directive(tokens, "collector");
-                                    push_token_from_str(tokens, "::a");
-                                    push_token_from_str(tokens, "::fill");
-                                    push_token_from_str(tokens, "::use");
-                                    push_token_from_str(tokens, "::lastuse");
-                                    push_token_from_str(tokens, "::discard*");
+                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                    let mut combined = String::new();
+                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                    tokens.push(PtxToken::Dot);
+                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
                             }
                     }
                     self.d_tmem.unparse_tokens(tokens);
@@ -554,11 +550,11 @@ pub mod section_3 {
                             Kind::KindMxf8f6f4 => {
                                     push_directive(tokens, "kind::mxf8f6f4");
                             }
-                            Kind::KindMxf4 => {
-                                    push_directive(tokens, "kind::mxf4");
-                            }
                             Kind::KindMxf4nvf4 => {
                                     push_directive(tokens, "kind::mxf4nvf4");
+                            }
+                            Kind::KindMxf4 => {
+                                    push_directive(tokens, "kind::mxf4");
                             }
                     }
                     push_directive(tokens, "block_scale");
@@ -582,13 +578,12 @@ pub mod section_3 {
                             }
                     }
                     match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, _, _) => {
-                                    push_directive(tokens, "collector");
-                                    push_token_from_str(tokens, "::a");
-                                    push_token_from_str(tokens, "::fill");
-                                    push_token_from_str(tokens, "::use");
-                                    push_token_from_str(tokens, "::lastuse");
-                                    push_token_from_str(tokens, "::discard*");
+                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                    let mut combined = String::new();
+                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                    tokens.push(PtxToken::Dot);
+                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
                             }
                     }
                     self.d_tmem.unparse_tokens(tokens);
@@ -694,13 +689,12 @@ pub mod section_5 {
                     }
                     push_directive(tokens, "kind::i8");
                     match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, _, _) => {
-                                    push_directive(tokens, "collector");
-                                    push_token_from_str(tokens, "::a");
-                                    push_token_from_str(tokens, "::fill");
-                                    push_token_from_str(tokens, "::use");
-                                    push_token_from_str(tokens, "::lastuse");
-                                    push_token_from_str(tokens, "::discard*");
+                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                    let mut combined = String::new();
+                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                    tokens.push(PtxToken::Dot);
+                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
                             }
                     }
                     self.d_tmem.unparse_tokens(tokens);
@@ -736,13 +730,12 @@ pub mod section_5 {
                     push_directive(tokens, "ashift");
                     if let Some(collector_usage_18) = self.collector_usage.as_ref() {
                             match collector_usage_18 {
-                                    CollectorUsage::CollectorBufferOp(_, _, _) => {
-                                            push_directive(tokens, "collector");
-                                            push_token_from_str(tokens, "::a");
-                                            push_token_from_str(tokens, "::fill");
-                                            push_token_from_str(tokens, "::use");
-                                            push_token_from_str(tokens, "::lastuse");
-                                            push_token_from_str(tokens, "::discard*");
+                                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                            let mut combined = String::new();
+                                            combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                            combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                            tokens.push(PtxToken::Dot);
+                                            tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
                                     }
                             }
                     }
@@ -780,13 +773,12 @@ pub mod section_5 {
                             push_directive(tokens, "ashift");
                     }
                     match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, _, _) => {
-                                    push_directive(tokens, "collector");
-                                    push_token_from_str(tokens, "::a");
-                                    push_token_from_str(tokens, "::fill");
-                                    push_token_from_str(tokens, "::use");
-                                    push_token_from_str(tokens, "::lastuse");
-                                    push_token_from_str(tokens, "::discard*");
+                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                    let mut combined = String::new();
+                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                    tokens.push(PtxToken::Dot);
+                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
                             }
                     }
                     self.d_tmem.unparse_tokens(tokens);

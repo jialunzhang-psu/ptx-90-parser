@@ -22,28 +22,28 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for State {
+    impl PtxParser for Scope {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Shared
+            // Try Cluster
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(State::Shared);
+                if stream.expect_string(".cluster").is_ok() {
+                    return Ok(Scope::Cluster);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try SharedCta
+            // Try Cta
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(State::SharedCta);
+                if stream.expect_string(".cta").is_ok() {
+                    return Ok(Scope::Cta);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared", ".shared::cta"];
+            let expected = &[".cluster", ".cta"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -76,28 +76,28 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Scope {
+    impl PtxParser for State {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cta
+            // Try SharedCta
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Scope::Cta);
+                if stream.expect_string(".shared::cta").is_ok() {
+                    return Ok(State::SharedCta);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try Cluster
+            // Try Shared
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".cluster").is_ok() {
-                    return Ok(Scope::Cluster);
+                if stream.expect_string(".shared").is_ok() {
+                    return Ok(State::Shared);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta", ".cluster"];
+            let expected = &[".shared::cta", ".shared"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -108,6 +108,7 @@ pub mod section_0 {
             stream.expect_string("mbarrier")?;
             stream.expect_string(".test_wait")?;
             let test_wait = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let sem = match Sem::parse(stream) {
                 Ok(val) => Some(val),
@@ -116,6 +117,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let scope = match Scope::parse(stream) {
                 Ok(val) => Some(val),
@@ -124,6 +126,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let state = match State::parse(stream) {
                 Ok(val) => Some(val),
@@ -132,13 +135,20 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b64")?;
             let b64 = ();
-            let waitcomplete = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let waitcomplete = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let addr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let state2 = Operand::parse(stream)?;
+            let state2 = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MbarrierTestWaitSemScopeStateB64 {
                 test_wait,
                 sem,
@@ -158,8 +168,10 @@ pub mod section_0 {
             stream.expect_string("mbarrier")?;
             stream.expect_string(".test_wait")?;
             let test_wait = ();
+            stream.expect_complete()?;
             stream.expect_string(".parity")?;
             let parity = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let sem = match Sem::parse(stream) {
                 Ok(val) => Some(val),
@@ -168,6 +180,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let scope = match Scope::parse(stream) {
                 Ok(val) => Some(val),
@@ -176,6 +189,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let state = match State::parse(stream) {
                 Ok(val) => Some(val),
@@ -184,13 +198,20 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b64")?;
             let b64 = ();
-            let waitcomplete = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let waitcomplete = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let addr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let phaseparity = Operand::parse(stream)?;
+            let phaseparity = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MbarrierTestWaitParitySemScopeStateB64 {
                 test_wait,
                 parity,
@@ -211,6 +232,7 @@ pub mod section_0 {
             stream.expect_string("mbarrier")?;
             stream.expect_string(".try_wait")?;
             let try_wait = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let sem = match Sem::parse(stream) {
                 Ok(val) => Some(val),
@@ -219,6 +241,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let scope = match Scope::parse(stream) {
                 Ok(val) => Some(val),
@@ -227,6 +250,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let state = match State::parse(stream) {
                 Ok(val) => Some(val),
@@ -235,26 +259,34 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b64")?;
             let b64 = ();
-            let waitcomplete = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let waitcomplete = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let addr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let state2 = Operand::parse(stream)?;
+            let state2 = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let suspendtimehint = match Operand::parse(stream) {
+            let suspendtimehint = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MbarrierTryWaitSemScopeStateB64 {
                 try_wait,
                 sem,
@@ -275,8 +307,10 @@ pub mod section_0 {
             stream.expect_string("mbarrier")?;
             stream.expect_string(".try_wait")?;
             let try_wait = ();
+            stream.expect_complete()?;
             stream.expect_string(".parity")?;
             let parity = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let sem = match Sem::parse(stream) {
                 Ok(val) => Some(val),
@@ -285,6 +319,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let scope = match Scope::parse(stream) {
                 Ok(val) => Some(val),
@@ -293,6 +328,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let state = match State::parse(stream) {
                 Ok(val) => Some(val),
@@ -301,26 +337,34 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b64")?;
             let b64 = ();
-            let waitcomplete = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let waitcomplete = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let addr = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let phaseparity = Operand::parse(stream)?;
+            let phaseparity = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let suspendtimehint = match Operand::parse(stream) {
+            let suspendtimehint = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(MbarrierTryWaitParitySemScopeStateB64 {
                 try_wait,
                 parity,

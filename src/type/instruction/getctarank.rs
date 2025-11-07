@@ -33,23 +33,23 @@ pub mod section_0 {
     pub struct GetctarankSpaceType {
         pub space: Option<Space>, // {.space}
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct GetctarankSharedClusterType {
         pub shared_cluster: (), // .shared::cluster
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct GetctarankType {
         pub type_: Type, // .type
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
 }

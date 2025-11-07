@@ -16,14 +16,14 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "istypep");
                     match &self.type_ {
-                            Type::Texref => {
-                                    push_directive(tokens, "texref");
-                            }
                             Type::Samplerref => {
                                     push_directive(tokens, "samplerref");
                             }
                             Type::Surfref => {
                                     push_directive(tokens, "surfref");
+                            }
+                            Type::Texref => {
+                                    push_directive(tokens, "texref");
                             }
                     }
                     self.p.unparse_tokens(tokens);

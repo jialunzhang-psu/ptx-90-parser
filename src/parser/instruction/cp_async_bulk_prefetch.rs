@@ -57,13 +57,18 @@ pub mod section_0 {
             stream.expect_string("cp")?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             stream.expect_string(".bulk")?;
             let bulk = ();
+            stream.expect_complete()?;
             stream.expect_string(".prefetch")?;
             let prefetch = ();
+            stream.expect_complete()?;
             stream.expect_string(".L2")?;
             let l2 = ();
+            stream.expect_complete()?;
             let src = Src::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_cache_hint = match LevelCacheHint::parse(stream) {
                 Ok(val) => Some(val),
@@ -72,22 +77,28 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let srcmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let size = Operand::parse(stream)?;
+            let size = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let cache_policy = match Operand::parse(stream) {
+            let cache_policy = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CpAsyncBulkPrefetchL2SrcLevelCacheHint {
                 async_,
                 bulk,

@@ -35,28 +35,28 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LevelPrefetchSize {
-        L264b, // .L2::64B
         L2128b, // .L2::128B
         L2256b, // .L2::256B
+        L264b, // .L2::64B
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Type {
-        B8, // .b8
+        B128, // .b128
         B16, // .b16
         B32, // .b32
         B64, // .b64
-        B128, // .b128
-        U8, // .u8
         U16, // .u16
         U32, // .u32
         U64, // .u64
-        S8, // .s8
         S16, // .s16
         S32, // .s32
         S64, // .s64
         F32, // .f32
         F64, // .f64
+        B8, // .b8
+        U8, // .u8
+        S8, // .s8
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -68,11 +68,11 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Level1EvictionPriority {
-        L1EvictNormal, // .L1::evict_normal
         L1EvictUnchanged, // .L1::evict_unchanged
+        L1EvictNormal, // .L1::evict_normal
         L1EvictFirst, // .L1::evict_first
-        L1EvictLast, // .L1::evict_last
         L1NoAllocate, // .L1::no_allocate
+        L1EvictLast, // .L1::evict_last
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -90,9 +90,9 @@ pub mod section_0 {
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub level_prefetch_size: Option<LevelPrefetchSize>, // {.level::prefetch_size}
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -104,9 +104,9 @@ pub mod section_0 {
         pub level_prefetch_size: Option<LevelPrefetchSize>, // {.level::prefetch_size}
         pub vec: Vec, // .vec
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -118,9 +118,9 @@ pub mod section_0 {
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub level_prefetch_size: Option<LevelPrefetchSize>, // {.level::prefetch_size}
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -133,9 +133,9 @@ pub mod section_0 {
         pub level_prefetch_size: Option<LevelPrefetchSize>, // {.level::prefetch_size}
         pub vec: Vec, // .vec
         pub type_: Type, // .type
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }

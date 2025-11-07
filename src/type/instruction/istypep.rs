@@ -11,16 +11,16 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Type {
-        Texref, // .texref
         Samplerref, // .samplerref
         Surfref, // .surfref
+        Texref, // .texref
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct IstypepType {
         pub type_: Type, // .type
-        pub p: Operand, // p
-        pub a: Operand, // a
+        pub p: GeneralOperand, // p
+        pub a: GeneralOperand, // a
     }
 
 }

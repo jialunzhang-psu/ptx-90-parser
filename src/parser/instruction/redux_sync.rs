@@ -26,33 +26,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Type::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Type::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Op {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Add
@@ -90,18 +63,53 @@ pub mod section_0 {
         }
     }
 
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try U32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u32").is_ok() {
+                    return Ok(Type::U32);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try S32
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s32").is_ok() {
+                    return Ok(Type::S32);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".u32", ".s32"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for ReduxSyncOpType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("redux")?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             let op = Op::parse(stream)?;
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let dst = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let dst = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let src = Operand::parse(stream)?;
+            let src = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let membermask = Operand::parse(stream)?;
+            let membermask = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ReduxSyncOpType {
                 sync,
                 op,
@@ -135,16 +143,6 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try Or
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".or").is_ok() {
-                    return Ok(Op::Or);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try Xor
             {
                 let saved_pos = stream.position();
@@ -154,8 +152,18 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Or
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Op::Or);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".and", ".or", ".xor"];
+            let expected = &[".and", ".xor", ".or"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -166,14 +174,22 @@ pub mod section_1 {
             stream.expect_string("redux")?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             let op = Op::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let dst = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let dst = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let src = Operand::parse(stream)?;
+            let src = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let membermask = Operand::parse(stream)?;
+            let membermask = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ReduxSyncOpB32 {
                 sync,
                 op,
@@ -228,24 +244,34 @@ pub mod section_2 {
             stream.expect_string("redux")?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             let op = Op::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let abs = stream.expect_string(".abs").is_ok();
             if !abs {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let nan = stream.expect_string(".NaN").is_ok();
             if !nan {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let dst = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let dst = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let src = Operand::parse(stream)?;
+            let src = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let membermask = Operand::parse(stream)?;
+            let membermask = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ReduxSyncOpAbsNanF32 {
                 sync,
                 op,

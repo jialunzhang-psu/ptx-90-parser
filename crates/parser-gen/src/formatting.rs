@@ -22,7 +22,6 @@ impl fmt::Display for Modifier {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Modifier::Atom(id) => write!(f, "{id}"),
-            Modifier::ImmediateNumber(num) => write!(f, "{num}"),
             Modifier::Sequence(items) => write!(f, "Sequence({})", items.join(", ")),
             Modifier::Optional(id) => write!(f, "Optional({id})"),
         }
@@ -171,7 +170,6 @@ fn build_instruction_head_node(head: &InstructionHead) -> Node {
 fn build_modifier_node(modifier: &Modifier) -> Node {
     match modifier {
         Modifier::Atom(ident) => build_identifier_node("modifier_atom", ident),
-        Modifier::ImmediateNumber(num) => Node::leaf("immediate_number", num),
         Modifier::Sequence(items) => {
             let mut node = Node::new("modifier_sequence");
             for item in items {
@@ -260,9 +258,7 @@ fn build_operand_element_node(element: &OperandElement) -> Node {
             node.push_child(build_identifier_node("item", id));
             node
         }
-        OperandElement::ImmediateNumber(num) => {
-            Node::leaf("immediate_number", num)
-        }
+        OperandElement::ImmediateNumber(num) => Node::leaf("immediate_number", num),
     }
 }
 

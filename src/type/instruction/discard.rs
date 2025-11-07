@@ -19,7 +19,7 @@ pub mod section_0 {
         pub global: bool, // {.global}
         pub level: Level, // .level
         pub a: AddressOperand, // [a]
-        pub size: Operand, // size
+        pub size: GeneralOperand, // size
     }
 
 }

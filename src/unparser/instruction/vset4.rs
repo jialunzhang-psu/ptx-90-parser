@@ -74,38 +74,17 @@ pub mod section_0 {
                     self.d.unparse_tokens(tokens);
                     if let Some(mask_0) = self.mask.as_ref() {
                             match mask_0 {
-                                    Mask::B0 => {
-                                            push_directive(tokens, "b0");
-                                    }
-                                    Mask::B1 => {
-                                            push_directive(tokens, "b1");
-                                    }
                                     Mask::B10B2 => {
                                             push_directive(tokens, "b10.b2");
                                     }
-                                    Mask::B20 => {
-                                            push_directive(tokens, "b20");
-                                    }
-                                    Mask::B21 => {
-                                            push_directive(tokens, "b21");
+                                    Mask::B3210 => {
+                                            push_directive(tokens, "b3210");
                                     }
                                     Mask::B210 => {
                                             push_directive(tokens, "b210");
                                     }
-                                    Mask::B3 => {
-                                            push_directive(tokens, "b3");
-                                    }
-                                    Mask::B30 => {
-                                            push_directive(tokens, "b30");
-                                    }
-                                    Mask::B31 => {
-                                            push_directive(tokens, "b31");
-                                    }
                                     Mask::B310 => {
                                             push_directive(tokens, "b310");
-                                    }
-                                    Mask::B32 => {
-                                            push_directive(tokens, "b32");
                                     }
                                     Mask::B320 => {
                                             push_directive(tokens, "b320");
@@ -113,8 +92,29 @@ pub mod section_0 {
                                     Mask::B321 => {
                                             push_directive(tokens, "b321");
                                     }
-                                    Mask::B3210 => {
-                                            push_directive(tokens, "b3210");
+                                    Mask::B20 => {
+                                            push_directive(tokens, "b20");
+                                    }
+                                    Mask::B21 => {
+                                            push_directive(tokens, "b21");
+                                    }
+                                    Mask::B30 => {
+                                            push_directive(tokens, "b30");
+                                    }
+                                    Mask::B31 => {
+                                            push_directive(tokens, "b31");
+                                    }
+                                    Mask::B32 => {
+                                            push_directive(tokens, "b32");
+                                    }
+                                    Mask::B0 => {
+                                            push_directive(tokens, "b0");
+                                    }
+                                    Mask::B1 => {
+                                            push_directive(tokens, "b1");
+                                    }
+                                    Mask::B3 => {
+                                            push_directive(tokens, "b3");
                                     }
                             }
                     }
@@ -370,38 +370,17 @@ pub mod section_0 {
                     self.d.unparse_tokens(tokens);
                     if let Some(mask_2) = self.mask.as_ref() {
                             match mask_2 {
-                                    Mask::B0 => {
-                                            push_directive(tokens, "b0");
-                                    }
-                                    Mask::B1 => {
-                                            push_directive(tokens, "b1");
-                                    }
                                     Mask::B10B2 => {
                                             push_directive(tokens, "b10.b2");
                                     }
-                                    Mask::B20 => {
-                                            push_directive(tokens, "b20");
-                                    }
-                                    Mask::B21 => {
-                                            push_directive(tokens, "b21");
+                                    Mask::B3210 => {
+                                            push_directive(tokens, "b3210");
                                     }
                                     Mask::B210 => {
                                             push_directive(tokens, "b210");
                                     }
-                                    Mask::B3 => {
-                                            push_directive(tokens, "b3");
-                                    }
-                                    Mask::B30 => {
-                                            push_directive(tokens, "b30");
-                                    }
-                                    Mask::B31 => {
-                                            push_directive(tokens, "b31");
-                                    }
                                     Mask::B310 => {
                                             push_directive(tokens, "b310");
-                                    }
-                                    Mask::B32 => {
-                                            push_directive(tokens, "b32");
                                     }
                                     Mask::B320 => {
                                             push_directive(tokens, "b320");
@@ -409,8 +388,29 @@ pub mod section_0 {
                                     Mask::B321 => {
                                             push_directive(tokens, "b321");
                                     }
-                                    Mask::B3210 => {
-                                            push_directive(tokens, "b3210");
+                                    Mask::B20 => {
+                                            push_directive(tokens, "b20");
+                                    }
+                                    Mask::B21 => {
+                                            push_directive(tokens, "b21");
+                                    }
+                                    Mask::B30 => {
+                                            push_directive(tokens, "b30");
+                                    }
+                                    Mask::B31 => {
+                                            push_directive(tokens, "b31");
+                                    }
+                                    Mask::B32 => {
+                                            push_directive(tokens, "b32");
+                                    }
+                                    Mask::B0 => {
+                                            push_directive(tokens, "b0");
+                                    }
+                                    Mask::B1 => {
+                                            push_directive(tokens, "b1");
+                                    }
+                                    Mask::B3 => {
+                                            push_directive(tokens, "b3");
                                     }
                             }
                     }

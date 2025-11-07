@@ -24,8 +24,8 @@ pub mod section_0 {
         pub is_canceled: (), // .is_canceled
         pub pred: (), // .pred
         pub b128: (), // .b128
-        pub pred2: Operand, // pred
-        pub try_cancel_response: Operand, // try_cancel_response
+        pub pred2: GeneralOperand, // pred
+        pub try_cancel_response: GeneralOperand, // try_cancel_response
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -35,8 +35,8 @@ pub mod section_0 {
         pub v4: (), // .v4
         pub b32: (), // .b32
         pub b128: (), // .b128
-        pub xdim: (Operand, Operand, Operand, Operand), // {xdim, ydim, zdim, _}
-        pub try_cancel_response: Operand, // try_cancel_response
+        pub xdim: VectorOperand, // {xdim, ydim, zdim, _}
+        pub try_cancel_response: GeneralOperand, // try_cancel_response
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -45,8 +45,8 @@ pub mod section_0 {
         pub get_first_ctaid_dimension: Option<GetFirstCtaidDimension>, // {.get_first_ctaid::dimension}
         pub b32: (), // .b32
         pub b128: (), // .b128
-        pub reg: Operand, // reg
-        pub try_cancel_response: Operand, // try_cancel_response
+        pub reg: GeneralOperand, // reg
+        pub try_cancel_response: GeneralOperand, // try_cancel_response
     }
 
 }

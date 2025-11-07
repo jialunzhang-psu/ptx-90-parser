@@ -61,15 +61,23 @@ pub mod section_0 {
             stream.expect_string("clusterlaunchcontrol")?;
             stream.expect_string(".query_cancel")?;
             let query_cancel = ();
+            stream.expect_complete()?;
             stream.expect_string(".is_canceled")?;
             let is_canceled = ();
+            stream.expect_complete()?;
             stream.expect_string(".pred")?;
             let pred = ();
+            stream.expect_complete()?;
             stream.expect_string(".b128")?;
             let b128 = ();
-            let pred2 = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let pred2 = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let try_cancel_response = Operand::parse(stream)?;
+            let try_cancel_response = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ClusterlaunchcontrolQueryCancelIsCanceledPredB128 {
                 query_cancel,
                 is_canceled,
@@ -87,26 +95,26 @@ pub mod section_0 {
             stream.expect_string("clusterlaunchcontrol")?;
             stream.expect_string(".query_cancel")?;
             let query_cancel = ();
+            stream.expect_complete()?;
             stream.expect_string(".get_first_ctaid")?;
             let get_first_ctaid = ();
+            stream.expect_complete()?;
             stream.expect_string(".v4")?;
             let v4 = ();
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
+            stream.expect_complete()?;
             stream.expect_string(".b128")?;
             let b128 = ();
-            stream.expect(&PtxToken::LBrace)?;
-            let xdim = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let xdim = VectorOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let ydim = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let zdim = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let operand = Operand::parse(stream)?;
-            stream.expect(&PtxToken::RBrace)?;
-            let xdim = (xdim, ydim, zdim, operand);
-            stream.expect(&PtxToken::Comma)?;
-            let try_cancel_response = Operand::parse(stream)?;
+            let try_cancel_response = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ClusterlaunchcontrolQueryCancelGetFirstCtaidV4B32B128 {
                 query_cancel,
                 get_first_ctaid,
@@ -125,6 +133,7 @@ pub mod section_0 {
             stream.expect_string("clusterlaunchcontrol")?;
             stream.expect_string(".query_cancel")?;
             let query_cancel = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let get_first_ctaid_dimension = match GetFirstCtaidDimension::parse(stream) {
                 Ok(val) => Some(val),
@@ -133,13 +142,20 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
+            stream.expect_complete()?;
             stream.expect_string(".b128")?;
             let b128 = ();
-            let reg = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let reg = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let try_cancel_response = Operand::parse(stream)?;
+            let try_cancel_response = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ClusterlaunchcontrolQueryCancelGetFirstCtaidDimensionB32B128 {
                 query_cancel,
                 get_first_ctaid_dimension,

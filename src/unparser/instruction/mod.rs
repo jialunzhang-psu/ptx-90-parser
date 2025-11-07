@@ -4,7 +4,7 @@
 
 use crate::lexer::PtxToken;
 use crate::unparser::PtxUnparser;
-use crate::r#type::instruction::Instruction;
+use crate::r#type::instruction::{Instruction, InstructionWithPredicate, Predicate};
 
 pub mod abs;
 pub mod activemask;
@@ -660,13 +660,45 @@ impl PtxUnparser for Instruction {
             Instruction::TxqSqueryB32(value) => value.unparse_tokens(tokens),
             Instruction::VmadDtypeAtypeBtypeSatScale(value) => value.unparse_tokens(tokens),
             Instruction::VmadDtypeAtypeBtypePoSatScale(value) => value.unparse_tokens(tokens),
-            Instruction::VopDtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
-            Instruction::VopDtypeAtypeBtypeSatOp2(value) => value.unparse_tokens(tokens),
-            Instruction::VopDtypeAtypeBtypeSat1(value) => value.unparse_tokens(tokens),
-            Instruction::Vop2DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
-            Instruction::Vop2DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
-            Instruction::Vop4DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
-            Instruction::Vop4DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::VaddDtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::VsubDtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::VabsdiffDtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::VminDtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::VmaxDtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::VaddDtypeAtypeBtypeSatOp2(value) => value.unparse_tokens(tokens),
+            Instruction::VsubDtypeAtypeBtypeSatOp2(value) => value.unparse_tokens(tokens),
+            Instruction::VabsdiffDtypeAtypeBtypeSatOp2(value) => value.unparse_tokens(tokens),
+            Instruction::VminDtypeAtypeBtypeSatOp2(value) => value.unparse_tokens(tokens),
+            Instruction::VmaxDtypeAtypeBtypeSatOp2(value) => value.unparse_tokens(tokens),
+            Instruction::VaddDtypeAtypeBtypeSat1(value) => value.unparse_tokens(tokens),
+            Instruction::VsubDtypeAtypeBtypeSat1(value) => value.unparse_tokens(tokens),
+            Instruction::VabsdiffDtypeAtypeBtypeSat1(value) => value.unparse_tokens(tokens),
+            Instruction::VminDtypeAtypeBtypeSat1(value) => value.unparse_tokens(tokens),
+            Instruction::VmaxDtypeAtypeBtypeSat1(value) => value.unparse_tokens(tokens),
+            Instruction::Vadd2DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vsub2DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vavrg2DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vabsdiff2DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vmin2DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vmax2DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vadd2DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vsub2DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vavrg2DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vabsdiff2DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vmin2DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vmax2DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vadd4DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vsub4DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vavrg4DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vabsdiff4DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vmin4DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vmax4DtypeAtypeBtypeSat(value) => value.unparse_tokens(tokens),
+            Instruction::Vadd4DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vsub4DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vavrg4DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vabsdiff4DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vmin4DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
+            Instruction::Vmax4DtypeAtypeBtypeAdd(value) => value.unparse_tokens(tokens),
             Instruction::VoteSyncModePred(value) => value.unparse_tokens(tokens),
             Instruction::VoteSyncBallotB32(value) => value.unparse_tokens(tokens),
             Instruction::VoteModePred(value) => value.unparse_tokens(tokens),
@@ -678,9 +710,12 @@ impl PtxUnparser for Instruction {
             Instruction::Vset2AtypeBtypeCmpAdd(value) => value.unparse_tokens(tokens),
             Instruction::Vset4AtypeBtypeCmp(value) => value.unparse_tokens(tokens),
             Instruction::Vset4AtypeBtypeCmpAdd(value) => value.unparse_tokens(tokens),
-            Instruction::VopDtypeAtypeU32SatMode(value) => value.unparse_tokens(tokens),
-            Instruction::VopDtypeAtypeU32SatModeOp2(value) => value.unparse_tokens(tokens),
-            Instruction::VopDtypeAtypeU32SatMode1(value) => value.unparse_tokens(tokens),
+            Instruction::VshlDtypeAtypeU32SatMode(value) => value.unparse_tokens(tokens),
+            Instruction::VshrDtypeAtypeU32SatMode(value) => value.unparse_tokens(tokens),
+            Instruction::VshlDtypeAtypeU32SatModeOp2(value) => value.unparse_tokens(tokens),
+            Instruction::VshrDtypeAtypeU32SatModeOp2(value) => value.unparse_tokens(tokens),
+            Instruction::VshlDtypeAtypeU32SatMode1(value) => value.unparse_tokens(tokens),
+            Instruction::VshrDtypeAtypeU32SatMode1(value) => value.unparse_tokens(tokens),
             Instruction::WgmmaCommitGroupSyncAligned(value) => value.unparse_tokens(tokens),
             Instruction::WgmmaFenceSyncAligned(value) => value.unparse_tokens(tokens),
             Instruction::WgmmaMmaAsyncSpSyncAlignedShapeDtypeF16F16(value) => value.unparse_tokens(tokens),
@@ -737,5 +772,21 @@ impl PtxUnparser for Instruction {
             Instruction::WmmaStoreDSyncAlignedLayoutShapeSsType3(value) => value.unparse_tokens(tokens),
             Instruction::XorType(value) => value.unparse_tokens(tokens),
         }
+    }
+}
+
+impl PtxUnparser for InstructionWithPredicate {
+    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        // Emit predicate if present
+        if let Some(predicate) = &self.predicate {
+            tokens.push(PtxToken::At);
+            if predicate.negated {
+                tokens.push(PtxToken::Exclaim);
+            }
+            predicate.operand.unparse_tokens(tokens);
+        }
+        
+        // Emit the instruction
+        self.instruction.unparse_tokens(tokens);
     }
 }

@@ -1,5 +1,4 @@
 use crate::lexer::{PtxToken, tokenize};
-use crate::r#type::instruction::Instruction;
 use thiserror::Error;
 
 mod common;
@@ -30,28 +29,24 @@ pub struct PtxParseError {
     pub span: Span,
 }
 
+/// Represents a position in the token stream, including both token index and character offset within a token
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct StreamPosition {
+    pub index: usize,
+    pub char_offset: usize,
+}
+
 pub struct PtxTokenStream<'a> {
     tokens: &'a [(PtxToken, Span)],
     /// Current position (index) in the tokens list
     index: usize,
-}
-
-#[derive(Debug, Clone)]
-pub struct InstructionParseFailure {
-    pub index: usize,
-    pub statement: String,
-    pub error: PtxParseError,
-}
-
-#[derive(Debug, Clone, Default)]
-pub struct InstructionParseSummary {
-    pub parsed: usize,
-    pub failures: Vec<InstructionParseFailure>,
+    /// Position within the current token's string content (for parsing multi-char identifiers/numbers)
+    pub(crate) char_offset: usize,
 }
 
 impl<'a> PtxTokenStream<'a> {
     pub fn new(tokens: &'a [(PtxToken, Span)]) -> Self {
-        Self { tokens, index: 0 }
+        Self { tokens, index: 0, char_offset: 0 }
     }
 
     /// Peek at the next token without consuming it.
@@ -204,29 +199,17 @@ impl<'a> PtxTokenStream<'a> {
         }
     }
 
-    /// Try to match a string pattern by consuming tokens until the entire pattern is matched.
+    /// Try to match a string pattern by consuming characters from the stream.
     ///
     /// # Behavior
-    /// This function attempts to match a string pattern against the token stream by:
-    /// 1. Saving the current position in the stream for potential rollback
-    /// 2. Tokenizing the pattern string to get expected tokens
-    /// 3. Iterating through expected tokens and matching them against the stream by value
-    /// 4. If all tokens match exactly, leaving the stream advanced and returning `true`
-    /// 5. If any token fails to match, resetting the stream position and returning `false`
-    ///
-    /// Tokens are matched by exact equality. This means:
-    /// - `Identifier("foo")` matches only `Identifier("foo")`, not `Identifier("bar")`
-    /// - `StringLiteral("x")` matches only `StringLiteral("x")`
-    /// - `Dot` matches only `Dot`
+    /// Matches the pattern character-by-character against the token stream.
+    /// Tokens are converted to their string representation and matched from char_offset.
+    /// If all characters match, the stream is advanced and returns true.
+    /// If any character fails to match, the stream is reset and returns false.
     ///
     /// # Returns
-    /// - `true` if the entire pattern was successfully matched (tokens consumed)
+    /// - `true` if the entire pattern was successfully matched (chars consumed)
     /// - `false` if matching failed at any point (stream position restored)
-    ///
-    /// # Examples
-    /// - Pattern ".shared" matches tokens [Dot, Identifier("shared")]
-    /// - Pattern ".to::cluster" matches tokens [Dot, Identifier("to"), Colon, Colon, Identifier("cluster")]
-    /// - Pattern "async" matches token [Identifier("async")]
     pub fn try_match_string(&mut self, pattern: &str) -> bool {
         let start_pos = self.position();
 
@@ -239,16 +222,37 @@ impl<'a> PtxTokenStream<'a> {
             }
         };
 
-        // Try to match each expected token by exact value
+        // Try to match each expected token
         for (expected_token, _) in expected_tokens {
             match self.peek() {
                 Ok((actual_token, _)) => {
+                    // Check if we can do a partial match for Identifier tokens
+                    // This handles cases like matching ".b3210" as ".b" + "3" + "2" + "1" + "0"
+                    if let (PtxToken::Identifier(actual_id), expected_str) = (actual_token, expected_token.as_str()) {
+                        // Check if the expected string matches from the current char_offset
+                        let remaining = &actual_id[self.char_offset..];
+                        if remaining.starts_with(expected_str) {
+                            let new_offset = self.char_offset + expected_str.len();
+                            if new_offset == actual_id.len() {
+                                // Exactly consumed the entire identifier - advance to next token
+                                self.index += 1;
+                                self.char_offset = 0;
+                            } else {
+                                // Partial match! Advance char_offset but DON'T advance index
+                                self.char_offset = new_offset;
+                            }
+                            continue;
+                        }
+                    }
+                    
+                    // Normal exact match
                     if actual_token != &expected_token {
                         self.set_position(start_pos);
                         return false;
                     }
                     // Token matches, consume it
                     self.index += 1;
+                    self.char_offset = 0;
                 }
                 Err(_) => {
                     // Unexpected EOF
@@ -272,6 +276,27 @@ impl<'a> PtxTokenStream<'a> {
             .map_or(false, |(token, _)| predicate(token))
     }
 
+    /// Expect that we've consumed a complete token (not stopped in the middle).
+    /// This should be called at the end of each struct parser to verify that
+    /// character-level parsing has consumed all characters from the current token.
+    ///
+    /// # Returns
+    /// - `Ok(())` if `char_offset == 0` (no partial token consumption)
+    /// - `Err(PtxParseError)` if `char_offset > 0` (stopped in middle of token)
+    pub fn expect_complete(&self) -> Result<(), PtxParseError> {
+        if self.char_offset > 0 {
+            // We're in the middle of a token - this is an error
+            let span = self.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            Err(unexpected_value(
+                span,
+                &["complete token"],
+                format!("partial token at char offset {}", self.char_offset)
+            ))
+        } else {
+            Ok(())
+        }
+    }
+
     /// Consume the next token if it matches the predicate.
     pub fn consume_if<F>(&mut self, predicate: F) -> Option<&'a (PtxToken, Span)>
     where
@@ -286,13 +311,17 @@ impl<'a> PtxTokenStream<'a> {
     }
 
     /// Get the current position in the stream, for backtracking.
-    pub fn position(&self) -> usize {
-        self.index
+    pub fn position(&self) -> StreamPosition {
+        StreamPosition {
+            index: self.index,
+            char_offset: self.char_offset,
+        }
     }
 
     /// Reset the stream to an old position, for backtracking.
-    pub fn set_position(&mut self, index: usize) {
-        self.index = index;
+    pub fn set_position(&mut self, pos: StreamPosition) {
+        self.index = pos.index;
+        self.char_offset = pos.char_offset;
     }
 
     /// Check if we've reached the end of the token stream.
@@ -303,6 +332,91 @@ impl<'a> PtxTokenStream<'a> {
     /// Get the remaining tokens.
     pub fn remaining(&self) -> &'a [(PtxToken, Span)] {
         &self.tokens[self.index..]
+    }
+
+    /// Peek at the character at the current char_offset within the current token's string.
+    /// Returns None if we're at the end of the current token's string or if the token has no string content.
+    pub fn peek_char_in_token(&self) -> Option<char> {
+        if self.index >= self.tokens.len() {
+            return None;
+        }
+        
+        let (token, _) = &self.tokens[self.index];
+        let string = match token {
+            PtxToken::Identifier(s) |
+            PtxToken::DecimalInteger(s) |
+            PtxToken::HexInteger(s) |
+            PtxToken::BinaryInteger(s) |
+            PtxToken::OctalInteger(s) => s,
+            _ => return None,
+        };
+        
+        string.chars().nth(self.char_offset)
+    }
+
+    /// Consume one character from the current token by advancing char_offset.
+    /// If we reach the end of the token's string, advance to the next token and reset char_offset.
+    /// Returns the consumed character.
+    pub fn consume_char_in_token(&mut self) -> Option<char> {
+        let ch = self.peek_char_in_token()?;
+        self.char_offset += 1;
+        
+        // Check if we've consumed the entire string of this token
+        if self.index < self.tokens.len() {
+            let (token, _) = &self.tokens[self.index];
+            let string = match token {
+                PtxToken::Identifier(s) |
+                PtxToken::DecimalInteger(s) |
+                PtxToken::HexInteger(s) |
+                PtxToken::BinaryInteger(s) |
+                PtxToken::OctalInteger(s) => s,
+                _ => "",
+            };
+            
+            if self.char_offset >= string.len() {
+                // Move to next token and reset char_offset
+                self.index += 1;
+                self.char_offset = 0;
+            }
+        }
+        
+        Some(ch)
+    }
+
+    /// Match a specific character at the current position within the token.
+    /// Consumes the character if it matches.
+    pub fn expect_char_in_token(&mut self, expected: char) -> Result<char, PtxParseError> {
+        match self.peek_char_in_token() {
+            Some(ch) if ch == expected => {
+                self.consume_char_in_token();
+                Ok(ch)
+            }
+            Some(ch) => {
+                let span = if self.index < self.tokens.len() {
+                    self.tokens[self.index].1.clone()
+                } else {
+                    0..0
+                };
+                Err(PtxParseError {
+                    kind: ParseErrorKind::UnexpectedToken {
+                        expected: vec![format!("'{}'", expected)],
+                        found: format!("'{}'", ch),
+                    },
+                    span,
+                })
+            }
+            None => {
+                let span = if self.index < self.tokens.len() {
+                    self.tokens[self.index].1.clone()
+                } else {
+                    0..0
+                };
+                Err(PtxParseError {
+                    kind: ParseErrorKind::UnexpectedEof,
+                    span,
+                })
+            }
+        }
     }
 }
 
@@ -375,106 +489,4 @@ pub(crate) fn peek_directive(
         }
     }
     Ok(None)
-}
-
-pub fn analyze_instruction_stream(source: &str) -> InstructionParseSummary {
-    let mut summary = InstructionParseSummary::default();
-
-    for (idx, statement) in extract_instruction_statements(source)
-        .into_iter()
-        .enumerate()
-    {
-        let trimmed = statement.trim();
-
-        if trimmed.is_empty()
-            || trimmed.starts_with('.')
-            || trimmed.starts_with('{')
-            || trimmed.starts_with('}')
-            || trimmed.ends_with(':')
-        {
-            continue;
-        }
-
-        // Strip trailing semicolon for instruction parsing
-        let trimmed = trimmed.strip_suffix(';').unwrap_or(trimmed);
-
-        let tokens = match tokenize(trimmed) {
-            Ok(tokens) => tokens,
-            Err(err) => {
-                summary.failures.push(InstructionParseFailure {
-                    index: idx + 1,
-                    statement,
-                    error: PtxParseError {
-                        kind: ParseErrorKind::InvalidLiteral("lexical error".to_string()),
-                        span: err.span,
-                    },
-                });
-                continue;
-            }
-        };
-
-        if tokens.is_empty() {
-            continue;
-        }
-
-        let mut stream = PtxTokenStream::new(&tokens);
-        match <Instruction as PtxParser>::parse(&mut stream) {
-            Ok(_) if stream.is_at_end() => summary.parsed += 1,
-            Ok(_) => summary.failures.push(InstructionParseFailure {
-                index: idx + 1,
-                statement,
-                error: PtxParseError {
-                    kind: ParseErrorKind::UnexpectedToken {
-                        expected: vec!["end of statement".to_string()],
-                        found: format!("remaining tokens at position {}", stream.position()),
-                    },
-                    span: tokens
-                        .get(stream.position())
-                        .map_or(0..0, |(_, span)| span.clone()),
-                },
-            }),
-            Err(err) => summary.failures.push(InstructionParseFailure {
-                index: idx + 1,
-                statement,
-                error: err,
-            }),
-        }
-    }
-
-    summary
-}
-
-pub fn extract_instruction_statements(source: &str) -> Vec<String> {
-    let mut statements = Vec::new();
-    let mut current = String::new();
-
-    for line in source.lines() {
-        let mut rest = line;
-
-        while let Some(idx) = rest.find(';') {
-            current.push_str(rest[..=idx].trim());
-            if !current.trim().is_empty() {
-                statements.push(current.trim().to_string());
-            }
-            current.clear();
-            rest = &rest[idx + 1..];
-        }
-
-        if rest.trim_end().ends_with(':') {
-            let label = rest.trim();
-            if !label.is_empty() {
-                statements.push(label.to_string());
-            }
-            current.clear();
-        } else if !rest.trim().is_empty() {
-            current.push_str(rest.trim());
-            current.push(' ');
-        }
-    }
-
-    if !current.trim().is_empty() {
-        statements.push(current.trim().to_string());
-    }
-
-    statements
 }

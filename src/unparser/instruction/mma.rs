@@ -324,10 +324,10 @@ pub mod section_1 {
                             }
                     }
                     match &self.f8type1 {
-                            F8type1::E4m3 => {
+                            F8type::E4m3 => {
                                     push_directive(tokens, "e4m3");
                             }
-                            F8type1::E5m2 => {
+                            F8type::E5m2 => {
                                     push_directive(tokens, "e5m2");
                             }
                     }
@@ -389,19 +389,19 @@ pub mod section_1 {
                             }
                     }
                     match &self.f8f6f4type1 {
-                            F8f6f4type1::E4m3 => {
+                            F8f6f4type::E4m3 => {
                                     push_directive(tokens, "e4m3");
                             }
-                            F8f6f4type1::E5m2 => {
+                            F8f6f4type::E5m2 => {
                                     push_directive(tokens, "e5m2");
                             }
-                            F8f6f4type1::E3m2 => {
+                            F8f6f4type::E3m2 => {
                                     push_directive(tokens, "e3m2");
                             }
-                            F8f6f4type1::E2m3 => {
+                            F8f6f4type::E2m3 => {
                                     push_directive(tokens, "e2m3");
                             }
-                            F8f6f4type1::E2m1 => {
+                            F8f6f4type::E2m1 => {
                                     push_directive(tokens, "e2m1");
                             }
                     }
@@ -470,21 +470,11 @@ pub mod section_2 {
             tokens.push(PtxToken::Comma);
                     self.scale_a_data.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBrace);
-                    let &( ref group_1_0, ref group_1_1) = &self.byte_id_a;
-                    group_1_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_1_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBrace);
+                    self.byte_id_a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.scale_b_data.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBrace);
-                    let &( ref group_2_0, ref group_2_1) = &self.byte_id_b;
-                    group_2_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_2_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBrace);
+                    self.byte_id_b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -539,21 +529,11 @@ pub mod section_3 {
             tokens.push(PtxToken::Comma);
                     self.scale_a_data.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBrace);
-                    let &( ref group_3_0, ref group_3_1) = &self.byte_id_a;
-                    group_3_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_3_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBrace);
+                    self.byte_id_a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.scale_b_data.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBrace);
-                    let &( ref group_4_0, ref group_4_1) = &self.byte_id_b;
-                    group_4_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_4_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBrace);
+                    self.byte_id_b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -578,8 +558,8 @@ pub mod section_4 {
                             }
                     }
                     push_directive(tokens, "block_scale");
-                    if let Some(scale_vec_size_5) = self.scale_vec_size.as_ref() {
-                            match scale_vec_size_5 {
+                    if let Some(scale_vec_size_1) = self.scale_vec_size.as_ref() {
+                            match scale_vec_size_1 {
                                     ScaleVecSize::ScaleVec1x => {
                                             push_directive(tokens, "scale_vec::1X");
                                     }
@@ -604,19 +584,19 @@ pub mod section_4 {
                             }
                     }
                     match &self.f8f6f4type1 {
-                            F8f6f4type1::E4m3 => {
+                            F8f6f4type::E4m3 => {
                                     push_directive(tokens, "e4m3");
                             }
-                            F8f6f4type1::E5m2 => {
+                            F8f6f4type::E5m2 => {
                                     push_directive(tokens, "e5m2");
                             }
-                            F8f6f4type1::E3m2 => {
+                            F8f6f4type::E3m2 => {
                                     push_directive(tokens, "e3m2");
                             }
-                            F8f6f4type1::E2m3 => {
+                            F8f6f4type::E2m3 => {
                                     push_directive(tokens, "e2m3");
                             }
-                            F8f6f4type1::E2m1 => {
+                            F8f6f4type::E2m1 => {
                                     push_directive(tokens, "e2m1");
                             }
                     }
@@ -636,21 +616,11 @@ pub mod section_4 {
             tokens.push(PtxToken::Comma);
                     self.scale_a_data.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBrace);
-                    let &( ref group_6_0, ref group_6_1) = &self.byte_id_a;
-                    group_6_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_6_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBrace);
+                    self.byte_id_a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.scale_b_data.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LBrace);
-                    let &( ref group_7_0, ref group_7_1) = &self.byte_id_b;
-                    group_7_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_7_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBrace);
+                    self.byte_id_b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -667,8 +637,8 @@ pub mod section_5 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M8n84 => {
-                                    push_directive(tokens, "m8n84");
+                            Shape::M16n8k16 => {
+                                    push_directive(tokens, "m16n8k16");
                             }
                             Shape::M16n8k4 => {
                                     push_directive(tokens, "m16n8k4");
@@ -676,8 +646,8 @@ pub mod section_5 {
                             Shape::M16n8k8 => {
                                     push_directive(tokens, "m16n8k8");
                             }
-                            Shape::M16n8k16 => {
-                                    push_directive(tokens, "m16n8k16");
+                            Shape::M8n84 => {
+                                    push_directive(tokens, "m8n84");
                             }
                     }
                     push_directive(tokens, "row");
@@ -709,14 +679,14 @@ pub mod section_6 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M8n8k16 => {
-                                    push_directive(tokens, "m8n8k16");
-                            }
                             Shape::M16n8k16 => {
                                     push_directive(tokens, "m16n8k16");
                             }
                             Shape::M16n8k32 => {
                                     push_directive(tokens, "m16n8k32");
+                            }
+                            Shape::M8n8k16 => {
+                                    push_directive(tokens, "m8n8k16");
                             }
                     }
                     push_directive(tokens, "row");
@@ -765,14 +735,14 @@ pub mod section_7 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M8n8k32 => {
-                                    push_directive(tokens, "m8n8k32");
-                            }
                             Shape::M16n8k32 => {
                                     push_directive(tokens, "m16n8k32");
                             }
                             Shape::M16n8k64 => {
                                     push_directive(tokens, "m16n8k64");
+                            }
+                            Shape::M8n8k32 => {
+                                    push_directive(tokens, "m8n8k32");
                             }
                     }
                     push_directive(tokens, "row");
@@ -821,14 +791,14 @@ pub mod section_8 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape {
-                            Shape::M8n8k128 => {
-                                    push_directive(tokens, "m8n8k128");
-                            }
                             Shape::M16n8k128 => {
                                     push_directive(tokens, "m16n8k128");
                             }
                             Shape::M16n8k256 => {
                                     push_directive(tokens, "m16n8k256");
+                            }
+                            Shape::M8n8k128 => {
+                                    push_directive(tokens, "m8n8k128");
                             }
                     }
                     push_directive(tokens, "row");

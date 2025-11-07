@@ -307,11 +307,11 @@ pub mod section_3 {
                     }
                     push_directive(tokens, "f32");
                     match &self.atype {
-                            Atype::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
                             Atype::Bf16 => {
                                     push_directive(tokens, "bf16");
+                            }
+                            Atype::F16 => {
+                                    push_directive(tokens, "f16");
                             }
                     }
                     self.d.unparse_tokens(tokens);

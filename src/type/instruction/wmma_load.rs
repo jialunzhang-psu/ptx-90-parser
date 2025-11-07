@@ -87,9 +87,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -123,9 +123,9 @@ pub mod section_0 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub atype: Atype, // .atype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -138,9 +138,9 @@ pub mod section_0 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub btype: Btype, // .btype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -153,9 +153,9 @@ pub mod section_0 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub ctype: Ctype, // .ctype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
 }
@@ -178,9 +178,9 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -208,9 +208,9 @@ pub mod section_1 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub atype: Atype, // .atype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -223,9 +223,9 @@ pub mod section_1 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub btype: Btype, // .btype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -238,9 +238,9 @@ pub mod section_1 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub ctype: Ctype, // .ctype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
 }
@@ -261,9 +261,9 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -291,9 +291,9 @@ pub mod section_2 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub atype: Atype, // .atype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -306,9 +306,9 @@ pub mod section_2 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub btype: Btype, // .btype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -321,9 +321,9 @@ pub mod section_2 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub ctype: Ctype, // .ctype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
 }
@@ -344,9 +344,9 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -374,9 +374,9 @@ pub mod section_3 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub atype: Atype, // .atype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -389,9 +389,9 @@ pub mod section_3 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub btype: Btype, // .btype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -404,9 +404,9 @@ pub mod section_3 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub ctype: Ctype, // .ctype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
 }
@@ -421,9 +421,9 @@ pub mod section_4 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -459,9 +459,9 @@ pub mod section_4 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub atype: Atype, // .atype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -474,9 +474,9 @@ pub mod section_4 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub btype: Btype, // .btype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -489,9 +489,9 @@ pub mod section_4 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub ctype: Ctype, // .ctype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
 }
@@ -506,9 +506,9 @@ pub mod section_5 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
+        SharedCta, // .shared::cta
         Global, // .global
         Shared, // .shared
-        SharedCta, // .shared::cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -542,9 +542,9 @@ pub mod section_5 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub atype: Atype, // .atype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -557,9 +557,9 @@ pub mod section_5 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub btype: Btype, // .btype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -572,9 +572,9 @@ pub mod section_5 {
         pub shape: Shape, // .shape
         pub ss: Option<Ss>, // {.ss}
         pub ctype: Ctype, // .ctype
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
-        pub stride: Option<Operand>, // {, stride}
+        pub stride: Option<GeneralOperand>, // {, stride}
     }
 
 }

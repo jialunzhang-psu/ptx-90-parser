@@ -108,11 +108,11 @@ pub mod section_0 {
 
     impl PtxParser for Kind {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindF16
+            // Try KindF8f6f4
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".kind::f16").is_ok() {
-                    return Ok(Kind::KindF16);
+                if stream.expect_string(".kind::f8f6f4").is_ok() {
+                    return Ok(Kind::KindF8f6f4);
                 }
                 stream.set_position(saved_pos);
             }
@@ -127,17 +127,17 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try KindF8f6f4
+            // Try KindF16
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".kind::f8f6f4").is_ok() {
-                    return Ok(Kind::KindF8f6f4);
+                if stream.expect_string(".kind::f16").is_ok() {
+                    return Ok(Kind::KindF16);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::f16", ".kind::tf32", ".kind::f8f6f4"];
+            let expected = &[".kind::f8f6f4", ".kind::tf32", ".kind::f16"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -148,43 +148,55 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             let kind = Kind::parse(stream)?;
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a_desc = Operand::parse(stream)?;
+            let a_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let disable_output_lane = match Operand::parse(stream) {
+            let disable_output_lane = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let scale_input_d = match Operand::parse(stream) {
+            let scale_input_d = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKind {
                 mma,
                 cta_group,
@@ -206,43 +218,55 @@ pub mod section_0 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             let kind = Kind::parse(stream)?;
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let disable_output_lane = match Operand::parse(stream) {
+            let disable_output_lane = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let scale_input_d = match Operand::parse(stream) {
+            let scale_input_d = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKind1 {
                 mma,
                 cta_group,
@@ -268,6 +292,70 @@ pub mod section_1 {
     // ============================================================================
     // Generated enum parsers
     // ============================================================================
+
+    impl PtxParser for CtaGroup {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try CtaGroup1
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta_group::1").is_ok() {
+                    return Ok(CtaGroup::CtaGroup1);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try CtaGroup2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta_group::2").is_ok() {
+                    return Ok(CtaGroup::CtaGroup2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".cta_group::1", ".cta_group::2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Kind {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try KindMxf8f6f4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf8f6f4").is_ok() {
+                    return Ok(Kind::KindMxf8f6f4);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try KindMxf4nvf4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf4nvf4").is_ok() {
+                    return Ok(Kind::KindMxf4nvf4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try KindMxf4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf4").is_ok() {
+                    return Ok(Kind::KindMxf4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".kind::mxf8f6f4", ".kind::mxf4nvf4", ".kind::mxf4"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
     impl PtxParser for ScaleVectorsize {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -326,79 +414,19 @@ pub mod section_1 {
         }
     }
 
-    impl PtxParser for CtaGroup {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try CtaGroup1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::1").is_ok() {
-                    return Ok(CtaGroup::CtaGroup1);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try CtaGroup2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::2").is_ok() {
-                    return Ok(CtaGroup::CtaGroup2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta_group::1", ".cta_group::2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindMxf8f6f4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf8f6f4").is_ok() {
-                    return Ok(Kind::KindMxf8f6f4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try KindMxf4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf4").is_ok() {
-                    return Ok(Kind::KindMxf4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try KindMxf4nvf4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf4nvf4").is_ok() {
-                    return Ok(Kind::KindMxf4nvf4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::mxf8f6f4", ".kind::mxf4", ".kind::mxf4nvf4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Tcgen05MmaCtaGroupKindBlockScaleScaleVectorsize {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             let kind = Kind::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".block_scale")?;
             let block_scale = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let scale_vectorsize = match ScaleVectorsize::parse(stream) {
                 Ok(val) => Some(val),
@@ -407,19 +435,29 @@ pub mod section_1 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a_desc = Operand::parse(stream)?;
+            let a_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let scale_a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let scale_b_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindBlockScaleScaleVectorsize {
                 mma,
                 cta_group,
@@ -443,10 +481,14 @@ pub mod section_1 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             let kind = Kind::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".block_scale")?;
             let block_scale = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let scale_vectorsize = match ScaleVectorsize::parse(stream) {
                 Ok(val) => Some(val),
@@ -455,19 +497,29 @@ pub mod section_1 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let scale_a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let scale_b_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindBlockScaleScaleVectorsize1 {
                 mma,
                 cta_group,
@@ -496,48 +548,18 @@ pub mod section_2 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Op {
+    impl PtxParser for Buffer {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Fill
+            // Try A
             {
                 let saved_pos = stream.position();
-                if stream.expect_string("::fill").is_ok() {
-                    return Ok(Op::Fill);
+                if stream.expect_string("::a").is_ok() {
+                    return Ok(Buffer::A);
                 }
                 stream.set_position(saved_pos);
             }
-            let saved_pos = stream.position();
-            // Try Use
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::use").is_ok() {
-                    return Ok(Op::Use);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Lastuse
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::lastuse").is_ok() {
-                    return Ok(Op::Lastuse);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Discard
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::discard*").is_ok() {
-                    return Ok(Op::Discard);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["::fill", "::use", "::lastuse", "::discard*"];
+            let expected = &["::a"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -565,23 +587,6 @@ pub mod section_2 {
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &["<complex>"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Buffer {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try A
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::a").is_ok() {
-                    return Ok(Buffer::A);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["::a"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -616,11 +621,11 @@ pub mod section_2 {
 
     impl PtxParser for Kind {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindF16
+            // Try KindF8f6f4
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".kind::f16").is_ok() {
-                    return Ok(Kind::KindF16);
+                if stream.expect_string(".kind::f8f6f4").is_ok() {
+                    return Ok(Kind::KindF8f6f4);
                 }
                 stream.set_position(saved_pos);
             }
@@ -635,17 +640,64 @@ pub mod section_2 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try KindF8f6f4
+            // Try KindF16
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".kind::f8f6f4").is_ok() {
-                    return Ok(Kind::KindF8f6f4);
+                if stream.expect_string(".kind::f16").is_ok() {
+                    return Ok(Kind::KindF16);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::f16", ".kind::tf32", ".kind::f8f6f4"];
+            let expected = &[".kind::f8f6f4", ".kind::tf32", ".kind::f16"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Op {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Discard
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::discard*").is_ok() {
+                    return Ok(Op::Discard);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Lastuse
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::lastuse").is_ok() {
+                    return Ok(Op::Lastuse);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Fill
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::fill").is_ok() {
+                    return Ok(Op::Fill);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Use
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::use").is_ok() {
+                    return Ok(Op::Use);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &["::discard*", "::lastuse", "::fill", "::use"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -656,44 +708,57 @@ pub mod section_2 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             let kind = Kind::parse(stream)?;
+            stream.expect_complete()?;
             let collector_usage = CollectorUsage::parse(stream)?;
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a_desc = Operand::parse(stream)?;
+            let a_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let disable_output_lane = match Operand::parse(stream) {
+            let disable_output_lane = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let scale_input_d = match Operand::parse(stream) {
+            let scale_input_d = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindCollectorUsage {
                 mma,
                 cta_group,
@@ -716,49 +781,63 @@ pub mod section_2 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             let kind = Kind::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ashift = stream.expect_string(".ashift").is_ok();
             if !ashift {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let collector_usage = CollectorUsage::parse(stream)?;
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let disable_output_lane = match Operand::parse(stream) {
+            let disable_output_lane = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let scale_input_d = match Operand::parse(stream) {
+            let scale_input_d = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindAshiftCollectorUsage {
                 mma,
                 cta_group,
@@ -782,10 +861,14 @@ pub mod section_2 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             let kind = Kind::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".ashift")?;
             let ashift = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let collector_usage = match CollectorUsage::parse(stream) {
                 Ok(val) => Some(val),
@@ -794,41 +877,51 @@ pub mod section_2 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let disable_output_lane = match Operand::parse(stream) {
+            let disable_output_lane = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let scale_input_d = match Operand::parse(stream) {
+            let scale_input_d = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindAshiftCollectorUsage1 {
                 mma,
                 cta_group,
@@ -856,6 +949,161 @@ pub mod section_3 {
     // ============================================================================
     // Generated enum parsers
     // ============================================================================
+
+    impl PtxParser for Buffer {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try A
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::a").is_ok() {
+                    return Ok(Buffer::A);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &["::a"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for CollectorUsage {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try CollectorBufferOp
+            {
+                let saved_seq_pos = stream.position();
+                match (|| -> Result<_, PtxParseError> {
+            stream.expect_string(".collector")?;
+            let collector = ();
+            let buffer = Buffer::parse(stream)?;
+            let op = Op::parse(stream)?;
+                    Ok((collector, buffer, op))
+                })() {
+                    Ok((collector, buffer, op)) => {
+                        return Ok(CollectorUsage::CollectorBufferOp(collector, buffer, op));
+                    }
+                    Err(_) => {
+                        stream.set_position(saved_seq_pos);
+                    }
+                }
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &["<complex>"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for CtaGroup {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try CtaGroup1
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta_group::1").is_ok() {
+                    return Ok(CtaGroup::CtaGroup1);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try CtaGroup2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".cta_group::2").is_ok() {
+                    return Ok(CtaGroup::CtaGroup2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".cta_group::1", ".cta_group::2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Kind {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try KindMxf8f6f4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf8f6f4").is_ok() {
+                    return Ok(Kind::KindMxf8f6f4);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try KindMxf4nvf4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf4nvf4").is_ok() {
+                    return Ok(Kind::KindMxf4nvf4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try KindMxf4
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".kind::mxf4").is_ok() {
+                    return Ok(Kind::KindMxf4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".kind::mxf8f6f4", ".kind::mxf4nvf4", ".kind::mxf4"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Op {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Discard
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::discard*").is_ok() {
+                    return Ok(Op::Discard);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Lastuse
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::lastuse").is_ok() {
+                    return Ok(Op::Lastuse);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Fill
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::fill").is_ok() {
+                    return Ok(Op::Fill);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Use
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::use").is_ok() {
+                    return Ok(Op::Use);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &["::discard*", "::lastuse", "::fill", "::use"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
 
     impl PtxParser for ScaleVectorsize {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -914,170 +1162,19 @@ pub mod section_3 {
         }
     }
 
-    impl PtxParser for Op {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Fill
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::fill").is_ok() {
-                    return Ok(Op::Fill);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Use
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::use").is_ok() {
-                    return Ok(Op::Use);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Lastuse
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::lastuse").is_ok() {
-                    return Ok(Op::Lastuse);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Discard
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::discard*").is_ok() {
-                    return Ok(Op::Discard);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["::fill", "::use", "::lastuse", "::discard*"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for CollectorUsage {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try CollectorBufferOp
-            {
-                let saved_seq_pos = stream.position();
-                match (|| -> Result<_, PtxParseError> {
-            stream.expect_string(".collector")?;
-            let collector = ();
-            let buffer = Buffer::parse(stream)?;
-            let op = Op::parse(stream)?;
-                    Ok((collector, buffer, op))
-                })() {
-                    Ok((collector, buffer, op)) => {
-                        return Ok(CollectorUsage::CollectorBufferOp(collector, buffer, op));
-                    }
-                    Err(_) => {
-                        stream.set_position(saved_seq_pos);
-                    }
-                }
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["<complex>"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Buffer {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try A
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::a").is_ok() {
-                    return Ok(Buffer::A);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["::a"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for CtaGroup {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try CtaGroup1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::1").is_ok() {
-                    return Ok(CtaGroup::CtaGroup1);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try CtaGroup2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::2").is_ok() {
-                    return Ok(CtaGroup::CtaGroup2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta_group::1", ".cta_group::2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindMxf8f6f4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf8f6f4").is_ok() {
-                    return Ok(Kind::KindMxf8f6f4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try KindMxf4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf4").is_ok() {
-                    return Ok(Kind::KindMxf4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try KindMxf4nvf4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf4nvf4").is_ok() {
-                    return Ok(Kind::KindMxf4nvf4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::mxf8f6f4", ".kind::mxf4", ".kind::mxf4nvf4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Tcgen05MmaCtaGroupKindBlockScaleScaleVectorsizeCollectorUsage {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             let kind = Kind::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".block_scale")?;
             let block_scale = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let scale_vectorsize = match ScaleVectorsize::parse(stream) {
                 Ok(val) => Some(val),
@@ -1086,20 +1183,31 @@ pub mod section_3 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let collector_usage = CollectorUsage::parse(stream)?;
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a_desc = Operand::parse(stream)?;
+            let a_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let scale_a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let scale_b_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindBlockScaleScaleVectorsizeCollectorUsage {
                 mma,
                 cta_group,
@@ -1124,10 +1232,14 @@ pub mod section_3 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             let kind = Kind::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".block_scale")?;
             let block_scale = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let scale_vectorsize = match ScaleVectorsize::parse(stream) {
                 Ok(val) => Some(val),
@@ -1136,20 +1248,31 @@ pub mod section_3 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let collector_usage = CollectorUsage::parse(stream)?;
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let scale_a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let scale_b_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindBlockScaleScaleVectorsizeCollectorUsage1 {
                 mma,
                 cta_group,
@@ -1211,31 +1334,42 @@ pub mod section_4 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".kind::i8")?;
             let kind_i8 = ();
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a_desc = Operand::parse(stream)?;
+            let a_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let disable_output_lane = match Operand::parse(stream) {
+            let disable_output_lane = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindI8 {
                 mma,
                 cta_group,
@@ -1256,31 +1390,42 @@ pub mod section_4 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".kind::i8")?;
             let kind_i8 = ();
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let disable_output_lane = match Operand::parse(stream) {
+            let disable_output_lane = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindI81 {
                 mma,
                 cta_group,
@@ -1306,6 +1451,23 @@ pub mod section_5 {
     // Generated enum parsers
     // ============================================================================
 
+    impl PtxParser for Buffer {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try A
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::a").is_ok() {
+                    return Ok(Buffer::A);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &["::a"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for CollectorUsage {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try CollectorBufferOp
@@ -1328,23 +1490,6 @@ pub mod section_5 {
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &["<complex>"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Buffer {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try A
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::a").is_ok() {
-                    return Ok(Buffer::A);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["::a"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1379,24 +1524,14 @@ pub mod section_5 {
 
     impl PtxParser for Op {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Fill
+            // Try Discard
             {
                 let saved_pos = stream.position();
-                if stream.expect_string("::fill").is_ok() {
-                    return Ok(Op::Fill);
+                if stream.expect_string("::discard*").is_ok() {
+                    return Ok(Op::Discard);
                 }
                 stream.set_position(saved_pos);
             }
-            let saved_pos = stream.position();
-            // Try Use
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("::use").is_ok() {
-                    return Ok(Op::Use);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try Lastuse
             {
@@ -1408,17 +1543,27 @@ pub mod section_5 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try Discard
+            // Try Fill
             {
                 let saved_pos = stream.position();
-                if stream.expect_string("::discard*").is_ok() {
-                    return Ok(Op::Discard);
+                if stream.expect_string("::fill").is_ok() {
+                    return Ok(Op::Fill);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Use
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("::use").is_ok() {
+                    return Ok(Op::Use);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["::fill", "::use", "::lastuse", "::discard*"];
+            let expected = &["::discard*", "::lastuse", "::fill", "::use"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -1429,32 +1574,44 @@ pub mod section_5 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".kind::i8")?;
             let kind_i8 = ();
+            stream.expect_complete()?;
             let collector_usage = CollectorUsage::parse(stream)?;
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a_desc = Operand::parse(stream)?;
+            let a_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let disable_output_lane = match Operand::parse(stream) {
+            let disable_output_lane = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindI8CollectorUsage {
                 mma,
                 cta_group,
@@ -1476,11 +1633,15 @@ pub mod section_5 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".kind::i8")?;
             let kind_i8 = ();
+            stream.expect_complete()?;
             stream.expect_string(".ashift")?;
             let ashift = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let collector_usage = match CollectorUsage::parse(stream) {
                 Ok(val) => Some(val),
@@ -1489,28 +1650,37 @@ pub mod section_5 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let disable_output_lane = match Operand::parse(stream) {
+            let disable_output_lane = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindI8AshiftCollectorUsage {
                 mma,
                 cta_group,
@@ -1533,37 +1703,50 @@ pub mod section_5 {
             stream.expect_string("tcgen05")?;
             stream.expect_string(".mma")?;
             let mma = ();
+            stream.expect_complete()?;
             let cta_group = CtaGroup::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".kind::i8")?;
             let kind_i8 = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ashift = stream.expect_string(".ashift").is_ok();
             if !ashift {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let collector_usage = CollectorUsage::parse(stream)?;
+            stream.expect_complete()?;
             let d_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a_tmem = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b_desc = Operand::parse(stream)?;
+            let b_desc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let idesc = Operand::parse(stream)?;
+            let idesc = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let disable_output_lane = match Operand::parse(stream) {
+            let disable_output_lane = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let enable_input_d = Operand::parse(stream)?;
+            let enable_input_d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Tcgen05MmaCtaGroupKindI8AshiftCollectorUsage1 {
                 mma,
                 cta_group,

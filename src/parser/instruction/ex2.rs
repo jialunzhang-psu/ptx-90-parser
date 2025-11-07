@@ -23,15 +23,6 @@ pub mod section_0 {
 
     impl PtxParser for Atype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Atype::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
             // Try F16x2
             {
                 let saved_pos = stream.position();
@@ -40,9 +31,18 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try F16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".f16").is_ok() {
+                    return Ok(Atype::F16);
+                }
+                stream.set_position(saved_pos);
+            }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".f16x2"];
+            let expected = &[".f16x2", ".f16"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -50,15 +50,6 @@ pub mod section_0 {
 
     impl PtxParser for Btype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Bf16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".bf16").is_ok() {
-                    return Ok(Btype::Bf16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
             // Try Bf16x2
             {
                 let saved_pos = stream.position();
@@ -67,9 +58,18 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try Bf16
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".bf16").is_ok() {
+                    return Ok(Btype::Bf16);
+                }
+                stream.set_position(saved_pos);
+            }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".bf16", ".bf16x2"];
+            let expected = &[".bf16x2", ".bf16"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -80,16 +80,23 @@ pub mod section_0 {
             stream.expect_string("ex2")?;
             stream.expect_string(".approx")?;
             let approx = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Ex2ApproxFtzF32 {
                 approx,
                 ftz,
@@ -106,10 +113,16 @@ pub mod section_0 {
             stream.expect_string("ex2")?;
             stream.expect_string(".approx")?;
             let approx = ();
+            stream.expect_complete()?;
             let atype = Atype::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Ex2ApproxAtype {
                 approx,
                 atype,
@@ -125,12 +138,19 @@ pub mod section_0 {
             stream.expect_string("ex2")?;
             stream.expect_string(".approx")?;
             let approx = ();
+            stream.expect_complete()?;
             stream.expect_string(".ftz")?;
             let ftz = ();
+            stream.expect_complete()?;
             let btype = Btype::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Ex2ApproxFtzBtype {
                 approx,
                 ftz,

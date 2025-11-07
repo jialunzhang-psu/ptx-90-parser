@@ -20,33 +20,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Shape {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M8n8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m8n8").is_ok() {
-                    return Ok(Shape::M8n8);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try M16n8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m16n8").is_ok() {
-                    return Ok(Shape::M16n8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m8n8", ".m16n8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Num {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try X1
@@ -84,17 +57,35 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Ss {
+    impl PtxParser for Shape {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Shared
+            // Try M16n8
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Ss::Shared);
+                if stream.expect_string(".m16n8").is_ok() {
+                    return Ok(Shape::M16n8);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
+            // Try M8n8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".m8n8").is_ok() {
+                    return Ok(Shape::M8n8);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".m16n8", ".m8n8"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Ss {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try SharedCta
             {
                 let saved_pos = stream.position();
@@ -103,9 +94,18 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
+            let saved_pos = stream.position();
+            // Try Shared
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared").is_ok() {
+                    return Ok(Ss::Shared);
+                }
+                stream.set_position(saved_pos);
+            }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared", ".shared::cta"];
+            let expected = &[".shared::cta", ".shared"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -143,15 +143,20 @@ pub mod section_0 {
             stream.expect_string("stmatrix")?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
+            stream.expect_complete()?;
             let shape = Shape::parse(stream)?;
+            stream.expect_complete()?;
             let num = Num::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let trans = stream.expect_string(".trans").is_ok();
             if !trans {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -160,10 +165,16 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
+            stream.expect_complete()?;
             let p = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let r = Operand::parse(stream)?;
+            let r = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(StmatrixSyncAlignedShapeNumTransSsType {
                 sync,
                 aligned,

@@ -19,7 +19,7 @@ pub mod section_0 {
         pub global: bool, // {.global}
         pub level_eviction_priority: LevelEvictionPriority, // .level::eviction_priority
         pub a: AddressOperand, // [a]
-        pub size: Operand, // size
+        pub size: GeneralOperand, // size
     }
 
 }

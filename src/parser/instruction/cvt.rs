@@ -51,30 +51,13 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for F4x4type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E2m1x4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e2m1x4").is_ok() {
-                    return Ok(F4x4type::E2m1x4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e2m1x4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Atype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U8
+            // Try Bf16
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".u8").is_ok() {
-                    return Ok(Atype::U8);
+                if stream.expect_string(".bf16").is_ok() {
+                    return Ok(Atype::Bf16);
                 }
                 stream.set_position(saved_pos);
             }
@@ -104,16 +87,6 @@ pub mod section_0 {
                 let saved_pos = stream.position();
                 if stream.expect_string(".u64").is_ok() {
                     return Ok(Atype::U64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s8").is_ok() {
-                    return Ok(Atype::S8);
                 }
                 stream.set_position(saved_pos);
             }
@@ -149,16 +122,6 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try Bf16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".bf16").is_ok() {
-                    return Ok(Atype::Bf16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try F16
             {
                 let saved_pos = stream.position();
@@ -188,8 +151,28 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".u8").is_ok() {
+                    return Ok(Atype::U8);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s8").is_ok() {
+                    return Ok(Atype::S8);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u8", ".u16", ".u32", ".u64", ".s8", ".s16", ".s32", ".s64", ".bf16", ".f16", ".f32", ".f64"];
+            let expected = &[".bf16", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64", ".f16", ".f32", ".f64", ".u8", ".s8"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -197,11 +180,11 @@ pub mod section_0 {
 
     impl PtxParser for Dtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U8
+            // Try Bf16
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".u8").is_ok() {
-                    return Ok(Dtype::U8);
+                if stream.expect_string(".bf16").is_ok() {
+                    return Ok(Dtype::Bf16);
                 }
                 stream.set_position(saved_pos);
             }
@@ -231,16 +214,6 @@ pub mod section_0 {
                 let saved_pos = stream.position();
                 if stream.expect_string(".u64").is_ok() {
                     return Ok(Dtype::U64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s8").is_ok() {
-                    return Ok(Dtype::S8);
                 }
                 stream.set_position(saved_pos);
             }
@@ -276,16 +249,6 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try Bf16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".bf16").is_ok() {
-                    return Ok(Dtype::Bf16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try F16
             {
                 let saved_pos = stream.position();
@@ -315,82 +278,28 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u8", ".u16", ".u32", ".u64", ".s8", ".s16", ".s32", ".s64", ".bf16", ".f16", ".f32", ".f64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Frnd {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Rn
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rn").is_ok() {
-                    return Ok(Frnd::Rn);
-                }
-                stream.set_position(saved_pos);
-            }
             let saved_pos = stream.position();
-            // Try Rz
+            // Try U8
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".rz").is_ok() {
-                    return Ok(Frnd::Rz);
+                if stream.expect_string(".u8").is_ok() {
+                    return Ok(Dtype::U8);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let saved_pos = stream.position();
-            // Try Rm
+            // Try S8
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".rm").is_ok() {
-                    return Ok(Frnd::Rm);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Rp
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rp").is_ok() {
-                    return Ok(Frnd::Rp);
+                if stream.expect_string(".s8").is_ok() {
+                    return Ok(Dtype::S8);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".rn", ".rz", ".rm", ".rp"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for F8x2type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E4m3x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3x2").is_ok() {
-                    return Ok(F8x2type::E4m3x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try E5m2x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2x2").is_ok() {
-                    return Ok(F8x2type::E5m2x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e4m3x2", ".e5m2x2"];
+            let expected = &[".bf16", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64", ".f16", ".f32", ".f64", ".u8", ".s8"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -413,48 +322,18 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Irnd {
+    impl PtxParser for F4x4type {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Rni
+            // Try E2m1x4
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".rni").is_ok() {
-                    return Ok(Irnd::Rni);
+                if stream.expect_string(".e2m1x4").is_ok() {
+                    return Ok(F4x4type::E2m1x4);
                 }
                 stream.set_position(saved_pos);
             }
-            let saved_pos = stream.position();
-            // Try Rzi
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rzi").is_ok() {
-                    return Ok(Irnd::Rzi);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Rmi
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rmi").is_ok() {
-                    return Ok(Irnd::Rmi);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Rpi
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rpi").is_ok() {
-                    return Ok(Irnd::Rpi);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".rni", ".rzi", ".rmi", ".rpi"];
+            let expected = &[".e2m1x4"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -514,6 +393,33 @@ pub mod section_0 {
         }
     }
 
+    impl PtxParser for F8x2type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try E4m3x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e4m3x2").is_ok() {
+                    return Ok(F8x2type::E4m3x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try E5m2x2
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".e5m2x2").is_ok() {
+                    return Ok(F8x2type::E5m2x2);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".e4m3x2", ".e5m2x2"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for F8x4type {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try E4m3x4
@@ -541,28 +447,48 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Frnd3 {
+    impl PtxParser for Frnd {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Rn
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rn").is_ok() {
+                    return Ok(Frnd::Rn);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
             // Try Rz
             {
                 let saved_pos = stream.position();
                 if stream.expect_string(".rz").is_ok() {
-                    return Ok(Frnd3::Rz);
+                    return Ok(Frnd::Rz);
                 }
                 stream.set_position(saved_pos);
             }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rm
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rm").is_ok() {
+                    return Ok(Frnd::Rm);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try Rp
             {
                 let saved_pos = stream.position();
                 if stream.expect_string(".rp").is_ok() {
-                    return Ok(Frnd3::Rp);
+                    return Ok(Frnd::Rp);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".rz", ".rp"];
+            let expected = &[".rn", ".rz", ".rm", ".rp"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -595,6 +521,80 @@ pub mod section_0 {
         }
     }
 
+    impl PtxParser for Frnd3 {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Rz
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rz").is_ok() {
+                    return Ok(Frnd3::Rz);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Rp
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rp").is_ok() {
+                    return Ok(Frnd3::Rp);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".rz", ".rp"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Irnd {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Rni
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rni").is_ok() {
+                    return Ok(Irnd::Rni);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Rzi
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rzi").is_ok() {
+                    return Ok(Irnd::Rzi);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rmi
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rmi").is_ok() {
+                    return Ok(Irnd::Rmi);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Rpi
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".rpi").is_ok() {
+                    return Ok(Irnd::Rpi);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".rni", ".rzi", ".rmi", ".rpi"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
     impl PtxParser for CvtIrndFtzSatDtypeAtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("cvt")?;
@@ -606,21 +606,30 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let sat = stream.expect_string(".sat").is_ok();
             if !sat {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let dtype = Dtype::parse(stream)?;
+            stream.expect_complete()?;
             let atype = Atype::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtIrndFtzSatDtypeAtype {
                 irnd,
                 ftz,
@@ -645,21 +654,30 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let sat = stream.expect_string(".sat").is_ok();
             if !sat {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let dtype = Dtype::parse(stream)?;
+            stream.expect_complete()?;
             let atype = Atype::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtFrndFtzSatDtypeAtype {
                 frnd,
                 ftz,
@@ -677,23 +695,32 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("cvt")?;
             let frnd2 = Frnd2::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let satfinite = stream.expect_string(".satfinite").is_ok();
             if !satfinite {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16")?;
             let f16 = ();
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtFrnd2ReluSatfiniteF16F32 {
                 frnd2,
                 relu,
@@ -711,25 +738,35 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("cvt")?;
             let frnd2 = Frnd2::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let satfinite = stream.expect_string(".satfinite").is_ok();
             if !satfinite {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16x2")?;
             let f16x2 = ();
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtFrnd2ReluSatfiniteF16x2F32 {
                 frnd2,
                 relu,
@@ -749,27 +786,38 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rs")?;
             let rs = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let satfinite = stream.expect_string(".satfinite").is_ok();
             if !satfinite {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16x2")?;
             let f16x2 = ();
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let rbits = Operand::parse(stream)?;
+            let rbits = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRsReluSatfiniteF16x2F32 {
                 rs,
                 relu,
@@ -789,23 +837,32 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("cvt")?;
             let frnd2 = Frnd2::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let satfinite = stream.expect_string(".satfinite").is_ok();
             if !satfinite {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".bf16")?;
             let bf16 = ();
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtFrnd2ReluSatfiniteBf16F32 {
                 frnd2,
                 relu,
@@ -823,25 +880,35 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("cvt")?;
             let frnd2 = Frnd2::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let satfinite = stream.expect_string(".satfinite").is_ok();
             if !satfinite {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".bf16x2")?;
             let bf16x2 = ();
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtFrnd2ReluSatfiniteBf16x2F32 {
                 frnd2,
                 relu,
@@ -861,27 +928,38 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rs")?;
             let rs = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let satfinite = stream.expect_string(".satfinite").is_ok();
             if !satfinite {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".bf16x2")?;
             let bf16x2 = ();
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let rbits = Operand::parse(stream)?;
+            let rbits = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRsReluSatfiniteBf16x2F32 {
                 rs,
                 relu,
@@ -902,18 +980,26 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rna")?;
             let rna = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let satfinite = stream.expect_string(".satfinite").is_ok();
             if !satfinite {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".tf32")?;
             let tf32 = ();
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRnaSatfiniteTf32F32 {
                 rna,
                 satfinite,
@@ -930,23 +1016,32 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("cvt")?;
             let frnd2 = Frnd2::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let satfinite = stream.expect_string(".satfinite").is_ok();
             if !satfinite {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".tf32")?;
             let tf32 = ();
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtFrnd2SatfiniteReluTf32F32 {
                 frnd2,
                 satfinite,
@@ -965,21 +1060,31 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rn")?;
             let rn = ();
+            stream.expect_complete()?;
             stream.expect_string(".satfinite")?;
             let satfinite = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let f8x2type = F8x2type::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRnSatfiniteReluF8x2typeF32 {
                 rn,
                 satfinite,
@@ -999,19 +1104,28 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rn")?;
             let rn = ();
+            stream.expect_complete()?;
             stream.expect_string(".satfinite")?;
             let satfinite = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let f8x2type = F8x2type::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".f16x2")?;
             let f16x2 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRnSatfiniteReluF8x2typeF16x2 {
                 rn,
                 satfinite,
@@ -1030,17 +1144,25 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rn")?;
             let rn = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16x2")?;
             let f16x2 = ();
+            stream.expect_complete()?;
             let f8x2type = F8x2type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRnReluF16x2F8x2type {
                 rn,
                 relu,
@@ -1058,30 +1180,31 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rs")?;
             let rs = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".satfinite")?;
             let satfinite = ();
+            stream.expect_complete()?;
             let f8x4type = F8x4type::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            stream.expect(&PtxToken::LBrace)?;
-            let a = Operand::parse(stream)?;
+            let a = VectorOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = Operand::parse(stream)?;
-            stream.expect(&PtxToken::RBrace)?;
-            let a = (a, b, e, f);
-            stream.expect(&PtxToken::Comma)?;
-            let rbits = Operand::parse(stream)?;
+            let rbits = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRsReluSatfiniteF8x4typeF32 {
                 rs,
                 relu,
@@ -1101,21 +1224,31 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rn")?;
             let rn = ();
+            stream.expect_complete()?;
             stream.expect_string(".satfinite")?;
             let satfinite = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let f4x2type = F4x2type::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRnSatfiniteReluF4x2typeF32 {
                 rn,
                 satfinite,
@@ -1135,17 +1268,25 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rn")?;
             let rn = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16x2")?;
             let f16x2 = ();
+            stream.expect_complete()?;
             let f4x2type = F4x2type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRnReluF16x2F4x2type {
                 rn,
                 relu,
@@ -1163,30 +1304,31 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rs")?;
             let rs = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".satfinite")?;
             let satfinite = ();
+            stream.expect_complete()?;
             let f4x4type = F4x4type::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            stream.expect(&PtxToken::LBrace)?;
-            let a = Operand::parse(stream)?;
+            let a = VectorOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = Operand::parse(stream)?;
-            stream.expect(&PtxToken::RBrace)?;
-            let a = (a, b, e, f);
-            stream.expect(&PtxToken::Comma)?;
-            let rbits = Operand::parse(stream)?;
+            let rbits = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRsReluSatfiniteF4x4typeF32 {
                 rs,
                 relu,
@@ -1206,21 +1348,31 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rn")?;
             let rn = ();
+            stream.expect_complete()?;
             stream.expect_string(".satfinite")?;
             let satfinite = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let f6x2type = F6x2type::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRnSatfiniteReluF6x2typeF32 {
                 rn,
                 satfinite,
@@ -1240,17 +1392,25 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rn")?;
             let rn = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16x2")?;
             let f16x2 = ();
+            stream.expect_complete()?;
             let f6x2type = F6x2type::parse(stream)?;
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRnReluF16x2F6x2type {
                 rn,
                 relu,
@@ -1268,30 +1428,31 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rs")?;
             let rs = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let relu = stream.expect_string(".relu").is_ok();
             if !relu {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".satfinite")?;
             let satfinite = ();
+            stream.expect_complete()?;
             let f6x4type = F6x4type::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            stream.expect(&PtxToken::LBrace)?;
-            let a = Operand::parse(stream)?;
+            let a = VectorOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = Operand::parse(stream)?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = Operand::parse(stream)?;
-            stream.expect(&PtxToken::RBrace)?;
-            let a = (a, b, e, f);
-            stream.expect(&PtxToken::Comma)?;
-            let rbits = Operand::parse(stream)?;
+            let rbits = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRsReluSatfiniteF6x4typeF32 {
                 rs,
                 relu,
@@ -1310,20 +1471,29 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("cvt")?;
             let frnd3 = Frnd3::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let satfinite = stream.expect_string(".satfinite").is_ok();
             if !satfinite {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".ue8m0x2")?;
             let ue8m0x2 = ();
+            stream.expect_complete()?;
             stream.expect_string(".f32")?;
             let f32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtFrnd3SatfiniteUe8m0x2F32 {
                 frnd3,
                 satfinite,
@@ -1341,18 +1511,26 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("cvt")?;
             let frnd3 = Frnd3::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let satfinite = stream.expect_string(".satfinite").is_ok();
             if !satfinite {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".ue8m0x2")?;
             let ue8m0x2 = ();
+            stream.expect_complete()?;
             stream.expect_string(".bf16x2")?;
             let bf16x2 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtFrnd3SatfiniteUe8m0x2Bf16x2 {
                 frnd3,
                 satfinite,
@@ -1370,13 +1548,20 @@ pub mod section_0 {
             stream.expect_string("cvt")?;
             stream.expect_string(".rn")?;
             let rn = ();
+            stream.expect_complete()?;
             stream.expect_string(".bf16x2")?;
             let bf16x2 = ();
+            stream.expect_complete()?;
             stream.expect_string(".ue8m0x2")?;
             let ue8m0x2 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CvtRnBf16x2Ue8m0x2 {
                 rn,
                 bf16x2,

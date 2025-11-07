@@ -42,16 +42,6 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try Or
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".or").is_ok() {
-                    return Ok(Boolop::Or);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try Xor
             {
                 let saved_pos = stream.position();
@@ -61,8 +51,18 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Or
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Boolop::Or);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".and", ".or", ".xor"];
+            let expected = &[".and", ".xor", ".or"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -70,6 +70,85 @@ pub mod section_0 {
 
     impl PtxParser for Cmpop {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Equ
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".equ").is_ok() {
+                    return Ok(Cmpop::Equ);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Neu
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".neu").is_ok() {
+                    return Ok(Cmpop::Neu);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Ltu
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".ltu").is_ok() {
+                    return Ok(Cmpop::Ltu);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Leu
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".leu").is_ok() {
+                    return Ok(Cmpop::Leu);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Gtu
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".gtu").is_ok() {
+                    return Ok(Cmpop::Gtu);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Geu
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".geu").is_ok() {
+                    return Ok(Cmpop::Geu);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Num
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".num").is_ok() {
+                    return Ok(Cmpop::Num);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Nan
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".nan").is_ok() {
+                    return Ok(Cmpop::Nan);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
             // Try Eq
             {
                 let saved_pos = stream.position();
@@ -78,6 +157,7 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
+            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try Ne
             {
@@ -168,88 +248,8 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Equ
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".equ").is_ok() {
-                    return Ok(Cmpop::Equ);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Neu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".neu").is_ok() {
-                    return Ok(Cmpop::Neu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Ltu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".ltu").is_ok() {
-                    return Ok(Cmpop::Ltu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Leu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".leu").is_ok() {
-                    return Ok(Cmpop::Leu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Gtu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".gtu").is_ok() {
-                    return Ok(Cmpop::Gtu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Geu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".geu").is_ok() {
-                    return Ok(Cmpop::Geu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Num
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".num").is_ok() {
-                    return Ok(Cmpop::Num);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Nan
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".nan").is_ok() {
-                    return Ok(Cmpop::Nan);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".eq", ".ne", ".lt", ".le", ".gt", ".ge", ".lo", ".ls", ".hi", ".hs", ".equ", ".neu", ".ltu", ".leu", ".gtu", ".geu", ".num", ".nan"];
+            let expected = &[".equ", ".neu", ".ltu", ".leu", ".gtu", ".geu", ".num", ".nan", ".eq", ".ne", ".lt", ".le", ".gt", ".ge", ".lo", ".ls", ".hi", ".hs"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -376,24 +376,32 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
             let cmpop = Cmpop::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
             let saved_pos = stream.position();
             let q = if stream.consume_if(|t| matches!(t, PtxToken::Pipe)).is_some() {
-                Some(Operand::parse(stream)?)
+                Some(GeneralOperand::parse(stream)?)
             } else {
                 stream.set_position(saved_pos);
                 None
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetpCmpopFtzType {
                 cmpop,
                 ftz,
@@ -411,28 +419,38 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
             let cmpop = Cmpop::parse(stream)?;
+            stream.expect_complete()?;
             let boolop = Boolop::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
             let saved_pos = stream.position();
             let q = if stream.consume_if(|t| matches!(t, PtxToken::Pipe)).is_some() {
-                Some(Operand::parse(stream)?)
+                Some(GeneralOperand::parse(stream)?)
             } else {
                 stream.set_position(saved_pos);
                 None
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetpCmpopBoolopFtzType {
                 cmpop,
                 boolop,
@@ -470,16 +488,6 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try Or
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".or").is_ok() {
-                    return Ok(Boolop::Or);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try Xor
             {
                 let saved_pos = stream.position();
@@ -489,8 +497,18 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Or
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".or").is_ok() {
+                    return Ok(Boolop::Or);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".and", ".or", ".xor"];
+            let expected = &[".and", ".xor", ".or"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -498,65 +516,6 @@ pub mod section_1 {
 
     impl PtxParser for Cmpop {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Eq
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".eq").is_ok() {
-                    return Ok(Cmpop::Eq);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Ne
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".ne").is_ok() {
-                    return Ok(Cmpop::Ne);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Lt
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".lt").is_ok() {
-                    return Ok(Cmpop::Lt);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Le
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".le").is_ok() {
-                    return Ok(Cmpop::Le);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Gt
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".gt").is_ok() {
-                    return Ok(Cmpop::Gt);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Ge
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".ge").is_ok() {
-                    return Ok(Cmpop::Ge);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
             // Try Equ
             {
                 let saved_pos = stream.position();
@@ -565,7 +524,6 @@ pub mod section_1 {
                 }
                 stream.set_position(saved_pos);
             }
-            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try Neu
             {
@@ -636,8 +594,68 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Eq
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".eq").is_ok() {
+                    return Ok(Cmpop::Eq);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Ne
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".ne").is_ok() {
+                    return Ok(Cmpop::Ne);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Lt
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".lt").is_ok() {
+                    return Ok(Cmpop::Lt);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Le
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".le").is_ok() {
+                    return Ok(Cmpop::Le);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Gt
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".gt").is_ok() {
+                    return Ok(Cmpop::Gt);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Ge
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".ge").is_ok() {
+                    return Ok(Cmpop::Ge);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".eq", ".ne", ".lt", ".le", ".gt", ".ge", ".equ", ".neu", ".ltu", ".leu", ".gtu", ".geu", ".num", ".nan"];
+            let expected = &[".equ", ".neu", ".ltu", ".leu", ".gtu", ".geu", ".num", ".nan", ".eq", ".ne", ".lt", ".le", ".gt", ".ge"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -647,18 +665,26 @@ pub mod section_1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
             let cmpop = Cmpop::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16")?;
             let f16 = ();
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetpCmpopFtzF16 {
                 cmpop,
                 ftz,
@@ -675,22 +701,32 @@ pub mod section_1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
             let cmpop = Cmpop::parse(stream)?;
+            stream.expect_complete()?;
             let boolop = Boolop::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16")?;
             let f16 = ();
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetpCmpopBoolopFtzF16 {
                 cmpop,
                 boolop,
@@ -710,20 +746,28 @@ pub mod section_1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
             let cmpop = Cmpop::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16x2")?;
             let f16x2 = ();
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
             stream.expect(&PtxToken::Pipe)?;
-            let q = Operand::parse(stream)?;
+            let q = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetpCmpopFtzF16x2 {
                 cmpop,
                 ftz,
@@ -741,24 +785,34 @@ pub mod section_1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
             let cmpop = Cmpop::parse(stream)?;
+            stream.expect_complete()?;
             let boolop = Boolop::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ftz = stream.expect_string(".ftz").is_ok();
             if !ftz {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             stream.expect_string(".f16x2")?;
             let f16x2 = ();
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
             stream.expect(&PtxToken::Pipe)?;
-            let q = Operand::parse(stream)?;
+            let q = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetpCmpopBoolopFtzF16x2 {
                 cmpop,
                 boolop,
@@ -779,13 +833,20 @@ pub mod section_1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
             let cmpop = Cmpop::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".bf16")?;
             let bf16 = ();
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetpCmpopBf16 {
                 cmpop,
                 bf16,
@@ -801,17 +862,26 @@ pub mod section_1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
             let cmpop = Cmpop::parse(stream)?;
+            stream.expect_complete()?;
             let boolop = Boolop::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".bf16")?;
             let bf16 = ();
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetpCmpopBoolopBf16 {
                 cmpop,
                 boolop,
@@ -830,15 +900,22 @@ pub mod section_1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
             let cmpop = Cmpop::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".bf16x2")?;
             let bf16x2 = ();
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
             stream.expect(&PtxToken::Pipe)?;
-            let q = Operand::parse(stream)?;
+            let q = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetpCmpopBf16x2 {
                 cmpop,
                 bf16x2,
@@ -855,19 +932,28 @@ pub mod section_1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("setp")?;
             let cmpop = Cmpop::parse(stream)?;
+            stream.expect_complete()?;
             let boolop = Boolop::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".bf16x2")?;
             let bf16x2 = ();
-            let p = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let p = GeneralOperand::parse(stream)?;
             stream.expect(&PtxToken::Pipe)?;
-            let q = Operand::parse(stream)?;
+            let q = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(SetpCmpopBoolopBf16x2 {
                 cmpop,
                 boolop,

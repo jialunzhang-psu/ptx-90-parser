@@ -29,8 +29,8 @@ pub mod section_0 {
         pub src: Src, // .src
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
         pub srcmem: AddressOperand, // [srcMem]
-        pub size: Operand, // size
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub size: GeneralOperand, // size
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }

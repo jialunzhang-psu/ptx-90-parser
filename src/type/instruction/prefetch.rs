@@ -29,8 +29,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LevelEvictionPriority {
-        L2EvictLast, // .L2::evict_last
         L2EvictNormal, // .L2::evict_normal
+        L2EvictLast, // .L2::evict_last
     }
 
     #[derive(Debug, Clone, PartialEq)]

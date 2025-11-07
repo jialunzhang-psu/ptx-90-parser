@@ -51,33 +51,6 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Vec {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try V2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v2").is_ok() {
-                    return Ok(Vec::V2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try V4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v4").is_ok() {
-                    return Ok(Vec::V4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".v2", ".v4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Scope {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try Cluster
@@ -90,6 +63,40 @@ pub mod section_0 {
             }
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".cluster"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Sem {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Weak
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".weak").is_ok() {
+                    return Ok(Sem::Weak);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".weak"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Ss {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try SharedCluster
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared::cluster").is_ok() {
+                    return Ok(Ss::SharedCluster);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".shared::cluster"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -182,35 +189,28 @@ pub mod section_0 {
         }
     }
 
-    impl PtxParser for Ss {
+    impl PtxParser for Vec {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCluster
+            // Try V2
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".shared::cluster").is_ok() {
-                    return Ok(Ss::SharedCluster);
+                if stream.expect_string(".v2").is_ok() {
+                    return Ok(Vec::V2);
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cluster"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Sem {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Weak
+            let saved_pos = stream.position();
+            // Try V4
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".weak").is_ok() {
-                    return Ok(Sem::Weak);
+                if stream.expect_string(".v4").is_ok() {
+                    return Ok(Vec::V4);
                 }
                 stream.set_position(saved_pos);
             }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".weak"];
+            let expected = &[".v2", ".v4"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -221,6 +221,7 @@ pub mod section_0 {
             stream.expect_string("st")?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let sem = match Sem::parse(stream) {
                 Ok(val) => Some(val),
@@ -229,6 +230,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let scope = match Scope::parse(stream) {
                 Ok(val) => Some(val),
@@ -237,6 +239,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -245,6 +248,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let completion_mechanism = match CompletionMechanism::parse(stream) {
                 Ok(val) => Some(val),
@@ -253,6 +257,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let vec = match Vec::parse(stream) {
                 Ok(val) => Some(val),
@@ -261,12 +266,19 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
+            stream.expect_complete()?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let mbar = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(StAsyncSemScopeSsCompletionMechanismVecType {
                 async_,
                 sem,
@@ -320,17 +332,42 @@ pub mod section_1 {
         }
     }
 
-    impl PtxParser for Type {
+    impl PtxParser for Sem {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B8
+            // Try Release
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".b8").is_ok() {
-                    return Ok(Type::B8);
+                if stream.expect_string(".release").is_ok() {
+                    return Ok(Sem::Release);
                 }
                 stream.set_position(saved_pos);
             }
-            let saved_pos = stream.position();
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".release"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Ss {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try Global
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".global").is_ok() {
+                    return Ok(Ss::Global);
+                }
+                stream.set_position(saved_pos);
+            }
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".global"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Type {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try B16
             {
                 let saved_pos = stream.position();
@@ -339,7 +376,6 @@ pub mod section_1 {
                 }
                 stream.set_position(saved_pos);
             }
-            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try B32
             {
@@ -356,16 +392,6 @@ pub mod section_1 {
                 let saved_pos = stream.position();
                 if stream.expect_string(".b64").is_ok() {
                     return Ok(Type::B64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u8").is_ok() {
-                    return Ok(Type::U8);
                 }
                 stream.set_position(saved_pos);
             }
@@ -396,16 +422,6 @@ pub mod section_1 {
                 let saved_pos = stream.position();
                 if stream.expect_string(".u64").is_ok() {
                     return Ok(Type::U64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s8").is_ok() {
-                    return Ok(Type::S8);
                 }
                 stream.set_position(saved_pos);
             }
@@ -460,42 +476,38 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b8", ".b16", ".b32", ".b64", ".u8", ".u16", ".u32", ".u64", ".s8", ".s16", ".s32", ".s64", ".f32", ".f64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Global
+            let saved_pos = stream.position();
+            // Try B8
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
+                if stream.expect_string(".b8").is_ok() {
+                    return Ok(Type::B8);
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".global"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
-    impl PtxParser for Sem {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Release
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try U8
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".release").is_ok() {
-                    return Ok(Sem::Release);
+                if stream.expect_string(".u8").is_ok() {
+                    return Ok(Type::U8);
                 }
                 stream.set_position(saved_pos);
             }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try S8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".s8").is_ok() {
+                    return Ok(Type::S8);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".release"];
+            let expected = &[".b16", ".b32", ".b64", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64", ".f32", ".f64", ".b8", ".u8", ".s8"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -506,13 +518,17 @@ pub mod section_1 {
             stream.expect_string("st")?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let mmio = stream.expect_string(".mmio").is_ok();
             if !mmio {
                 stream.set_position(saved_pos);
             }
+            stream.expect_complete()?;
             let sem = Sem::parse(stream)?;
+            stream.expect_complete()?;
             let scope = Scope::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let ss = match Ss::parse(stream) {
                 Ok(val) => Some(val),
@@ -521,10 +537,16 @@ pub mod section_1 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let type_ = Type::parse(stream)?;
+            stream.expect_complete()?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(StAsyncMmioSemScopeSsType {
                 async_,
                 mmio,

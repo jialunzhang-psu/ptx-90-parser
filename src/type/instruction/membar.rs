@@ -32,16 +32,16 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Sem {
-        Sc, // .sc
         AcqRel, // .acq_rel
         Acquire, // .acquire
         Release, // .release
+        Sc, // .sc
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
-        Cta, // .cta
         Cluster, // .cluster
+        Cta, // .cta
         Gpu, // .gpu
         Sys, // .sys
     }
@@ -53,11 +53,11 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Proxykind {
+        AsyncSharedCluster, // .async.shared::cluster
+        AsyncSharedCta, // .async.shared::cta
+        AsyncGlobal, // .async.global
         Alias, // .alias
         Async, // .async
-        AsyncGlobal, // .async.global
-        AsyncSharedCta, // .async.shared::cta
-        AsyncSharedCluster, // .async.shared::cluster
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -68,8 +68,8 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Level {
         Cta, // .cta
-        Gl, // .gl
         Sys, // .sys
+        Gl, // .gl
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -120,7 +120,7 @@ pub mod section_0 {
         pub acquire: (), // .acquire
         pub scope: Scope, // .scope
         pub addr: AddressOperand, // [addr]
-        pub size: Operand, // size
+        pub size: GeneralOperand, // size
     }
 
     #[derive(Debug, Clone, PartialEq)]

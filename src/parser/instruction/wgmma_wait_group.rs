@@ -17,11 +17,17 @@ pub mod section_0 {
             stream.expect_string("wgmma")?;
             stream.expect_string(".wait_group")?;
             let wait_group = ();
+            stream.expect_complete()?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             stream.expect_string(".aligned")?;
             let aligned = ();
-            let n = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let n = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(WgmmaWaitGroupSyncAligned {
                 wait_group,
                 sync,

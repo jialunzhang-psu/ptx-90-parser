@@ -22,29 +22,29 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "cvta");
                     match &self.space {
-                            Space::Const => {
-                                    push_directive(tokens, "const");
+                            Space::SharedCluster => {
+                                    push_directive(tokens, "shared::cluster");
                             }
-                            Space::Global => {
-                                    push_directive(tokens, "global");
-                            }
-                            Space::Local => {
-                                    push_directive(tokens, "local");
-                            }
-                            Space::Shared => {
-                                    push_directive(tokens, "shared");
+                            Space::ParamEntry => {
+                                    push_directive(tokens, "param::entry");
                             }
                             Space::SharedCta => {
                                     push_directive(tokens, "shared::cta");
                             }
-                            Space::SharedCluster => {
-                                    push_directive(tokens, "shared::cluster");
+                            Space::Global => {
+                                    push_directive(tokens, "global");
+                            }
+                            Space::Shared => {
+                                    push_directive(tokens, "shared");
+                            }
+                            Space::Const => {
+                                    push_directive(tokens, "const");
+                            }
+                            Space::Local => {
+                                    push_directive(tokens, "local");
                             }
                             Space::Param => {
                                     push_directive(tokens, "param");
-                            }
-                            Space::ParamEntry => {
-                                    push_directive(tokens, "param::entry");
                             }
                     }
                     match &self.size {
@@ -67,29 +67,29 @@ pub mod section_0 {
             push_opcode(tokens, "cvta");
                     push_directive(tokens, "to");
                     match &self.space {
-                            Space::Const => {
-                                    push_directive(tokens, "const");
+                            Space::SharedCluster => {
+                                    push_directive(tokens, "shared::cluster");
                             }
-                            Space::Global => {
-                                    push_directive(tokens, "global");
-                            }
-                            Space::Local => {
-                                    push_directive(tokens, "local");
-                            }
-                            Space::Shared => {
-                                    push_directive(tokens, "shared");
+                            Space::ParamEntry => {
+                                    push_directive(tokens, "param::entry");
                             }
                             Space::SharedCta => {
                                     push_directive(tokens, "shared::cta");
                             }
-                            Space::SharedCluster => {
-                                    push_directive(tokens, "shared::cluster");
+                            Space::Global => {
+                                    push_directive(tokens, "global");
+                            }
+                            Space::Shared => {
+                                    push_directive(tokens, "shared");
+                            }
+                            Space::Const => {
+                                    push_directive(tokens, "const");
+                            }
+                            Space::Local => {
+                                    push_directive(tokens, "local");
                             }
                             Space::Param => {
                                     push_directive(tokens, "param");
-                            }
-                            Space::ParamEntry => {
-                                    push_directive(tokens, "param::entry");
                             }
                     }
                     match &self.size {

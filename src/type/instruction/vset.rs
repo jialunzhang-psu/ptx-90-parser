@@ -80,10 +80,10 @@ pub mod section_0 {
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
         pub cmp: Cmp, // .cmp
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
     }
 
@@ -93,12 +93,12 @@ pub mod section_0 {
         pub btype: Btype, // .btype
         pub cmp: Cmp, // .cmp
         pub op2: Op2, // .op2
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: Operand, // c
+        pub c: GeneralOperand, // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -106,13 +106,13 @@ pub mod section_0 {
         pub atype: Atype, // .atype
         pub btype: Btype, // .btype
         pub cmp: Cmp, // .cmp
-        pub d: Operand, // d
+        pub d: GeneralOperand, // d
         pub dsel: Dsel, // .dsel
-        pub a: Operand, // a
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: Operand, // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: Operand, // c
+        pub c: GeneralOperand, // c
     }
 
 }

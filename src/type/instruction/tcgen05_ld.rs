@@ -26,22 +26,22 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape1 {
-        _16x64b, // .16x64b
         _16x128b, // .16x128b
         _16x256b, // .16x256b
+        _16x64b, // .16x64b
         _32x32b, // .32x32b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Num {
+        X128, // .x128
+        X16, // .x16
+        X32, // .x32
+        X64, // .x64
         X1, // .x1
         X2, // .x2
         X4, // .x4
         X8, // .x8
-        X16, // .x16
-        X32, // .x32
-        X64, // .x64
-        X128, // .x128
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -85,7 +85,7 @@ pub mod section_0 {
         pub num: Num, // .num
         pub pack: Option<Pack>, // {.pack}
         pub b32: (), // .b32
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub taddr: AddressOperand, // [taddr]
     }
 
@@ -98,9 +98,9 @@ pub mod section_0 {
         pub num: Num, // .num
         pub pack: Option<Pack>, // {.pack}
         pub b32: (), // .b32
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub taddr: AddressOperand, // [taddr]
-        pub immhalfsplitoff: Operand, // immHalfSplitoff
+        pub immhalfsplitoff: GeneralOperand, // immHalfSplitoff
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -115,8 +115,8 @@ pub mod section_0 {
         pub abs: bool, // {.abs}
         pub nan: bool, // {.NaN}
         pub f32: (), // .f32
-        pub r: Operand, // r
-        pub redval: Operand, // redval
+        pub r: GeneralOperand, // r
+        pub redval: GeneralOperand, // redval
         pub taddr: AddressOperand, // [taddr]
     }
 
@@ -132,10 +132,10 @@ pub mod section_0 {
         pub abs: bool, // {.abs}
         pub nan: bool, // {.NaN}
         pub f32: (), // .f32
-        pub r: Operand, // r
-        pub redval: Operand, // redval
+        pub r: GeneralOperand, // r
+        pub redval: GeneralOperand, // redval
         pub taddr: AddressOperand, // [taddr]
-        pub immhalfsplitoff: Operand, // immHalfSplitoff
+        pub immhalfsplitoff: GeneralOperand, // immHalfSplitoff
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -148,8 +148,8 @@ pub mod section_0 {
         pub num: Num, // .num
         pub redop: Redop, // .redOp
         pub type_: Type, // .type
-        pub r: Operand, // r
-        pub redval: Operand, // redval
+        pub r: GeneralOperand, // r
+        pub redval: GeneralOperand, // redval
         pub taddr: AddressOperand, // [taddr]
     }
 
@@ -163,10 +163,10 @@ pub mod section_0 {
         pub num: Num, // .num
         pub redop: Redop, // .redOp
         pub type_: Type, // .type
-        pub r: Operand, // r
-        pub redval: Operand, // redval
+        pub r: GeneralOperand, // r
+        pub redval: GeneralOperand, // redval
         pub taddr: AddressOperand, // [taddr]
-        pub immhalfsplitoff: Operand, // immHalfSplitoff
+        pub immhalfsplitoff: GeneralOperand, // immHalfSplitoff
     }
 
 }

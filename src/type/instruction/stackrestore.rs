@@ -18,7 +18,7 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct StackrestoreType {
         pub type_: Type, // .type
-        pub a: Operand, // a
+        pub a: GeneralOperand, // a
     }
 
 }

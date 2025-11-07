@@ -42,14 +42,14 @@ pub mod section_0 {
         Inc, // .inc
         Dec, // .dec
         And, // .and
-        Or, // .or
         Xor, // .xor
+        Or, // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LoadMode {
-        Tile, // .tile
         Im2colNoOffs, // .im2col_no_offs
+        Tile, // .tile
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -70,9 +70,9 @@ pub mod section_0 {
         pub load_mode: Option<LoadMode>, // {.load_mode}
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
         pub level_cache_hint: bool, // {.level::cache_hint}
-        pub tensormap: (Operand, Operand), // [tensorMap, tensorCoords]
+        pub tensormap: TexHandler2, // [tensorMap, tensorCoords]
         pub srcmem: AddressOperand, // [srcMem]
-        pub cache_policy: Option<Operand>, // {, cache-policy}
+        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
     }
 
 }

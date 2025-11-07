@@ -56,9 +56,6 @@ pub mod section_0 {
                             Redop::And => {
                                     push_directive(tokens, "and");
                             }
-                            Redop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Redop::Xor => {
                                     push_directive(tokens, "xor");
                             }
@@ -76,6 +73,9 @@ pub mod section_0 {
                             }
                             Redop::Max => {
                                     push_directive(tokens, "max");
+                            }
+                            Redop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     match &self.type_ {
@@ -140,9 +140,6 @@ pub mod section_1 {
                             Redop::And => {
                                     push_directive(tokens, "and");
                             }
-                            Redop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Redop::Xor => {
                                     push_directive(tokens, "xor");
                             }
@@ -160,6 +157,9 @@ pub mod section_1 {
                             }
                             Redop::Max => {
                                     push_directive(tokens, "max");
+                            }
+                            Redop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     match &self.type_ {
@@ -229,11 +229,11 @@ pub mod section_2 {
                     push_directive(tokens, "add");
                     push_directive(tokens, "noftz");
                     match &self.type_ {
-                            Type::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
                             Type::Bf16 => {
                                     push_directive(tokens, "bf16");
+                            }
+                            Type::F16 => {
+                                    push_directive(tokens, "f16");
                             }
                     }
                     self.dstmem.unparse_tokens(tokens);

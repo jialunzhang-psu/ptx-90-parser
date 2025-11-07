@@ -18,8 +18,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
-        M8n8, // .m8n8
         M16n16, // .m16n16
+        M8n8, // .m8n8
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -31,8 +31,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Ss {
-        Shared, // .shared
         SharedCta, // .shared::cta
+        Shared, // .shared
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -61,7 +61,7 @@ pub mod section_0 {
         pub trans: bool, // {.trans}
         pub ss: Option<Ss>, // {.ss}
         pub type_: Type, // .type
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
     }
 
@@ -74,7 +74,7 @@ pub mod section_0 {
         pub ss: Option<Ss>, // {.ss}
         pub dst_fmt: DstFmt, // .dst_fmt
         pub src_fmt: SrcFmt, // .src_fmt
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
     }
 
@@ -88,7 +88,7 @@ pub mod section_0 {
         pub ss: Option<Ss>, // {.ss}
         pub dst_fmt: DstFmt, // .dst_fmt
         pub src_fmt: SrcFmt, // .src_fmt
-        pub r: Operand, // r
+        pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
     }
 

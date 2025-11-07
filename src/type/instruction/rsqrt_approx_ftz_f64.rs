@@ -13,8 +13,8 @@ pub mod section_0 {
         pub approx: (), // .approx
         pub ftz: (), // .ftz
         pub f64: (), // .f64
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
 }

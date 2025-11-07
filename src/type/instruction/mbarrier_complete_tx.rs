@@ -18,15 +18,15 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
-        Cta, // .cta
         Cluster, // .cluster
+        Cta, // .cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Space {
-        Shared, // .shared
-        SharedCta, // .shared::cta
         SharedCluster, // .shared::cluster
+        SharedCta, // .shared::cta
+        Shared, // .shared
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -37,7 +37,7 @@ pub mod section_0 {
         pub space: Option<Space>, // {.space}
         pub b64: (), // .b64
         pub addr: AddressOperand, // [addr]
-        pub txcount: Operand, // txCount
+        pub txcount: GeneralOperand, // txCount
     }
 
 }

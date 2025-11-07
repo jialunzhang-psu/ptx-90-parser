@@ -108,10 +108,10 @@ pub fn sanitize_field_name(s: &str) -> String {
 
     // Escape Rust keywords
     match with_prefix.as_str() {
-        "type" | "match" | "const" | "static" | "extern" | "async" | "await"
-        | "fn" | "let" | "mut" | "impl" | "trait" | "struct" | "enum"
-        | "mod" | "pub" | "use" | "crate" | "self" | "super" | "in"
-        | "loop" | "while" | "for" | "if" | "else" | "return" | "break" | "continue" => {
+        "type" | "match" | "const" | "static" | "extern" | "async" | "await" | "fn" | "let"
+        | "mut" | "impl" | "trait" | "struct" | "enum" | "mod" | "pub" | "use" | "crate"
+        | "self" | "super" | "in" | "loop" | "while" | "for" | "if" | "else" | "return"
+        | "break" | "continue" => {
             format!("{}_", with_prefix)
         }
         _ => with_prefix,

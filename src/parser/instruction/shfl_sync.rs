@@ -19,15 +19,6 @@ pub mod section_0 {
 
     impl PtxParser for Mode {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Up
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".up").is_ok() {
-                    return Ok(Mode::Up);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
             // Try Down
             {
                 let saved_pos = stream.position();
@@ -36,7 +27,6 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try Bfly
             {
@@ -57,8 +47,18 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Up
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".up").is_ok() {
+                    return Ok(Mode::Up);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".up", ".down", ".bfly", ".idx"];
+            let expected = &[".down", ".bfly", ".idx", ".up"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -69,25 +69,35 @@ pub mod section_0 {
             stream.expect_string("shfl")?;
             stream.expect_string(".sync")?;
             let sync = ();
+            stream.expect_complete()?;
             let mode = Mode::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
             let saved_pos = stream.position();
             let p = if stream.consume_if(|t| matches!(t, PtxToken::Pipe)).is_some() {
-                Some(Operand::parse(stream)?)
+                Some(GeneralOperand::parse(stream)?)
             } else {
                 stream.set_position(saved_pos);
                 None
             };
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let a = Operand::parse(stream)?;
+            let a = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let b = Operand::parse(stream)?;
+            let b = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c = Operand::parse(stream)?;
+            let c = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let membermask = Operand::parse(stream)?;
+            let membermask = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(ShflSyncModeB32 {
                 sync,
                 mode,

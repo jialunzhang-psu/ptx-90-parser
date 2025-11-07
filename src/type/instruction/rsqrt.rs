@@ -14,16 +14,16 @@ pub mod section_0 {
         pub approx: (), // .approx
         pub ftz: bool, // {.ftz}
         pub f32: (), // .f32
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct RsqrtApproxF64 {
         pub approx: (), // .approx
         pub f64: (), // .f64
-        pub d: Operand, // d
-        pub a: Operand, // a
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
     }
 
 }

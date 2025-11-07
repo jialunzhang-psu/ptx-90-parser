@@ -34,15 +34,17 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "lop3");
                     match &self.boolop {
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Boolop::And => {
                                     push_directive(tokens, "and");
+                            }
+                            Boolop::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     push_directive(tokens, "b32");
                     self.d.unparse_tokens(tokens);
+                    tokens.push(PtxToken::Pipe);
+                    self.p.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
                     self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);

@@ -12,13 +12,13 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct BraUni {
         pub uni: bool, // {.uni}
-        pub tgt: Operand, // tgt
+        pub tgt: GeneralOperand, // tgt
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BraUni1 {
         pub uni: bool, // {.uni}
-        pub tgt: Operand, // tgt
+        pub tgt: GeneralOperand, // tgt
     }
 
 }

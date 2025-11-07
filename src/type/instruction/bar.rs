@@ -27,8 +27,8 @@ pub mod section_0 {
         pub cta: bool, // {.cta}
         pub sync: (), // .sync
         pub aligned: bool, // {.aligned}
-        pub a: Operand, // a
-        pub b: Option<Operand>, // {, b}
+        pub a: GeneralOperand, // a
+        pub b: Option<GeneralOperand>, // {, b}
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -36,8 +36,8 @@ pub mod section_0 {
         pub cta: bool, // {.cta}
         pub arrive: (), // .arrive
         pub aligned: bool, // {.aligned}
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -47,11 +47,11 @@ pub mod section_0 {
         pub popc: (), // .popc
         pub aligned: bool, // {.aligned}
         pub u32: (), // .u32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Option<Operand>, // {, b}
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: Option<GeneralOperand>, // {, b}
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -61,27 +61,27 @@ pub mod section_0 {
         pub op: Op, // .op
         pub aligned: bool, // {.aligned}
         pub pred: (), // .pred
-        pub p: Operand, // p
-        pub a: Operand, // a
-        pub b: Option<Operand>, // {, b}
+        pub p: GeneralOperand, // p
+        pub a: GeneralOperand, // a
+        pub b: Option<GeneralOperand>, // {, b}
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarCtaSync {
         pub cta: bool, // {.cta}
         pub sync: (), // .sync
-        pub a: Operand, // a
-        pub b: Option<Operand>, // {, b}
+        pub a: GeneralOperand, // a
+        pub b: Option<GeneralOperand>, // {, b}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarCtaArrive {
         pub cta: bool, // {.cta}
         pub arrive: (), // .arrive
-        pub a: Operand, // a
-        pub b: Operand, // b
+        pub a: GeneralOperand, // a
+        pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -90,11 +90,11 @@ pub mod section_0 {
         pub red: (), // .red
         pub popc: (), // .popc
         pub u32: (), // .u32
-        pub d: Operand, // d
-        pub a: Operand, // a
-        pub b: Option<Operand>, // {, b}
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
+        pub b: Option<GeneralOperand>, // {, b}
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -103,11 +103,11 @@ pub mod section_0 {
         pub red: (), // .red
         pub op: Op, // .op
         pub pred: (), // .pred
-        pub p: Operand, // p
-        pub a: Operand, // a
-        pub b: Option<Operand>, // {, b}
+        pub p: GeneralOperand, // p
+        pub a: GeneralOperand, // a
+        pub b: Option<GeneralOperand>, // {, b}
         pub c_op: bool, // {!} operator
-        pub c: Operand, // {!}c
+        pub c: GeneralOperand, // {!}c
     }
 
 }

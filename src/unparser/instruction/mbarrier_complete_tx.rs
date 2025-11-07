@@ -27,24 +27,24 @@ pub mod section_0 {
                     }
                     if let Some(scope_1) = self.scope.as_ref() {
                             match scope_1 {
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
                                     Scope::Cluster => {
                                             push_directive(tokens, "cluster");
+                                    }
+                                    Scope::Cta => {
+                                            push_directive(tokens, "cta");
                                     }
                             }
                     }
                     if let Some(space_2) = self.space.as_ref() {
                             match space_2 {
-                                    Space::Shared => {
-                                            push_directive(tokens, "shared");
+                                    Space::SharedCluster => {
+                                            push_directive(tokens, "shared::cluster");
                                     }
                                     Space::SharedCta => {
                                             push_directive(tokens, "shared::cta");
                                     }
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
+                                    Space::Shared => {
+                                            push_directive(tokens, "shared");
                                     }
                             }
                     }

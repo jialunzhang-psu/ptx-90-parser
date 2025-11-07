@@ -36,11 +36,11 @@ pub mod section_0 {
             push_opcode(tokens, "ex2");
                     push_directive(tokens, "approx");
                     match &self.atype {
-                            Atype::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
                             Atype::F16x2 => {
                                     push_directive(tokens, "f16x2");
+                            }
+                            Atype::F16 => {
+                                    push_directive(tokens, "f16");
                             }
                     }
                     self.d.unparse_tokens(tokens);
@@ -56,11 +56,11 @@ pub mod section_0 {
                     push_directive(tokens, "approx");
                     push_directive(tokens, "ftz");
                     match &self.btype {
-                            Btype::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
                             Btype::Bf16x2 => {
                                     push_directive(tokens, "bf16x2");
+                            }
+                            Btype::Bf16 => {
+                                    push_directive(tokens, "bf16");
                             }
                     }
                     self.d.unparse_tokens(tokens);

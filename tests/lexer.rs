@@ -45,7 +45,10 @@ fn test_directives() {
     assert_eq!(tokens[2].0, PtxToken::Dot);
     assert_eq!(tokens[3].0, PtxToken::Identifier("target".to_string()));
     assert_eq!(tokens[4].0, PtxToken::Dot);
-    assert_eq!(tokens[5].0, PtxToken::Identifier("address_size".to_string()));
+    assert_eq!(
+        tokens[5].0,
+        PtxToken::Identifier("address_size".to_string())
+    );
     assert_eq!(tokens[6].0, PtxToken::Dot);
     assert_eq!(tokens[7].0, PtxToken::Identifier("func".to_string()));
     assert_eq!(tokens[8].0, PtxToken::Dot);
@@ -60,10 +63,7 @@ fn test_integers() {
     assert_eq!(tokens.len(), 4);
     assert_eq!(tokens[0].0, PtxToken::DecimalInteger("42".to_string()));
     assert_eq!(tokens[1].0, PtxToken::HexInteger("0x2A".to_string()));
-    assert_eq!(
-        tokens[2].0,
-        PtxToken::BinaryInteger("0b101010".to_string())
-    );
+    assert_eq!(tokens[2].0, PtxToken::BinaryInteger("0b101010".to_string()));
     assert_eq!(tokens[3].0, PtxToken::OctalInteger("052".to_string()));
 }
 
@@ -74,15 +74,9 @@ fn test_floats() {
 
     assert_eq!(tokens.len(), 5);
     assert_eq!(tokens[0].0, PtxToken::Float("3.14".to_string()));
-    assert_eq!(
-        tokens[1].0,
-        PtxToken::FloatExponent("2.5e10".to_string())
-    );
+    assert_eq!(tokens[1].0, PtxToken::FloatExponent("2.5e10".to_string()));
     assert_eq!(tokens[2].0, PtxToken::FloatExponent("1e-5".to_string()));
-    assert_eq!(
-        tokens[3].0,
-        PtxToken::HexFloat("0F40490000".to_string())
-    );
+    assert_eq!(tokens[3].0, PtxToken::HexFloat("0F40490000".to_string()));
     assert_eq!(
         tokens[4].0,
         PtxToken::HexFloat("0D4009000000000000".to_string())
@@ -109,16 +103,10 @@ fn test_identifiers() {
     let tokens = tokenize(source).unwrap();
 
     assert_eq!(tokens.len(), 4);
-    assert_eq!(
-        tokens[0].0,
-        PtxToken::Identifier("kernel_main".to_string())
-    );
+    assert_eq!(tokens[0].0, PtxToken::Identifier("kernel_main".to_string()));
     assert_eq!(tokens[1].0, PtxToken::Identifier("my_var".to_string()));
     assert_eq!(tokens[2].0, PtxToken::Identifier("_temp".to_string()));
-    assert_eq!(
-        tokens[3].0,
-        PtxToken::Identifier("$special".to_string())
-    );
+    assert_eq!(tokens[3].0, PtxToken::Identifier("$special".to_string()));
 }
 
 #[test]
@@ -195,7 +183,7 @@ fn test_ptx_instruction() {
     let source = "mov.u32 %r0, 42;";
     let tokens = tokenize(source).unwrap();
 
-    assert_eq!(tokens.len(), 7);  // mov + . + u32 + %r0 + , + 42 + ;
+    assert_eq!(tokens.len(), 7); // mov + . + u32 + %r0 + , + 42 + ;
     assert_eq!(tokens[0].0, PtxToken::Identifier("mov".to_string()));
     assert_eq!(tokens[1].0, PtxToken::Dot);
     assert_eq!(tokens[2].0, PtxToken::Identifier("u32".to_string()));
@@ -258,16 +246,8 @@ fn test_memory_access() {
             .iter()
             .any(|(t, _)| matches!(t, PtxToken::Identifier(s) if s == "ld"))
     );
-    assert!(
-        tokens
-            .iter()
-            .any(|(t, _)| matches!(t, PtxToken::LBracket))
-    );
-    assert!(
-        tokens
-            .iter()
-            .any(|(t, _)| matches!(t, PtxToken::RBracket))
-    );
+    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::LBracket)));
+    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::RBracket)));
     assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::Plus)));
 }
 
@@ -559,11 +539,7 @@ fn test_predicated_instructions() {
             .iter()
             .any(|(t, _)| matches!(t, PtxToken::Register(s) if s == "%p0"))
     );
-    assert!(
-        tokens
-            .iter()
-            .any(|(t, _)| matches!(t, PtxToken::Exclaim))
-    );
+    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::Exclaim)));
 }
 
 #[test]
@@ -594,16 +570,8 @@ fn test_vector_operations() {
     let tokens = result.unwrap();
 
     // Verify vector syntax elements
-    assert!(
-        tokens
-            .iter()
-            .any(|(t, _)| matches!(t, PtxToken::LBrace))
-    );
-    assert!(
-        tokens
-            .iter()
-            .any(|(t, _)| matches!(t, PtxToken::RBrace))
-    );
+    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::LBrace)));
+    assert!(tokens.iter().any(|(t, _)| matches!(t, PtxToken::RBrace)));
     assert!(
         tokens
             .iter()

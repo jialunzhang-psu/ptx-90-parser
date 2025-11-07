@@ -17,11 +17,8 @@ pub mod section_0 {
             push_opcode(tokens, "tanh");
                     push_directive(tokens, "approx");
                     match &self.type_ {
-                            Type::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
+                            Type::Bf16x2 => {
+                                    push_directive(tokens, "bf16x2");
                             }
                             Type::F16x2 => {
                                     push_directive(tokens, "f16x2");
@@ -29,8 +26,11 @@ pub mod section_0 {
                             Type::Bf16 => {
                                     push_directive(tokens, "bf16");
                             }
-                            Type::Bf16x2 => {
-                                    push_directive(tokens, "bf16x2");
+                            Type::F16 => {
+                                    push_directive(tokens, "f16");
+                            }
+                            Type::F32 => {
+                                    push_directive(tokens, "f32");
                             }
                     }
                     self.d.unparse_tokens(tokens);

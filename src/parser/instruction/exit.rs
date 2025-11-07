@@ -15,6 +15,8 @@ pub mod section_0 {
     impl PtxParser for Exit {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("exit")?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(Exit {
             })
         }

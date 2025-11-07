@@ -23,28 +23,38 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for State {
+    impl PtxParser for CpSize {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Shared
+            // Try _16
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(State::Shared);
+                if stream.expect_string("16").is_ok() {
+                    return Ok(CpSize::_16);
                 }
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            // Try SharedCta
+            // Try _4
             {
                 let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(State::SharedCta);
+                if stream.expect_string("4").is_ok() {
+                    return Ok(CpSize::_4);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try _8
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string("8").is_ok() {
+                    return Ok(CpSize::_8);
                 }
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared", ".shared::cta"];
+            let expected = &["16", "4", "8"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -69,15 +79,6 @@ pub mod section_0 {
 
     impl PtxParser for LevelPrefetchSize {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L264b
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::64B").is_ok() {
-                    return Ok(LevelPrefetchSize::L264b);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
             // Try L2128b
             {
                 let saved_pos = stream.position();
@@ -86,7 +87,6 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            stream.set_position(saved_pos);
             let saved_pos = stream.position();
             // Try L2256b
             {
@@ -97,29 +97,45 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try L264b
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".L2::64B").is_ok() {
+                    return Ok(LevelPrefetchSize::L264b);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::64B", ".L2::128B", ".L2::256B"];
+            let expected = &[".L2::128B", ".L2::256B", ".L2::64B"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
 
-    impl PtxParser for CpSize {
+    impl PtxParser for State {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            let start_pos = stream.position();
-            if stream.expect_string("4").is_ok() {
-                return Ok(CpSize::_4);
+            // Try SharedCta
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared::cta").is_ok() {
+                    return Ok(State::SharedCta);
+                }
+                stream.set_position(saved_pos);
             }
-            stream.set_position(start_pos);
-            if stream.expect_string("8").is_ok() {
-                return Ok(CpSize::_8);
+            let saved_pos = stream.position();
+            // Try Shared
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".shared").is_ok() {
+                    return Ok(State::Shared);
+                }
+                stream.set_position(saved_pos);
             }
-            stream.set_position(start_pos);
-            if stream.expect_string("16").is_ok() {
-                return Ok(CpSize::_16);
-            }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(0..0);
-            let expected = &["4", "8", "16"];
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".shared::cta", ".shared"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -130,11 +146,15 @@ pub mod section_0 {
             stream.expect_string("cp")?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             stream.expect_string(".ca")?;
             let ca = ();
+            stream.expect_complete()?;
             let state = State::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".global")?;
             let global = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_cache_hint = match LevelCacheHint::parse(stream) {
                 Ok(val) => Some(val),
@@ -143,6 +163,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_prefetch_size = match LevelPrefetchSize::parse(stream) {
                 Ok(val) => Some(val),
@@ -151,37 +172,45 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let dst = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let src = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let cp_size = CpSize::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let src_size = match Operand::parse(stream) {
+            let src_size = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let cache_policy = match Operand::parse(stream) {
+            let cache_policy = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CpAsyncCaStateGlobalLevelCacheHintLevelPrefetchSize {
                 async_,
                 ca,
@@ -204,11 +233,15 @@ pub mod section_0 {
             stream.expect_string("cp")?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             stream.expect_string(".cg")?;
             let cg = ();
+            stream.expect_complete()?;
             let state = State::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".global")?;
             let global = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_cache_hint = match LevelCacheHint::parse(stream) {
                 Ok(val) => Some(val),
@@ -217,6 +250,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_prefetch_size = match LevelPrefetchSize::parse(stream) {
                 Ok(val) => Some(val),
@@ -225,38 +259,46 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let dst = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let src = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             stream.expect_string("16")?;
             let imm_16 = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let src_size = match Operand::parse(stream) {
+            let src_size = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let cache_policy = match Operand::parse(stream) {
+            let cache_policy = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CpAsyncCgStateGlobalLevelCacheHintLevelPrefetchSize {
                 async_,
                 cg,
@@ -279,11 +321,15 @@ pub mod section_0 {
             stream.expect_string("cp")?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             stream.expect_string(".ca")?;
             let ca = ();
+            stream.expect_complete()?;
             let state = State::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".global")?;
             let global = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_cache_hint = match LevelCacheHint::parse(stream) {
                 Ok(val) => Some(val),
@@ -292,6 +338,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_prefetch_size = match LevelPrefetchSize::parse(stream) {
                 Ok(val) => Some(val),
@@ -300,37 +347,45 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let dst = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let src = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let cp_size = CpSize::parse(stream)?;
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let ignore_src = match Operand::parse(stream) {
+            let ignore_src = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let cache_policy = match Operand::parse(stream) {
+            let cache_policy = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CpAsyncCaStateGlobalLevelCacheHintLevelPrefetchSize1 {
                 async_,
                 ca,
@@ -353,11 +408,15 @@ pub mod section_0 {
             stream.expect_string("cp")?;
             stream.expect_string(".async")?;
             let async_ = ();
+            stream.expect_complete()?;
             stream.expect_string(".cg")?;
             let cg = ();
+            stream.expect_complete()?;
             let state = State::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".global")?;
             let global = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_cache_hint = match LevelCacheHint::parse(stream) {
                 Ok(val) => Some(val),
@@ -366,6 +425,7 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let level_prefetch_size = match LevelPrefetchSize::parse(stream) {
                 Ok(val) => Some(val),
@@ -374,38 +434,46 @@ pub mod section_0 {
                     None
                 }
             };
+            stream.expect_complete()?;
             let dst = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let src = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             stream.expect_string("16")?;
             let imm_16 = ();
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let ignore_src = match Operand::parse(stream) {
+            let ignore_src = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
             let saved_pos = stream.position();
             let has_comma = stream.expect(&PtxToken::Comma).is_ok();
             if !has_comma {
                 stream.set_position(saved_pos);
             }
             let saved_pos = stream.position();
-            let cache_policy = match Operand::parse(stream) {
+            let cache_policy = match GeneralOperand::parse(stream) {
                 Ok(val) => Some(val),
                 Err(_) => {
                     stream.set_position(saved_pos);
                     None
                 }
             };
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(CpAsyncCgStateGlobalLevelCacheHintLevelPrefetchSize1 {
                 async_,
                 cg,

@@ -5,6 +5,8 @@ use crate::analyzer::{
 };
 use crate::naming;
 use crate::r#type::OperatorToken;
+use crate::r#type::IdentifierToken;
+use crate::analyzer::RustName;
 
 /// Output collected when generating types for a PTX section
 pub struct GeneratedTypeOutput {
@@ -23,7 +25,9 @@ struct EnumDefinition {
 
 impl EnumDefinition {
     fn new() -> Self {
-        Self { variants: Vec::new() }
+        Self {
+            variants: Vec::new(),
+        }
     }
 
     fn add_variant(&mut self, variant: (String, String, Option<Vec<String>>)) {
@@ -63,7 +67,7 @@ impl TypeGenerator {
         let mut struct_names = Vec::new();
 
         // Generate type definitions for each instruction
-        for instr in &section.0 {
+        for instr in &section.instructions {
             let struct_name = instr.rust_name.clone();
             let type_def = self.generate_instruction_type(instr);
             struct_names.push(struct_name);
@@ -87,12 +91,12 @@ impl TypeGenerator {
 
         // Generate module name from section index
         let module_name = format!("section_{}", section_idx);
-        
+
         // Wrap everything in a module
         let mut output = String::new();
         output.push_str(&format!("pub mod {} {{\n", module_name));
         output.push_str("    use crate::r#type::common::*;\n\n");
-        
+
         // Indent enum definitions
         for line in enum_output.lines() {
             if !line.is_empty() {
@@ -101,7 +105,7 @@ impl TypeGenerator {
             output.push_str(line);
             output.push_str("\n");
         }
-        
+
         // Indent struct definitions
         for line in struct_output.lines() {
             if !line.is_empty() {
@@ -110,9 +114,9 @@ impl TypeGenerator {
             output.push_str(line);
             output.push_str("\n");
         }
-        
+
         output.push_str("}\n");
-        
+
         GeneratedTypeOutput {
             code: output,
             instruction_structs: struct_names,
@@ -178,7 +182,10 @@ impl TypeGenerator {
             let field_type = self.infer_modifier_type(modifier);
             let raw_form = self.get_modifier_raw_form(modifier);
 
-            output.push_str(&format!("    pub {}: {}, // {}\n", rust_name, field_type, raw_form));
+            output.push_str(&format!(
+                "    pub {}: {}, // {}\n",
+                rust_name, field_type, raw_form
+            ));
         }
 
         // Generate fields from operands
@@ -207,22 +214,22 @@ impl TypeGenerator {
                 PipeChoice(((_, first_name), (_, second_name))) => {
                     // d|p generates: pub d: Operand, pub p: Operand
                     output.push_str(&format!(
-                        "    pub {}: Operand, // first operand of {}\n",
+                        "    pub {}: GeneralOperand, // first operand of {}\n",
                         first_name, operand_raw
                     ));
                     output.push_str(&format!(
-                        "    pub {}: Operand, // second operand of {}\n",
+                        "    pub {}: GeneralOperand, // second operand of {}\n",
                         second_name, operand_raw
                     ));
                 }
                 PipeOptionalChoice(((_, first_name), (_, second_name))) => {
                     // d{|p} generates: pub d: Operand, pub p: Option<Operand>
                     output.push_str(&format!(
-                        "    pub {}: Operand, // first operand of {}\n",
+                        "    pub {}: GeneralOperand, // first operand of {}\n",
                         first_name, operand_raw
                     ));
                     output.push_str(&format!(
-                        "    pub {}: Option<Operand>, // optional second operand of {}\n",
+                        "    pub {}: Option<GeneralOperand>, // optional second operand of {}\n",
                         second_name, operand_raw
                     ));
                 }
@@ -241,7 +248,10 @@ impl TypeGenerator {
             if let Some((modifier, rust_name)) = &operand.modifier {
                 let field_type = self.infer_modifier_type(modifier);
                 let mod_raw = self.get_modifier_raw_form(modifier);
-                output.push_str(&format!("    pub {}: {}, // {}\n", rust_name, field_type, mod_raw));
+                output.push_str(&format!(
+                    "    pub {}: {}, // {}\n",
+                    rust_name, field_type, mod_raw
+                ));
             }
         }
 
@@ -259,11 +269,20 @@ impl TypeGenerator {
             | Optional((_, rust_name))
             | ParenthesizedOperand((_, rust_name))
             | ImmediateNumber((_, rust_name)) => rust_name.clone(),
-            PipeChoice(((_, first_name), _)) | PipeOptionalChoice(((_, first_name), _)) => first_name.clone(),
-            CurlyGroup(items) | SquareGroup(items) => {
-                // For groups, use the first item's name
-                items.first().map(|(_, rust_name)| rust_name.clone()).unwrap_or_else(|| "group".to_string())
+            PipeChoice(((_, first_name), _)) | PipeOptionalChoice(((_, first_name), _)) => {
+                first_name.clone()
             }
+            CurlyGroup(items) => {
+                // For groups, use the first item's name
+                items
+                    .first()
+                    .map(|(_, rust_name)| rust_name.clone())
+                    .unwrap_or_else(|| "group".to_string())
+            }
+            SquareGroup(items) => items
+                .first()
+                .map(|(_, rust_name, _)| rust_name.clone())
+                .unwrap_or_else(|| "group".to_string()),
             ParamList(rust_name) => rust_name.clone(),
             Choice { base, .. } => {
                 // base.1 contains the PascalCase type name (e.g., "CpSize")
@@ -278,13 +297,11 @@ impl TypeGenerator {
         match modifier {
             AnalyzedModifier::Atom((ident, _)) => ident.clone(),
             AnalyzedModifier::Choice { base, .. } => base.0.clone(),
-            AnalyzedModifier::Sequence(items) => {
-                items
-                    .iter()
-                    .map(|(item, _)| self.get_modifier_raw_form(item))
-                    .collect::<Vec<_>>()
-                    .join("")
-            }
+            AnalyzedModifier::Sequence(items) => items
+                .iter()
+                .map(|(item, _)| self.get_modifier_raw_form(item))
+                .collect::<Vec<_>>()
+                .join(""),
             AnalyzedModifier::Optional(inner) => {
                 format!("{{{}}}", self.get_modifier_raw_form(&inner.0))
             }
@@ -302,16 +319,19 @@ impl TypeGenerator {
             PipeChoice(((first, _), (second, _))) => format!("{}|{}", first, second),
             PipeOptionalChoice(((first, _), (second, _))) => format!("{}{{|{}}}", first, second),
             CurlyGroup(operands) => {
-                let parts: Vec<String> = operands
-                    .iter()
-                    .map(|(ident, _)| ident.clone())
-                    .collect();
+                let parts: Vec<String> = operands.iter().map(|(ident, _)| ident.clone()).collect();
                 format!("{{{}}}", parts.join(", "))
             }
             SquareGroup(operands) => {
                 let parts: Vec<String> = operands
                     .iter()
-                    .map(|(ident, _)| ident.clone())
+                    .map(|(ident, _, optional)| {
+                        if *optional {
+                            format!("{{{},}}", ident)
+                        } else {
+                            ident.clone()
+                        }
+                    })
                     .collect();
                 format!("[{}]", parts.join(", "))
             }
@@ -326,7 +346,7 @@ impl TypeGenerator {
         use AnalyzedOperandElement::*;
         match operand {
             // Optional operands should be Option<Operand>
-            Optional(_) => "Option<Operand>".to_string(),
+            Optional(_) => "Option<GeneralOperand>".to_string(),
             // Immediate numbers are just markers
             ImmediateNumber(_) => "()".to_string(),
             // Address operands use AddressOperand type
@@ -334,23 +354,31 @@ impl TypeGenerator {
             // Choice operands should generate an enum
             Choice { base, options } => self.generate_operand_choice_enum(&base.1, options),
             // ParamList is a list of operands
-            ParamList(_) => "Vec<Operand>".to_string(),
-            // SquareGroup should be a tuple
-            SquareGroup(operands) => {
-                let element_types: Vec<String> = vec!["Operand".to_string(); operands.len()];
-                format!("({})", element_types.join(", "))
-            }
-            // CurlyGroup should be a tuple
-            CurlyGroup(operands) => {
-                let element_types: Vec<String> = vec!["Operand".to_string(); operands.len()];
-                format!("({})", element_types.join(", "))
-            }
+            ParamList(_) => "Vec<GeneralOperand>".to_string(),
+            // SquareGroup should map to texture handler helpers when appropriate
+            SquareGroup(operands) => match operands.len() {
+                2 => "TexHandler2".to_string(),
+                3 => {
+                    if operands.iter().any(|(_, _, optional)| *optional) {
+                        "TexHandler3Optional".to_string()
+                    } else {
+                        "TexHandler3".to_string()
+                    }
+                }
+                _ => {
+                    let element_types: Vec<String> =
+                        vec!["GeneralOperand".to_string(); operands.len()];
+                    format!("({})", element_types.join(", "))
+                }
+            },
+            // CurlyGroup represents a vector operand
+            CurlyGroup(_) => "VectorOperand".to_string(),
             // PipeChoice needs two operand fields
-            PipeChoice(_) => "Operand".to_string(),
+            PipeChoice(_) => "GeneralOperand".to_string(),
             // PipeOptionalChoice needs operand + optional operand
-            PipeOptionalChoice(_) => "Operand".to_string(),
+            PipeOptionalChoice(_) => "GeneralOperand".to_string(),
             // All other operands
-            _ => "Operand".to_string(),
+            _ => "GeneralOperand".to_string(),
         }
     }
 
@@ -358,15 +386,13 @@ impl TypeGenerator {
     fn generate_operand_choice_enum(
         &mut self,
         enum_name: &str,
-        options: &[String],
+        options: &[(IdentifierToken, RustName)],
     ) -> String {
         // Generate enum variants from options
-        let mut variants = Vec::new();
-        for option in options {
-            // Sanitize the option to create a valid variant name
-            let variant_name = self.sanitize_variant_name(option);
-            variants.push((variant_name, option.clone(), None));
-        }
+        let variants: Vec<_> = options
+            .iter()
+            .map(|(identifier, rust_name)| (rust_name.clone(), identifier.clone(), None))
+            .collect();
 
         // Add to pending enums
         self.add_enum_variants(enum_name, variants);
@@ -428,7 +454,7 @@ impl TypeGenerator {
                 // For Optional(Atom), use bool instead of Option<()>
                 match &inner.0 {
                     AnalyzedModifier::Atom(_) => "bool".to_string(),
-                    _ => format!("Option<{}>", self.infer_modifier_type(&inner.0))
+                    _ => format!("Option<{}>", self.infer_modifier_type(&inner.0)),
                 }
             }
         }
@@ -473,9 +499,7 @@ impl TypeGenerator {
 /// Generate the content for mod.rs file in the type module
 /// Generate the mod.rs file content with proper module structure
 /// Takes module info with format: (filename, Vec<(section_name, struct_name)>)
-pub fn generate_mod_rs_content_v2(
-    modules: &[(String, Vec<(String, String)>)]
-) -> String {
+pub fn generate_mod_rs_content_v2(modules: &[(String, Vec<(String, String)>)]) -> String {
     let mut output = String::new();
 
     // Generate module declarations
@@ -502,6 +526,23 @@ pub fn generate_mod_rs_content_v2(
         }
     }
 
+    output.push_str("}\n");
+    output.push_str("\n");
+
+    // Generate predicate wrapper struct
+    output.push_str("/// Represents a complete instruction with optional predicate guard\n");
+    output.push_str("/// Format: [@{!}pred] instruction\n");
+    output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
+    output.push_str("pub struct InstructionWithPredicate {\n");
+    output.push_str("    pub predicate: Option<Predicate>,\n");
+    output.push_str("    pub instruction: Instruction,\n");
+    output.push_str("}\n");
+    output.push_str("\n");
+    output.push_str("/// Predicate guard for conditional instruction execution\n");
+    output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
+    output.push_str("pub struct Predicate {\n");
+    output.push_str("    pub negated: bool,\n");
+    output.push_str("    pub operand: crate::r#type::common::Operand,\n");
     output.push_str("}\n");
 
     output
@@ -533,6 +574,23 @@ pub fn generate_mod_rs_content(modules: &[GeneratedTypeOutput]) -> String {
         }
     }
 
+    output.push_str("}\n");
+    output.push_str("\n");
+
+    // Generate predicate wrapper struct
+    output.push_str("/// Represents a complete instruction with optional predicate guard\n");
+    output.push_str("/// Format: [@{!}pred] instruction\n");
+    output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
+    output.push_str("pub struct InstructionWithPredicate {\n");
+    output.push_str("    pub predicate: Option<Predicate>,\n");
+    output.push_str("    pub instruction: Instruction,\n");
+    output.push_str("}\n");
+    output.push_str("\n");
+    output.push_str("/// Predicate guard for conditional instruction execution\n");
+    output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
+    output.push_str("pub struct Predicate {\n");
+    output.push_str("    pub negated: bool,\n");
+    output.push_str("    pub operand: crate::r#type::common::Operand,\n");
     output.push_str("}\n");
 
     output

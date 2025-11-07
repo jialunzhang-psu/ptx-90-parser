@@ -34,20 +34,32 @@ pub mod section_0 {
                     push_directive(tokens, "sync");
                     push_directive(tokens, "aligned");
                     match &self.shape1 {
-                            Shape1::_16x64b => {
-                                    push_directive(tokens, "16x64b");
-                            }
                             Shape1::_16x128b => {
                                     push_directive(tokens, "16x128b");
                             }
                             Shape1::_16x256b => {
                                     push_directive(tokens, "16x256b");
                             }
+                            Shape1::_16x64b => {
+                                    push_directive(tokens, "16x64b");
+                            }
                             Shape1::_32x32b => {
                                     push_directive(tokens, "32x32b");
                             }
                     }
                     match &self.num {
+                            Num::X128 => {
+                                    push_directive(tokens, "x128");
+                            }
+                            Num::X16 => {
+                                    push_directive(tokens, "x16");
+                            }
+                            Num::X32 => {
+                                    push_directive(tokens, "x32");
+                            }
+                            Num::X64 => {
+                                    push_directive(tokens, "x64");
+                            }
                             Num::X1 => {
                                     push_directive(tokens, "x1");
                             }
@@ -59,18 +71,6 @@ pub mod section_0 {
                             }
                             Num::X8 => {
                                     push_directive(tokens, "x8");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
                             }
                     }
                     if let Some(pack_0) = self.pack.as_ref() {
@@ -100,6 +100,18 @@ pub mod section_0 {
                             }
                     }
                     match &self.num {
+                            Num::X128 => {
+                                    push_directive(tokens, "x128");
+                            }
+                            Num::X16 => {
+                                    push_directive(tokens, "x16");
+                            }
+                            Num::X32 => {
+                                    push_directive(tokens, "x32");
+                            }
+                            Num::X64 => {
+                                    push_directive(tokens, "x64");
+                            }
                             Num::X1 => {
                                     push_directive(tokens, "x1");
                             }
@@ -111,18 +123,6 @@ pub mod section_0 {
                             }
                             Num::X8 => {
                                     push_directive(tokens, "x8");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
                             }
                     }
                     if let Some(pack_1) = self.pack.as_ref() {
@@ -155,6 +155,18 @@ pub mod section_0 {
                             }
                     }
                     match &self.num {
+                            Num::X128 => {
+                                    push_directive(tokens, "x128");
+                            }
+                            Num::X16 => {
+                                    push_directive(tokens, "x16");
+                            }
+                            Num::X32 => {
+                                    push_directive(tokens, "x32");
+                            }
+                            Num::X64 => {
+                                    push_directive(tokens, "x64");
+                            }
                             Num::X1 => {
                                     push_directive(tokens, "x1");
                             }
@@ -166,18 +178,6 @@ pub mod section_0 {
                             }
                             Num::X8 => {
                                     push_directive(tokens, "x8");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
                             }
                     }
                     match &self.redop {
@@ -217,6 +217,18 @@ pub mod section_0 {
                             }
                     }
                     match &self.num {
+                            Num::X128 => {
+                                    push_directive(tokens, "x128");
+                            }
+                            Num::X16 => {
+                                    push_directive(tokens, "x16");
+                            }
+                            Num::X32 => {
+                                    push_directive(tokens, "x32");
+                            }
+                            Num::X64 => {
+                                    push_directive(tokens, "x64");
+                            }
                             Num::X1 => {
                                     push_directive(tokens, "x1");
                             }
@@ -228,18 +240,6 @@ pub mod section_0 {
                             }
                             Num::X8 => {
                                     push_directive(tokens, "x8");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
                             }
                     }
                     match &self.redop {
@@ -281,6 +281,18 @@ pub mod section_0 {
                             }
                     }
                     match &self.num {
+                            Num::X128 => {
+                                    push_directive(tokens, "x128");
+                            }
+                            Num::X16 => {
+                                    push_directive(tokens, "x16");
+                            }
+                            Num::X32 => {
+                                    push_directive(tokens, "x32");
+                            }
+                            Num::X64 => {
+                                    push_directive(tokens, "x64");
+                            }
                             Num::X1 => {
                                     push_directive(tokens, "x1");
                             }
@@ -292,18 +304,6 @@ pub mod section_0 {
                             }
                             Num::X8 => {
                                     push_directive(tokens, "x8");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
                             }
                     }
                     match &self.redop {
@@ -344,6 +344,18 @@ pub mod section_0 {
                             }
                     }
                     match &self.num {
+                            Num::X128 => {
+                                    push_directive(tokens, "x128");
+                            }
+                            Num::X16 => {
+                                    push_directive(tokens, "x16");
+                            }
+                            Num::X32 => {
+                                    push_directive(tokens, "x32");
+                            }
+                            Num::X64 => {
+                                    push_directive(tokens, "x64");
+                            }
                             Num::X1 => {
                                     push_directive(tokens, "x1");
                             }
@@ -355,18 +367,6 @@ pub mod section_0 {
                             }
                             Num::X8 => {
                                     push_directive(tokens, "x8");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
                             }
                     }
                     match &self.redop {

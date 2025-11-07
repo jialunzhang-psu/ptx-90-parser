@@ -1,3 +1,37 @@
+// ============================================================================
+// PTX Specification Parser
+// ============================================================================
+//
+// This module parses PTX instruction specification strings into structured AST nodes.
+//
+// ## Overview
+//
+// PTX specifications are text files that define instruction syntax patterns.
+// They consist of:
+// - **Sections**: Separated by lines of 5+ dashes (-----)
+// - **Rules**: Statements ending with semicolons (;)
+// - **Parameter Rules**: Define parameter sets (e.g., `.type = { .u32, .s32 }`)
+// - **Instruction Rules**: Define instruction patterns (e.g., `add.type d, a, b`)
+//
+// ## Parsing Pipeline
+//
+// 1. **Section Splitting**: Split input by separator lines (-----)
+// 2. **Rule Splitting**: Split each section by semicolons (;)
+// 3. **Rule Classification**: Determine if rule is parameter or instruction (by '=')
+// 4. **Identifier Collection**: Gather all parameter names for context-aware parsing
+// 5. **Parsing**: Parse each rule into structured AST nodes
+//
+// ## Example
+//
+// ```ptx
+// add.type d, a, b;
+// .type = { .u32, .s32, .f32 };
+// ```
+//
+// This parses into:
+// - InstructionRule: `add.type d, a, b`
+// - ParameterRule: `.type` with choices `[.u32, .s32, .f32]`
+
 use crate::lexer::{PtxSpecToken, Span, token_to_string, tokenize};
 use crate::r#type::{
     InstructionHead, InstructionRule, Modifier, Operand, OperandElement, OperatorToken,
@@ -6,6 +40,11 @@ use crate::r#type::{
 use std::collections::HashSet;
 use std::fmt;
 
+// ============================================================================
+// Error Types
+// ============================================================================
+
+/// Error type for specification parsing failures
 #[derive(Debug, Clone)]
 pub struct SpecParseError {
     pub message: String,
@@ -24,12 +63,33 @@ impl fmt::Display for SpecParseError {
 
 impl std::error::Error for SpecParseError {}
 
+// ============================================================================
+// Public API
+// ============================================================================
+
 /// Parse a PTX specification string into a list of Section AST nodes.
+///
+/// # Arguments
+/// * `source` - The PTX specification source code
+///
+/// # Returns
+/// * `Ok(Vec<Section>)` - Parsed sections containing rules
+/// * `Err(SpecParseError)` - Parsing error with message and optional span
+///
+/// # Example
+/// ```ignore
+/// let spec = "add.type d, a, b;\n.type = { .u32, .s32 };";
+/// let sections = parse_spec(spec)?;
+/// ```
 pub fn parse_spec(source: &str) -> Result<Vec<Section>, SpecParseError> {
     parse_spec_with_name(source, "<input>")
 }
 
 /// Parse a PTX specification string with a file name for error reporting.
+///
+/// # Arguments
+/// * `source` - The PTX specification source code
+/// * `_name` - The file name (currently unused, reserved for future error reporting)
 pub fn parse_spec_with_name(source: &str, _name: &str) -> Result<Vec<Section>, SpecParseError> {
     // Step 1: Split input into sections using "-----" as separator
     let sections = split_into_sections(source);
@@ -60,8 +120,8 @@ pub fn parse_spec_with_name(source: &str, _name: &str) -> Result<Vec<Section>, S
         for classified_rule in classified_rules {
             match classified_rule {
                 ClassifiedRule::Parameter { lhs_list, rhs } => {
-                    // Parse the RHS choices
-                    let choices = parse_parameter_rhs(&rhs, &identifiers)?;
+                    // Parse the RHS choices, excluding the LHS identifiers to avoid self-recursion
+                    let choices = parse_parameter_rhs(&rhs, &identifiers, &lhs_list)?;
 
                     // Create a ParameterRule for each LHS
                     for lhs in lhs_list {
@@ -91,8 +151,20 @@ pub fn parse_spec_with_name(source: &str, _name: &str) -> Result<Vec<Section>, S
 }
 
 // ============================================================================
-// Step 1: Split into sections
+// Section Splitting (Step 1)
 // ============================================================================
+//
+// Split the input source into sections using lines of 5+ dashes as separators.
+// Each section can contain multiple rules.
+//
+// Example:
+// ```
+// add.type d, a, b;
+// .type = { .u32, .s32 };
+// -----
+// sub.type d, a, b;
+// ```
+// Results in 2 sections.
 
 fn split_into_sections(source: &str) -> Vec<String> {
     let mut sections = Vec::new();
@@ -125,8 +197,17 @@ fn split_into_sections(source: &str) -> Vec<String> {
 }
 
 // ============================================================================
-// Step 2: Split into rules
+// Rule Splitting (Step 2)
 // ============================================================================
+//
+// Split a section into individual rules using semicolons as separators.
+// Tokenizes the section first to properly handle semicolons in context.
+//
+// Example:
+// ```
+// add.type d, a, b; sub.type d, a, b;
+// ```
+// Results in 2 rules: ["add.type d, a, b", "sub.type d, a, b"]
 
 fn split_into_rules(section: &str) -> Result<Vec<String>, SpecParseError> {
     let tokens = tokenize(section).map_err(|e| SpecParseError {
@@ -275,13 +356,20 @@ fn collect_parameter_identifiers(classified_rules: &[ClassifiedRule]) -> HashSet
 fn parse_parameter_rhs(
     rhs: &str,
     identifiers: &HashSet<String>,
+    exclude_lhs: &[String],
 ) -> Result<Vec<Modifier>, SpecParseError> {
     let tokens = tokenize(rhs).map_err(|e| SpecParseError {
         message: format!("Lexer error in RHS: {:?}", e),
         span: Some(e.span),
     })?;
 
-    let mut parser = TokenParser::new(tokens, identifiers);
+    // Create a filtered identifier set that excludes the LHS to avoid self-recursion
+    let mut filtered_identifiers = identifiers.clone();
+    for lhs in exclude_lhs {
+        filtered_identifiers.remove(lhs);
+    }
+
+    let mut parser = TokenParser::new(tokens, &filtered_identifiers);
 
     // RHS should be: { modifier, modifier, ... }
     parser.expect_token(&PtxSpecToken::LBrace)?;
@@ -421,29 +509,30 @@ impl<'a> TokenParser<'a> {
     }
 
     fn expect_identifier(&mut self) -> Result<String, SpecParseError> {
-        if let Some((token, _)) = self.advance() {
+        // Only collect a single identifier token (not chained identifiers)
+        if let Some(token) = self.peek() {
             match token {
-                PtxSpecToken::Identifier(s) => Ok(s),
-                PtxSpecToken::Directive(s) => Ok(format!(".{}", s)),
+                PtxSpecToken::Identifier(s) => {
+                    let result = s.clone();
+                    self.advance();
+                    Ok(result)
+                }
                 _ => Err(SpecParseError {
-                    message: format!("Expected identifier, got {:?}", token),
+                    message: format!("Expected identifier, found {:?}", token),
                     span: self.current_span(),
-                }),
+                })
             }
         } else {
             Err(SpecParseError {
-                message: "Unexpected end of input, expected identifier".to_string(),
-                span: None,
+                message: "Expected identifier, found end of input".to_string(),
+                span: self.current_span(),
             })
         }
     }
 
     fn peek_is_modifier_start(&self) -> bool {
         if let Some(token) = self.peek() {
-            matches!(
-                token,
-                PtxSpecToken::Dot | PtxSpecToken::Directive(_) | PtxSpecToken::LBrace
-            )
+            matches!(token, PtxSpecToken::Dot | PtxSpecToken::LBrace)
         } else {
             false
         }
@@ -464,7 +553,10 @@ impl<'a> TokenParser<'a> {
                 // Extract the identifier from the inner modifier (must be Atom)
                 let id = match inner {
                     Modifier::Atom(id) => id,
-                    _ => panic!("Optional modifier must contain a simple Atom, got: {:?}", inner),
+                    _ => panic!(
+                        "Optional modifier must contain a simple Atom, got: {:?}",
+                        inner
+                    ),
                 };
 
                 Ok(Modifier::Optional(id))
@@ -483,207 +575,147 @@ impl<'a> TokenParser<'a> {
 
     fn parse_parameter_choice(&mut self) -> Result<Modifier, SpecParseError> {
         // Parse a parameter choice which might be:
-        // - .collector::buffer::op where ::buffer, ::op are identifiers -> Sequence([::buffer, ::op])
+        // - .collector::buffer::op where ::buffer, ::op are identifiers -> Sequence([.collector, ::buffer, ::op])
+        // - .b.n.n.n.n where .n is a known identifier -> Sequence([".b", ".n", ".n", ".n", ".n"])
         // - .dtype where .dtype is an identifier -> Atom(.dtype) (parameter reference)
         // - aa::item3 where neither are identifiers -> Atom(aa::item3) (literal)
+        // - 0, 1, 2 (numbers in parameter context) -> Atom("0"), Atom("1"), etc.
         //
-        // Rules:
-        // 1. If the entire parsed string is in identifiers → Atom (parameter reference)
-        // 2. If it splits into multiple parts that are ALL in identifiers → Sequence
-        // 3. If only SOME parts are in identifiers → ERROR
-        // 4. Otherwise → Atom (literal value)
+        // Algorithm:
+        // 1. Collect tokens until delimiter into a string representation
+        // 2. Try to match token sequences from the identifier set
+        // 3. Split into segments and return Atom or Sequence
 
-        let saved_pos = self.pos;
-
-        // First, parse the entire string to see what we have
-        let full_string = self.parse_modifier_atom_with_concatenation()?;
-        let full_string_text = match &full_string {
-            Modifier::Atom(s) => s.clone(),
-            Modifier::ImmediateNumber(n) => {
-                // Immediate numbers are not split, just return them directly
-                return Ok(Modifier::ImmediateNumber(n.clone()));
-            }
-            _ => unreachable!(),
-        };
-        let end_pos = self.pos; // Save the position after parsing the full string
-
-        // Check if the entire string is a known identifier (parameter reference)
-        if self.identifiers.contains(&full_string_text) {
-            return Ok(Modifier::Atom(full_string_text));
-        }
-
-        // Reset and try to parse as a potential sequence
-        self.pos = saved_pos;
-
-        // Check if it starts with a directive (grouping prefix) followed by multiple :: parts
-        if let Some(PtxSpecToken::Directive(directive_name)) = self.peek() {
-            let directive_str = format!(".{}", directive_name);
-            self.advance(); // consume the directive
-
-            // Check if followed by ::
-            if self.peek_is(&PtxSpecToken::DoubleColon) {
-                // Collect all parts including the directive
-                let mut parts_strings = Vec::new();
-                parts_strings.push(directive_str); // Include the directive prefix
-
-                while self.peek_is(&PtxSpecToken::DoubleColon) {
-                    self.advance(); // consume ::
-
-                    let mut part = String::from("::");
-                    if let Some((token, _)) = self.advance() {
-                        match token {
-                            PtxSpecToken::Identifier(s) => part.push_str(&s),
-                            PtxSpecToken::DecimalInteger(s) => part.push_str(&s),
-                            PtxSpecToken::OctalInteger(s) => part.push_str(&s),
-                            PtxSpecToken::HexInteger(s) => part.push_str(&s),
-                            _ => {
-                                return Err(SpecParseError {
-                                    message: format!("Expected identifier or number after '::'"),
-                                    span: self.current_span(),
-                                });
-                            }
-                        }
-                    }
-
-                    // Check for trailing * characters
-                    while self.peek_is(&PtxSpecToken::Star) {
-                        self.advance();
-                        part.push('*');
-                    }
-
-                    parts_strings.push(part);
-                }
-
-                // Now check: are the :: parts (excluding the first directive) identifiers?
-                // The first part is the directive prefix (e.g., ".collector"), which may or may not be a parameter
-                // The rest are :: parts (e.g., "::buffer", "::op")
-                if parts_strings.len() > 1 {
-                    // Check the :: parts (skip the first directive part)
-                    let double_colon_parts = &parts_strings[1..];
-                    let parts_in_identifiers: Vec<bool> = double_colon_parts
-                        .iter()
-                        .map(|p| self.identifiers.contains(p))
-                        .collect();
-
-                    let all_in = parts_in_identifiers.iter().all(|&b| b);
-                    let some_in = parts_in_identifiers.iter().any(|&b| b);
-
-                    if all_in {
-                        // All :: parts are identifiers → Sequence
-                        return Ok(Modifier::Sequence(parts_strings));
-                    } else if some_in {
-                        // Only some :: parts are identifiers → ERROR
-                        return Err(SpecParseError {
-                            message: format!(
-                                "Partial identifier match in '{}': only some parts are known parameters",
-                                full_string_text
-                            ),
-                            span: self.current_span(),
-                        });
-                    }
-                    // else: none are identifiers, fall through to return as literal Atom
-                }
+        let start_pos = self.pos;
+        
+        // Find the end position (next delimiter)
+        let mut end_pos = self.pos;
+        while end_pos < self.tokens.len() {
+            match &self.tokens[end_pos].0 {
+                PtxSpecToken::Comma | PtxSpecToken::RBrace | PtxSpecToken::RBracket | PtxSpecToken::RParen => break,
+                _ => end_pos += 1,
             }
         }
-
-        // If we get here, it's a literal atom (not a parameter reference, not a sequence)
-        // Restore to the end position so tokens are properly consumed
-        self.pos = end_pos;
-        Ok(Modifier::Atom(full_string_text))
-    }
-
-    fn parse_modifier_atom_with_concatenation(&mut self) -> Result<Modifier, SpecParseError> {
-        // Parse a modifier like .b8x16.b6x16_p32 (for parameter RHS)
-        let mut result = String::new();
-
-        // Start with a directive or ::identifier
-        if let Some(token) = self.peek() {
-            match token {
-                PtxSpecToken::Directive(s) => {
-                    result.push('.');
-                    result.push_str(s);
-                    self.advance();
-                }
-                PtxSpecToken::DoubleColon => {
-                    result.push_str("::");
-                    self.advance();
-                    if let Some((token, _)) = self.advance() {
-                        match token {
-                            PtxSpecToken::Identifier(s) => result.push_str(&s),
-                            PtxSpecToken::DecimalInteger(s) => result.push_str(&s),
-                            _ => {
-                                return Err(SpecParseError {
-                                    message: format!("Expected identifier after '::'"),
-                                    span: self.current_span(),
-                                });
-                            }
-                        }
-                    }
-                }
-                _ => {
-                    return self.parse_modifier_atom();
-                }
-            }
-        } else {
+        
+        if start_pos >= end_pos {
             return Err(SpecParseError {
-                message: "Unexpected end of input".to_string(),
-                span: None,
+                message: "Expected parameter choice".to_string(),
+                span: self.current_span(),
             });
         }
 
-        // Check for continuation: :: or .
-        loop {
-            if self.peek_is(&PtxSpecToken::DoubleColon) {
-                self.advance();
-                result.push_str("::");
+        // Helper: convert token range to string
+        let tokens_to_string = |start: usize, end: usize| -> String {
+            self.tokens[start..end]
+                .iter()
+                .map(|(t, _)| token_to_string(t))
+                .collect::<Vec<_>>()
+                .join("")
+        };
 
-                if let Some((token, _)) = self.advance() {
-                    match token {
-                        PtxSpecToken::Identifier(s) => result.push_str(&s),
-                        PtxSpecToken::DecimalInteger(s) => result.push_str(&s),
-                        PtxSpecToken::OctalInteger(s) => result.push_str(&s),
-                        PtxSpecToken::HexInteger(s) => result.push_str(&s),
-                        _ => {
-                            return Err(SpecParseError {
-                                message: format!(
-                                    "Expected identifier or number after '::', got {:?}",
-                                    token
-                                ),
-                                span: self.current_span(),
-                            });
+        // Check if entire range is a known identifier
+        let full_string = tokens_to_string(start_pos, end_pos);
+        if self.identifiers.contains(&full_string) {
+            self.pos = end_pos;
+            return Ok(Modifier::Atom(full_string));
+        }
+
+        // Try to split by matching token sequences against identifier set
+        let mut segments = Vec::new();
+        let mut pos = start_pos;
+
+        while pos < end_pos {
+            let mut matched = false;
+            
+            // Try longest match first
+            for try_end in (pos + 1..=end_pos).rev() {
+                let candidate = tokens_to_string(pos, try_end);
+                
+                if self.identifiers.contains(&candidate) {
+                    segments.push(candidate);
+                    pos = try_end;
+                    matched = true;
+                    break;
+                }
+            }
+            
+            if !matched {
+                // Collect unmatched tokens until we find a match
+                let segment_start = pos;
+                pos += 1;
+                
+                while pos < end_pos {
+                    let mut has_match = false;
+                    for try_end in (pos + 1..=end_pos).rev() {
+                        if self.identifiers.contains(&tokens_to_string(pos, try_end)) {
+                            has_match = true;
+                            break;
                         }
                     }
+                    if has_match { break; }
+                    pos += 1;
                 }
-            } else if matches!(self.peek(), Some(PtxSpecToken::Directive(_))) {
-                // Concatenate another directive (e.g., .b8x16.b6x16_p32)
-                if let Some((PtxSpecToken::Directive(s), _)) = self.advance() {
-                    result.push('.');
-                    result.push_str(&s);
-                }
-            } else if matches!(self.peek(), Some(PtxSpecToken::Identifier(_))) {
-                // Handle patterns like 02_13 where _13 is an identifier following a number
-                if let Some((PtxSpecToken::Identifier(s), _)) = self.advance() {
-                    result.push_str(&s);
-                }
-            } else {
-                break;
+                
+                segments.push(tokens_to_string(segment_start, pos));
             }
         }
 
-        // Check for trailing * characters
-        while self.peek_is(&PtxSpecToken::Star) {
-            self.advance();
-            result.push('*');
+        self.pos = end_pos;
+
+        if segments.is_empty() {
+            Ok(Modifier::Atom(full_string))
+        } else if segments.len() == 1 {
+            Ok(Modifier::Atom(segments.into_iter().next().unwrap()))
+        } else {
+            Ok(Modifier::Sequence(segments))
+        }
+    }
+
+    fn parse_modifier_atom_with_concatenation(&mut self) -> Result<Modifier, SpecParseError> {
+        // Parse a modifier like .b8x16.b6x16_p32 (for instruction modifiers)
+        // Collects all tokens until we hit a delimiter or operand-like token
+        
+        let start_pos = self.pos;
+        
+        // Find the end position (next delimiter or operand-like token)
+        let mut end_pos = self.pos;
+        while end_pos < self.tokens.len() {
+            match &self.tokens[end_pos].0 {
+                // Stop at delimiters
+                PtxSpecToken::Comma | PtxSpecToken::RBrace | PtxSpecToken::RBracket | PtxSpecToken::RParen |
+                PtxSpecToken::LBrace | PtxSpecToken::LBracket | PtxSpecToken::LParen |
+                PtxSpecToken::Pipe | PtxSpecToken::Semicolon => break,
+                _ => end_pos += 1,
+            }
+        }
+        
+        if start_pos >= end_pos {
+            return Err(SpecParseError {
+                message: "Expected modifier".to_string(),
+                span: self.current_span(),
+            });
         }
 
+        // Convert token range to string
+        let result = self.tokens[start_pos..end_pos]
+            .iter()
+            .map(|(t, _)| token_to_string(t))
+            .collect::<Vec<_>>()
+            .join("");
+        
+        self.pos = end_pos;
         Ok(Modifier::Atom(result))
     }
 
     fn parse_modifier_atom(&mut self) -> Result<Modifier, SpecParseError> {
-        // Parse a modifier like .dtype or ::buffer or .b8x16.b6x16_p32 or immediate number like 4, 8, 16
-        let mut result = String::new();
-
-        // Check if this is an immediate number (no prefix)
+        // Parse a single modifier - must start with .
+        // :: is NOT a separator, it's part of the modifier content
+        // Collect everything after . until we hit:
+        // - Another . (next modifier)
+        // - A consecutive identifier (one that comes after an identifier, not after . or ::)
+        // - A delimiter (comma, brace, etc.)
+        
+        // Check if this is an immediate number (no prefix) - treat as Atom for parameter choices
         if let Some(token) = self.peek() {
             match token {
                 PtxSpecToken::DecimalInteger(_) | PtxSpecToken::HexInteger(_) => {
@@ -693,80 +725,81 @@ impl<'a> TokenParser<'a> {
                             PtxSpecToken::HexInteger(s) => s,
                             _ => unreachable!(),
                         };
-                        return Ok(Modifier::ImmediateNumber(num_str));
+                        return Ok(Modifier::Atom(num_str));
                     }
                 }
                 _ => {}
             }
         }
 
-        // Check if it starts with dot or double colon
-        if self.peek_is(&PtxSpecToken::Dot) {
-            self.advance();
-            result.push('.');
-        } else if self.peek_is(&PtxSpecToken::DoubleColon) {
-            self.advance();
-            result.push_str("::");
+        // Must start with .
+        if !self.peek_is(&PtxSpecToken::Dot) {
+            return Err(SpecParseError {
+                message: "Modifier must start with '.'".to_string(),
+                span: self.current_span(),
+            });
         }
 
-        // Now expect identifier or directive
-        if let Some((token, _)) = self.advance() {
-            match token {
-                PtxSpecToken::Identifier(s) => result.push_str(&s),
-                PtxSpecToken::Directive(s) => {
-                    result.clear();
-                    result.push('.');
-                    result.push_str(&s);
-                }
-                _ => {
-                    return Err(SpecParseError {
-                        message: format!("Expected identifier in modifier, got {:?}", token),
-                        span: self.current_span(),
-                    });
-                }
-            }
+        let mut result = String::new();
+        let mut last_was_identifier; // Track if last consumed token was an identifier
 
-            // Check for :: continuation
-            while self.peek_is(&PtxSpecToken::DoubleColon) {
-                self.advance();
-                result.push_str("::");
+        // Consume the initial dot
+        result.push('.');
+        self.advance();
+        last_was_identifier = false;
 
-                if let Some((token, _)) = self.advance() {
-                    match token {
-                        PtxSpecToken::Identifier(s) => result.push_str(&s),
-                        PtxSpecToken::DecimalInteger(s) => result.push_str(&s),
-                        PtxSpecToken::HexInteger(s) => result.push_str(&s),
-                        _ => {
-                            return Err(SpecParseError {
-                                message: format!(
-                                    "Expected identifier or number after '::', got {:?}",
-                                    token
-                                ),
-                                span: self.current_span(),
-                            });
+        // Now collect everything until we hit a stopping point
+        loop {
+            if let Some(token) = self.peek() {
+                match token {
+                    PtxSpecToken::Identifier(s) => {
+                        // If the last thing we consumed was an identifier, this is a consecutive identifier
+                        // This means we've reached the operands, so stop here
+                        if last_was_identifier {
+                            break;
                         }
+                        result.push_str(s);
+                        self.advance();
+                        last_was_identifier = true;
                     }
-                } else {
-                    return Err(SpecParseError {
-                        message: "Unexpected end after '::'".to_string(),
-                        span: None,
-                    });
+                    PtxSpecToken::DecimalInteger(s) => {
+                        result.push_str(s);
+                        self.advance();
+                        last_was_identifier = false;
+                    }
+                    PtxSpecToken::HexInteger(s) => {
+                        result.push_str(s);
+                        self.advance();
+                        last_was_identifier = false;
+                    }
+                    PtxSpecToken::DoubleColon => {
+                        result.push_str("::");
+                        self.advance();
+                        last_was_identifier = false;
+                    }
+                    PtxSpecToken::Star => {
+                        result.push('*');
+                        self.advance();
+                        last_was_identifier = false;
+                    }
+                    // Stop at next dot (another modifier)
+                    PtxSpecToken::Dot => break,
+                    // Stop at delimiters
+                    _ => break,
                 }
+            } else {
+                break;
             }
-
-            // Check for trailing * characters (like .discard*)
-            while self.peek_is(&PtxSpecToken::Star) {
-                self.advance();
-                result.push('*');
-            }
-
-            Ok(Modifier::Atom(result))
-        } else {
-            Err(SpecParseError {
-                message: "Unexpected end of input in modifier".to_string(),
-                span: None,
-            })
         }
+
+        if result == "." {
+            return Err(SpecParseError {
+                message: "Invalid modifier: '.'".to_string(),
+                span: self.current_span(),
+            });
+        }
+
+        Ok(Modifier::Atom(result))
     }
 
     fn parse_operand(&mut self) -> Result<Operand, SpecParseError> {
@@ -788,7 +821,10 @@ impl<'a> TokenParser<'a> {
                         operand: OperandElement::Item(id),
                         modifier: None,
                     } => id,
-                    _ => panic!("Optional operand {{, ...}} must contain a simple identifier, got: {:?}", inner_operand),
+                    _ => panic!(
+                        "Optional operand {{, ...}} must contain a simple identifier, got: {:?}",
+                        inner_operand
+                    ),
                 };
 
                 return Ok(Operand {
@@ -834,7 +870,10 @@ impl<'a> TokenParser<'a> {
             // Extract first identifier
             let first = match operand {
                 OperandElement::Item(id) => id,
-                _ => panic!("PipeChoice must have simple identifiers, got: {:?}", operand),
+                _ => panic!(
+                    "PipeChoice must have simple identifiers, got: {:?}",
+                    operand
+                ),
             };
 
             // Parse second identifier
@@ -866,7 +905,10 @@ impl<'a> TokenParser<'a> {
                 // Extract first identifier
                 let first = match operand {
                     OperandElement::Item(id) => id,
-                    _ => panic!("PipeOptionalChoice must have simple identifiers, got: {:?}", operand),
+                    _ => panic!(
+                        "PipeOptionalChoice must have simple identifiers, got: {:?}",
+                        operand
+                    ),
                 };
 
                 // Parse second identifier
@@ -882,6 +924,13 @@ impl<'a> TokenParser<'a> {
             } else {
                 // Not a modifier or pipe choice, restore position
                 self.pos = saved_pos;
+            }
+        }
+
+        if modifier.is_none() {
+            if self.peek_is(&PtxSpecToken::Dot) {
+                let parsed_modifier = self.parse_modifier_atom_with_concatenation()?;
+                modifier = Some(parsed_modifier);
             }
         }
 
@@ -954,7 +1003,10 @@ impl<'a> TokenParser<'a> {
                             operand: OperandElement::Item(id),
                             modifier: None,
                         } => id,
-                        _ => panic!("Optional operand {{...,}} must contain a simple identifier, got: {:?}", inner_operand),
+                        _ => panic!(
+                            "Optional operand {{...,}} must contain a simple identifier, got: {:?}",
+                            inner_operand
+                        ),
                     };
 
                     return Ok(OperandElement::Optional(id));
@@ -1020,7 +1072,10 @@ impl<'a> TokenParser<'a> {
                     operand: OperandElement::Item(id),
                     modifier: None,
                 } => id,
-                _ => panic!("Address [a] must contain a simple identifier, got: {:?}", first_operand),
+                _ => panic!(
+                    "Address [a] must contain a simple identifier, got: {:?}",
+                    first_operand
+                ),
             };
 
             Ok(OperandElement::Address(id))
@@ -1057,7 +1112,10 @@ impl<'a> TokenParser<'a> {
                 operand: OperandElement::Item(id),
                 modifier: None,
             } => id,
-            _ => panic!("ParenthesizedOperand (a) must contain a simple identifier, got: {:?}", operand),
+            _ => panic!(
+                "ParenthesizedOperand (a) must contain a simple identifier, got: {:?}",
+                operand
+            ),
         };
 
         Ok(OperandElement::ParenthesizedOperand(id))

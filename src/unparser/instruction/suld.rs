@@ -1,6 +1,7 @@
 //! Original PTX specification:
 //!
-//! suld.b.geom{.cop}.vec.dtype.mode [a, b];  // unformatted
+//! suld.b.geom{.cop}.vec.dtype{.mode}  d, [a, b];  // unformatted
+//! 
 //! .geom  = { .1d, .2d, .3d, .a1d, .a2d };
 //! .cop   = { .ca, .cg, .cs, .cv };               // cache operation
 //! .vec   = { none, .v2, .v4 };
@@ -21,6 +22,12 @@ pub mod section_0 {
             push_opcode(tokens, "suld");
                     push_directive(tokens, "b");
                     match &self.geom {
+                            Geom::A1d => {
+                                    push_directive(tokens, "a1d");
+                            }
+                            Geom::A2d => {
+                                    push_directive(tokens, "a2d");
+                            }
                             Geom::_1d => {
                                     push_directive(tokens, "1d");
                             }
@@ -29,12 +36,6 @@ pub mod section_0 {
                             }
                             Geom::_3d => {
                                     push_directive(tokens, "3d");
-                            }
-                            Geom::A1d => {
-                                    push_directive(tokens, "a1d");
-                            }
-                            Geom::A2d => {
-                                    push_directive(tokens, "a2d");
                             }
                     }
                     if let Some(cop_0) = self.cop.as_ref() {
@@ -65,9 +66,6 @@ pub mod section_0 {
                             }
                     }
                     match &self.dtype {
-                            Dtype::B8 => {
-                                    push_directive(tokens, "b8");
-                            }
                             Dtype::B16 => {
                                     push_directive(tokens, "b16");
                             }
@@ -77,24 +75,26 @@ pub mod section_0 {
                             Dtype::B64 => {
                                     push_directive(tokens, "b64");
                             }
-                    }
-                    match &self.mode {
-                            Mode::Trap => {
-                                    push_directive(tokens, "trap");
-                            }
-                            Mode::Clamp => {
-                                    push_directive(tokens, "clamp");
-                            }
-                            Mode::Zero => {
-                                    push_directive(tokens, "zero");
+                            Dtype::B8 => {
+                                    push_directive(tokens, "b8");
                             }
                     }
-                    tokens.push(PtxToken::LBracket);
-                    let &( ref group_1_0, ref group_1_1) = &self.a;
-                    group_1_0.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Comma);
-                    group_1_1.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RBracket);
+                    if let Some(mode_1) = self.mode.as_ref() {
+                            match mode_1 {
+                                    Mode::Clamp => {
+                                            push_directive(tokens, "clamp");
+                                    }
+                                    Mode::Trap => {
+                                            push_directive(tokens, "trap");
+                                    }
+                                    Mode::Zero => {
+                                            push_directive(tokens, "zero");
+                                    }
+                            }
+                    }
+                    self.d.unparse_tokens(tokens);
+            tokens.push(PtxToken::Comma);
+                    self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }

@@ -37,14 +37,14 @@ pub mod section_0 {
                     push_directive(tokens, "sp");
                     push_directive(tokens, "cta_group::1");
                     match &self.kind {
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
+                            Kind::KindF8f6f4 => {
+                                    push_directive(tokens, "kind::f8f6f4");
                             }
                             Kind::KindTf32 => {
                                     push_directive(tokens, "kind::tf32");
                             }
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
+                            Kind::KindF16 => {
+                                    push_directive(tokens, "kind::f16");
                             }
                     }
                     if self.collector_usage {
@@ -77,14 +77,14 @@ pub mod section_0 {
                     push_directive(tokens, "sp");
                     push_directive(tokens, "cta_group::1");
                     match &self.kind {
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
+                            Kind::KindF8f6f4 => {
+                                    push_directive(tokens, "kind::f8f6f4");
                             }
                             Kind::KindTf32 => {
                                     push_directive(tokens, "kind::tf32");
                             }
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
+                            Kind::KindF16 => {
+                                    push_directive(tokens, "kind::f16");
                             }
                     }
                     if self.collector_usage {
@@ -125,16 +125,12 @@ pub mod section_1 {
                     push_directive(tokens, "kind::i8");
                     if let Some(collector_usage_2) = self.collector_usage.as_ref() {
                             match collector_usage_2 {
-                                    CollectorUsage::CollectorBufferOp(_, _, _) => {
-                                            push_directive(tokens, "collector");
-                                            push_token_from_str(tokens, "::b0");
-                                            push_token_from_str(tokens, "::b1");
-                                            push_token_from_str(tokens, "::b2");
-                                            push_token_from_str(tokens, "::b3");
-                                            push_token_from_str(tokens, "::fill");
-                                            push_token_from_str(tokens, "::use");
-                                            push_token_from_str(tokens, "::lastuse");
-                                            push_token_from_str(tokens, "::discard");
+                                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                            let mut combined = String::new();
+                                            combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                            combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                            tokens.push(PtxToken::Dot);
+                                            tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
                                     }
                             }
                     }
@@ -167,16 +163,12 @@ pub mod section_1 {
                     push_directive(tokens, "kind::i8");
                     if let Some(collector_usage_4) = self.collector_usage.as_ref() {
                             match collector_usage_4 {
-                                    CollectorUsage::CollectorBufferOp(_, _, _) => {
-                                            push_directive(tokens, "collector");
-                                            push_token_from_str(tokens, "::b0");
-                                            push_token_from_str(tokens, "::b1");
-                                            push_token_from_str(tokens, "::b2");
-                                            push_token_from_str(tokens, "::b3");
-                                            push_token_from_str(tokens, "::fill");
-                                            push_token_from_str(tokens, "::use");
-                                            push_token_from_str(tokens, "::lastuse");
-                                            push_token_from_str(tokens, "::discard");
+                                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                            let mut combined = String::new();
+                                            combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                            combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                            tokens.push(PtxToken::Dot);
+                                            tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
                                     }
                             }
                     }

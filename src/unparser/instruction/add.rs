@@ -34,6 +34,12 @@ pub mod section_0 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "add");
                     match &self.type_ {
+                            Type::U16x2 => {
+                                    push_directive(tokens, "u16x2");
+                            }
+                            Type::S16x2 => {
+                                    push_directive(tokens, "s16x2");
+                            }
                             Type::U16 => {
                                     push_directive(tokens, "u16");
                             }
@@ -51,12 +57,6 @@ pub mod section_0 {
                             }
                             Type::S64 => {
                                     push_directive(tokens, "s64");
-                            }
-                            Type::U16x2 => {
-                                    push_directive(tokens, "u16x2");
-                            }
-                            Type::S16x2 => {
-                                    push_directive(tokens, "s16x2");
                             }
                     }
                     self.d.unparse_tokens(tokens);
@@ -314,11 +314,11 @@ pub mod section_3 {
                     }
                     push_directive(tokens, "f32");
                     match &self.atype {
-                            Atype::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
                             Atype::Bf16 => {
                                     push_directive(tokens, "bf16");
+                            }
+                            Atype::F16 => {
+                                    push_directive(tokens, "f16");
                             }
                     }
                     self.d.unparse_tokens(tokens);

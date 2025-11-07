@@ -25,103 +25,6 @@ pub mod section_0 {
     // Generated enum parsers
     // ============================================================================
 
-    impl PtxParser for Tquery {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Width
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".width").is_ok() {
-                    return Ok(Tquery::Width);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Height
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".height").is_ok() {
-                    return Ok(Tquery::Height);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Depth
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".depth").is_ok() {
-                    return Ok(Tquery::Depth);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try ChannelDataType
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".channel_data_type").is_ok() {
-                    return Ok(Tquery::ChannelDataType);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try ChannelOrder
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".channel_order").is_ok() {
-                    return Ok(Tquery::ChannelOrder);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try NormalizedCoords
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".normalized_coords").is_ok() {
-                    return Ok(Tquery::NormalizedCoords);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try ArraySize
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".array_size").is_ok() {
-                    return Ok(Tquery::ArraySize);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try NumMipmapLevels
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".num_mipmap_levels").is_ok() {
-                    return Ok(Tquery::NumMipmapLevels);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try NumSamples
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".num_samples").is_ok() {
-                    return Ok(Tquery::NumSamples);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".width", ".height", ".depth", ".channel_data_type", ".channel_order", ".normalized_coords", ".array_size", ".num_mipmap_levels", ".num_samples"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
-        }
-    }
-
     impl PtxParser for Squery {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             // Try ForceUnnormalizedCoords
@@ -181,20 +84,20 @@ pub mod section_0 {
 
     impl PtxParser for Tlquery {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Width
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".width").is_ok() {
-                    return Ok(Tlquery::Width);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
             // Try Height
             {
                 let saved_pos = stream.position();
                 if stream.expect_string(".height").is_ok() {
                     return Ok(Tlquery::Height);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try Width
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".width").is_ok() {
+                    return Ok(Tlquery::Width);
                 }
                 stream.set_position(saved_pos);
             }
@@ -210,7 +113,104 @@ pub mod section_0 {
             }
             stream.set_position(saved_pos);
             let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".width", ".height", ".depth"];
+            let expected = &[".height", ".width", ".depth"];
+            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            Err(crate::parser::unexpected_value(span, expected, found))
+        }
+    }
+
+    impl PtxParser for Tquery {
+        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+            // Try ChannelDataType
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".channel_data_type").is_ok() {
+                    return Ok(Tquery::ChannelDataType);
+                }
+                stream.set_position(saved_pos);
+            }
+            let saved_pos = stream.position();
+            // Try NormalizedCoords
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".normalized_coords").is_ok() {
+                    return Ok(Tquery::NormalizedCoords);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try NumMipmapLevels
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".num_mipmap_levels").is_ok() {
+                    return Ok(Tquery::NumMipmapLevels);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try ChannelOrder
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".channel_order").is_ok() {
+                    return Ok(Tquery::ChannelOrder);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try NumSamples
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".num_samples").is_ok() {
+                    return Ok(Tquery::NumSamples);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try ArraySize
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".array_size").is_ok() {
+                    return Ok(Tquery::ArraySize);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Height
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".height").is_ok() {
+                    return Ok(Tquery::Height);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Width
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".width").is_ok() {
+                    return Ok(Tquery::Width);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let saved_pos = stream.position();
+            // Try Depth
+            {
+                let saved_pos = stream.position();
+                if stream.expect_string(".depth").is_ok() {
+                    return Ok(Tquery::Depth);
+                }
+                stream.set_position(saved_pos);
+            }
+            stream.set_position(saved_pos);
+            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[".channel_data_type", ".normalized_coords", ".num_mipmap_levels", ".channel_order", ".num_samples", ".array_size", ".height", ".width", ".depth"];
             let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
@@ -220,11 +220,17 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("txq")?;
             let tquery = Tquery::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(TxqTqueryB32 {
                 tquery,
                 b32,
@@ -240,14 +246,22 @@ pub mod section_0 {
             stream.expect_string("txq")?;
             stream.expect_string(".level")?;
             let level = ();
+            stream.expect_complete()?;
             let tlquery = Tlquery::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let lod = Operand::parse(stream)?;
+            let lod = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(TxqLevelTlqueryB32 {
                 level,
                 tlquery,
@@ -264,11 +278,17 @@ pub mod section_0 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("txq")?;
             let squery = Squery::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect_string(".b32")?;
             let b32 = ();
-            let d = Operand::parse(stream)?;
+            stream.expect_complete()?;
+            let d = GeneralOperand::parse(stream)?;
+            stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
             let a = AddressOperand::parse(stream)?;
+            stream.expect_complete()?;
+            stream.expect_complete()?;
+            stream.expect(&PtxToken::Semicolon)?;
             Ok(TxqSqueryB32 {
                 squery,
                 b32,

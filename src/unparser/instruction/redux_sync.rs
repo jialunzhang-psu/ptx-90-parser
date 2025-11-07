@@ -67,11 +67,11 @@ pub mod section_1 {
                             Op::And => {
                                     push_directive(tokens, "and");
                             }
-                            Op::Or => {
-                                    push_directive(tokens, "or");
-                            }
                             Op::Xor => {
                                     push_directive(tokens, "xor");
+                            }
+                            Op::Or => {
+                                    push_directive(tokens, "or");
                             }
                     }
                     push_directive(tokens, "b32");

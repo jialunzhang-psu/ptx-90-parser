@@ -13,7 +13,7 @@ pub mod section_0 {
         pub wait_group: (), // .wait_group
         pub sync: (), // .sync
         pub aligned: (), // .aligned
-        pub n: Operand, // N
+        pub n: GeneralOperand, // N
     }
 
 }
