@@ -174,7 +174,7 @@ pub mod xor;
 
 /// Top-level instruction type encompassing all PTX instructions
 #[derive(Debug, Clone, PartialEq)]
-pub enum Instruction {
+pub enum Inst {
     AbsType(abs::section_0::AbsType),
     AbsFtzF32(abs::section_0::AbsFtzF32),
     AbsF64(abs::section_0::AbsF64),
@@ -769,17 +769,3 @@ pub enum Instruction {
     XorType(xor::section_0::XorType),
 }
 
-/// Represents a complete instruction with optional predicate guard
-/// Format: [@{!}pred] instruction
-#[derive(Debug, Clone, PartialEq)]
-pub struct InstructionWithPredicate {
-    pub predicate: Option<Predicate>,
-    pub instruction: Instruction,
-}
-
-/// Predicate guard for conditional instruction execution
-#[derive(Debug, Clone, PartialEq)]
-pub struct Predicate {
-    pub negated: bool,
-    pub operand: crate::r#type::common::Operand,
-}

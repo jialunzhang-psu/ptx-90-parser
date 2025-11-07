@@ -467,3 +467,25 @@ impl PtxUnparser for VariableSymbol {
         push_identifier(tokens, &self.0);
     }
 }
+
+impl PtxUnparser for crate::r#type::common::Instruction {
+    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        // Emit label if present
+        if let Some(label) = &self.label {
+            tokens.push(PtxToken::Identifier(label.clone()));
+            tokens.push(PtxToken::Colon);
+        }
+        
+        // Emit predicate if present
+        if let Some(predicate) = &self.predicate {
+            tokens.push(PtxToken::At);
+            if predicate.negated {
+                tokens.push(PtxToken::Exclaim);
+            }
+            predicate.operand.unparse_tokens(tokens);
+        }
+        
+        // Emit the instruction
+        self.inst.unparse_tokens(tokens);
+    }
+}

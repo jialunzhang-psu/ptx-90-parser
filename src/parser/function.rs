@@ -1,5 +1,5 @@
 use crate::parser::common::{invalid_literal, parse_register_name, parse_u64_literal};
-use crate::r#type::common::CodeLinkage;
+use crate::r#type::common::{CodeLinkage, Instruction};
 use crate::unlexer::PtxUnlexer;
 use crate::{
     lexer::{PtxToken, tokenize},
@@ -14,7 +14,7 @@ use crate::{
             FunctionHeaderDirective, FunctionKernelDirective, FunctionStatement, LocationDirective,
             PragmaDirective, RegisterDirective, StatementDirective, StatementSectionDirective,
         },
-        instruction::Instruction,
+        instruction::Inst,
         variable::VariableDirective,
     },
 };
@@ -470,26 +470,8 @@ fn parse_function_entry_directive_internal(
     }
 }
 
-fn try_parse_label(stream: &mut PtxTokenStream) -> Result<Option<String>, PtxParseError> {
-    if !stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
-        return Ok(None);
-    }
-
-    let position = stream.position();
-    let (name, _) = stream.expect_identifier()?;
-    if stream
-        .consume_if(|token| matches!(token, PtxToken::Colon))
-        .is_some()
-    {
-        Ok(Some(name))
-    } else {
-        stream.set_position(position);
-        Ok(None)
-    }
-}
-
 fn parse_instruction_statement(stream: &mut PtxTokenStream) -> Result<Instruction, PtxParseError> {
-    // The generated Instruction parser handles predicates, labels, etc.
+    // Parse instruction with label and predicate
     Instruction::parse(stream)
 }
 
@@ -539,16 +521,16 @@ fn parse_extern_call_block(stream: &mut PtxTokenStream) -> Result<ExternCallBloc
         let instruction = parse_instruction_statement(stream)?;
         if call.is_none() {
             if matches!(
-                instruction,
-                Instruction::CallUni(_)
-                    | Instruction::CallUni1(_)
-                    | Instruction::CallUni2(_)
-                    | Instruction::CallUni3(_)
-                    | Instruction::CallUni4(_)
-                    | Instruction::CallUni5(_)
-                    | Instruction::CallUni6(_)
-                    | Instruction::CallUni7(_)
-                    | Instruction::CallUni8(_)
+                instruction.inst,
+                Inst::CallUni(_)
+                    | Inst::CallUni1(_)
+                    | Inst::CallUni2(_)
+                    | Inst::CallUni3(_)
+                    | Inst::CallUni4(_)
+                    | Inst::CallUni5(_)
+                    | Inst::CallUni6(_)
+                    | Inst::CallUni7(_)
+                    | Inst::CallUni8(_)
             ) {
                 call = Some(instruction);
             } else {
@@ -570,10 +552,6 @@ fn parse_extern_call_block(stream: &mut PtxTokenStream) -> Result<ExternCallBloc
 fn parse_function_statement(
     stream: &mut PtxTokenStream,
 ) -> Result<FunctionStatement, PtxParseError> {
-    if let Some(label) = try_parse_label(stream)? {
-        return Ok(FunctionStatement::Label(label));
-    }
-
     if let Some((name, _)) = peek_directive(stream)? {
         match name.as_str() {
             "loc" | "pragma" | "dwarf" | "section" => {

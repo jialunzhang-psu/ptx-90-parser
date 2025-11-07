@@ -1,5 +1,4 @@
-use super::common::CodeLinkage;
-use super::instruction::Instruction;
+use super::common::{CodeLinkage, Instruction};
 use super::variable::VariableDirective;
 
 /// All directives that describe kernel/function entities.
@@ -87,7 +86,6 @@ pub enum FunctionEntryDirective {
 /// Executable items that appear within a function body.
 #[derive(Debug, Clone, PartialEq)]
 pub enum FunctionStatement {
-    Label(String),
     Directive(StatementDirective),
     Instruction(Instruction),
     ExternCallBlock(ExternCallBlock),

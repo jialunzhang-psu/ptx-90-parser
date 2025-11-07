@@ -1,6 +1,6 @@
 mod util;
 
-use ptx_parser::{r#type::instruction::InstructionWithPredicate, unparser::PtxUnparser};
+use ptx_parser::{r#type::common::Instruction, unparser::PtxUnparser};
 use util::{parse_result, tokenize_only};
 
 const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
@@ -329,7 +329,7 @@ fn docs_examples_roundtrip() {
     let mut mismatches = Vec::new();
     let mut matched = 0usize;
     for example in DOC_EXAMPLE_INSTRUCTIONS {
-        match parse_result::<InstructionWithPredicate>(example) {
+        match parse_result::<Instruction>(example) {
             Ok(parsed) => {
                 let original = tokenize_only(example);
                 let unparsed = parsed.to_tokens();

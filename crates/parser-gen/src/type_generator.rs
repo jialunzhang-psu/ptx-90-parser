@@ -512,10 +512,10 @@ pub fn generate_mod_rs_content_v2(modules: &[(String, Vec<(String, String)>)]) -
     }
     output.push_str("\n");
 
-    // Generate Instruction enum
+    // Generate Inst enum
     output.push_str("/// Top-level instruction type encompassing all PTX instructions\n");
     output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
-    output.push_str("pub enum Instruction {\n");
+    output.push_str("pub enum Inst {\n");
 
     for (module_name, structs) in modules {
         for (section_name, struct_name) in structs {
@@ -529,21 +529,12 @@ pub fn generate_mod_rs_content_v2(modules: &[(String, Vec<(String, String)>)]) -
     output.push_str("}\n");
     output.push_str("\n");
 
-    // Generate predicate wrapper struct
-    output.push_str("/// Represents a complete instruction with optional predicate guard\n");
-    output.push_str("/// Format: [@{!}pred] instruction\n");
-    output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
-    output.push_str("pub struct InstructionWithPredicate {\n");
-    output.push_str("    pub predicate: Option<Predicate>,\n");
-    output.push_str("    pub instruction: Instruction,\n");
-    output.push_str("}\n");
-    output.push_str("\n");
-    output.push_str("/// Predicate guard for conditional instruction execution\n");
-    output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
-    output.push_str("pub struct Predicate {\n");
-    output.push_str("    pub negated: bool,\n");
-    output.push_str("    pub operand: crate::r#type::common::Operand,\n");
-    output.push_str("}\n");
+    // Note: Instruction struct is defined in src/type/common.rs
+    // pub struct Instruction {
+    //     pub label: Option<String>,
+    //     pub predicate: Option<crate::r#type::common::Predicate>,
+    //     pub inst: Inst,
+    // }
 
     output
 }
@@ -560,10 +551,10 @@ pub fn generate_mod_rs_content(modules: &[GeneratedTypeOutput]) -> String {
     }
     output.push_str("\n");
 
-    // Generate Instruction enum
+    // Generate Inst enum
     output.push_str("/// Top-level instruction type encompassing all PTX instructions\n");
     output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
-    output.push_str("pub enum Instruction {\n");
+    output.push_str("pub enum Inst {\n");
 
     for module in modules {
         for struct_name in &module.instruction_structs {
@@ -577,21 +568,12 @@ pub fn generate_mod_rs_content(modules: &[GeneratedTypeOutput]) -> String {
     output.push_str("}\n");
     output.push_str("\n");
 
-    // Generate predicate wrapper struct
-    output.push_str("/// Represents a complete instruction with optional predicate guard\n");
-    output.push_str("/// Format: [@{!}pred] instruction\n");
-    output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
-    output.push_str("pub struct InstructionWithPredicate {\n");
-    output.push_str("    pub predicate: Option<Predicate>,\n");
-    output.push_str("    pub instruction: Instruction,\n");
-    output.push_str("}\n");
-    output.push_str("\n");
-    output.push_str("/// Predicate guard for conditional instruction execution\n");
-    output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
-    output.push_str("pub struct Predicate {\n");
-    output.push_str("    pub negated: bool,\n");
-    output.push_str("    pub operand: crate::r#type::common::Operand,\n");
-    output.push_str("}\n");
+    // Note: Instruction struct is defined in src/type/common.rs
+    // pub struct Instruction {
+    //     pub label: Option<String>,
+    //     pub predicate: Option<crate::r#type::common::Predicate>,
+    //     pub inst: Inst,
+    // }
 
     output
 }

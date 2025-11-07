@@ -79,10 +79,6 @@ fn unparse_extern_call_block(tokens: &mut Vec<PtxToken>, block: &ExternCallBlock
 
 fn unparse_function_statement(tokens: &mut Vec<PtxToken>, statement: &FunctionStatement) {
     match statement {
-        FunctionStatement::Label(name) => {
-            push_identifier(tokens, name);
-            tokens.push(PtxToken::Colon);
-        }
         FunctionStatement::Instruction(instruction) => instruction.unparse_tokens(tokens),
         FunctionStatement::ExternCallBlock(block) => unparse_extern_call_block(tokens, block),
         FunctionStatement::Directive(_) => {

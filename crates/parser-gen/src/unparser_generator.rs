@@ -617,45 +617,27 @@ pub fn generate_unparser_mod_rs_content(modules: &[(String, Vec<(String, String)
     output.push_str("#![allow(unused)]\n\n");
     output.push_str("use crate::lexer::PtxToken;\n");
     output.push_str("use crate::unparser::PtxUnparser;\n");
-    output.push_str("use crate::r#type::instruction::{Instruction, InstructionWithPredicate, Predicate};\n\n");
+    output.push_str("use crate::r#type::instruction::Inst;\n\n");
 
     for (module_name, _) in modules {
         output.push_str(&format!("pub mod {};\n", module_name));
     }
     output.push_str("\n");
 
-    output.push_str("impl PtxUnparser for Instruction {\n");
+    output.push_str("impl PtxUnparser for Inst {\n");
     output.push_str("    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {\n");
     output.push_str("        match self {\n");
 
     for (_module_name, structs) in modules {
         for (_section_name, struct_name) in structs {
             output.push_str(&format!(
-                "            Instruction::{}(value) => value.unparse_tokens(tokens),\n",
+                "            Inst::{}(value) => value.unparse_tokens(tokens),\n",
                 struct_name
             ));
         }
     }
 
     output.push_str("        }\n");
-    output.push_str("    }\n");
-    output.push_str("}\n");
-    output.push_str("\n");
-
-    // Generate unparser for InstructionWithPredicate
-    output.push_str("impl PtxUnparser for InstructionWithPredicate {\n");
-    output.push_str("    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {\n");
-    output.push_str("        // Emit predicate if present\n");
-    output.push_str("        if let Some(predicate) = &self.predicate {\n");
-    output.push_str("            tokens.push(PtxToken::At);\n");
-    output.push_str("            if predicate.negated {\n");
-    output.push_str("                tokens.push(PtxToken::Exclaim);\n");
-    output.push_str("            }\n");
-    output.push_str("            predicate.operand.unparse_tokens(tokens);\n");
-    output.push_str("        }\n");
-    output.push_str("        \n");
-    output.push_str("        // Emit the instruction\n");
-    output.push_str("        self.instruction.unparse_tokens(tokens);\n");
     output.push_str("    }\n");
     output.push_str("}\n");
 

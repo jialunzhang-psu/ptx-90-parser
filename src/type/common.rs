@@ -327,3 +327,27 @@ pub struct FunctionSymbol(pub String);
 /// Variable symbol
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VariableSymbol(pub String);
+
+/* --------------------------------------------------- */
+/* -------------------- Predicate -------------------- */
+/* --------------------------------------------------- */
+
+/// Predicate guard for conditional instruction execution
+#[derive(Debug, Clone, PartialEq)]
+pub struct Predicate {
+    pub negated: bool,
+    pub operand: Operand,
+}
+
+/* --------------------------------------------------- */
+/* -------------------- Instruction ------------------ */
+/* --------------------------------------------------- */
+
+/// Represents a complete instruction with optional label and predicate guard
+/// Format: [label:] [@{!}pred] instruction
+#[derive(Debug, Clone, PartialEq)]
+pub struct Instruction {
+    pub label: Option<String>,
+    pub predicate: Option<Predicate>,
+    pub inst: crate::r#type::instruction::Inst,
+}

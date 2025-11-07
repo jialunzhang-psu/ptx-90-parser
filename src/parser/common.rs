@@ -4,6 +4,7 @@ use crate::{
     lexer::PtxToken,
     parser::{ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, Span},
     r#type::common::*,
+    r#type::instruction::Inst,
 };
 
 pub(crate) fn unexpected_value(
@@ -842,5 +843,65 @@ impl PtxParser for VariableSymbol {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let (name, _) = stream.expect_identifier()?;
         Ok(VariableSymbol(name))
+    }
+}
+
+/// Try to parse an optional label (identifier followed by colon).
+/// Returns `Ok(Some(label))` if a label is found, `Ok(None)` if not,
+/// or `Err` if parsing fails.
+pub(crate) fn try_parse_label(
+    stream: &mut PtxTokenStream,
+) -> Result<Option<String>, PtxParseError> {
+    if !stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
+        return Ok(None);
+    }
+
+    let position = stream.position();
+    let (name, _) = stream.expect_identifier()?;
+    if stream
+        .consume_if(|token| matches!(token, PtxToken::Colon))
+        .is_some()
+    {
+        Ok(Some(name))
+    } else {
+        stream.set_position(position);
+        Ok(None)
+    }
+}
+
+impl PtxParser for Instruction {
+    /// Parse a PTX instruction with optional label and predicate
+    ///
+    /// Format: [label:] [@{!}pred] instruction
+    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        // Optional label (ends with colon)
+        let label = try_parse_label(stream)?;
+        
+        // Optional predicate: @{!}pred or @!pred
+        let predicate = if stream.check(|t| matches!(t, PtxToken::At)) {
+            stream.consume()?; // consume @
+            
+            // Optional negation
+            let negated = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
+
+            // Predicate operand (can be register %p1 or identifier p)
+            let operand = Operand::parse(stream)?;
+
+            Some(Predicate { negated, operand })
+        } else {
+            None
+        };
+        
+        // Parse the actual instruction using the module-level dispatcher
+        let inst = crate::parser::instruction::parse_instruction_inner(stream)?;
+        
+        Ok(Instruction { label, predicate, inst })
+    }
+}
+
+// Backwards compatibility: Inst can still be parsed directly
+impl PtxParser for Inst {
+    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        Ok(Instruction::parse(stream)?.inst)
     }
 }

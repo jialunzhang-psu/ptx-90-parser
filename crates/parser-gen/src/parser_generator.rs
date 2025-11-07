@@ -565,8 +565,7 @@ pub fn generate_parser_mod_rs_content(
     output.push_str("#![allow(unused)]\n\n");
 
     output.push_str("use crate::parser::{PtxParser, PtxParseError, PtxTokenStream, Span};\n");
-    output.push_str("use crate::r#type::instruction::{Instruction, InstructionWithPredicate, Predicate};\n");
-    output.push_str("use crate::r#type::common::Operand;\n");
+    output.push_str("use crate::r#type::instruction::Inst;\n");
     output.push_str("use crate::lexer::PtxToken;\n\n");
 
     for (module_name, _, _) in modules {
@@ -576,7 +575,7 @@ pub fn generate_parser_mod_rs_content(
 
     // Generate the internal instruction parser (without label/pred)
     output.push_str("/// Parse instruction without label or predicate\n");
-    output.push_str("fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Instruction, PtxParseError> {\n");
+    output.push_str("pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Inst, PtxParseError> {\n");
     output.push_str("    let start_pos = stream.position();\n");
     output.push_str("    \n");
     output.push_str("    // Peek at the opcode to determine which parser to try\n");
@@ -615,7 +614,7 @@ pub fn generate_parser_mod_rs_content(
                 module_name, section_name, struct_name
             ));
             output.push_str(&format!(
-                "                Ok(inst) => return Ok(Instruction::{}(inst)),\n",
+                "                Ok(inst) => return Ok(Inst::{}(inst)),\n",
                 struct_name
             ));
             output.push_str("                Err(_) => {}\n");
@@ -632,44 +631,6 @@ pub fn generate_parser_mod_rs_content(
     output.push_str("    Err(crate::parser::unexpected_value(span, &[\"valid PTX instruction\"], \"no matching instruction format\"))\n");
     output.push_str("}\n");
     output.push_str("\n");
-
-    // Generate the main Instruction parser with label and predicate support
-    output.push_str("impl PtxParser for InstructionWithPredicate {\n");
-    output.push_str("    /// Parse a PTX instruction with optional label and predicate\n");
-    output.push_str("    ///\n");
-    output.push_str("    /// Format: [label:] [@{!}pred] instruction\n");
-    output.push_str("    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {\n");
-    output.push_str("        // Optional label (ends with colon)\n");
-    output.push_str("        // Labels are handled by the module parser, not here\n");
-    output.push_str("        \n");
-    output.push_str("        // Optional predicate: @{!}pred or @!pred\n");
-    output.push_str("        let predicate = if stream.check(|t| matches!(t, PtxToken::At)) {\n");
-    output.push_str("            stream.consume()?; // consume @\n");
-    output.push_str("            \n");
-    output.push_str("            // Optional negation\n");
-    output.push_str("            let negated = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();\n");
-    output.push_str("\n");
-    output.push_str("            // Predicate operand (can be register %p1 or identifier p)\n");
-    output.push_str("            let operand = Operand::parse(stream)?;\n");
-    output.push_str("\n");
-    output.push_str("            Some(Predicate { negated, operand })\n");
-    output.push_str("        } else {\n");
-    output.push_str("            None\n");
-    output.push_str("        };\n");
-    output.push_str("        \n");
-    output.push_str("        // Parse the actual instruction\n");
-    output.push_str("        let instruction = parse_instruction_inner(stream)?;\n");
-    output.push_str("        \n");
-    output.push_str("        Ok(InstructionWithPredicate { predicate, instruction })\n");
-    output.push_str("    }\n");
-    output.push_str("}\n");
-    output.push_str("\n");
-    output.push_str("// Backwards compatibility: Instruction can still be parsed directly\n");
-    output.push_str("impl PtxParser for Instruction {\n");
-    output.push_str("    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {\n");
-    output.push_str("        Ok(InstructionWithPredicate::parse(stream)?.instruction)\n");
-    output.push_str("    }\n");
-    output.push_str("}\n");
 
     output
 }
