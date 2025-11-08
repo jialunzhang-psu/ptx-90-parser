@@ -45,7 +45,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for RsqrtApproxF64 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("rsqrt")?;
@@ -62,15 +61,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(RsqrtApproxF64 {
-                approx,
-                f64,
-                d,
-                a,
-            })
+            Ok(RsqrtApproxF64 { approx, f64, d, a })
         }
     }
-
-
 }
-

@@ -19,71 +19,73 @@ pub mod section_0 {
     impl PtxUnparser for CpAsyncBulkPrefetchTensorDimL2SrcLoadModeLevelCacheHint {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "cp");
-                    push_directive(tokens, "async");
-                    push_directive(tokens, "bulk");
-                    push_directive(tokens, "prefetch");
-                    push_directive(tokens, "tensor");
-                    match &self.dim {
-                            Dim::_1d => {
-                                    push_directive(tokens, "1d");
-                            }
-                            Dim::_2d => {
-                                    push_directive(tokens, "2d");
-                            }
-                            Dim::_3d => {
-                                    push_directive(tokens, "3d");
-                            }
-                            Dim::_4d => {
-                                    push_directive(tokens, "4d");
-                            }
-                            Dim::_5d => {
-                                    push_directive(tokens, "5d");
-                            }
+            push_directive(tokens, "async");
+            push_directive(tokens, "bulk");
+            push_directive(tokens, "prefetch");
+            push_directive(tokens, "tensor");
+            match &self.dim {
+                Dim::_1d => {
+                    push_directive(tokens, "1d");
+                }
+                Dim::_2d => {
+                    push_directive(tokens, "2d");
+                }
+                Dim::_3d => {
+                    push_directive(tokens, "3d");
+                }
+                Dim::_4d => {
+                    push_directive(tokens, "4d");
+                }
+                Dim::_5d => {
+                    push_directive(tokens, "5d");
+                }
+            }
+            push_directive(tokens, "L2");
+            match &self.src {
+                Src::Global => {
+                    push_directive(tokens, "global");
+                }
+            }
+            if let Some(load_mode_0) = self.load_mode.as_ref() {
+                match load_mode_0 {
+                    LoadMode::Im2colW128 => {
+                        push_directive(tokens, "im2col::w::128");
                     }
-                    push_directive(tokens, "L2");
-                    match &self.src {
-                            Src::Global => {
-                                    push_directive(tokens, "global");
-                            }
+                    LoadMode::TileGather4 => {
+                        push_directive(tokens, "tile::gather4");
                     }
-                    if let Some(load_mode_0) = self.load_mode.as_ref() {
-                            match load_mode_0 {
-                                    LoadMode::Im2colW128 => {
-                                            push_directive(tokens, "im2col::w::128");
-                                    }
-                                    LoadMode::TileGather4 => {
-                                            push_directive(tokens, "tile::gather4");
-                                    }
-                                    LoadMode::Im2colW => {
-                                            push_directive(tokens, "im2col::w");
-                                    }
-                                    LoadMode::Im2col => {
-                                            push_directive(tokens, "im2col");
-                                    }
-                                    LoadMode::Tile => {
-                                            push_directive(tokens, "tile");
-                                    }
-                            }
+                    LoadMode::Im2colW => {
+                        push_directive(tokens, "im2col::w");
                     }
-                    if let Some(level_cache_hint_1) = self.level_cache_hint.as_ref() {
-                            match level_cache_hint_1 {
-                                    LevelCacheHint::L2CacheHint => {
-                                            push_directive(tokens, "L2::cache_hint");
-                                    }
-                            }
+                    LoadMode::Im2col => {
+                        push_directive(tokens, "im2col");
                     }
-                    self.tensormap.unparse_tokens(tokens);
-            if self.im2colinfo.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_2) = self.im2colinfo.as_ref() {
-                        opt_2.unparse_tokens(tokens);
+                    LoadMode::Tile => {
+                        push_directive(tokens, "tile");
                     }
-            if self.cache_policy.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_3) = self.cache_policy.as_ref() {
-                        opt_3.unparse_tokens(tokens);
+                }
+            }
+            if let Some(level_cache_hint_1) = self.level_cache_hint.as_ref() {
+                match level_cache_hint_1 {
+                    LevelCacheHint::L2CacheHint => {
+                        push_directive(tokens, "L2::cache_hint");
                     }
+                }
+            }
+            self.tensormap.unparse_tokens(tokens);
+            if self.im2colinfo.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_2) = self.im2colinfo.as_ref() {
+                opt_2.unparse_tokens(tokens);
+            }
+            if self.cache_policy.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_3) = self.cache_policy.as_ref() {
+                opt_3.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

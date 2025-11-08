@@ -112,9 +112,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".x128", ".x16", ".x32", ".x64", ".x1", ".x2", ".x4", ".x8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -129,9 +135,15 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".pack::16b"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -156,9 +168,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".min", ".max"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -203,9 +221,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".16x128b", ".16x256b", ".16x64b", ".32x32b"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -220,9 +244,15 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".16x32bx2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -237,9 +267,15 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".32x32b"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -254,9 +290,15 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".16x32bx2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -281,9 +323,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".u32", ".s32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -337,7 +385,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for Tcgen05LdSyncAlignedShape2NumPackB32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("tcgen05")?;
@@ -390,7 +437,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for Tcgen05LdRedSyncAlignedShape3NumRedopAbsNanF32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -455,7 +501,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for Tcgen05LdRedSyncAlignedShape4NumRedopAbsNanF32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -525,7 +570,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for Tcgen05LdRedSyncAlignedShape3NumRedopType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("tcgen05")?;
@@ -574,7 +618,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for Tcgen05LdRedSyncAlignedShape4NumRedopType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -628,7 +671,4 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
-

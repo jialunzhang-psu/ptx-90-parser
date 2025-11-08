@@ -19,49 +19,49 @@ pub mod section_0 {
     impl PtxUnparser for SlctDtypeS32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "slct");
-                    match &self.dtype {
-                            Dtype::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Dtype::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Dtype::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Dtype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Dtype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Dtype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Dtype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Dtype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
+            match &self.dtype {
+                Dtype::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Dtype::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Dtype::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Dtype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Dtype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Dtype::S32 => {
                     push_directive(tokens, "s32");
-                    self.d.unparse_tokens(tokens);
+                }
+                Dtype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Dtype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Dtype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            push_directive(tokens, "s32");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.c.unparse_tokens(tokens);
+            self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -69,55 +69,53 @@ pub mod section_0 {
     impl PtxUnparser for SlctFtzDtypeF32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "slct");
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    match &self.dtype {
-                            Dtype::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Dtype::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Dtype::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Dtype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Dtype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Dtype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Dtype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Dtype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            match &self.dtype {
+                Dtype::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Dtype::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Dtype::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Dtype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Dtype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Dtype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Dtype::F32 => {
                     push_directive(tokens, "f32");
-                    self.d.unparse_tokens(tokens);
+                }
+                Dtype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            push_directive(tokens, "f32");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.c.unparse_tokens(tokens);
+            self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

@@ -41,7 +41,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for BrxIdxUni1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("brx")?;
@@ -69,7 +68,4 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
-

@@ -14,16 +14,14 @@ pub mod section_0 {
     impl PtxUnparser for CpAsyncBulkWaitGroupRead {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "cp");
-                    push_directive(tokens, "async");
-                    push_directive(tokens, "bulk");
-                    push_directive(tokens, "wait_group");
-                    if self.read {
-                            push_directive(tokens, "read");
-                    }
-                    self.n.unparse_tokens(tokens);
+            push_directive(tokens, "async");
+            push_directive(tokens, "bulk");
+            push_directive(tokens, "wait_group");
+            if self.read {
+                push_directive(tokens, "read");
+            }
+            self.n.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

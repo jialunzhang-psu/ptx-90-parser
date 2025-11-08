@@ -15,17 +15,15 @@ pub mod section_0 {
     impl PtxUnparser for GriddepcontrolAction {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "griddepcontrol");
-                    match &self.action {
-                            Action::LaunchDependents => {
-                                    push_directive(tokens, "launch_dependents");
-                            }
-                            Action::Wait => {
-                                    push_directive(tokens, "wait");
-                            }
-                    }
+            match &self.action {
+                Action::LaunchDependents => {
+                    push_directive(tokens, "launch_dependents");
+                }
+                Action::Wait => {
+                    push_directive(tokens, "wait");
+                }
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

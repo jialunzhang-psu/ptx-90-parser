@@ -78,60 +78,62 @@ pub mod section_0 {
     impl PtxUnparser for WmmaLoadASyncAlignedLayoutShapeSsAtype {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "a");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "a");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M16n16k16 => {
+                    push_directive(tokens, "m16n16k16");
+                }
+                Shape::M8n32k16 => {
+                    push_directive(tokens, "m8n32k16");
+                }
+                Shape::M32n8k16 => {
+                    push_directive(tokens, "m32n8k16");
+                }
+            }
+            if let Some(ss_0) = self.ss.as_ref() {
+                match ss_0 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M16n16k16 => {
-                                    push_directive(tokens, "m16n16k16");
-                            }
-                            Shape::M8n32k16 => {
-                                    push_directive(tokens, "m8n32k16");
-                            }
-                            Shape::M32n8k16 => {
-                                    push_directive(tokens, "m32n8k16");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_0) = self.ss.as_ref() {
-                            match ss_0 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.atype {
-                            Atype::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Atype::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
-                            Atype::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.atype {
+                Atype::F16 => {
+                    push_directive(tokens, "f16");
+                }
+                Atype::S8 => {
+                    push_directive(tokens, "s8");
+                }
+                Atype::U8 => {
+                    push_directive(tokens, "u8");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_1) = self.stride.as_ref() {
-                        opt_1.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_1) = self.stride.as_ref() {
+                opt_1.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -139,60 +141,62 @@ pub mod section_0 {
     impl PtxUnparser for WmmaLoadBSyncAlignedLayoutShapeSsBtype {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "b");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "b");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M16n16k16 => {
+                    push_directive(tokens, "m16n16k16");
+                }
+                Shape::M8n32k16 => {
+                    push_directive(tokens, "m8n32k16");
+                }
+                Shape::M32n8k16 => {
+                    push_directive(tokens, "m32n8k16");
+                }
+            }
+            if let Some(ss_2) = self.ss.as_ref() {
+                match ss_2 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M16n16k16 => {
-                                    push_directive(tokens, "m16n16k16");
-                            }
-                            Shape::M8n32k16 => {
-                                    push_directive(tokens, "m8n32k16");
-                            }
-                            Shape::M32n8k16 => {
-                                    push_directive(tokens, "m32n8k16");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_2) = self.ss.as_ref() {
-                            match ss_2 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.btype {
-                            Btype::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Btype::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
-                            Btype::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.btype {
+                Btype::F16 => {
+                    push_directive(tokens, "f16");
+                }
+                Btype::S8 => {
+                    push_directive(tokens, "s8");
+                }
+                Btype::U8 => {
+                    push_directive(tokens, "u8");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_3) = self.stride.as_ref() {
-                        opt_3.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_3) = self.stride.as_ref() {
+                opt_3.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -200,64 +204,65 @@ pub mod section_0 {
     impl PtxUnparser for WmmaLoadCSyncAlignedLayoutShapeSsCtype {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "c");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "c");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M16n16k16 => {
+                    push_directive(tokens, "m16n16k16");
+                }
+                Shape::M8n32k16 => {
+                    push_directive(tokens, "m8n32k16");
+                }
+                Shape::M32n8k16 => {
+                    push_directive(tokens, "m32n8k16");
+                }
+            }
+            if let Some(ss_4) = self.ss.as_ref() {
+                match ss_4 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M16n16k16 => {
-                                    push_directive(tokens, "m16n16k16");
-                            }
-                            Shape::M8n32k16 => {
-                                    push_directive(tokens, "m8n32k16");
-                            }
-                            Shape::M32n8k16 => {
-                                    push_directive(tokens, "m32n8k16");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_4) = self.ss.as_ref() {
-                            match ss_4 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.ctype {
-                            Ctype::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Ctype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Ctype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.ctype {
+                Ctype::F16 => {
+                    push_directive(tokens, "f16");
+                }
+                Ctype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Ctype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_5) = self.stride.as_ref() {
-                        opt_5.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_5) = self.stride.as_ref() {
+                opt_5.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
 
 pub mod section_1 {
@@ -267,54 +272,56 @@ pub mod section_1 {
     impl PtxUnparser for WmmaLoadASyncAlignedLayoutShapeSsAtype1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "a");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "a");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M16n16k16 => {
+                    push_directive(tokens, "m16n16k16");
+                }
+                Shape::M8n32k16 => {
+                    push_directive(tokens, "m8n32k16");
+                }
+                Shape::M32n8k16 => {
+                    push_directive(tokens, "m32n8k16");
+                }
+            }
+            if let Some(ss_6) = self.ss.as_ref() {
+                match ss_6 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M16n16k16 => {
-                                    push_directive(tokens, "m16n16k16");
-                            }
-                            Shape::M8n32k16 => {
-                                    push_directive(tokens, "m8n32k16");
-                            }
-                            Shape::M32n8k16 => {
-                                    push_directive(tokens, "m32n8k16");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_6) = self.ss.as_ref() {
-                            match ss_6 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.atype {
-                            Atype::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.atype {
+                Atype::Bf16 => {
+                    push_directive(tokens, "bf16");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_7) = self.stride.as_ref() {
-                        opt_7.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_7) = self.stride.as_ref() {
+                opt_7.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -322,54 +329,56 @@ pub mod section_1 {
     impl PtxUnparser for WmmaLoadBSyncAlignedLayoutShapeSsBtype1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "b");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "b");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M16n16k16 => {
+                    push_directive(tokens, "m16n16k16");
+                }
+                Shape::M8n32k16 => {
+                    push_directive(tokens, "m8n32k16");
+                }
+                Shape::M32n8k16 => {
+                    push_directive(tokens, "m32n8k16");
+                }
+            }
+            if let Some(ss_8) = self.ss.as_ref() {
+                match ss_8 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M16n16k16 => {
-                                    push_directive(tokens, "m16n16k16");
-                            }
-                            Shape::M8n32k16 => {
-                                    push_directive(tokens, "m8n32k16");
-                            }
-                            Shape::M32n8k16 => {
-                                    push_directive(tokens, "m32n8k16");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_8) = self.ss.as_ref() {
-                            match ss_8 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.btype {
-                            Btype::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.btype {
+                Btype::Bf16 => {
+                    push_directive(tokens, "bf16");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_9) = self.stride.as_ref() {
-                        opt_9.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_9) = self.stride.as_ref() {
+                opt_9.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -377,58 +386,59 @@ pub mod section_1 {
     impl PtxUnparser for WmmaLoadCSyncAlignedLayoutShapeSsCtype1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "c");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "c");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M16n16k16 => {
+                    push_directive(tokens, "m16n16k16");
+                }
+                Shape::M8n32k16 => {
+                    push_directive(tokens, "m8n32k16");
+                }
+                Shape::M32n8k16 => {
+                    push_directive(tokens, "m32n8k16");
+                }
+            }
+            if let Some(ss_10) = self.ss.as_ref() {
+                match ss_10 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M16n16k16 => {
-                                    push_directive(tokens, "m16n16k16");
-                            }
-                            Shape::M8n32k16 => {
-                                    push_directive(tokens, "m8n32k16");
-                            }
-                            Shape::M32n8k16 => {
-                                    push_directive(tokens, "m32n8k16");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_10) = self.ss.as_ref() {
-                            match ss_10 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.ctype {
-                            Ctype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.ctype {
+                Ctype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_11) = self.stride.as_ref() {
-                        opt_11.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_11) = self.stride.as_ref() {
+                opt_11.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
 
 pub mod section_2 {
@@ -438,48 +448,50 @@ pub mod section_2 {
     impl PtxUnparser for WmmaLoadASyncAlignedLayoutShapeSsAtype2 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "a");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "a");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M16n16k8 => {
+                    push_directive(tokens, "m16n16k8");
+                }
+            }
+            if let Some(ss_12) = self.ss.as_ref() {
+                match ss_12 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M16n16k8 => {
-                                    push_directive(tokens, "m16n16k8");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_12) = self.ss.as_ref() {
-                            match ss_12 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.atype {
-                            Atype::Tf32 => {
-                                    push_directive(tokens, "tf32");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.atype {
+                Atype::Tf32 => {
+                    push_directive(tokens, "tf32");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_13) = self.stride.as_ref() {
-                        opt_13.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_13) = self.stride.as_ref() {
+                opt_13.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -487,48 +499,50 @@ pub mod section_2 {
     impl PtxUnparser for WmmaLoadBSyncAlignedLayoutShapeSsBtype2 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "b");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "b");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M16n16k8 => {
+                    push_directive(tokens, "m16n16k8");
+                }
+            }
+            if let Some(ss_14) = self.ss.as_ref() {
+                match ss_14 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M16n16k8 => {
-                                    push_directive(tokens, "m16n16k8");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_14) = self.ss.as_ref() {
-                            match ss_14 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.btype {
-                            Btype::Tf32 => {
-                                    push_directive(tokens, "tf32");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.btype {
+                Btype::Tf32 => {
+                    push_directive(tokens, "tf32");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_15) = self.stride.as_ref() {
-                        opt_15.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_15) = self.stride.as_ref() {
+                opt_15.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -536,52 +550,53 @@ pub mod section_2 {
     impl PtxUnparser for WmmaLoadCSyncAlignedLayoutShapeSsCtype2 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "c");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "c");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M16n16k8 => {
+                    push_directive(tokens, "m16n16k8");
+                }
+            }
+            if let Some(ss_16) = self.ss.as_ref() {
+                match ss_16 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M16n16k8 => {
-                                    push_directive(tokens, "m16n16k8");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_16) = self.ss.as_ref() {
-                            match ss_16 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.ctype {
-                            Ctype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.ctype {
+                Ctype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_17) = self.stride.as_ref() {
-                        opt_17.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_17) = self.stride.as_ref() {
+                opt_17.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
 
 pub mod section_3 {
@@ -591,48 +606,50 @@ pub mod section_3 {
     impl PtxUnparser for WmmaLoadASyncAlignedLayoutShapeSsAtype3 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "a");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "a");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M8n8k4 => {
+                    push_directive(tokens, "m8n8k4");
+                }
+            }
+            if let Some(ss_18) = self.ss.as_ref() {
+                match ss_18 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M8n8k4 => {
-                                    push_directive(tokens, "m8n8k4");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_18) = self.ss.as_ref() {
-                            match ss_18 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.atype {
-                            Atype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.atype {
+                Atype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_19) = self.stride.as_ref() {
-                        opt_19.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_19) = self.stride.as_ref() {
+                opt_19.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -640,48 +657,50 @@ pub mod section_3 {
     impl PtxUnparser for WmmaLoadBSyncAlignedLayoutShapeSsBtype3 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "b");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "b");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M8n8k4 => {
+                    push_directive(tokens, "m8n8k4");
+                }
+            }
+            if let Some(ss_20) = self.ss.as_ref() {
+                match ss_20 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M8n8k4 => {
-                                    push_directive(tokens, "m8n8k4");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_20) = self.ss.as_ref() {
-                            match ss_20 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.btype {
-                            Btype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.btype {
+                Btype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_21) = self.stride.as_ref() {
-                        opt_21.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_21) = self.stride.as_ref() {
+                opt_21.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -689,52 +708,53 @@ pub mod section_3 {
     impl PtxUnparser for WmmaLoadCSyncAlignedLayoutShapeSsCtype3 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "c");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "c");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M8n8k4 => {
+                    push_directive(tokens, "m8n8k4");
+                }
+            }
+            if let Some(ss_22) = self.ss.as_ref() {
+                match ss_22 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M8n8k4 => {
-                                    push_directive(tokens, "m8n8k4");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_22) = self.ss.as_ref() {
-                            match ss_22 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.ctype {
-                            Ctype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.ctype {
+                Ctype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_23) = self.stride.as_ref() {
-                        opt_23.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_23) = self.stride.as_ref() {
+                opt_23.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
 
 pub mod section_4 {
@@ -744,44 +764,46 @@ pub mod section_4 {
     impl PtxUnparser for WmmaLoadASyncAlignedRowShapeSsAtype {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "a");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    push_directive(tokens, "row");
-                    match &self.shape {
-                            Shape::M8n8k32 => {
-                                    push_directive(tokens, "m8n8k32");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "a");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            push_directive(tokens, "row");
+            match &self.shape {
+                Shape::M8n8k32 => {
+                    push_directive(tokens, "m8n8k32");
+                }
+            }
+            if let Some(ss_24) = self.ss.as_ref() {
+                match ss_24 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    if let Some(ss_24) = self.ss.as_ref() {
-                            match ss_24 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    match &self.atype {
-                            Atype::S4 => {
-                                    push_directive(tokens, "s4");
-                            }
-                            Atype::U4 => {
-                                    push_directive(tokens, "u4");
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.atype {
+                Atype::S4 => {
+                    push_directive(tokens, "s4");
+                }
+                Atype::U4 => {
+                    push_directive(tokens, "u4");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_25) = self.stride.as_ref() {
-                        opt_25.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_25) = self.stride.as_ref() {
+                opt_25.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -789,44 +811,46 @@ pub mod section_4 {
     impl PtxUnparser for WmmaLoadBSyncAlignedColShapeSsBtype {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "b");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    push_directive(tokens, "col");
-                    match &self.shape {
-                            Shape::M8n8k32 => {
-                                    push_directive(tokens, "m8n8k32");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "b");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            push_directive(tokens, "col");
+            match &self.shape {
+                Shape::M8n8k32 => {
+                    push_directive(tokens, "m8n8k32");
+                }
+            }
+            if let Some(ss_26) = self.ss.as_ref() {
+                match ss_26 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    if let Some(ss_26) = self.ss.as_ref() {
-                            match ss_26 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    match &self.btype {
-                            Btype::S4 => {
-                                    push_directive(tokens, "s4");
-                            }
-                            Btype::U4 => {
-                                    push_directive(tokens, "u4");
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.btype {
+                Btype::S4 => {
+                    push_directive(tokens, "s4");
+                }
+                Btype::U4 => {
+                    push_directive(tokens, "u4");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_27) = self.stride.as_ref() {
-                        opt_27.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_27) = self.stride.as_ref() {
+                opt_27.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -834,52 +858,53 @@ pub mod section_4 {
     impl PtxUnparser for WmmaLoadCSyncAlignedLayoutShapeSsCtype4 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "c");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "c");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M8n8k32 => {
+                    push_directive(tokens, "m8n8k32");
+                }
+            }
+            if let Some(ss_28) = self.ss.as_ref() {
+                match ss_28 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M8n8k32 => {
-                                    push_directive(tokens, "m8n8k32");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_28) = self.ss.as_ref() {
-                            match ss_28 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.ctype {
-                            Ctype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.ctype {
+                Ctype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_29) = self.stride.as_ref() {
-                        opt_29.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_29) = self.stride.as_ref() {
+                opt_29.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
 
 pub mod section_5 {
@@ -889,41 +914,43 @@ pub mod section_5 {
     impl PtxUnparser for WmmaLoadASyncAlignedRowShapeSsAtype1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "a");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    push_directive(tokens, "row");
-                    match &self.shape {
-                            Shape::M8n8k128 => {
-                                    push_directive(tokens, "m8n8k128");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "a");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            push_directive(tokens, "row");
+            match &self.shape {
+                Shape::M8n8k128 => {
+                    push_directive(tokens, "m8n8k128");
+                }
+            }
+            if let Some(ss_30) = self.ss.as_ref() {
+                match ss_30 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    if let Some(ss_30) = self.ss.as_ref() {
-                            match ss_30 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    match &self.atype {
-                            Atype::B1 => {
-                                    push_directive(tokens, "b1");
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.atype {
+                Atype::B1 => {
+                    push_directive(tokens, "b1");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_31) = self.stride.as_ref() {
-                        opt_31.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_31) = self.stride.as_ref() {
+                opt_31.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -931,41 +958,43 @@ pub mod section_5 {
     impl PtxUnparser for WmmaLoadBSyncAlignedColShapeSsBtype1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "b");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    push_directive(tokens, "col");
-                    match &self.shape {
-                            Shape::M8n8k128 => {
-                                    push_directive(tokens, "m8n8k128");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "b");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            push_directive(tokens, "col");
+            match &self.shape {
+                Shape::M8n8k128 => {
+                    push_directive(tokens, "m8n8k128");
+                }
+            }
+            if let Some(ss_32) = self.ss.as_ref() {
+                match ss_32 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    if let Some(ss_32) = self.ss.as_ref() {
-                            match ss_32 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    match &self.btype {
-                            Btype::B1 => {
-                                    push_directive(tokens, "b1");
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.btype {
+                Btype::B1 => {
+                    push_directive(tokens, "b1");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_33) = self.stride.as_ref() {
-                        opt_33.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_33) = self.stride.as_ref() {
+                opt_33.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -973,51 +1002,51 @@ pub mod section_5 {
     impl PtxUnparser for WmmaLoadCSyncAlignedLayoutShapeSsCtype5 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wmma");
-                    push_directive(tokens, "load");
-                    push_directive(tokens, "c");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.layout {
-                            Layout::Row => {
-                                    push_directive(tokens, "row");
-                            }
-                            Layout::Col => {
-                                    push_directive(tokens, "col");
-                            }
+            push_directive(tokens, "load");
+            push_directive(tokens, "c");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.layout {
+                Layout::Row => {
+                    push_directive(tokens, "row");
+                }
+                Layout::Col => {
+                    push_directive(tokens, "col");
+                }
+            }
+            match &self.shape {
+                Shape::M8n8k128 => {
+                    push_directive(tokens, "m8n8k128");
+                }
+            }
+            if let Some(ss_34) = self.ss.as_ref() {
+                match ss_34 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.shape {
-                            Shape::M8n8k128 => {
-                                    push_directive(tokens, "m8n8k128");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_34) = self.ss.as_ref() {
-                            match ss_34 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.ctype {
-                            Ctype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
-                    self.r.unparse_tokens(tokens);
+                }
+            }
+            match &self.ctype {
+                Ctype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            self.r.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.p.unparse_tokens(tokens);
-            if self.stride.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_35) = self.stride.as_ref() {
-                        opt_35.unparse_tokens(tokens);
-                    }
+            self.p.unparse_tokens(tokens);
+            if self.stride.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_35) = self.stride.as_ref() {
+                opt_35.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

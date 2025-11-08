@@ -25,21 +25,23 @@ pub mod section_0 {
     impl PtxUnparser for CallUni {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "call");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    tokens.push(PtxToken::LParen);
-                    self.ret_param.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RParen);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            tokens.push(PtxToken::LParen);
+            self.ret_param.unparse_tokens(tokens);
+            tokens.push(PtxToken::RParen);
             tokens.push(PtxToken::Comma);
-                    self.func.unparse_tokens(tokens);
+            self.func.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LParen);
-                    for (idx, operand) in self.param_list.iter().enumerate() {
-                        if idx > 0 { tokens.push(PtxToken::Comma); }
-                        operand.unparse_tokens(tokens);
-                    }
-                    tokens.push(PtxToken::RParen);
+            tokens.push(PtxToken::LParen);
+            for (idx, operand) in self.param_list.iter().enumerate() {
+                if idx > 0 {
+                    tokens.push(PtxToken::Comma);
+                }
+                operand.unparse_tokens(tokens);
+            }
+            tokens.push(PtxToken::RParen);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -47,17 +49,19 @@ pub mod section_0 {
     impl PtxUnparser for CallUni1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "call");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    self.func.unparse_tokens(tokens);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            self.func.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LParen);
-                    for (idx, operand) in self.param_list.iter().enumerate() {
-                        if idx > 0 { tokens.push(PtxToken::Comma); }
-                        operand.unparse_tokens(tokens);
-                    }
-                    tokens.push(PtxToken::RParen);
+            tokens.push(PtxToken::LParen);
+            for (idx, operand) in self.param_list.iter().enumerate() {
+                if idx > 0 {
+                    tokens.push(PtxToken::Comma);
+                }
+                operand.unparse_tokens(tokens);
+            }
+            tokens.push(PtxToken::RParen);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -65,10 +69,10 @@ pub mod section_0 {
     impl PtxUnparser for CallUni2 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "call");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    self.func.unparse_tokens(tokens);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            self.func.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -76,23 +80,25 @@ pub mod section_0 {
     impl PtxUnparser for CallUni3 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "call");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    tokens.push(PtxToken::LParen);
-                    self.ret_param.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RParen);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            tokens.push(PtxToken::LParen);
+            self.ret_param.unparse_tokens(tokens);
+            tokens.push(PtxToken::RParen);
             tokens.push(PtxToken::Comma);
-                    self.fptr.unparse_tokens(tokens);
+            self.fptr.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LParen);
-                    for (idx, operand) in self.param_list.iter().enumerate() {
-                        if idx > 0 { tokens.push(PtxToken::Comma); }
-                        operand.unparse_tokens(tokens);
-                    }
-                    tokens.push(PtxToken::RParen);
+            tokens.push(PtxToken::LParen);
+            for (idx, operand) in self.param_list.iter().enumerate() {
+                if idx > 0 {
+                    tokens.push(PtxToken::Comma);
+                }
+                operand.unparse_tokens(tokens);
+            }
+            tokens.push(PtxToken::RParen);
             tokens.push(PtxToken::Comma);
-                    self.flist.unparse_tokens(tokens);
+            self.flist.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -100,19 +106,21 @@ pub mod section_0 {
     impl PtxUnparser for CallUni4 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "call");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    self.fptr.unparse_tokens(tokens);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            self.fptr.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LParen);
-                    for (idx, operand) in self.param_list.iter().enumerate() {
-                        if idx > 0 { tokens.push(PtxToken::Comma); }
-                        operand.unparse_tokens(tokens);
-                    }
-                    tokens.push(PtxToken::RParen);
+            tokens.push(PtxToken::LParen);
+            for (idx, operand) in self.param_list.iter().enumerate() {
+                if idx > 0 {
+                    tokens.push(PtxToken::Comma);
+                }
+                operand.unparse_tokens(tokens);
+            }
+            tokens.push(PtxToken::RParen);
             tokens.push(PtxToken::Comma);
-                    self.flist.unparse_tokens(tokens);
+            self.flist.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -120,12 +128,12 @@ pub mod section_0 {
     impl PtxUnparser for CallUni5 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "call");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    self.fptr.unparse_tokens(tokens);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            self.fptr.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.flist.unparse_tokens(tokens);
+            self.flist.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -133,23 +141,25 @@ pub mod section_0 {
     impl PtxUnparser for CallUni6 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "call");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    tokens.push(PtxToken::LParen);
-                    self.ret_param.unparse_tokens(tokens);
-                    tokens.push(PtxToken::RParen);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            tokens.push(PtxToken::LParen);
+            self.ret_param.unparse_tokens(tokens);
+            tokens.push(PtxToken::RParen);
             tokens.push(PtxToken::Comma);
-                    self.fptr.unparse_tokens(tokens);
+            self.fptr.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LParen);
-                    for (idx, operand) in self.param_list.iter().enumerate() {
-                        if idx > 0 { tokens.push(PtxToken::Comma); }
-                        operand.unparse_tokens(tokens);
-                    }
-                    tokens.push(PtxToken::RParen);
+            tokens.push(PtxToken::LParen);
+            for (idx, operand) in self.param_list.iter().enumerate() {
+                if idx > 0 {
+                    tokens.push(PtxToken::Comma);
+                }
+                operand.unparse_tokens(tokens);
+            }
+            tokens.push(PtxToken::RParen);
             tokens.push(PtxToken::Comma);
-                    self.fproto.unparse_tokens(tokens);
+            self.fproto.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -157,19 +167,21 @@ pub mod section_0 {
     impl PtxUnparser for CallUni7 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "call");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    self.fptr.unparse_tokens(tokens);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            self.fptr.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    tokens.push(PtxToken::LParen);
-                    for (idx, operand) in self.param_list.iter().enumerate() {
-                        if idx > 0 { tokens.push(PtxToken::Comma); }
-                        operand.unparse_tokens(tokens);
-                    }
-                    tokens.push(PtxToken::RParen);
+            tokens.push(PtxToken::LParen);
+            for (idx, operand) in self.param_list.iter().enumerate() {
+                if idx > 0 {
+                    tokens.push(PtxToken::Comma);
+                }
+                operand.unparse_tokens(tokens);
+            }
+            tokens.push(PtxToken::RParen);
             tokens.push(PtxToken::Comma);
-                    self.fproto.unparse_tokens(tokens);
+            self.fproto.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -177,15 +189,13 @@ pub mod section_0 {
     impl PtxUnparser for CallUni8 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "call");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    self.fptr.unparse_tokens(tokens);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            self.fptr.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.fproto.unparse_tokens(tokens);
+            self.fproto.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

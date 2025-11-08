@@ -21,47 +21,54 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum LevelPrimaryPriority {
         L2EvictUnchanged, // .L2::evict_unchanged
-        L2EvictNormal, // .L2::evict_normal
-        L2EvictFirst, // .L2::evict_first
-        L2EvictLast, // .L2::evict_last
+        L2EvictNormal,    // .L2::evict_normal
+        L2EvictFirst,     // .L2::evict_first
+        L2EvictLast,      // .L2::evict_last
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LevelSecondaryPriority {
         L2EvictUnchanged, // .L2::evict_unchanged
-        L2EvictFirst, // .L2::evict_first
+        L2EvictFirst,     // .L2::evict_first
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
-        pub range: (), // .range
-        pub global: bool, // {.global}
-        pub level_primary_priority: LevelPrimaryPriority, // .level::primary_priority
+        pub range: (),                                                // .range
+        pub global: bool,                                             // {.global}
+        pub level_primary_priority: LevelPrimaryPriority,             // .level::primary_priority
         pub level_secondary_priority: Option<LevelSecondaryPriority>, // {.level::secondary_priority}
-        pub b64: (), // .b64
-        pub cache_policy: GeneralOperand, // cache-policy
-        pub a: AddressOperand, // [a]
-        pub primary_size: GeneralOperand, // primary-size
-        pub total_size: GeneralOperand, // total-size
+        pub b64: (),                                                  // .b64
+        pub cache_policy: GeneralOperand,                             // cache-policy
+        pub a: AddressOperand,                                        // [a]
+        pub primary_size: GeneralOperand,                             // primary-size
+        pub total_size: GeneralOperand,                               // total-size
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
-        pub fractional: (), // .fractional
-        pub level_primary_priority: LevelPrimaryPriority, // .level::primary_priority
+        pub fractional: (),                                           // .fractional
+        pub level_primary_priority: LevelPrimaryPriority,             // .level::primary_priority
         pub level_secondary_priority: Option<LevelSecondaryPriority>, // {.level::secondary_priority}
-        pub b64: (), // .b64
-        pub cache_policy: GeneralOperand, // cache-policy
-        pub fraction: Option<GeneralOperand>, // {, fraction}
+        pub b64: (),                                                  // .b64
+        pub cache_policy: GeneralOperand,                             // cache-policy
+        pub fraction: Option<GeneralOperand>,                         // {, fraction}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CreatepolicyCvtL2B64 {
-        pub cvt: (), // .cvt
-        pub l2: (), // .L2
-        pub b64: (), // .b64
-        pub cache_policy: GeneralOperand, // cache-policy
+        pub cvt: (),                         // .cvt
+        pub l2: (),                          // .L2
+        pub b64: (),                         // .b64
+        pub cache_policy: GeneralOperand,    // cache-policy
         pub access_property: GeneralOperand, // access-property
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::CreatepolicyCvtL2B64;
+pub use section_0::CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64;
+pub use section_0::CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64;
+pub use section_0::LevelPrimaryPriority as LevelPrimaryPriority0;
+pub use section_0::LevelSecondaryPriority as LevelSecondaryPriority0;

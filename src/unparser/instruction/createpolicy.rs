@@ -24,42 +24,42 @@ pub mod section_0 {
     impl PtxUnparser for CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "createpolicy");
-                    push_directive(tokens, "range");
-                    if self.global {
-                            push_directive(tokens, "global");
+            push_directive(tokens, "range");
+            if self.global {
+                push_directive(tokens, "global");
+            }
+            match &self.level_primary_priority {
+                LevelPrimaryPriority::L2EvictUnchanged => {
+                    push_directive(tokens, "L2::evict_unchanged");
+                }
+                LevelPrimaryPriority::L2EvictNormal => {
+                    push_directive(tokens, "L2::evict_normal");
+                }
+                LevelPrimaryPriority::L2EvictFirst => {
+                    push_directive(tokens, "L2::evict_first");
+                }
+                LevelPrimaryPriority::L2EvictLast => {
+                    push_directive(tokens, "L2::evict_last");
+                }
+            }
+            if let Some(level_secondary_priority_0) = self.level_secondary_priority.as_ref() {
+                match level_secondary_priority_0 {
+                    LevelSecondaryPriority::L2EvictUnchanged => {
+                        push_directive(tokens, "L2::evict_unchanged");
                     }
-                    match &self.level_primary_priority {
-                            LevelPrimaryPriority::L2EvictUnchanged => {
-                                    push_directive(tokens, "L2::evict_unchanged");
-                            }
-                            LevelPrimaryPriority::L2EvictNormal => {
-                                    push_directive(tokens, "L2::evict_normal");
-                            }
-                            LevelPrimaryPriority::L2EvictFirst => {
-                                    push_directive(tokens, "L2::evict_first");
-                            }
-                            LevelPrimaryPriority::L2EvictLast => {
-                                    push_directive(tokens, "L2::evict_last");
-                            }
+                    LevelSecondaryPriority::L2EvictFirst => {
+                        push_directive(tokens, "L2::evict_first");
                     }
-                    if let Some(level_secondary_priority_0) = self.level_secondary_priority.as_ref() {
-                            match level_secondary_priority_0 {
-                                    LevelSecondaryPriority::L2EvictUnchanged => {
-                                            push_directive(tokens, "L2::evict_unchanged");
-                                    }
-                                    LevelSecondaryPriority::L2EvictFirst => {
-                                            push_directive(tokens, "L2::evict_first");
-                                    }
-                            }
-                    }
-                    push_directive(tokens, "b64");
-                    self.cache_policy.unparse_tokens(tokens);
+                }
+            }
+            push_directive(tokens, "b64");
+            self.cache_policy.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.primary_size.unparse_tokens(tokens);
+            self.primary_size.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.total_size.unparse_tokens(tokens);
+            self.total_size.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -67,37 +67,39 @@ pub mod section_0 {
     impl PtxUnparser for CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "createpolicy");
-                    push_directive(tokens, "fractional");
-                    match &self.level_primary_priority {
-                            LevelPrimaryPriority::L2EvictUnchanged => {
-                                    push_directive(tokens, "L2::evict_unchanged");
-                            }
-                            LevelPrimaryPriority::L2EvictNormal => {
-                                    push_directive(tokens, "L2::evict_normal");
-                            }
-                            LevelPrimaryPriority::L2EvictFirst => {
-                                    push_directive(tokens, "L2::evict_first");
-                            }
-                            LevelPrimaryPriority::L2EvictLast => {
-                                    push_directive(tokens, "L2::evict_last");
-                            }
+            push_directive(tokens, "fractional");
+            match &self.level_primary_priority {
+                LevelPrimaryPriority::L2EvictUnchanged => {
+                    push_directive(tokens, "L2::evict_unchanged");
+                }
+                LevelPrimaryPriority::L2EvictNormal => {
+                    push_directive(tokens, "L2::evict_normal");
+                }
+                LevelPrimaryPriority::L2EvictFirst => {
+                    push_directive(tokens, "L2::evict_first");
+                }
+                LevelPrimaryPriority::L2EvictLast => {
+                    push_directive(tokens, "L2::evict_last");
+                }
+            }
+            if let Some(level_secondary_priority_1) = self.level_secondary_priority.as_ref() {
+                match level_secondary_priority_1 {
+                    LevelSecondaryPriority::L2EvictUnchanged => {
+                        push_directive(tokens, "L2::evict_unchanged");
                     }
-                    if let Some(level_secondary_priority_1) = self.level_secondary_priority.as_ref() {
-                            match level_secondary_priority_1 {
-                                    LevelSecondaryPriority::L2EvictUnchanged => {
-                                            push_directive(tokens, "L2::evict_unchanged");
-                                    }
-                                    LevelSecondaryPriority::L2EvictFirst => {
-                                            push_directive(tokens, "L2::evict_first");
-                                    }
-                            }
+                    LevelSecondaryPriority::L2EvictFirst => {
+                        push_directive(tokens, "L2::evict_first");
                     }
-                    push_directive(tokens, "b64");
-                    self.cache_policy.unparse_tokens(tokens);
-            if self.fraction.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_2) = self.fraction.as_ref() {
-                        opt_2.unparse_tokens(tokens);
-                    }
+                }
+            }
+            push_directive(tokens, "b64");
+            self.cache_policy.unparse_tokens(tokens);
+            if self.fraction.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_2) = self.fraction.as_ref() {
+                opt_2.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -105,15 +107,13 @@ pub mod section_0 {
     impl PtxUnparser for CreatepolicyCvtL2B64 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "createpolicy");
-                    push_directive(tokens, "cvt");
-                    push_directive(tokens, "L2");
-                    push_directive(tokens, "b64");
-                    self.cache_policy.unparse_tokens(tokens);
+            push_directive(tokens, "cvt");
+            push_directive(tokens, "L2");
+            push_directive(tokens, "b64");
+            self.cache_policy.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.access_property.unparse_tokens(tokens);
+            self.access_property.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

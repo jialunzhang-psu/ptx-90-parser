@@ -1,7 +1,7 @@
 //! Original PTX specification:
 //!
 //! suld.b.geom{.cop}.vec.dtype{.mode}  d, [a, b];  // unformatted
-//! 
+//!
 //! .geom  = { .1d, .2d, .3d, .a1d, .a2d };
 //! .cop   = { .ca, .cg, .cs, .cv };               // cache operation
 //! .vec   = { none, .v2, .v4 };
@@ -62,9 +62,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".ca", ".cg", ".cs", ".cv"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -109,9 +115,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".b16", ".b32", ".b64", ".b8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -166,9 +178,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".a1d", ".a2d", ".1d", ".2d", ".3d"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -203,9 +221,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".clamp", ".trap", ".zero"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -240,9 +264,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &["none", ".v2", ".v4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -296,7 +326,4 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
-

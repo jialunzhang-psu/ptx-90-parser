@@ -54,9 +54,15 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".L2::cache_hint"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -161,9 +167,17 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".exch", ".and", ".xor", ".cas", ".add", ".inc", ".dec", ".min", ".max", ".or"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".exch", ".and", ".xor", ".cas", ".add", ".inc", ".dec", ".min", ".max", ".or",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -208,9 +222,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".cluster", ".cta", ".gpu", ".sys"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -255,9 +275,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".relaxed", ".acquire", ".release", ".acq_rel"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -302,9 +328,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".shared::cluster", ".shared::cta", ".global", ".shared"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -389,9 +421,17 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b32", ".b64", ".u32", ".u64", ".s32", ".s64", ".f32", ".f64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".b32", ".b64", ".u32", ".u64", ".s32", ".s64", ".f32", ".f64",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -478,7 +518,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for AtomSemScopeSpaceOpType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("atom")?;
@@ -539,7 +578,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for AtomSemScopeSpaceCasB16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -604,7 +642,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for AtomSemScopeSpaceCasB128 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("atom")?;
@@ -667,7 +704,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for AtomSemScopeSpaceExchLevelCacheHintB128 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -752,7 +788,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for AtomSemScopeSpaceAddNoftzLevelCacheHintF16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -842,7 +877,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for AtomSemScopeSpaceAddNoftzLevelCacheHintF16x2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("atom")?;
@@ -930,7 +964,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for AtomSemScopeSpaceAddNoftzLevelCacheHintBf16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -1020,7 +1053,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for AtomSemScopeSpaceAddNoftzLevelCacheHintBf16x2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("atom")?;
@@ -1108,8 +1140,6 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
 
 pub mod section_1 {
@@ -1140,9 +1170,15 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".bf16", ".f16"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1157,9 +1193,15 @@ pub mod section_1 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".L2::cache_hint"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1194,9 +1236,15 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".add", ".min", ".max"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1221,9 +1269,15 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".bf16x2", ".f16x2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1268,9 +1322,15 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".cluster", ".cta", ".gpu", ".sys"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1315,9 +1375,15 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".relaxed", ".acquire", ".release", ".acq_rel"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1352,9 +1418,15 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".v2", ".v4", ".v8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1379,9 +1451,15 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".v2", ".v4"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1470,7 +1548,6 @@ pub mod section_1 {
         }
     }
 
-
     impl PtxParser for AtomSemScopeGlobalOpNoftzLevelCacheHintVec16BitHalfWordType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("atom")?;
@@ -1540,23 +1617,24 @@ pub mod section_1 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(AtomSemScopeGlobalOpNoftzLevelCacheHintVec16BitHalfWordType {
-                sem,
-                scope,
-                global,
-                op,
-                noftz,
-                level_cache_hint,
-                vec_16_bit,
-                half_word_type,
-                d,
-                a,
-                b,
-                cache_policy,
-            })
+            Ok(
+                AtomSemScopeGlobalOpNoftzLevelCacheHintVec16BitHalfWordType {
+                    sem,
+                    scope,
+                    global,
+                    op,
+                    noftz,
+                    level_cache_hint,
+                    vec_16_bit,
+                    half_word_type,
+                    d,
+                    a,
+                    b,
+                    cache_policy,
+                },
+            )
         }
     }
-
 
     impl PtxParser for AtomSemScopeGlobalOpNoftzLevelCacheHintVec32BitPackedType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -1643,7 +1721,4 @@ pub mod section_1 {
             })
         }
     }
-
-
 }
-

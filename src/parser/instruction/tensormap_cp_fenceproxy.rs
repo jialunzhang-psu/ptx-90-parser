@@ -30,9 +30,15 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".global.shared::cta"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -43,23 +49,33 @@ pub mod section_0 {
             {
                 let saved_seq_pos = stream.position();
                 match (|| -> Result<_, PtxParseError> {
-            let to_proxy_from_proxy = ToProxyFromProxy::parse(stream)?;
-            stream.expect_string(".release")?;
-            let release = ();
-            let scope = Scope::parse(stream)?;
+                    let to_proxy_from_proxy = ToProxyFromProxy::parse(stream)?;
+                    stream.expect_string(".release")?;
+                    let release = ();
+                    let scope = Scope::parse(stream)?;
                     Ok((to_proxy_from_proxy, release, scope))
                 })() {
                     Ok((to_proxy_from_proxy, release, scope)) => {
-                        return Ok(FenceQualifiers::ToProxyFromProxyReleaseScope(to_proxy_from_proxy, release, scope));
+                        return Ok(FenceQualifiers::ToProxyFromProxyReleaseScope(
+                            to_proxy_from_proxy,
+                            release,
+                            scope,
+                        ));
                     }
                     Err(_) => {
                         stream.set_position(saved_seq_pos);
                     }
                 }
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &["<complex>"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -104,9 +120,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".cluster", ".cta", ".gpu", ".sys"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -121,9 +143,15 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".tensormap::generic"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -154,19 +182,18 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(TensormapCpFenceproxyCpQualifiersFenceQualifiersSyncAligned {
-                cp_fenceproxy,
-                cp_qualifiers,
-                fence_qualifiers,
-                sync,
-                aligned,
-                dst,
-                src,
-                size,
-            })
+            Ok(
+                TensormapCpFenceproxyCpQualifiersFenceQualifiersSyncAligned {
+                    cp_fenceproxy,
+                    cp_qualifiers,
+                    fence_qualifiers,
+                    sync,
+                    aligned,
+                    dst,
+                    src,
+                    size,
+                },
+            )
         }
     }
-
-
 }
-

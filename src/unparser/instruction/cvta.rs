@@ -21,43 +21,43 @@ pub mod section_0 {
     impl PtxUnparser for CvtaSpaceSize {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "cvta");
-                    match &self.space {
-                            Space::SharedCluster => {
-                                    push_directive(tokens, "shared::cluster");
-                            }
-                            Space::ParamEntry => {
-                                    push_directive(tokens, "param::entry");
-                            }
-                            Space::SharedCta => {
-                                    push_directive(tokens, "shared::cta");
-                            }
-                            Space::Global => {
-                                    push_directive(tokens, "global");
-                            }
-                            Space::Shared => {
-                                    push_directive(tokens, "shared");
-                            }
-                            Space::Const => {
-                                    push_directive(tokens, "const");
-                            }
-                            Space::Local => {
-                                    push_directive(tokens, "local");
-                            }
-                            Space::Param => {
-                                    push_directive(tokens, "param");
-                            }
-                    }
-                    match &self.size {
-                            Size::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Size::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                    }
-                    self.p.unparse_tokens(tokens);
+            match &self.space {
+                Space::SharedCluster => {
+                    push_directive(tokens, "shared::cluster");
+                }
+                Space::ParamEntry => {
+                    push_directive(tokens, "param::entry");
+                }
+                Space::SharedCta => {
+                    push_directive(tokens, "shared::cta");
+                }
+                Space::Global => {
+                    push_directive(tokens, "global");
+                }
+                Space::Shared => {
+                    push_directive(tokens, "shared");
+                }
+                Space::Const => {
+                    push_directive(tokens, "const");
+                }
+                Space::Local => {
+                    push_directive(tokens, "local");
+                }
+                Space::Param => {
+                    push_directive(tokens, "param");
+                }
+            }
+            match &self.size {
+                Size::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Size::U64 => {
+                    push_directive(tokens, "u64");
+                }
+            }
+            self.p.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -65,47 +65,45 @@ pub mod section_0 {
     impl PtxUnparser for CvtaToSpaceSize {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "cvta");
-                    push_directive(tokens, "to");
-                    match &self.space {
-                            Space::SharedCluster => {
-                                    push_directive(tokens, "shared::cluster");
-                            }
-                            Space::ParamEntry => {
-                                    push_directive(tokens, "param::entry");
-                            }
-                            Space::SharedCta => {
-                                    push_directive(tokens, "shared::cta");
-                            }
-                            Space::Global => {
-                                    push_directive(tokens, "global");
-                            }
-                            Space::Shared => {
-                                    push_directive(tokens, "shared");
-                            }
-                            Space::Const => {
-                                    push_directive(tokens, "const");
-                            }
-                            Space::Local => {
-                                    push_directive(tokens, "local");
-                            }
-                            Space::Param => {
-                                    push_directive(tokens, "param");
-                            }
-                    }
-                    match &self.size {
-                            Size::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Size::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                    }
-                    self.p.unparse_tokens(tokens);
+            push_directive(tokens, "to");
+            match &self.space {
+                Space::SharedCluster => {
+                    push_directive(tokens, "shared::cluster");
+                }
+                Space::ParamEntry => {
+                    push_directive(tokens, "param::entry");
+                }
+                Space::SharedCta => {
+                    push_directive(tokens, "shared::cta");
+                }
+                Space::Global => {
+                    push_directive(tokens, "global");
+                }
+                Space::Shared => {
+                    push_directive(tokens, "shared");
+                }
+                Space::Const => {
+                    push_directive(tokens, "const");
+                }
+                Space::Local => {
+                    push_directive(tokens, "local");
+                }
+                Space::Param => {
+                    push_directive(tokens, "param");
+                }
+            }
+            match &self.size {
+                Size::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Size::U64 => {
+                    push_directive(tokens, "u64");
+                }
+            }
+            self.p.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

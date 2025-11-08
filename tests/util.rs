@@ -1,9 +1,5 @@
 #![allow(dead_code)]
-use ptx_parser::{
-    lexer::{tokenize, PtxToken},
-    parser::{PtxParseError, PtxParser, PtxTokenStream},
-    unparser::PtxUnparser,
-};
+use ptx_parser::{PtxParseError, PtxParser, PtxToken, PtxTokenStream, PtxUnparser, tokenize};
 
 pub fn parse_result<T: PtxParser>(source: &str) -> Result<T, PtxParseError> {
     let tokens = tokenize(source).expect("tokenization should succeed");
@@ -15,7 +11,7 @@ pub fn parse<T: PtxParser>(source: &str) -> T {
     parse_result(source).expect("parse should succeed")
 }
 
-pub fn tokenize_only(source: &str) -> Vec<ptx_parser::lexer::PtxToken> {
+pub fn tokenize_only(source: &str) -> Vec<ptx_parser::PtxToken> {
     let tokens = tokenize(source).expect("tokenization should succeed");
     tokens.into_iter().map(|(token, _)| token).collect()
 }
@@ -45,7 +41,7 @@ pub fn tokens_equivalent(left: &[PtxToken], right: &[PtxToken]) -> bool {
                 if let PtxToken::Register(right_reg) = right_token {
                     let (left_base, left_component_with_dot) = left_reg.split_at(dot_pos);
                     let left_component = &left_component_with_dot[1..]; // Skip the '.'
-                    
+
                     // Check if right has base + dot + component
                     if right_reg == left_base
                         && right_idx + 2 < right.len()
@@ -70,7 +66,7 @@ pub fn tokens_equivalent(left: &[PtxToken], right: &[PtxToken]) -> bool {
                 if let PtxToken::Register(left_reg) = left_token {
                     let (right_base, right_component_with_dot) = right_reg.split_at(dot_pos);
                     let right_component = &right_component_with_dot[1..]; // Skip the '.'
-                    
+
                     // Check if left has base + dot + component
                     if left_reg == right_base
                         && left_idx + 2 < left.len()
@@ -111,4 +107,3 @@ where
         original_tokens
     );
 }
-

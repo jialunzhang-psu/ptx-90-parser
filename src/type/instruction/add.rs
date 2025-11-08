@@ -31,17 +31,17 @@ pub mod section_0 {
     pub enum Type {
         U16x2, // .u16x2
         S16x2, // .s16x2
-        U16, // .u16
-        U32, // .u32
-        U64, // .u64
-        S16, // .s16
-        S32, // .s32
-        S64, // .s64
+        U16,   // .u16
+        U32,   // .u32
+        U64,   // .u64
+        S16,   // .s16
+        S32,   // .s32
+        S64,   // .s64
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddType {
-        pub type_: Type, // .type
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -49,13 +49,12 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddSatS32 {
-        pub sat: bool, // {.sat}
-        pub s32: (), // .s32
+        pub sat: bool,         // {.sat}
+        pub s32: (),           // .s32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
     }
-
 }
 
 pub mod section_1 {
@@ -71,10 +70,10 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddRndFtzSatF32 {
-        pub rnd: Option<Rnd>, // {.rnd}
-        pub ftz: bool, // {.ftz}
-        pub sat: bool, // {.sat}
-        pub f32: (), // .f32
+        pub rnd: Option<Rnd>,  // {.rnd}
+        pub ftz: bool,         // {.ftz}
+        pub sat: bool,         // {.sat}
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -82,9 +81,9 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddRndFtzF32x2 {
-        pub rnd: Option<Rnd>, // {.rnd}
-        pub ftz: bool, // {.ftz}
-        pub f32x2: (), // .f32x2
+        pub rnd: Option<Rnd>,  // {.rnd}
+        pub ftz: bool,         // {.ftz}
+        pub f32x2: (),         // .f32x2
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -92,13 +91,12 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddRndF64 {
-        pub rnd: Option<Rnd>, // {.rnd}
-        pub f64: (), // .f64
+        pub rnd: Option<Rnd>,  // {.rnd}
+        pub f64: (),           // .f64
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
     }
-
 }
 
 pub mod section_2 {
@@ -111,10 +109,10 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddRndFtzSatF16 {
-        pub rnd: Option<Rnd>, // {.rnd}
-        pub ftz: bool, // {.ftz}
-        pub sat: bool, // {.sat}
-        pub f16: (), // .f16
+        pub rnd: Option<Rnd>,  // {.rnd}
+        pub ftz: bool,         // {.ftz}
+        pub sat: bool,         // {.sat}
+        pub f16: (),           // .f16
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -122,10 +120,10 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddRndFtzSatF16x2 {
-        pub rnd: Option<Rnd>, // {.rnd}
-        pub ftz: bool, // {.ftz}
-        pub sat: bool, // {.sat}
-        pub f16x2: (), // .f16x2
+        pub rnd: Option<Rnd>,  // {.rnd}
+        pub ftz: bool,         // {.ftz}
+        pub sat: bool,         // {.sat}
+        pub f16x2: (),         // .f16x2
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -133,8 +131,8 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddRndBf16 {
-        pub rnd: Option<Rnd>, // {.rnd}
-        pub bf16: (), // .bf16
+        pub rnd: Option<Rnd>,  // {.rnd}
+        pub bf16: (),          // .bf16
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -142,13 +140,12 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddRndBf16x2 {
-        pub rnd: Option<Rnd>, // {.rnd}
-        pub bf16x2: (), // .bf16x2
+        pub rnd: Option<Rnd>,  // {.rnd}
+        pub bf16x2: (),        // .bf16x2
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
     }
-
 }
 
 pub mod section_3 {
@@ -165,18 +162,35 @@ pub mod section_3 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Atype {
         Bf16, // .bf16
-        F16, // .f16
+        F16,  // .f16
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddRndSatF32Atype {
-        pub rnd: Option<Rnd>, // {.rnd}
-        pub sat: bool, // {.sat}
-        pub f32: (), // .f32
-        pub atype: Atype, // .atype
+        pub rnd: Option<Rnd>,  // {.rnd}
+        pub sat: bool,         // {.sat}
+        pub f32: (),           // .f32
+        pub atype: Atype,      // .atype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub c: GeneralOperand, // c
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::AddSatS32;
+pub use section_0::AddType;
+pub use section_0::Type as Type0;
+pub use section_1::AddRndF64;
+pub use section_1::AddRndFtzF32x2;
+pub use section_1::AddRndFtzSatF32;
+pub use section_1::Rnd as Rnd1;
+pub use section_2::AddRndBf16;
+pub use section_2::AddRndBf16x2;
+pub use section_2::AddRndFtzSatF16;
+pub use section_2::AddRndFtzSatF16x2;
+pub use section_2::Rnd as Rnd2;
+pub use section_3::AddRndSatF32Atype;
+pub use section_3::Atype as Atype3;
+pub use section_3::Rnd as Rnd3;

@@ -34,7 +34,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for CpAsyncWaitAll {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("cp")?;
@@ -46,13 +45,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(CpAsyncWaitAll {
-                async_,
-                wait_all,
-            })
+            Ok(CpAsyncWaitAll { async_, wait_all })
         }
     }
-
-
 }
-

@@ -17,10 +17,14 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AllocaType {
-        pub type_: Type, // .type
-        pub ptr: GeneralOperand, // ptr
-        pub size: GeneralOperand, // size
+        pub type_: Type,                      // .type
+        pub ptr: GeneralOperand,              // ptr
+        pub size: GeneralOperand,             // size
         pub immalign: Option<GeneralOperand>, // {, immAlign}
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::AllocaType;
+pub use section_0::Type as Type0;

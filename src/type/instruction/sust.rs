@@ -34,8 +34,8 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Vec {
         None, // none
-        V2, // .v2
-        V4, // .v4
+        V2,   // .v2
+        V4,   // .v4
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -43,14 +43,14 @@ pub mod section_0 {
         B16, // .b16
         B32, // .b32
         B64, // .b64
-        B8, // .b8
+        B8,  // .b8
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Mode {
         Clamp, // .clamp
-        Trap, // .trap
-        Zero, // .zero
+        Trap,  // .trap
+        Zero,  // .zero
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -61,37 +61,48 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct SustBDimCopVecCtypeMode {
-        pub b: (), // .b
-        pub dim: Dim, // .dim
-        pub cop: Option<Cop>, // {.cop}
-        pub vec: Vec, // .vec
-        pub ctype: Ctype, // .ctype
+        pub b: (),              // .b
+        pub dim: Dim,           // .dim
+        pub cop: Option<Cop>,   // {.cop}
+        pub vec: Vec,           // .vec
+        pub ctype: Ctype,       // .ctype
         pub mode: Option<Mode>, // {.mode}
-        pub a: TexHandler2, // [a, b]
-        pub c: GeneralOperand, // c
+        pub a: TexHandler2,     // [a, b]
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct SustPDimVecB32Mode {
-        pub p: (), // .p
-        pub dim: Dim, // .dim
-        pub vec: Vec, // .vec
-        pub b32: (), // .b32
+        pub p: (),              // .p
+        pub dim: Dim,           // .dim
+        pub vec: Vec,           // .vec
+        pub b32: (),            // .b32
         pub mode: Option<Mode>, // {.mode}
-        pub a: TexHandler2, // [a, b]
-        pub c: GeneralOperand, // c
+        pub a: TexHandler2,     // [a, b]
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct SustBAdimCopVecCtypeMode {
-        pub b: (), // .b
-        pub adim: Adim, // .adim
-        pub cop: Option<Cop>, // {.cop}
-        pub vec: Vec, // .vec
-        pub ctype: Ctype, // .ctype
+        pub b: (),              // .b
+        pub adim: Adim,         // .adim
+        pub cop: Option<Cop>,   // {.cop}
+        pub vec: Vec,           // .vec
+        pub ctype: Ctype,       // .ctype
         pub mode: Option<Mode>, // {.mode}
-        pub a: TexHandler2, // [a, b]
-        pub c: GeneralOperand, // c
+        pub a: TexHandler2,     // [a, b]
+        pub c: GeneralOperand,  // c
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Adim as Adim0;
+pub use section_0::Cop as Cop0;
+pub use section_0::Ctype as Ctype0;
+pub use section_0::Dim as Dim0;
+pub use section_0::Mode as Mode0;
+pub use section_0::SustBAdimCopVecCtypeMode;
+pub use section_0::SustBDimCopVecCtypeMode;
+pub use section_0::SustPDimVecB32Mode;
+pub use section_0::Vec as Vec0;

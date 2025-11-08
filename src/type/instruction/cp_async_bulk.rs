@@ -56,19 +56,18 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CpAsyncBulkDstSrcCompletionMechanismLevelCacheHint {
-        pub async_: (), // .async
-        pub bulk: (), // .bulk
-        pub dst: Dst, // .dst
-        pub src: Src, // .src
+        pub async_: (),                                // .async
+        pub bulk: (),                                  // .bulk
+        pub dst: Dst,                                  // .dst
+        pub src: Src,                                  // .src
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
-        pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub dstmem: AddressOperand, // [dstMem]
-        pub srcmem: AddressOperand, // [srcMem]
-        pub size: GeneralOperand, // size
-        pub mbar: AddressOperand, // [mbar]
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub level_cache_hint: Option<LevelCacheHint>,  // {.level::cache_hint}
+        pub dstmem: AddressOperand,                    // [dstMem]
+        pub srcmem: AddressOperand,                    // [srcMem]
+        pub size: GeneralOperand,                      // size
+        pub mbar: AddressOperand,                      // [mbar]
+        pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
     }
-
 }
 
 pub mod section_1 {
@@ -101,21 +100,20 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CpAsyncBulkDstSrcCompletionMechanismMulticastLevelCacheHint {
-        pub async_: (), // .async
-        pub bulk: (), // .bulk
-        pub dst: Dst, // .dst
-        pub src: Src, // .src
+        pub async_: (),                                // .async
+        pub bulk: (),                                  // .bulk
+        pub dst: Dst,                                  // .dst
+        pub src: Src,                                  // .src
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
-        pub multicast: Option<Multicast>, // {.multicast}
-        pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub dstmem: AddressOperand, // [dstMem]
-        pub srcmem: AddressOperand, // [srcMem]
-        pub size: GeneralOperand, // size
-        pub mbar: AddressOperand, // [mbar]
-        pub ctamask: Option<GeneralOperand>, // {, ctaMask}
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub multicast: Option<Multicast>,              // {.multicast}
+        pub level_cache_hint: Option<LevelCacheHint>,  // {.level::cache_hint}
+        pub dstmem: AddressOperand,                    // [dstMem]
+        pub srcmem: AddressOperand,                    // [srcMem]
+        pub size: GeneralOperand,                      // size
+        pub mbar: AddressOperand,                      // [mbar]
+        pub ctamask: Option<GeneralOperand>,           // {, ctaMask}
+        pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
     }
-
 }
 
 pub mod section_2 {
@@ -138,17 +136,16 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CpAsyncBulkDstSrcCompletionMechanism {
-        pub async_: (), // .async
-        pub bulk: (), // .bulk
-        pub dst: Dst, // .dst
-        pub src: Src, // .src
+        pub async_: (),                                // .async
+        pub bulk: (),                                  // .bulk
+        pub dst: Dst,                                  // .dst
+        pub src: Src,                                  // .src
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
-        pub dstmem: AddressOperand, // [dstMem]
-        pub srcmem: AddressOperand, // [srcMem]
-        pub size: GeneralOperand, // size
-        pub mbar: AddressOperand, // [mbar]
+        pub dstmem: AddressOperand,                    // [dstMem]
+        pub srcmem: AddressOperand,                    // [srcMem]
+        pub size: GeneralOperand,                      // size
+        pub mbar: AddressOperand,                      // [mbar]
     }
-
 }
 
 pub mod section_3 {
@@ -176,18 +173,40 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CpAsyncBulkDstSrcCompletionMechanismLevelCacheHintCpMask {
-        pub async_: (), // .async
-        pub bulk: (), // .bulk
-        pub dst: Dst, // .dst
-        pub src: Src, // .src
+        pub async_: (),                                // .async
+        pub bulk: (),                                  // .bulk
+        pub dst: Dst,                                  // .dst
+        pub src: Src,                                  // .src
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
-        pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub cp_mask: bool, // {.cp_mask}
-        pub dstmem: AddressOperand, // [dstMem]
-        pub srcmem: AddressOperand, // [srcMem]
-        pub size: GeneralOperand, // size
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
-        pub bytemask: Option<GeneralOperand>, // {, byteMask}
+        pub level_cache_hint: Option<LevelCacheHint>,  // {.level::cache_hint}
+        pub cp_mask: bool,                             // {.cp_mask}
+        pub dstmem: AddressOperand,                    // [dstMem]
+        pub srcmem: AddressOperand,                    // [srcMem]
+        pub size: GeneralOperand,                      // size
+        pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
+        pub bytemask: Option<GeneralOperand>,          // {, byteMask}
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::CompletionMechanism as CompletionMechanism0;
+pub use section_0::CpAsyncBulkDstSrcCompletionMechanismLevelCacheHint;
+pub use section_0::Dst as Dst0;
+pub use section_0::LevelCacheHint as LevelCacheHint0;
+pub use section_0::Src as Src0;
+pub use section_1::CompletionMechanism as CompletionMechanism1;
+pub use section_1::CpAsyncBulkDstSrcCompletionMechanismMulticastLevelCacheHint;
+pub use section_1::Dst as Dst1;
+pub use section_1::LevelCacheHint as LevelCacheHint1;
+pub use section_1::Multicast as Multicast1;
+pub use section_1::Src as Src1;
+pub use section_2::CompletionMechanism as CompletionMechanism2;
+pub use section_2::CpAsyncBulkDstSrcCompletionMechanism;
+pub use section_2::Dst as Dst2;
+pub use section_2::Src as Src2;
+pub use section_3::CompletionMechanism as CompletionMechanism3;
+pub use section_3::CpAsyncBulkDstSrcCompletionMechanismLevelCacheHintCpMask;
+pub use section_3::Dst as Dst3;
+pub use section_3::LevelCacheHint as LevelCacheHint3;
+pub use section_3::Src as Src3;

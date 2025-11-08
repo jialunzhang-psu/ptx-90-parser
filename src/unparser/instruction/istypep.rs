@@ -15,23 +15,21 @@ pub mod section_0 {
     impl PtxUnparser for IstypepType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "istypep");
-                    match &self.type_ {
-                            Type::Samplerref => {
-                                    push_directive(tokens, "samplerref");
-                            }
-                            Type::Surfref => {
-                                    push_directive(tokens, "surfref");
-                            }
-                            Type::Texref => {
-                                    push_directive(tokens, "texref");
-                            }
-                    }
-                    self.p.unparse_tokens(tokens);
+            match &self.type_ {
+                Type::Samplerref => {
+                    push_directive(tokens, "samplerref");
+                }
+                Type::Surfref => {
+                    push_directive(tokens, "surfref");
+                }
+                Type::Texref => {
+                    push_directive(tokens, "texref");
+                }
+            }
+            self.p.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

@@ -18,8 +18,12 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct Tcgen05WaitOperationSyncAligned {
         pub wait_operation: WaitOperation, // .wait_operation
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
+        pub sync: (),                      // .sync
+        pub aligned: (),                   // .aligned
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Tcgen05WaitOperationSyncAligned;
+pub use section_0::WaitOperation as WaitOperation0;

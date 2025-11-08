@@ -74,9 +74,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".wb", ".cg", ".cs", ".wt"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -131,9 +137,21 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L1::evict_unchanged", ".L1::evict_normal", ".L1::evict_first", ".L1::no_allocate", ".L1::evict_last"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".L1::evict_unchanged",
+                ".L1::evict_normal",
+                ".L1::evict_first",
+                ".L1::no_allocate",
+                ".L1::evict_last",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -168,9 +186,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".L2::evict_normal", ".L2::evict_first", ".L2::evict_last"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -185,9 +209,15 @@ pub mod section_0 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".L2::cache_hint"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -232,9 +262,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".cluster", ".cta", ".gpu", ".sys"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -309,9 +345,23 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cluster", ".param::func", ".shared::cta", ".global", ".shared", ".local", ".param"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".shared::cluster",
+                ".param::func",
+                ".shared::cta",
+                ".global",
+                ".shared",
+                ".local",
+                ".param",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -466,9 +516,18 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b128", ".b16", ".b32", ".b64", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64", ".f32", ".f64", ".b8", ".u8", ".s8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".b128", ".b16", ".b32", ".b64", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64",
+                ".f32", ".f64", ".b8", ".u8", ".s8",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -503,9 +562,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".v2", ".v4", ".v8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -592,7 +657,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for StWeakSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("st")?;
@@ -670,21 +734,22 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(StWeakSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
-                weak,
-                ss,
-                level1_eviction_priority,
-                level2_eviction_priority,
-                level_cache_hint,
-                vec,
-                type_,
-                a,
-                b,
-                cache_policy,
-            })
+            Ok(
+                StWeakSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
+                    weak,
+                    ss,
+                    level1_eviction_priority,
+                    level2_eviction_priority,
+                    level_cache_hint,
+                    vec,
+                    type_,
+                    a,
+                    b,
+                    cache_policy,
+                },
+            )
         }
     }
-
 
     impl PtxParser for StVolatileSsVecType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -730,8 +795,9 @@ pub mod section_0 {
         }
     }
 
-
-    impl PtxParser for StRelaxedScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
+    impl PtxParser
+        for StRelaxedScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType
+    {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("st")?;
             stream.expect_string(".relaxed")?;
@@ -807,24 +873,27 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(StRelaxedScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
-                relaxed,
-                scope,
-                ss,
-                level1_eviction_priority,
-                level2_eviction_priority,
-                level_cache_hint,
-                vec,
-                type_,
-                a,
-                b,
-                cache_policy,
-            })
+            Ok(
+                StRelaxedScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
+                    relaxed,
+                    scope,
+                    ss,
+                    level1_eviction_priority,
+                    level2_eviction_priority,
+                    level_cache_hint,
+                    vec,
+                    type_,
+                    a,
+                    b,
+                    cache_policy,
+                },
+            )
         }
     }
 
-
-    impl PtxParser for StReleaseScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
+    impl PtxParser
+        for StReleaseScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType
+    {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("st")?;
             stream.expect_string(".release")?;
@@ -900,22 +969,23 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(StReleaseScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
-                release,
-                scope,
-                ss,
-                level1_eviction_priority,
-                level2_eviction_priority,
-                level_cache_hint,
-                vec,
-                type_,
-                a,
-                b,
-                cache_policy,
-            })
+            Ok(
+                StReleaseScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
+                    release,
+                    scope,
+                    ss,
+                    level1_eviction_priority,
+                    level2_eviction_priority,
+                    level_cache_hint,
+                    vec,
+                    type_,
+                    a,
+                    b,
+                    cache_policy,
+                },
+            )
         }
     }
-
 
     impl PtxParser for StMmioRelaxedSysGlobalType {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -955,7 +1025,4 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
-

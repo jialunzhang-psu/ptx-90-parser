@@ -15,9 +15,9 @@ pub mod section_0 {
     impl PtxUnparser for CpAsyncWaitGroup {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "cp");
-                    push_directive(tokens, "async");
-                    push_directive(tokens, "wait_group");
-                    self.n.unparse_tokens(tokens);
+            push_directive(tokens, "async");
+            push_directive(tokens, "wait_group");
+            self.n.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -25,11 +25,9 @@ pub mod section_0 {
     impl PtxUnparser for CpAsyncWaitAll {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "cp");
-                    push_directive(tokens, "async");
-                    push_directive(tokens, "wait_all");
+            push_directive(tokens, "async");
+            push_directive(tokens, "wait_all");
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

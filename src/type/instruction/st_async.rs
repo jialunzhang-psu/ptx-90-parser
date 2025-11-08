@@ -66,18 +66,17 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct StAsyncSemScopeSsCompletionMechanismVecType {
-        pub async_: (), // .async
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub ss: Option<Ss>, // {.ss}
+        pub async_: (),                                        // .async
+        pub sem: Option<Sem>,                                  // {.sem}
+        pub scope: Option<Scope>,                              // {.scope}
+        pub ss: Option<Ss>,                                    // {.ss}
         pub completion_mechanism: Option<CompletionMechanism>, // {.completion_mechanism}
-        pub vec: Option<Vec>, // {.vec}
-        pub type_: Type, // .type
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub mbar: AddressOperand, // [mbar]
+        pub vec: Option<Vec>,                                  // {.vec}
+        pub type_: Type,                                       // .type
+        pub a: AddressOperand,                                 // [a]
+        pub b: GeneralOperand,                                 // b
+        pub mbar: AddressOperand,                              // [mbar]
     }
-
 }
 
 pub mod section_1 {
@@ -112,21 +111,35 @@ pub mod section_1 {
         S64, // .s64
         F32, // .f32
         F64, // .f64
-        B8, // .b8
-        U8, // .u8
-        S8, // .s8
+        B8,  // .b8
+        U8,  // .u8
+        S8,  // .s8
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct StAsyncMmioSemScopeSsType {
-        pub async_: (), // .async
-        pub mmio: bool, // {.mmio}
-        pub sem: Sem, // .sem
-        pub scope: Scope, // .scope
-        pub ss: Option<Ss>, // {.ss}
-        pub type_: Type, // .type
+        pub async_: (),        // .async
+        pub mmio: bool,        // {.mmio}
+        pub sem: Sem,          // .sem
+        pub scope: Scope,      // .scope
+        pub ss: Option<Ss>,    // {.ss}
+        pub type_: Type,       // .type
         pub a: AddressOperand, // [a]
         pub b: GeneralOperand, // b
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::CompletionMechanism as CompletionMechanism0;
+pub use section_0::Scope as Scope0;
+pub use section_0::Sem as Sem0;
+pub use section_0::Ss as Ss0;
+pub use section_0::StAsyncSemScopeSsCompletionMechanismVecType;
+pub use section_0::Type as Type0;
+pub use section_0::Vec as Vec0;
+pub use section_1::Scope as Scope1;
+pub use section_1::Sem as Sem1;
+pub use section_1::Ss as Ss1;
+pub use section_1::StAsyncMmioSemScopeSsType;
+pub use section_1::Type as Type1;

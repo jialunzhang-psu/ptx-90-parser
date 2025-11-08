@@ -15,27 +15,25 @@ pub mod section_0 {
     impl PtxUnparser for CpAsyncMbarrierArriveNoincStateB64 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "cp");
-                    push_directive(tokens, "async");
-                    push_directive(tokens, "mbarrier");
-                    push_directive(tokens, "arrive");
-                    if self.noinc {
-                            push_directive(tokens, "noinc");
+            push_directive(tokens, "async");
+            push_directive(tokens, "mbarrier");
+            push_directive(tokens, "arrive");
+            if self.noinc {
+                push_directive(tokens, "noinc");
+            }
+            if let Some(state_0) = self.state.as_ref() {
+                match state_0 {
+                    State::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    if let Some(state_0) = self.state.as_ref() {
-                            match state_0 {
-                                    State::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    State::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    State::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    push_directive(tokens, "b64");
-                    self.addr.unparse_tokens(tokens);
+                }
+            }
+            push_directive(tokens, "b64");
+            self.addr.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

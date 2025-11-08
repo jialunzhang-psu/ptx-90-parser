@@ -7,7 +7,7 @@
 //! vop2  = { vadd2, vsub2, vavrg2, vabsdiff2, vmin2, vmax2 };
 //! .dtype = .atype = .btype = { .u32, .s32 };
 //! .mask  = { .h0, .h1, .h10 };  // defaults to .h10
-//! .asel  = .bsel  = { .h00, .h01, .h02, .h03, .h10, .h11, .h12, .h13, .h20, .h21, .h22, .h23, .h30, .h31, .h32, .h33 }; 
+//! .asel  = .bsel  = { .h00, .h01, .h02, .h03, .h10, .h11, .h12, .h13, .h20, .h21, .h22, .h23, .h30, .h31, .h32, .h33 };
 //! // .asel defaults to .h10
 //! // .bsel defaults to .h32
 
@@ -38,8 +38,8 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Mask {
         H10, // .h10
-        H0, // .h0
-        H1, // .h1
+        H0,  // .h0
+        H1,  // .h1
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -84,182 +84,202 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vadd2DtypeAtypeBtypeSat {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub sat: bool, // {.sat}
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub sat: bool,          // {.sat}
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vsub2DtypeAtypeBtypeSat {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub sat: bool, // {.sat}
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub sat: bool,          // {.sat}
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vavrg2DtypeAtypeBtypeSat {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub sat: bool, // {.sat}
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub sat: bool,          // {.sat}
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vabsdiff2DtypeAtypeBtypeSat {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub sat: bool, // {.sat}
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub sat: bool,          // {.sat}
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vmin2DtypeAtypeBtypeSat {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub sat: bool, // {.sat}
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub sat: bool,          // {.sat}
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vmax2DtypeAtypeBtypeSat {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub sat: bool, // {.sat}
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub sat: bool,          // {.sat}
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vadd2DtypeAtypeBtypeAdd {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub add: (), // .add
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub add: (),            // .add
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vsub2DtypeAtypeBtypeAdd {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub add: (), // .add
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub add: (),            // .add
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vavrg2DtypeAtypeBtypeAdd {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub add: (), // .add
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub add: (),            // .add
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vabsdiff2DtypeAtypeBtypeAdd {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub add: (), // .add
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub add: (),            // .add
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vmin2DtypeAtypeBtypeAdd {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub add: (), // .add
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub add: (),            // .add
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vmax2DtypeAtypeBtypeAdd {
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub add: (), // .add
-        pub d: GeneralOperand, // d
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub add: (),            // .add
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Asel as Asel0;
+pub use section_0::Atype as Atype0;
+pub use section_0::Bsel as Bsel0;
+pub use section_0::Btype as Btype0;
+pub use section_0::Dtype as Dtype0;
+pub use section_0::Mask as Mask0;
+pub use section_0::Vabsdiff2DtypeAtypeBtypeAdd;
+pub use section_0::Vabsdiff2DtypeAtypeBtypeSat;
+pub use section_0::Vadd2DtypeAtypeBtypeAdd;
+pub use section_0::Vadd2DtypeAtypeBtypeSat;
+pub use section_0::Vavrg2DtypeAtypeBtypeAdd;
+pub use section_0::Vavrg2DtypeAtypeBtypeSat;
+pub use section_0::Vmax2DtypeAtypeBtypeAdd;
+pub use section_0::Vmax2DtypeAtypeBtypeSat;
+pub use section_0::Vmin2DtypeAtypeBtypeAdd;
+pub use section_0::Vmin2DtypeAtypeBtypeSat;
+pub use section_0::Vsub2DtypeAtypeBtypeAdd;
+pub use section_0::Vsub2DtypeAtypeBtypeSat;

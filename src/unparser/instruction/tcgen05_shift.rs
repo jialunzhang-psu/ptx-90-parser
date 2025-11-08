@@ -15,20 +15,18 @@ pub mod section_0 {
     impl PtxUnparser for Tcgen05ShiftCtaGroupDown {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "shift");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "down");
-                    self.taddr.unparse_tokens(tokens);
+            push_directive(tokens, "shift");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "down");
+            self.taddr.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

@@ -33,14 +33,13 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct ReduxSyncOpType {
-        pub sync: (), // .sync
-        pub op: Op, // .op
-        pub type_: Type, // .type
-        pub dst: GeneralOperand, // dst
-        pub src: GeneralOperand, // src
+        pub sync: (),                   // .sync
+        pub op: Op,                     // .op
+        pub type_: Type,                // .type
+        pub dst: GeneralOperand,        // dst
+        pub src: GeneralOperand,        // src
         pub membermask: GeneralOperand, // membermask
     }
-
 }
 
 pub mod section_1 {
@@ -50,19 +49,18 @@ pub mod section_1 {
     pub enum Op {
         And, // .and
         Xor, // .xor
-        Or, // .or
+        Or,  // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct ReduxSyncOpB32 {
-        pub sync: (), // .sync
-        pub op: Op, // .op
-        pub b32: (), // .b32
-        pub dst: GeneralOperand, // dst
-        pub src: GeneralOperand, // src
+        pub sync: (),                   // .sync
+        pub op: Op,                     // .op
+        pub b32: (),                    // .b32
+        pub dst: GeneralOperand,        // dst
+        pub src: GeneralOperand,        // src
         pub membermask: GeneralOperand, // membermask
     }
-
 }
 
 pub mod section_2 {
@@ -76,14 +74,23 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct ReduxSyncOpAbsNanF32 {
-        pub sync: (), // .sync
-        pub op: Op, // .op
-        pub abs: bool, // {.abs}
-        pub nan: bool, // {.NaN}
-        pub f32: (), // .f32
-        pub dst: GeneralOperand, // dst
-        pub src: GeneralOperand, // src
+        pub sync: (),                   // .sync
+        pub op: Op,                     // .op
+        pub abs: bool,                  // {.abs}
+        pub nan: bool,                  // {.NaN}
+        pub f32: (),                    // .f32
+        pub dst: GeneralOperand,        // dst
+        pub src: GeneralOperand,        // src
         pub membermask: GeneralOperand, // membermask
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Op as Op0;
+pub use section_0::ReduxSyncOpType;
+pub use section_0::Type as Type0;
+pub use section_1::Op as Op1;
+pub use section_1::ReduxSyncOpB32;
+pub use section_2::Op as Op2;
+pub use section_2::ReduxSyncOpAbsNanF32;

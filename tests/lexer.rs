@@ -1,4 +1,4 @@
-use ptx_parser::lexer::{PtxToken, tokenize};
+use ptx_parser::{PtxToken, tokenize};
 
 // ============================================================================
 // Basic token tests

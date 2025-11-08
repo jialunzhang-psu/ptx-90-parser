@@ -23,12 +23,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(RetUni {
-                uni,
-            })
+            Ok(RetUni { uni })
         }
     }
-
-
 }
-

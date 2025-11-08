@@ -100,9 +100,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".f16", ".f32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -427,9 +433,48 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m64n104k32", ".m64n112k32", ".m64n120k32", ".m64n128k32", ".m64n136k32", ".m64n144k32", ".m64n152k32", ".m64n160k32", ".m64n168k32", ".m64n176k32", ".m64n184k32", ".m64n192k32", ".m64n200k32", ".m64n208k32", ".m64n216k32", ".m64n224k32", ".m64n232k32", ".m64n240k32", ".m64n248k32", ".m64n256k32", ".m64n16k32", ".m64n24k32", ".m64n32k32", ".m64n40k32", ".m64n48k32", ".m64n56k32", ".m64n64k32", ".m64n72k32", ".m64n80k32", ".m64n88k32", ".m64n96k32", ".m64n8k32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".m64n104k32",
+                ".m64n112k32",
+                ".m64n120k32",
+                ".m64n128k32",
+                ".m64n136k32",
+                ".m64n144k32",
+                ".m64n152k32",
+                ".m64n160k32",
+                ".m64n168k32",
+                ".m64n176k32",
+                ".m64n184k32",
+                ".m64n192k32",
+                ".m64n200k32",
+                ".m64n208k32",
+                ".m64n216k32",
+                ".m64n224k32",
+                ".m64n232k32",
+                ".m64n240k32",
+                ".m64n248k32",
+                ".m64n256k32",
+                ".m64n16k32",
+                ".m64n24k32",
+                ".m64n32k32",
+                ".m64n40k32",
+                ".m64n48k32",
+                ".m64n56k32",
+                ".m64n64k32",
+                ".m64n72k32",
+                ".m64n80k32",
+                ".m64n88k32",
+                ".m64n96k32",
+                ".m64n8k32",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -513,7 +558,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for WgmmaMmaAsyncSpSyncAlignedShapeDtypeF16F161 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("wgmma")?;
@@ -588,8 +632,6 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
 
 pub mod section_1 {
@@ -610,9 +652,15 @@ pub mod section_1 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".f32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -937,9 +985,48 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m64n104k32", ".m64n112k32", ".m64n120k32", ".m64n128k32", ".m64n136k32", ".m64n144k32", ".m64n152k32", ".m64n160k32", ".m64n168k32", ".m64n176k32", ".m64n184k32", ".m64n192k32", ".m64n200k32", ".m64n208k32", ".m64n216k32", ".m64n224k32", ".m64n232k32", ".m64n240k32", ".m64n248k32", ".m64n256k32", ".m64n16k32", ".m64n24k32", ".m64n32k32", ".m64n40k32", ".m64n48k32", ".m64n56k32", ".m64n64k32", ".m64n72k32", ".m64n80k32", ".m64n88k32", ".m64n96k32", ".m64n8k32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".m64n104k32",
+                ".m64n112k32",
+                ".m64n120k32",
+                ".m64n128k32",
+                ".m64n136k32",
+                ".m64n144k32",
+                ".m64n152k32",
+                ".m64n160k32",
+                ".m64n168k32",
+                ".m64n176k32",
+                ".m64n184k32",
+                ".m64n192k32",
+                ".m64n200k32",
+                ".m64n208k32",
+                ".m64n216k32",
+                ".m64n224k32",
+                ".m64n232k32",
+                ".m64n240k32",
+                ".m64n248k32",
+                ".m64n256k32",
+                ".m64n16k32",
+                ".m64n24k32",
+                ".m64n32k32",
+                ".m64n40k32",
+                ".m64n48k32",
+                ".m64n56k32",
+                ".m64n64k32",
+                ".m64n72k32",
+                ".m64n80k32",
+                ".m64n88k32",
+                ".m64n96k32",
+                ".m64n8k32",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1023,7 +1110,6 @@ pub mod section_1 {
         }
     }
 
-
     impl PtxParser for WgmmaMmaAsyncSpSyncAlignedShapeDtypeBf16Bf161 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("wgmma")?;
@@ -1098,8 +1184,6 @@ pub mod section_1 {
             })
         }
     }
-
-
 }
 
 pub mod section_2 {
@@ -1120,9 +1204,15 @@ pub mod section_2 {
                 }
                 stream.set_position(saved_pos);
             }
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".f32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1447,9 +1537,48 @@ pub mod section_2 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m64n104k16", ".m64n112k16", ".m64n120k16", ".m64n128k16", ".m64n136k16", ".m64n144k16", ".m64n152k16", ".m64n160k16", ".m64n168k16", ".m64n176k16", ".m64n184k16", ".m64n192k16", ".m64n200k16", ".m64n208k16", ".m64n216k16", ".m64n224k16", ".m64n232k16", ".m64n240k16", ".m64n248k16", ".m64n256k16", ".m64n16k16", ".m64n24k16", ".m64n32k16", ".m64n40k16", ".m64n48k16", ".m64n56k16", ".m64n64k16", ".m64n72k16", ".m64n80k16", ".m64n88k16", ".m64n96k16", ".m64n8k16"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".m64n104k16",
+                ".m64n112k16",
+                ".m64n120k16",
+                ".m64n128k16",
+                ".m64n136k16",
+                ".m64n144k16",
+                ".m64n152k16",
+                ".m64n160k16",
+                ".m64n168k16",
+                ".m64n176k16",
+                ".m64n184k16",
+                ".m64n192k16",
+                ".m64n200k16",
+                ".m64n208k16",
+                ".m64n216k16",
+                ".m64n224k16",
+                ".m64n232k16",
+                ".m64n240k16",
+                ".m64n248k16",
+                ".m64n256k16",
+                ".m64n16k16",
+                ".m64n24k16",
+                ".m64n32k16",
+                ".m64n40k16",
+                ".m64n48k16",
+                ".m64n56k16",
+                ".m64n64k16",
+                ".m64n72k16",
+                ".m64n80k16",
+                ".m64n88k16",
+                ".m64n96k16",
+                ".m64n8k16",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1525,7 +1654,6 @@ pub mod section_2 {
         }
     }
 
-
     impl PtxParser for WgmmaMmaAsyncSpSyncAlignedShapeDtypeTf32Tf321 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("wgmma")?;
@@ -1596,8 +1724,6 @@ pub mod section_2 {
             })
         }
     }
-
-
 }
 
 pub mod section_3 {
@@ -1628,9 +1754,15 @@ pub mod section_3 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".e4m3", ".e5m2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1655,9 +1787,15 @@ pub mod section_3 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".e4m3", ".e5m2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -1682,9 +1820,15 @@ pub mod section_3 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".f16", ".f32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -2009,9 +2153,48 @@ pub mod section_3 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m64n104k64", ".m64n112k64", ".m64n120k64", ".m64n128k64", ".m64n136k64", ".m64n144k64", ".m64n152k64", ".m64n160k64", ".m64n168k64", ".m64n176k64", ".m64n184k64", ".m64n192k64", ".m64n200k64", ".m64n208k64", ".m64n216k64", ".m64n224k64", ".m64n232k64", ".m64n240k64", ".m64n248k64", ".m64n256k64", ".m64n16k64", ".m64n24k64", ".m64n32k64", ".m64n40k64", ".m64n48k64", ".m64n56k64", ".m64n64k64", ".m64n72k64", ".m64n80k64", ".m64n88k64", ".m64n96k64", ".m64n8k64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".m64n104k64",
+                ".m64n112k64",
+                ".m64n120k64",
+                ".m64n128k64",
+                ".m64n136k64",
+                ".m64n144k64",
+                ".m64n152k64",
+                ".m64n160k64",
+                ".m64n168k64",
+                ".m64n176k64",
+                ".m64n184k64",
+                ".m64n192k64",
+                ".m64n200k64",
+                ".m64n208k64",
+                ".m64n216k64",
+                ".m64n224k64",
+                ".m64n232k64",
+                ".m64n240k64",
+                ".m64n248k64",
+                ".m64n256k64",
+                ".m64n16k64",
+                ".m64n24k64",
+                ".m64n32k64",
+                ".m64n40k64",
+                ".m64n48k64",
+                ".m64n56k64",
+                ".m64n64k64",
+                ".m64n72k64",
+                ".m64n80k64",
+                ".m64n88k64",
+                ".m64n96k64",
+                ".m64n8k64",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -2085,7 +2268,6 @@ pub mod section_3 {
         }
     }
 
-
     impl PtxParser for WgmmaMmaAsyncSpSyncAlignedShapeDtypeAtypeBtype1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("wgmma")?;
@@ -2154,8 +2336,6 @@ pub mod section_3 {
             })
         }
     }
-
-
 }
 
 pub mod section_4 {
@@ -2186,9 +2366,15 @@ pub mod section_4 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".s8", ".u8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -2213,9 +2399,15 @@ pub mod section_4 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".s8", ".u8"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -2400,9 +2592,34 @@ pub mod section_4 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m64n112k64", ".m64n128k64", ".m64n144k64", ".m64n160k64", ".m64n176k64", ".m64n192k64", ".m64n208k64", ".m64n224k64", ".m64n240k64", ".m64n256k64", ".m64n16k64", ".m64n24k64", ".m64n32k64", ".m64n48k64", ".m64n64k64", ".m64n80k64", ".m64n96k64", ".m64n8k64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".m64n112k64",
+                ".m64n128k64",
+                ".m64n144k64",
+                ".m64n160k64",
+                ".m64n176k64",
+                ".m64n192k64",
+                ".m64n208k64",
+                ".m64n224k64",
+                ".m64n240k64",
+                ".m64n256k64",
+                ".m64n16k64",
+                ".m64n24k64",
+                ".m64n32k64",
+                ".m64n48k64",
+                ".m64n64k64",
+                ".m64n80k64",
+                ".m64n96k64",
+                ".m64n8k64",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -2476,7 +2693,6 @@ pub mod section_4 {
         }
     }
 
-
     impl PtxParser for WgmmaMmaAsyncSpSyncAlignedShapeSatfiniteS32AtypeBtype1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("wgmma")?;
@@ -2545,7 +2761,4 @@ pub mod section_4 {
             })
         }
     }
-
-
 }
-

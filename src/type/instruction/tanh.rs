@@ -12,18 +12,22 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Type {
         Bf16x2, // .bf16x2
-        F16x2, // .f16x2
-        Bf16, // .bf16
-        F16, // .f16
-        F32, // .f32
+        F16x2,  // .f16x2
+        Bf16,   // .bf16
+        F16,    // .f16
+        F32,    // .f32
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct TanhApproxType {
-        pub approx: (), // .approx
-        pub type_: Type, // .type
+        pub approx: (),        // .approx
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::TanhApproxType;
+pub use section_0::Type as Type0;

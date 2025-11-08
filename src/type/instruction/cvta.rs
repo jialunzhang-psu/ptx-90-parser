@@ -18,13 +18,13 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Space {
         SharedCluster, // .shared::cluster
-        ParamEntry, // .param::entry
-        SharedCta, // .shared::cta
-        Global, // .global
-        Shared, // .shared
-        Const, // .const
-        Local, // .local
-        Param, // .param
+        ParamEntry,    // .param::entry
+        SharedCta,     // .shared::cta
+        Global,        // .global
+        Shared,        // .shared
+        Const,         // .const
+        Local,         // .local
+        Param,         // .param
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -35,19 +35,25 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtaSpaceSize {
-        pub space: Space, // .space
-        pub size: Size, // .size
+        pub space: Space,      // .space
+        pub size: Size,        // .size
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtaToSpaceSize {
-        pub to: (), // .to
-        pub space: Space, // .space
-        pub size: Size, // .size
+        pub to: (),            // .to
+        pub space: Space,      // .space
+        pub size: Size,        // .size
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::CvtaSpaceSize;
+pub use section_0::CvtaToSpaceSize;
+pub use section_0::Size as Size0;
+pub use section_0::Space as Space0;

@@ -28,46 +28,45 @@ pub mod section_0 {
     impl PtxUnparser for MulModeType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mul");
-                    match &self.mode {
-                            Mode::Wide => {
-                                    push_directive(tokens, "wide");
-                            }
-                            Mode::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Mode::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                    }
-                    match &self.type_ {
-                            Type::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Type::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Type::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Type::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                    }
-                    self.d.unparse_tokens(tokens);
+            match &self.mode {
+                Mode::Wide => {
+                    push_directive(tokens, "wide");
+                }
+                Mode::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Mode::Lo => {
+                    push_directive(tokens, "lo");
+                }
+            }
+            match &self.type_ {
+                Type::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Type::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Type::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Type::S64 => {
+                    push_directive(tokens, "s64");
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
 
 pub mod section_1 {
@@ -77,34 +76,34 @@ pub mod section_1 {
     impl PtxUnparser for MulRndFtzSatF32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_0) = self.rnd.as_ref() {
-                            match rnd_0 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                                    Rnd::Rz => {
-                                            push_directive(tokens, "rz");
-                                    }
-                                    Rnd::Rm => {
-                                            push_directive(tokens, "rm");
-                                    }
-                                    Rnd::Rp => {
-                                            push_directive(tokens, "rp");
-                                    }
-                            }
+            if let Some(rnd_0) = self.rnd.as_ref() {
+                match rnd_0 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
+                    Rnd::Rz => {
+                        push_directive(tokens, "rz");
                     }
-                    if self.sat {
-                            push_directive(tokens, "sat");
+                    Rnd::Rm => {
+                        push_directive(tokens, "rm");
                     }
-                    push_directive(tokens, "f32");
-                    self.d.unparse_tokens(tokens);
+                    Rnd::Rp => {
+                        push_directive(tokens, "rp");
+                    }
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            if self.sat {
+                push_directive(tokens, "sat");
+            }
+            push_directive(tokens, "f32");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -112,31 +111,31 @@ pub mod section_1 {
     impl PtxUnparser for MulRndFtzF32x2 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_1) = self.rnd.as_ref() {
-                            match rnd_1 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                                    Rnd::Rz => {
-                                            push_directive(tokens, "rz");
-                                    }
-                                    Rnd::Rm => {
-                                            push_directive(tokens, "rm");
-                                    }
-                                    Rnd::Rp => {
-                                            push_directive(tokens, "rp");
-                                    }
-                            }
+            if let Some(rnd_1) = self.rnd.as_ref() {
+                match rnd_1 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
+                    Rnd::Rz => {
+                        push_directive(tokens, "rz");
                     }
-                    push_directive(tokens, "f32x2");
-                    self.d.unparse_tokens(tokens);
+                    Rnd::Rm => {
+                        push_directive(tokens, "rm");
+                    }
+                    Rnd::Rp => {
+                        push_directive(tokens, "rp");
+                    }
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            push_directive(tokens, "f32x2");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -144,32 +143,31 @@ pub mod section_1 {
     impl PtxUnparser for MulRndF64 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_2) = self.rnd.as_ref() {
-                            match rnd_2 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                                    Rnd::Rz => {
-                                            push_directive(tokens, "rz");
-                                    }
-                                    Rnd::Rm => {
-                                            push_directive(tokens, "rm");
-                                    }
-                                    Rnd::Rp => {
-                                            push_directive(tokens, "rp");
-                                    }
-                            }
+            if let Some(rnd_2) = self.rnd.as_ref() {
+                match rnd_2 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    push_directive(tokens, "f64");
-                    self.d.unparse_tokens(tokens);
+                    Rnd::Rz => {
+                        push_directive(tokens, "rz");
+                    }
+                    Rnd::Rm => {
+                        push_directive(tokens, "rm");
+                    }
+                    Rnd::Rp => {
+                        push_directive(tokens, "rp");
+                    }
+                }
+            }
+            push_directive(tokens, "f64");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
 
 pub mod section_2 {
@@ -179,25 +177,25 @@ pub mod section_2 {
     impl PtxUnparser for MulRndFtzSatF16 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_3) = self.rnd.as_ref() {
-                            match rnd_3 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                            }
+            if let Some(rnd_3) = self.rnd.as_ref() {
+                match rnd_3 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    if self.sat {
-                            push_directive(tokens, "sat");
-                    }
-                    push_directive(tokens, "f16");
-                    self.d.unparse_tokens(tokens);
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            if self.sat {
+                push_directive(tokens, "sat");
+            }
+            push_directive(tokens, "f16");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -205,25 +203,25 @@ pub mod section_2 {
     impl PtxUnparser for MulRndFtzSatF16x2 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_4) = self.rnd.as_ref() {
-                            match rnd_4 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                            }
+            if let Some(rnd_4) = self.rnd.as_ref() {
+                match rnd_4 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    if self.sat {
-                            push_directive(tokens, "sat");
-                    }
-                    push_directive(tokens, "f16x2");
-                    self.d.unparse_tokens(tokens);
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            if self.sat {
+                push_directive(tokens, "sat");
+            }
+            push_directive(tokens, "f16x2");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -231,19 +229,19 @@ pub mod section_2 {
     impl PtxUnparser for MulRndBf16 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_5) = self.rnd.as_ref() {
-                            match rnd_5 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                            }
+            if let Some(rnd_5) = self.rnd.as_ref() {
+                match rnd_5 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    push_directive(tokens, "bf16");
-                    self.d.unparse_tokens(tokens);
+                }
+            }
+            push_directive(tokens, "bf16");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -251,22 +249,20 @@ pub mod section_2 {
     impl PtxUnparser for MulRndBf16x2 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_6) = self.rnd.as_ref() {
-                            match rnd_6 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                            }
+            if let Some(rnd_6) = self.rnd.as_ref() {
+                match rnd_6 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    push_directive(tokens, "bf16x2");
-                    self.d.unparse_tokens(tokens);
+                }
+            }
+            push_directive(tokens, "bf16x2");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

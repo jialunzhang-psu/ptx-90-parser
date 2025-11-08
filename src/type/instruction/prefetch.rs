@@ -18,7 +18,7 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Space {
         Global, // .global
-        Local, // .local
+        Local,  // .local
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -30,7 +30,7 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum LevelEvictionPriority {
         L2EvictNormal, // .L2::evict_normal
-        L2EvictLast, // .L2::evict_last
+        L2EvictLast,   // .L2::evict_last
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -42,28 +42,38 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct PrefetchSpaceLevel {
         pub space: Option<Space>, // {.space}
-        pub level: Level, // .level
-        pub a: AddressOperand, // [a]
+        pub level: Level,         // .level
+        pub a: AddressOperand,    // [a]
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct PrefetchGlobalLevelEvictionPriority {
-        pub global: (), // .global
+        pub global: (),                                     // .global
         pub level_eviction_priority: LevelEvictionPriority, // .level::eviction_priority
-        pub a: AddressOperand, // [a]
+        pub a: AddressOperand,                              // [a]
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct PrefetchuL1 {
-        pub l1: (), // .L1
+        pub l1: (),            // .L1
         pub a: AddressOperand, // [a]
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct PrefetchTensormapSpaceTensormap {
         pub tensormap_space: Option<TensormapSpace>, // {.tensormap_space}
-        pub tensormap: (), // .tensormap
-        pub a: AddressOperand, // [a]
+        pub tensormap: (),                           // .tensormap
+        pub a: AddressOperand,                       // [a]
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Level as Level0;
+pub use section_0::LevelEvictionPriority as LevelEvictionPriority0;
+pub use section_0::PrefetchGlobalLevelEvictionPriority;
+pub use section_0::PrefetchSpaceLevel;
+pub use section_0::PrefetchTensormapSpaceTensormap;
+pub use section_0::PrefetchuL1;
+pub use section_0::Space as Space0;
+pub use section_0::TensormapSpace as TensormapSpace0;

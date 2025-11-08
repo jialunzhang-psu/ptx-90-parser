@@ -22,13 +22,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(ActivemaskB32 {
-                b32,
-                d,
-            })
+            Ok(ActivemaskB32 { b32, d })
         }
     }
-
-
 }
-

@@ -32,18 +32,18 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Sem {
-        AcqRel, // .acq_rel
+        AcqRel,  // .acq_rel
         Acquire, // .acquire
         Release, // .release
-        Sc, // .sc
+        Sc,      // .sc
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
         Cluster, // .cluster
-        Cta, // .cta
-        Gpu, // .gpu
-        Sys, // .sys
+        Cta,     // .cta
+        Gpu,     // .gpu
+        Sys,     // .sys
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -54,10 +54,10 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Proxykind {
         AsyncSharedCluster, // .async.shared::cluster
-        AsyncSharedCta, // .async.shared::cta
-        AsyncGlobal, // .async.global
-        Alias, // .alias
-        Async, // .async
+        AsyncSharedCta,     // .async.shared::cta
+        AsyncGlobal,        // .async.global
+        Alias,              // .alias
+        Async,              // .async
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -69,76 +69,76 @@ pub mod section_0 {
     pub enum Level {
         Cta, // .cta
         Sys, // .sys
-        Gl, // .gl
+        Gl,  // .gl
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct FenceSemScope {
         pub sem: Option<Sem>, // {.sem}
-        pub scope: Scope, // .scope
+        pub scope: Scope,     // .scope
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct FenceAcquireSyncRestrictSharedClusterCluster {
-        pub acquire: (), // .acquire
+        pub acquire: (),                      // .acquire
         pub sync_restrict_shared_cluster: (), // .sync_restrict::shared::cluster
-        pub cluster: (), // .cluster
+        pub cluster: (),                      // .cluster
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct FenceReleaseSyncRestrictSharedCtaCluster {
-        pub release: (), // .release
+        pub release: (),                  // .release
         pub sync_restrict_shared_cta: (), // .sync_restrict::shared::cta
-        pub cluster: (), // .cluster
+        pub cluster: (),                  // .cluster
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct FenceOpRestrictReleaseCluster {
         pub op_restrict: OpRestrict, // .op_restrict
-        pub release: (), // .release
-        pub cluster: (), // .cluster
+        pub release: (),             // .release
+        pub cluster: (),             // .cluster
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct FenceProxyProxykind {
-        pub proxy: (), // .proxy
+        pub proxy: (),            // .proxy
         pub proxykind: Proxykind, // .proxykind
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct FenceProxyToProxykindFromProxykindReleaseScope {
-        pub proxy: (), // .proxy
+        pub proxy: (),                                             // .proxy
         pub to_proxykind_from_proxykind: ToProxykindFromProxykind, // .to_proxykind::from_proxykind
-        pub release: (), // .release
-        pub scope: Scope, // .scope
+        pub release: (),                                           // .release
+        pub scope: Scope,                                          // .scope
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct FenceProxyToProxykindFromProxykindAcquireScope {
-        pub proxy: (), // .proxy
+        pub proxy: (),                                             // .proxy
         pub to_proxykind_from_proxykind: ToProxykindFromProxykind, // .to_proxykind::from_proxykind
-        pub acquire: (), // .acquire
-        pub scope: Scope, // .scope
-        pub addr: AddressOperand, // [addr]
-        pub size: GeneralOperand, // size
+        pub acquire: (),                                           // .acquire
+        pub scope: Scope,                                          // .scope
+        pub addr: AddressOperand,                                  // [addr]
+        pub size: GeneralOperand,                                  // size
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct FenceProxyAsyncGenericAcquireSyncRestrictSharedClusterCluster {
-        pub proxy: (), // .proxy
-        pub async_generic: (), // .async::generic
-        pub acquire: (), // .acquire
+        pub proxy: (),                        // .proxy
+        pub async_generic: (),                // .async::generic
+        pub acquire: (),                      // .acquire
         pub sync_restrict_shared_cluster: (), // .sync_restrict::shared::cluster
-        pub cluster: (), // .cluster
+        pub cluster: (),                      // .cluster
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct FenceProxyAsyncGenericReleaseSyncRestrictSharedCtaCluster {
-        pub proxy: (), // .proxy
-        pub async_generic: (), // .async::generic
-        pub release: (), // .release
+        pub proxy: (),                    // .proxy
+        pub async_generic: (),            // .async::generic
+        pub release: (),                  // .release
         pub sync_restrict_shared_cta: (), // .sync_restrict::shared::cta
-        pub cluster: (), // .cluster
+        pub cluster: (),                  // .cluster
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -148,8 +148,27 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MembarProxyProxykind {
-        pub proxy: (), // .proxy
+        pub proxy: (),            // .proxy
         pub proxykind: Proxykind, // .proxykind
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::FenceAcquireSyncRestrictSharedClusterCluster;
+pub use section_0::FenceOpRestrictReleaseCluster;
+pub use section_0::FenceProxyAsyncGenericAcquireSyncRestrictSharedClusterCluster;
+pub use section_0::FenceProxyAsyncGenericReleaseSyncRestrictSharedCtaCluster;
+pub use section_0::FenceProxyProxykind;
+pub use section_0::FenceProxyToProxykindFromProxykindAcquireScope;
+pub use section_0::FenceProxyToProxykindFromProxykindReleaseScope;
+pub use section_0::FenceReleaseSyncRestrictSharedCtaCluster;
+pub use section_0::FenceSemScope;
+pub use section_0::Level as Level0;
+pub use section_0::MembarLevel;
+pub use section_0::MembarProxyProxykind;
+pub use section_0::OpRestrict as OpRestrict0;
+pub use section_0::Proxykind as Proxykind0;
+pub use section_0::Scope as Scope0;
+pub use section_0::Sem as Sem0;
+pub use section_0::ToProxykindFromProxykind as ToProxykindFromProxykind0;

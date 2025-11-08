@@ -1,14 +1,15 @@
 use crate::lexer::{PtxToken, tokenize};
 use thiserror::Error;
 
-mod common;
-mod function;
-pub mod instruction;
-mod module;
-mod variable;
+pub(crate) mod common;
+pub(crate) mod function;
+pub(crate) mod instruction;
+pub(crate) mod module;
+pub(crate) mod variable;
 
 pub type Span = std::ops::Range<usize>;
 
+/// Kinds of parse errors that can occur during PTX parsing.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
 pub enum ParseErrorKind {
     #[error("unexpected token: expected one of {expected:?}, found {found}")]
@@ -22,6 +23,7 @@ pub enum ParseErrorKind {
     InvalidLiteral(String),
 }
 
+/// PTX parsing error with location information.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
 #[error("parsing error at {span:?}: {kind}")]
 pub struct PtxParseError {
@@ -36,6 +38,9 @@ pub struct StreamPosition {
     pub char_offset: usize,
 }
 
+/// Token stream wrapper for parsing PTX tokens.
+///
+/// This struct provides methods for consuming and inspecting tokens during parsing.
 pub struct PtxTokenStream<'a> {
     tokens: &'a [(PtxToken, Span)],
     /// Current position (index) in the tokens list
@@ -46,7 +51,11 @@ pub struct PtxTokenStream<'a> {
 
 impl<'a> PtxTokenStream<'a> {
     pub fn new(tokens: &'a [(PtxToken, Span)]) -> Self {
-        Self { tokens, index: 0, char_offset: 0 }
+        Self {
+            tokens,
+            index: 0,
+            char_offset: 0,
+        }
     }
 
     /// Peek at the next token without consuming it.
@@ -228,7 +237,9 @@ impl<'a> PtxTokenStream<'a> {
                 Ok((actual_token, _)) => {
                     // Check if we can do a partial match for Identifier tokens
                     // This handles cases like matching ".b3210" as ".b" + "3" + "2" + "1" + "0"
-                    if let (PtxToken::Identifier(actual_id), expected_str) = (actual_token, expected_token.as_str()) {
+                    if let (PtxToken::Identifier(actual_id), expected_str) =
+                        (actual_token, expected_token.as_str())
+                    {
                         // Check if the expected string matches from the current char_offset
                         let remaining = &actual_id[self.char_offset..];
                         if remaining.starts_with(expected_str) {
@@ -244,7 +255,7 @@ impl<'a> PtxTokenStream<'a> {
                             continue;
                         }
                     }
-                    
+
                     // Normal exact match
                     if actual_token != &expected_token {
                         self.set_position(start_pos);
@@ -286,11 +297,14 @@ impl<'a> PtxTokenStream<'a> {
     pub fn expect_complete(&self) -> Result<(), PtxParseError> {
         if self.char_offset > 0 {
             // We're in the middle of a token - this is an error
-            let span = self.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = self
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             Err(unexpected_value(
                 span,
                 &["complete token"],
-                format!("partial token at char offset {}", self.char_offset)
+                format!("partial token at char offset {}", self.char_offset),
             ))
         } else {
             Ok(())
@@ -340,17 +354,17 @@ impl<'a> PtxTokenStream<'a> {
         if self.index >= self.tokens.len() {
             return None;
         }
-        
+
         let (token, _) = &self.tokens[self.index];
         let string = match token {
-            PtxToken::Identifier(s) |
-            PtxToken::DecimalInteger(s) |
-            PtxToken::HexInteger(s) |
-            PtxToken::BinaryInteger(s) |
-            PtxToken::OctalInteger(s) => s,
+            PtxToken::Identifier(s)
+            | PtxToken::DecimalInteger(s)
+            | PtxToken::HexInteger(s)
+            | PtxToken::BinaryInteger(s)
+            | PtxToken::OctalInteger(s) => s,
             _ => return None,
         };
-        
+
         string.chars().nth(self.char_offset)
     }
 
@@ -360,26 +374,26 @@ impl<'a> PtxTokenStream<'a> {
     pub fn consume_char_in_token(&mut self) -> Option<char> {
         let ch = self.peek_char_in_token()?;
         self.char_offset += 1;
-        
+
         // Check if we've consumed the entire string of this token
         if self.index < self.tokens.len() {
             let (token, _) = &self.tokens[self.index];
             let string = match token {
-                PtxToken::Identifier(s) |
-                PtxToken::DecimalInteger(s) |
-                PtxToken::HexInteger(s) |
-                PtxToken::BinaryInteger(s) |
-                PtxToken::OctalInteger(s) => s,
+                PtxToken::Identifier(s)
+                | PtxToken::DecimalInteger(s)
+                | PtxToken::HexInteger(s)
+                | PtxToken::BinaryInteger(s)
+                | PtxToken::OctalInteger(s) => s,
                 _ => "",
             };
-            
+
             if self.char_offset >= string.len() {
                 // Move to next token and reset char_offset
                 self.index += 1;
                 self.char_offset = 0;
             }
         }
-        
+
         Some(ch)
     }
 
@@ -420,13 +434,49 @@ impl<'a> PtxTokenStream<'a> {
     }
 }
 
+/// Trait for types that can be parsed from a PTX token stream.
+///
+/// This trait is implemented for all PTX AST node types to enable
+/// recursive descent parsing.
 pub trait PtxParser
 where
     Self: Sized,
 {
+    /// Parse an instance of `Self` from the token stream.
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError>;
 }
 
+/// Parse PTX source code into a structured Module representation.
+///
+/// This is the main entry point for parsing PTX code. It performs lexical
+/// analysis followed by syntactic parsing.
+///
+/// # Arguments
+///
+/// * `source` - The PTX source code as a string slice
+///
+/// # Returns
+///
+/// Returns a parsed `Module` AST node, or a `PtxParseError` if parsing fails.
+///
+/// # Example
+///
+/// ```no_run
+/// use ptx_parser::parse_ptx;
+///
+/// let source = r#"
+///     .version 8.5
+///     .target sm_90
+///     .address_size 64
+///     
+///     .entry kernel() {
+///         ret;
+///     }
+/// "#;
+///
+/// let module = parse_ptx(source).expect("Failed to parse PTX");
+/// println!("Parsed {} directives", module.directives.len());
+/// ```
 pub fn parse_ptx(source: &str) -> Result<crate::r#type::module::Module, PtxParseError> {
     let tokens = crate::lexer::tokenize(source).map_err(|err| PtxParseError {
         kind: ParseErrorKind::InvalidLiteral("lexical error".into()),

@@ -24,24 +24,24 @@ pub mod section_0 {
     impl PtxUnparser for GetctarankSpaceType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "getctarank");
-                    if let Some(space_0) = self.space.as_ref() {
-                            match space_0 {
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
-                                    }
-                            }
+            if let Some(space_0) = self.space.as_ref() {
+                match space_0 {
+                    Space::SharedCluster => {
+                        push_directive(tokens, "shared::cluster");
                     }
-                    match &self.type_ {
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                    }
-                    self.d.unparse_tokens(tokens);
+                }
+            }
+            match &self.type_ {
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::U64 => {
+                    push_directive(tokens, "u64");
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -49,18 +49,18 @@ pub mod section_0 {
     impl PtxUnparser for GetctarankSharedClusterType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "getctarank");
-                    push_directive(tokens, "shared::cluster");
-                    match &self.type_ {
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                    }
-                    self.d.unparse_tokens(tokens);
+            push_directive(tokens, "shared::cluster");
+            match &self.type_ {
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::U64 => {
+                    push_directive(tokens, "u64");
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -68,20 +68,18 @@ pub mod section_0 {
     impl PtxUnparser for GetctarankType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "getctarank");
-                    match &self.type_ {
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                    }
-                    self.d.unparse_tokens(tokens);
+            match &self.type_ {
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::U64 => {
+                    push_directive(tokens, "u64");
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

@@ -1,6 +1,6 @@
 //! Original PTX specification:
 //!
-//! mov.type  d, a; 
+//! mov.type  d, a;
 //! // mov.type  d, sreg;
 //! // mov.type  d, avar;       // get address of variable
 //! // mov.type  d, avar+imm;   // get address of variable with offset
@@ -151,9 +151,18 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".pred", ".b16", ".b32", ".b64", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64", ".f32", ".f64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".pred", ".b16", ".b32", ".b64", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64",
+                ".f32", ".f64",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -170,14 +179,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovType {
-                type_,
-                d,
-                a,
-            })
+            Ok(MovType { type_, d, a })
         }
     }
-
 
     impl PtxParser for MovU32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -192,14 +196,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovU32 {
-                u32,
-                d,
-                fname,
-            })
+            Ok(MovU32 { u32, d, fname })
         }
     }
-
 
     impl PtxParser for MovU64 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -214,14 +213,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovU64 {
-                u64,
-                d,
-                fname,
-            })
+            Ok(MovU64 { u64, d, fname })
         }
     }
-
 
     impl PtxParser for MovU321 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -236,14 +230,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovU321 {
-                u32,
-                d,
-                kernel,
-            })
+            Ok(MovU321 { u32, d, kernel })
         }
     }
-
 
     impl PtxParser for MovU641 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -258,15 +247,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovU641 {
-                u64,
-                d,
-                kernel,
-            })
+            Ok(MovU641 { u64, d, kernel })
         }
     }
-
-
 }
 
 pub mod section_1 {
@@ -317,9 +300,15 @@ pub mod section_1 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".b128", ".b16", ".b32", ".b64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -336,14 +325,7 @@ pub mod section_1 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovType1 {
-                type_,
-                d,
-                a,
-            })
+            Ok(MovType1 { type_, d, a })
         }
     }
-
-
 }
-

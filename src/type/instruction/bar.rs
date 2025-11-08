@@ -19,95 +19,106 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Op {
         And, // .and
-        Or, // .or
+        Or,  // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarrierCtaSyncAligned {
-        pub cta: bool, // {.cta}
-        pub sync: (), // .sync
-        pub aligned: bool, // {.aligned}
-        pub a: GeneralOperand, // a
+        pub cta: bool,                 // {.cta}
+        pub sync: (),                  // .sync
+        pub aligned: bool,             // {.aligned}
+        pub a: GeneralOperand,         // a
         pub b: Option<GeneralOperand>, // {, b}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarrierCtaArriveAligned {
-        pub cta: bool, // {.cta}
-        pub arrive: (), // .arrive
-        pub aligned: bool, // {.aligned}
+        pub cta: bool,         // {.cta}
+        pub arrive: (),        // .arrive
+        pub aligned: bool,     // {.aligned}
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarrierCtaRedPopcAlignedU32 {
-        pub cta: bool, // {.cta}
-        pub red: (), // .red
-        pub popc: (), // .popc
-        pub aligned: bool, // {.aligned}
-        pub u32: (), // .u32
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
+        pub cta: bool,                 // {.cta}
+        pub red: (),                   // .red
+        pub popc: (),                  // .popc
+        pub aligned: bool,             // {.aligned}
+        pub u32: (),                   // .u32
+        pub d: GeneralOperand,         // d
+        pub a: GeneralOperand,         // a
         pub b: Option<GeneralOperand>, // {, b}
-        pub c_op: bool, // {!} operator
-        pub c: GeneralOperand, // {!}c
+        pub c_op: bool,                // {!} operator
+        pub c: GeneralOperand,         // {!}c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarrierCtaRedOpAlignedPred {
-        pub cta: bool, // {.cta}
-        pub red: (), // .red
-        pub op: Op, // .op
-        pub aligned: bool, // {.aligned}
-        pub pred: (), // .pred
-        pub p: GeneralOperand, // p
-        pub a: GeneralOperand, // a
+        pub cta: bool,                 // {.cta}
+        pub red: (),                   // .red
+        pub op: Op,                    // .op
+        pub aligned: bool,             // {.aligned}
+        pub pred: (),                  // .pred
+        pub p: GeneralOperand,         // p
+        pub a: GeneralOperand,         // a
         pub b: Option<GeneralOperand>, // {, b}
-        pub c_op: bool, // {!} operator
-        pub c: GeneralOperand, // {!}c
+        pub c_op: bool,                // {!} operator
+        pub c: GeneralOperand,         // {!}c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarCtaSync {
-        pub cta: bool, // {.cta}
-        pub sync: (), // .sync
-        pub a: GeneralOperand, // a
+        pub cta: bool,                 // {.cta}
+        pub sync: (),                  // .sync
+        pub a: GeneralOperand,         // a
         pub b: Option<GeneralOperand>, // {, b}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarCtaArrive {
-        pub cta: bool, // {.cta}
-        pub arrive: (), // .arrive
+        pub cta: bool,         // {.cta}
+        pub arrive: (),        // .arrive
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarCtaRedPopcU32 {
-        pub cta: bool, // {.cta}
-        pub red: (), // .red
-        pub popc: (), // .popc
-        pub u32: (), // .u32
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
+        pub cta: bool,                 // {.cta}
+        pub red: (),                   // .red
+        pub popc: (),                  // .popc
+        pub u32: (),                   // .u32
+        pub d: GeneralOperand,         // d
+        pub a: GeneralOperand,         // a
         pub b: Option<GeneralOperand>, // {, b}
-        pub c_op: bool, // {!} operator
-        pub c: GeneralOperand, // {!}c
+        pub c_op: bool,                // {!} operator
+        pub c: GeneralOperand,         // {!}c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarCtaRedOpPred {
-        pub cta: bool, // {.cta}
-        pub red: (), // .red
-        pub op: Op, // .op
-        pub pred: (), // .pred
-        pub p: GeneralOperand, // p
-        pub a: GeneralOperand, // a
+        pub cta: bool,                 // {.cta}
+        pub red: (),                   // .red
+        pub op: Op,                    // .op
+        pub pred: (),                  // .pred
+        pub p: GeneralOperand,         // p
+        pub a: GeneralOperand,         // a
         pub b: Option<GeneralOperand>, // {, b}
-        pub c_op: bool, // {!} operator
-        pub c: GeneralOperand, // {!}c
+        pub c_op: bool,                // {!} operator
+        pub c: GeneralOperand,         // {!}c
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::BarCtaArrive;
+pub use section_0::BarCtaRedOpPred;
+pub use section_0::BarCtaRedPopcU32;
+pub use section_0::BarCtaSync;
+pub use section_0::BarrierCtaArriveAligned;
+pub use section_0::BarrierCtaRedOpAlignedPred;
+pub use section_0::BarrierCtaRedPopcAlignedU32;
+pub use section_0::BarrierCtaSyncAligned;
+pub use section_0::Op as Op0;

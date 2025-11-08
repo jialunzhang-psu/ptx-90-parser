@@ -196,9 +196,14 @@ impl UnparserGenerator {
     ) -> String {
         let indent_str = self.indent(indent);
         let mut code = String::new();
-        let (pattern, bindings) = self.choice_variant_pattern_with_bindings(enum_name, variant_name, option);
+        let (pattern, bindings) =
+            self.choice_variant_pattern_with_bindings(enum_name, variant_name, option);
         code.push_str(&format!("{}{} => {{\n", indent_str, pattern));
-        code.push_str(&self.emit_literal_from_modifier_with_bindings(option, &bindings, indent + 1));
+        code.push_str(&self.emit_literal_from_modifier_with_bindings(
+            option,
+            &bindings,
+            indent + 1,
+        ));
         code.push_str(&format!("{}}}\n", indent_str));
         code
     }
@@ -474,15 +479,6 @@ impl UnparserGenerator {
         }
     }
 
-    fn choice_variant_pattern(
-        &self,
-        enum_name: &str,
-        variant_name: &str,
-        option: &AnalyzedModifier,
-    ) -> String {
-        self.choice_variant_pattern_with_bindings(enum_name, variant_name, option).0
-    }
-
     fn choice_variant_pattern_with_bindings(
         &self,
         enum_name: &str,
@@ -496,14 +492,23 @@ impl UnparserGenerator {
                 } else {
                     // Check if this is a .b.n.n.n.n pattern that needs special handling
                     let needs_bindings = self.is_combinable_sequence(items);
-                    
+
                     if needs_bindings {
                         // Bind the actual values so we can combine them
                         let bindings: Vec<String> = (0..items.len())
-                            .map(|i| if i == 0 { "_".to_string() } else { format!("n{}", i) })
+                            .map(|i| {
+                                if i == 0 {
+                                    "_".to_string()
+                                } else {
+                                    format!("n{}", i)
+                                }
+                            })
                             .collect();
                         let args = bindings.join(", ");
-                        (format!("{}::{}({})", enum_name, variant_name, args), bindings)
+                        (
+                            format!("{}::{}({})", enum_name, variant_name, args),
+                            bindings,
+                        )
                     } else {
                         // No bindings needed for regular sequences
                         let args = (0..items.len()).map(|_| "_").collect::<Vec<_>>().join(", ");
@@ -512,14 +517,17 @@ impl UnparserGenerator {
                 }
             }
             AnalyzedModifier::Optional(inner) => {
-                let (inner_pattern, bindings) = self.choice_variant_pattern_with_bindings(enum_name, variant_name, &inner.0);
+                let (inner_pattern, bindings) =
+                    self.choice_variant_pattern_with_bindings(enum_name, variant_name, &inner.0);
                 if inner_pattern.contains("(") {
                     (inner_pattern, bindings)
                 } else {
                     (format!("{}::{}(..)", enum_name, variant_name), vec![])
                 }
             }
-            AnalyzedModifier::Choice { .. } => (format!("{}::{}(..)", enum_name, variant_name), vec![]),
+            AnalyzedModifier::Choice { .. } => {
+                (format!("{}::{}(..)", enum_name, variant_name), vec![])
+            }
             _ => (format!("{}::{}", enum_name, variant_name), vec![]),
         }
     }
@@ -530,15 +538,16 @@ impl UnparserGenerator {
         if items.len() < 2 {
             return false;
         }
-        
+
         // First item should be a directive starting with .
-        let first_is_directive = matches!(&items[0].0, AnalyzedModifier::Atom((ident, _)) if ident.starts_with('.'));
-        
+        let first_is_directive =
+            matches!(&items[0].0, AnalyzedModifier::Atom((ident, _)) if ident.starts_with('.'));
+
         // Rest should be Choice items (like .n = { 0, 1, 2, ... })
-        let rest_are_choices = items[1..].iter().all(|(modifier, _)| {
-            matches!(modifier, AnalyzedModifier::Choice { .. })
-        });
-        
+        let rest_are_choices = items[1..]
+            .iter()
+            .all(|(modifier, _)| matches!(modifier, AnalyzedModifier::Choice { .. }));
+
         first_is_directive && rest_are_choices
     }
 
@@ -549,7 +558,10 @@ impl UnparserGenerator {
         let indent_str = self.indent(indent);
         // Extract the last character/digit from the debug representation of the enum variant
         // For _0 -> "0", for _7 -> "7", for Buffer -> "r", etc.
-        format!("{}combined.push_str(format!(\"{{:?}}\", {}).trim_start_matches('_'));\n", indent_str, binding)
+        format!(
+            "{}combined.push_str(format!(\"{{:?}}\", {}).trim_start_matches('_'));\n",
+            indent_str, binding
+        )
     }
 
     fn emit_literal_from_modifier_with_bindings(
@@ -571,21 +583,25 @@ impl UnparserGenerator {
                     let directive_name = if let AnalyzedModifier::Atom((ident, _)) = &seq[0].0 {
                         Self::directive_name(ident)
                     } else {
-                        "b".to_string()  // fallback
+                        "b".to_string() // fallback
                     };
-                    
+
                     let mut code = String::new();
                     let indent_str = self.indent(indent);
-                    
+
                     // Build the combined string by converting each enum value to its string representation
                     // We'll build it piece by piece
-                    code.push_str(&format!("{}let mut combined = String::new();\n", indent_str));
-                    
-                    for binding in &bindings[1..] {  // Skip first binding which is "_"
+                    code.push_str(&format!(
+                        "{}let mut combined = String::new();\n",
+                        indent_str
+                    ));
+
+                    for binding in &bindings[1..] {
+                        // Skip first binding which is "_"
                         // Each binding is an enum, we need to match it and convert to string
                         code.push_str(&self.generate_enum_to_char(binding, indent));
                     }
-                    
+
                     // Push as DOT + identifier (two tokens)
                     code.push_str(&format!("{}tokens.push(PtxToken::Dot);\n", indent_str));
                     code.push_str(&format!("{}tokens.push(PtxToken::Identifier(format!(\"{{}}{{}}\", \"{}\", combined).into()));\n", indent_str, directive_name));
@@ -593,7 +609,7 @@ impl UnparserGenerator {
                 } else {
                     self.emit_modifier_literal(seq, indent)
                 }
-            },
+            }
             AnalyzedModifier::Optional(inner) => {
                 let (nested, _) = inner.as_ref();
                 self.emit_literal_from_modifier_with_bindings(nested, bindings, indent)
@@ -601,7 +617,9 @@ impl UnparserGenerator {
             AnalyzedModifier::Choice { options, .. } => {
                 let mut code = String::new();
                 for (option, _) in options {
-                    code.push_str(&self.emit_literal_from_modifier_with_bindings(option, bindings, indent));
+                    code.push_str(
+                        &self.emit_literal_from_modifier_with_bindings(option, bindings, indent),
+                    );
                 }
                 code
             }
@@ -642,4 +660,74 @@ pub fn generate_unparser_mod_rs_content(modules: &[(String, Vec<(String, String)
     output.push_str("}\n");
 
     output
+}
+
+/// Generate complete unparser file from PTX specification content
+/// Returns (generated_code, module_info(module_name, instruction_structs))
+pub fn generate_unparser_file(
+    spec_content: &str,
+    file_name: &str,
+    module_name: &str,
+) -> Result<(String, (String, Vec<(String, String)>)), Box<dyn std::error::Error>> {
+    use crate::analyzer::Analyzer;
+
+    let sections = crate::parse_spec_with_name(spec_content, file_name)?;
+
+    if sections.is_empty() {
+        return Err("No sections found in file".into());
+    }
+
+    let mut analyzer = Analyzer::new();
+    let analyzed_sections = analyzer.analyze_sections(&sections);
+
+    if analyzed_sections.is_empty() {
+        return Err("No instructions found".into());
+    }
+
+    let mut all_outputs = Vec::new();
+    let mut unparser_gen = UnparserGenerator::new();
+
+    for (section_idx, section) in analyzed_sections.iter().enumerate() {
+        let generated = unparser_gen.generate(section, section_idx, module_name);
+
+        if !generated.code.trim().is_empty() {
+            all_outputs.push(generated);
+        }
+    }
+
+    if all_outputs.is_empty() {
+        return Err("No instructions found".into());
+    }
+
+    let all_instruction_structs: Vec<(String, String)> = all_outputs
+        .iter()
+        .flat_map(|output| {
+            let section_name = output.module_name.clone();
+            output
+                .instruction_structs
+                .iter()
+                .map(move |struct_name| (section_name.clone(), struct_name.clone()))
+        })
+        .collect();
+
+    let mut output = String::new();
+    output.push_str("//! Original PTX specification:\n");
+    output.push_str("//!\n");
+    for line in spec_content.lines() {
+        output.push_str("//! ");
+        output.push_str(line);
+        output.push_str("\n");
+    }
+    output.push_str("\n");
+    output.push_str("#![allow(unused)]\n");
+    output.push_str("\n");
+    output.push_str(&UnparserGenerator::generate_imports());
+    output.push_str("\n\n");
+
+    for gen_output in all_outputs.iter() {
+        output.push_str(&gen_output.code);
+        output.push_str("\n");
+    }
+
+    Ok((output, (module_name.to_string(), all_instruction_structs)))
 }

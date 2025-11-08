@@ -10,10 +10,13 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct ElectSync {
-        pub sync: (), // .sync
-        pub d: GeneralOperand, // first operand of d|p
-        pub p: GeneralOperand, // second operand of d|p
+        pub sync: (),                   // .sync
+        pub d: GeneralOperand,          // first operand of d|p
+        pub p: GeneralOperand,          // second operand of d|p
         pub membermask: GeneralOperand, // membermask
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::ElectSync;

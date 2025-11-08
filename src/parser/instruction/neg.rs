@@ -2,10 +2,10 @@
 //!
 //! neg.type  d, a;
 //! .type = { .s16, .s32, .s64 };
-//! 
+//!
 //! neg{.ftz}.f32  d, a;
 //! neg.f64        d, a;
-//! 
+//!
 //! neg{.ftz}.f16    d, a;
 //! neg{.ftz}.f16x2  d, a;
 //! neg.bf16         d, a;
@@ -55,9 +55,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".s16", ".s32", ".s64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -74,14 +80,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(NegType {
-                type_,
-                d,
-                a,
-            })
+            Ok(NegType { type_, d, a })
         }
     }
-
 
     impl PtxParser for NegFtzF32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -102,15 +103,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(NegFtzF32 {
-                ftz,
-                f32,
-                d,
-                a,
-            })
+            Ok(NegFtzF32 { ftz, f32, d, a })
         }
     }
-
 
     impl PtxParser for NegF64 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -125,14 +120,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(NegF64 {
-                f64,
-                d,
-                a,
-            })
+            Ok(NegF64 { f64, d, a })
         }
     }
-
 
     impl PtxParser for NegFtzF16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -153,15 +143,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(NegFtzF16 {
-                ftz,
-                f16,
-                d,
-                a,
-            })
+            Ok(NegFtzF16 { ftz, f16, d, a })
         }
     }
-
 
     impl PtxParser for NegFtzF16x2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -182,15 +166,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(NegFtzF16x2 {
-                ftz,
-                f16x2,
-                d,
-                a,
-            })
+            Ok(NegFtzF16x2 { ftz, f16x2, d, a })
         }
     }
-
 
     impl PtxParser for NegBf16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -205,14 +183,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(NegBf16 {
-                bf16,
-                d,
-                a,
-            })
+            Ok(NegBf16 { bf16, d, a })
         }
     }
-
 
     impl PtxParser for NegBf16x2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -227,14 +200,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(NegBf16x2 {
-                bf16x2,
-                d,
-                a,
-            })
+            Ok(NegBf16x2 { bf16x2, d, a })
         }
     }
-
-
 }
-

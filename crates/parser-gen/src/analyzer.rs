@@ -16,7 +16,11 @@ fn modifier_text_length(modifier: &AnalyzedModifier) -> usize {
         }
         AnalyzedModifier::Choice { options, .. } => {
             // For choices, use the maximum length among options
-            options.iter().map(|(m, _)| modifier_text_length(m)).max().unwrap_or(0)
+            options
+                .iter()
+                .map(|(m, _)| modifier_text_length(m))
+                .max()
+                .unwrap_or(0)
         }
         AnalyzedModifier::Optional(inner) => modifier_text_length(&inner.0),
     }
@@ -306,7 +310,7 @@ impl Analyzer {
                     if !options.is_empty() {
                         // Sort options by length (descending) to try longest matches first
                         options.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
-                        
+
                         AnalyzedOperandElement::Choice {
                             base: (ident.clone(), "".to_string()),
                             options,
@@ -379,7 +383,7 @@ impl Analyzer {
                         .iter()
                         .map(|choice| (self.analyze_modifier(choice), "".to_string()))
                         .collect();
-                    
+
                     // Sort by text length (descending) to try longest matches first
                     // This prevents ".s16" from matching before ".s16x2"
                     options.sort_by(|a, b| {
@@ -387,7 +391,7 @@ impl Analyzer {
                         let len_b = modifier_text_length(&b.0);
                         len_b.cmp(&len_a) // Descending order
                     });
-                    
+
                     AnalyzedModifier::Choice {
                         base: (ident.clone(), "".to_string()),
                         options,
@@ -406,18 +410,16 @@ impl Analyzer {
                             if let Some(choices) = self.parameters.get(ident) {
                                 let mut options: Vec<_> = choices
                                     .iter()
-                                    .map(|choice| {
-                                        (self.analyze_modifier(choice), "".to_string())
-                                    })
+                                    .map(|choice| (self.analyze_modifier(choice), "".to_string()))
                                     .collect();
-                                
+
                                 // Sort by text length (descending)
                                 options.sort_by(|a, b| {
                                     let len_a = modifier_text_length(&a.0);
                                     let len_b = modifier_text_length(&b.0);
                                     len_b.cmp(&len_a)
                                 });
-                                
+
                                 (
                                     AnalyzedModifier::Choice {
                                         base: (ident.clone(), "".to_string()),
@@ -442,14 +444,14 @@ impl Analyzer {
                         .iter()
                         .map(|choice| (self.analyze_modifier(choice), "".to_string()))
                         .collect();
-                    
+
                     // Sort by text length (descending)
                     options.sort_by(|a, b| {
                         let len_a = modifier_text_length(&a.0);
                         let len_b = modifier_text_length(&b.0);
                         len_b.cmp(&len_a)
                     });
-                    
+
                     AnalyzedModifier::Choice {
                         base: (ident.clone(), "".to_string()),
                         options,

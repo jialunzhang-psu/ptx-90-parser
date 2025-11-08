@@ -3,7 +3,7 @@
 //! div.type  d, a, b;
 //! .type = { .u16, .u32, .u64,
 //! .s16, .s32, .s64 };
-//! 
+//!
 //! div.approx{.ftz}.f32  d, a, b;  // fast, approximate divide
 //! div.full{.ftz}.f32    d, a, b;  // full-range approximate divide
 //! div.rnd{.ftz}.f32     d, a, b;  // IEEE 754 compliant rounding
@@ -36,7 +36,7 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct DivType {
-        pub type_: Type, // .type
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -44,9 +44,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct DivApproxFtzF32 {
-        pub approx: (), // .approx
-        pub ftz: bool, // {.ftz}
-        pub f32: (), // .f32
+        pub approx: (),        // .approx
+        pub ftz: bool,         // {.ftz}
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -54,9 +54,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct DivFullFtzF32 {
-        pub full: (), // .full
-        pub ftz: bool, // {.ftz}
-        pub f32: (), // .f32
+        pub full: (),          // .full
+        pub ftz: bool,         // {.ftz}
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -64,9 +64,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct DivRndFtzF32 {
-        pub rnd: Rnd, // .rnd
-        pub ftz: bool, // {.ftz}
-        pub f32: (), // .f32
+        pub rnd: Rnd,          // .rnd
+        pub ftz: bool,         // {.ftz}
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -74,11 +74,20 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct DivRndF64 {
-        pub rnd: Rnd, // .rnd
-        pub f64: (), // .f64
+        pub rnd: Rnd,          // .rnd
+        pub f64: (),           // .f64
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::DivApproxFtzF32;
+pub use section_0::DivFullFtzF32;
+pub use section_0::DivRndF64;
+pub use section_0::DivRndFtzF32;
+pub use section_0::DivType;
+pub use section_0::Rnd as Rnd0;
+pub use section_0::Type as Type0;

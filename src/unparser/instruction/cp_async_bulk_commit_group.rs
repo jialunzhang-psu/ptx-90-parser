@@ -14,12 +14,10 @@ pub mod section_0 {
     impl PtxUnparser for CpAsyncBulkCommitGroup {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "cp");
-                    push_directive(tokens, "async");
-                    push_directive(tokens, "bulk");
-                    push_directive(tokens, "commit_group");
+            push_directive(tokens, "async");
+            push_directive(tokens, "bulk");
+            push_directive(tokens, "commit_group");
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

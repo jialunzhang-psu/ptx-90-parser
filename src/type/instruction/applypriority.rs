@@ -16,10 +16,14 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct ApplypriorityGlobalLevelEvictionPriority {
-        pub global: bool, // {.global}
+        pub global: bool,                                   // {.global}
         pub level_eviction_priority: LevelEvictionPriority, // .level::eviction_priority
-        pub a: AddressOperand, // [a]
-        pub size: GeneralOperand, // size
+        pub a: AddressOperand,                              // [a]
+        pub size: GeneralOperand,                           // size
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::ApplypriorityGlobalLevelEvictionPriority;
+pub use section_0::LevelEvictionPriority as LevelEvictionPriority0;

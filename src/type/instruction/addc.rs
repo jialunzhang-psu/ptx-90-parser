@@ -19,11 +19,15 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AddcCcType {
-        pub cc: bool, // {.cc}
-        pub type_: Type, // .type
+        pub cc: bool,          // {.cc}
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::AddcCcType;
+pub use section_0::Type as Type0;

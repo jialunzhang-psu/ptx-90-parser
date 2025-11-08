@@ -14,21 +14,19 @@ pub mod section_0 {
     impl PtxUnparser for StBulkWeakSharedCta {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "st");
-                    push_directive(tokens, "bulk");
-                    if self.weak {
-                            push_directive(tokens, "weak");
-                    }
-                    if self.shared_cta {
-                            push_directive(tokens, "shared::cta");
-                    }
-                    self.a.unparse_tokens(tokens);
+            push_directive(tokens, "bulk");
+            if self.weak {
+                push_directive(tokens, "weak");
+            }
+            if self.shared_cta {
+                push_directive(tokens, "shared::cta");
+            }
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.size.unparse_tokens(tokens);
+            self.size.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.initval.unparse_tokens(tokens);
+            self.initval.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

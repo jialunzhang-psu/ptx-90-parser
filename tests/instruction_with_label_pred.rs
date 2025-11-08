@@ -1,16 +1,12 @@
 mod util;
 
-use ptx_parser::{
-    r#type::common::Instruction,
-    unparser::PtxUnparser,
-    unlexer::PtxUnlexer,
-};
+use ptx_parser::{PtxUnlexer, PtxUnparser, r#type::Instruction};
 
 #[test]
 fn test_instruction_with_label_only() {
     let input = "loop_start: add.s32 %r1, %r2, %r3;";
     let result: Instruction = util::parse(input);
-    
+
     assert_eq!(result.label, Some("loop_start".to_string()));
     assert_eq!(result.predicate, None);
 }
@@ -19,10 +15,10 @@ fn test_instruction_with_label_only() {
 fn test_instruction_with_predicate_only() {
     let input = "@%p0 bra exit_label;";
     let result: Instruction = util::parse(input);
-    
+
     assert_eq!(result.label, None);
     assert!(result.predicate.is_some());
-    
+
     let predicate = result.predicate.unwrap();
     assert_eq!(predicate.negated, false);
 }
@@ -31,10 +27,10 @@ fn test_instruction_with_predicate_only() {
 fn test_instruction_with_negated_predicate() {
     let input = "@!%p0 add.s32 %r1, %r2, %r3;";
     let result: Instruction = util::parse(input);
-    
+
     assert_eq!(result.label, None);
     assert!(result.predicate.is_some());
-    
+
     let predicate = result.predicate.unwrap();
     assert_eq!(predicate.negated, true);
 }
@@ -43,10 +39,10 @@ fn test_instruction_with_negated_predicate() {
 fn test_instruction_with_label_and_predicate() {
     let input = "my_label: @%p1 setp.eq.s32 %p0, %r1, %r2;";
     let result: Instruction = util::parse(input);
-    
+
     assert_eq!(result.label, Some("my_label".to_string()));
     assert!(result.predicate.is_some());
-    
+
     let predicate = result.predicate.unwrap();
     assert_eq!(predicate.negated, false);
 }
@@ -55,10 +51,10 @@ fn test_instruction_with_label_and_predicate() {
 fn test_instruction_with_label_and_negated_predicate() {
     let input = "exit_point: @!%p0 ret;";
     let result: Instruction = util::parse(input);
-    
+
     assert_eq!(result.label, Some("exit_point".to_string()));
     assert!(result.predicate.is_some());
-    
+
     let predicate = result.predicate.unwrap();
     assert_eq!(predicate.negated, true);
 }
@@ -67,7 +63,7 @@ fn test_instruction_with_label_and_negated_predicate() {
 fn test_instruction_without_label_or_predicate() {
     let input = "mov.u32 %r0, %r1;";
     let result: Instruction = util::parse(input);
-    
+
     assert_eq!(result.label, None);
     assert_eq!(result.predicate, None);
 }
@@ -76,7 +72,7 @@ fn test_instruction_without_label_or_predicate() {
 fn test_complex_label_names() {
     let input = "loop_start_123: add.s32 %r1, %r2, %r3;";
     let result: Instruction = util::parse(input);
-    
+
     assert_eq!(result.label, Some("loop_start_123".to_string()));
 }
 
@@ -88,7 +84,7 @@ fn test_multiple_instructions_in_sequence() {
         "loop: @!%p0 bra start;",
         "ret;",
     ];
-    
+
     for input in inputs {
         let result: Instruction = util::parse(input);
         // Just verify they all parse successfully without panicking
@@ -102,7 +98,7 @@ fn test_unparse_instruction_with_label() {
     let parsed: Instruction = util::parse(input);
     let tokens = parsed.to_tokens();
     let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
-    
+
     assert!(unparsed.contains("my_label:"));
     assert!(unparsed.contains("add.s32"));
 }
@@ -113,7 +109,7 @@ fn test_unparse_instruction_with_predicate() {
     let parsed: Instruction = util::parse(input);
     let tokens = parsed.to_tokens();
     let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
-    
+
     assert!(unparsed.contains("@"));
     assert!(unparsed.contains("p0"));
     assert!(unparsed.contains("bra"));
@@ -125,7 +121,7 @@ fn test_unparse_instruction_with_label_and_predicate() {
     let parsed: Instruction = util::parse(input);
     let tokens = parsed.to_tokens();
     let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
-    
+
     eprintln!("Unparsed: {}", unparsed);
     assert!(unparsed.contains("check:"));
     assert!(unparsed.contains("@"));
@@ -140,7 +136,7 @@ fn test_roundtrip_with_label() {
     let parsed: Instruction = util::parse(input);
     let tokens = parsed.to_tokens();
     let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
-    
+
     // Parse the unparsed output again
     let reparsed: Instruction = util::parse(&unparsed);
     assert_eq!(parsed.label, reparsed.label);
@@ -153,7 +149,7 @@ fn test_roundtrip_with_predicate() {
     let parsed: Instruction = util::parse(input);
     let tokens = parsed.to_tokens();
     let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
-    
+
     // Parse the unparsed output again
     let reparsed: Instruction = util::parse(&unparsed);
     assert_eq!(parsed.label, reparsed.label);
@@ -166,7 +162,7 @@ fn test_roundtrip_with_label_and_predicate() {
     let parsed: Instruction = util::parse(input);
     let tokens = parsed.to_tokens();
     let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
-    
+
     // Parse the unparsed output again
     let reparsed: Instruction = util::parse(&unparsed);
     assert_eq!(parsed.label, reparsed.label);
@@ -175,4 +171,3 @@ fn test_roundtrip_with_label_and_predicate() {
         assert_eq!(pred1.negated, pred2.negated);
     }
 }
-

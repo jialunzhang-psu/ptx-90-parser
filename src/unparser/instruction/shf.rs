@@ -16,23 +16,23 @@ pub mod section_0 {
     impl PtxUnparser for ShfLModeB32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "shf");
-                    push_directive(tokens, "l");
-                    match &self.mode {
-                            Mode::Clamp => {
-                                    push_directive(tokens, "clamp");
-                            }
-                            Mode::Wrap => {
-                                    push_directive(tokens, "wrap");
-                            }
-                    }
-                    push_directive(tokens, "b32");
-                    self.d.unparse_tokens(tokens);
+            push_directive(tokens, "l");
+            match &self.mode {
+                Mode::Clamp => {
+                    push_directive(tokens, "clamp");
+                }
+                Mode::Wrap => {
+                    push_directive(tokens, "wrap");
+                }
+            }
+            push_directive(tokens, "b32");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.c.unparse_tokens(tokens);
+            self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -40,26 +40,24 @@ pub mod section_0 {
     impl PtxUnparser for ShfRModeB32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "shf");
-                    push_directive(tokens, "r");
-                    match &self.mode {
-                            Mode::Clamp => {
-                                    push_directive(tokens, "clamp");
-                            }
-                            Mode::Wrap => {
-                                    push_directive(tokens, "wrap");
-                            }
-                    }
-                    push_directive(tokens, "b32");
-                    self.d.unparse_tokens(tokens);
+            push_directive(tokens, "r");
+            match &self.mode {
+                Mode::Clamp => {
+                    push_directive(tokens, "clamp");
+                }
+                Mode::Wrap => {
+                    push_directive(tokens, "wrap");
+                }
+            }
+            push_directive(tokens, "b32");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.c.unparse_tokens(tokens);
+            self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

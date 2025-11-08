@@ -15,7 +15,7 @@ pub mod section_0 {
     impl PtxUnparser for Pmevent {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "pmevent");
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -23,11 +23,9 @@ pub mod section_0 {
     impl PtxUnparser for PmeventMask {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "pmevent");
-                    push_directive(tokens, "mask");
-                    self.a.unparse_tokens(tokens);
+            push_directive(tokens, "mask");
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

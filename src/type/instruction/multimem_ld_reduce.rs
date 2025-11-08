@@ -47,9 +47,9 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
         Cluster, // .cluster
-        Cta, // .cta
-        Gpu, // .gpu
-        Sys, // .sys
+        Cta,     // .cta
+        Gpu,     // .gpu
+        Sys,     // .sys
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -64,7 +64,7 @@ pub mod section_0 {
         Add, // .add
         And, // .and
         Xor, // .xor
-        Or, // .or
+        Or,  // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -91,60 +91,59 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MultimemLdReduceLdsemScopeSsOpType {
-        pub ld_reduce: (), // .ld_reduce
+        pub ld_reduce: (),        // .ld_reduce
         pub ldsem: Option<Ldsem>, // {.ldsem}
         pub scope: Option<Scope>, // {.scope}
-        pub ss: Option<Ss>, // {.ss}
-        pub op: Op, // .op
-        pub type_: Type, // .type
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
+        pub ss: Option<Ss>,       // {.ss}
+        pub op: Op,               // .op
+        pub type_: Type,          // .type
+        pub d: GeneralOperand,    // d
+        pub a: AddressOperand,    // [a]
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MultimemLdReduceWeakSsOpType {
-        pub ld_reduce: (), // .ld_reduce
-        pub weak: (), // .weak
-        pub ss: Option<Ss>, // {.ss}
-        pub op: Op, // .op
-        pub type_: Type, // .type
+        pub ld_reduce: (),     // .ld_reduce
+        pub weak: (),          // .weak
+        pub ss: Option<Ss>,    // {.ss}
+        pub op: Op,            // .op
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MultimemStStsemScopeSsType {
-        pub st: (), // .st
+        pub st: (),               // .st
         pub stsem: Option<Stsem>, // {.stsem}
         pub scope: Option<Scope>, // {.scope}
-        pub ss: Option<Ss>, // {.ss}
-        pub type_: Type, // .type
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
+        pub ss: Option<Ss>,       // {.ss}
+        pub type_: Type,          // .type
+        pub a: AddressOperand,    // [a]
+        pub b: GeneralOperand,    // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MultimemStWeakSsType {
-        pub st: (), // .st
-        pub weak: (), // .weak
-        pub ss: Option<Ss>, // {.ss}
-        pub type_: Type, // .type
+        pub st: (),            // .st
+        pub weak: (),          // .weak
+        pub ss: Option<Ss>,    // {.ss}
+        pub type_: Type,       // .type
         pub a: AddressOperand, // [a]
         pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MultimemRedRedsemScopeSsOpType {
-        pub red: (), // .red
+        pub red: (),                // .red
         pub redsem: Option<Redsem>, // {.redsem}
-        pub scope: Option<Scope>, // {.scope}
-        pub ss: Option<Ss>, // {.ss}
-        pub op: Op, // .op
-        pub type_: Type, // .type
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
+        pub scope: Option<Scope>,   // {.scope}
+        pub ss: Option<Ss>,         // {.ss}
+        pub op: Op,                 // .op
+        pub type_: Type,            // .type
+        pub a: AddressOperand,      // [a]
+        pub b: GeneralOperand,      // b
     }
-
 }
 
 pub mod section_1 {
@@ -159,9 +158,9 @@ pub mod section_1 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
         Cluster, // .cluster
-        Cta, // .cta
-        Gpu, // .gpu
-        Sys, // .sys
+        Cta,     // .cta
+        Gpu,     // .gpu
+        Sys,     // .sys
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -196,13 +195,13 @@ pub mod section_1 {
         E5m2x4, // .e5m2x4
         E4m3x2, // .e4m3x2
         E4m3x4, // .e4m3x4
-        F16x2, // .f16x2
-        Bf16, // .bf16
-        E5m2, // .e5m2
-        E4m3, // .e4m3
-        F16, // .f16
-        F32, // .f32
-        F64, // .f64
+        F16x2,  // .f16x2
+        Bf16,   // .bf16
+        E5m2,   // .e5m2
+        E4m3,   // .e4m3
+        F16,    // .f16
+        F32,    // .f32
+        F64,    // .f64
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -225,74 +224,104 @@ pub mod section_1 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Redtype {
         Bf16x2, // .bf16x2
-        F16x2, // .f16x2
-        Bf16, // .bf16
-        F16, // .f16
-        F32, // .f32
-        F64, // .f64
+        F16x2,  // .f16x2
+        Bf16,   // .bf16
+        F16,    // .f16
+        F32,    // .f32
+        F64,    // .f64
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MultimemLdReduceLdsemScopeSsOpAccPrecVecType {
-        pub ld_reduce: (), // .ld_reduce
-        pub ldsem: Option<Ldsem>, // {.ldsem}
-        pub scope: Option<Scope>, // {.scope}
-        pub ss: Option<Ss>, // {.ss}
-        pub op: Op, // .op
+        pub ld_reduce: (),             // .ld_reduce
+        pub ldsem: Option<Ldsem>,      // {.ldsem}
+        pub scope: Option<Scope>,      // {.scope}
+        pub ss: Option<Ss>,            // {.ss}
+        pub op: Op,                    // .op
         pub acc_prec: Option<AccPrec>, // {.acc_prec}
-        pub vec: Option<Vec>, // {.vec}
-        pub type_: Type, // .type
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
+        pub vec: Option<Vec>,          // {.vec}
+        pub type_: Type,               // .type
+        pub d: GeneralOperand,         // d
+        pub a: AddressOperand,         // [a]
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MultimemLdReduceWeakSsOpAccPrecVecType {
-        pub ld_reduce: (), // .ld_reduce
-        pub weak: (), // .weak
-        pub ss: Option<Ss>, // {.ss}
-        pub op: Op, // .op
+        pub ld_reduce: (),             // .ld_reduce
+        pub weak: (),                  // .weak
+        pub ss: Option<Ss>,            // {.ss}
+        pub op: Op,                    // .op
         pub acc_prec: Option<AccPrec>, // {.acc_prec}
-        pub vec: Option<Vec>, // {.vec}
-        pub type_: Type, // .type
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
+        pub vec: Option<Vec>,          // {.vec}
+        pub type_: Type,               // .type
+        pub d: GeneralOperand,         // d
+        pub a: AddressOperand,         // [a]
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MultimemStStsemScopeSsVecType {
-        pub st: (), // .st
+        pub st: (),               // .st
         pub stsem: Option<Stsem>, // {.stsem}
         pub scope: Option<Scope>, // {.scope}
-        pub ss: Option<Ss>, // {.ss}
-        pub vec: Option<Vec>, // {.vec}
-        pub type_: Type, // .type
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
+        pub ss: Option<Ss>,       // {.ss}
+        pub vec: Option<Vec>,     // {.vec}
+        pub type_: Type,          // .type
+        pub a: AddressOperand,    // [a]
+        pub b: GeneralOperand,    // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MultimemStWeakSsVecType {
-        pub st: (), // .st
-        pub weak: (), // .weak
-        pub ss: Option<Ss>, // {.ss}
-        pub vec: Option<Vec>, // {.vec}
-        pub type_: Type, // .type
+        pub st: (),            // .st
+        pub weak: (),          // .weak
+        pub ss: Option<Ss>,    // {.ss}
+        pub vec: Option<Vec>,  // {.vec}
+        pub type_: Type,       // .type
         pub a: AddressOperand, // [a]
         pub b: GeneralOperand, // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MultimemRedRedsemScopeSsRedopVecRedtype {
-        pub red: (), // .red
+        pub red: (),                // .red
         pub redsem: Option<Redsem>, // {.redsem}
-        pub scope: Option<Scope>, // {.scope}
-        pub ss: Option<Ss>, // {.ss}
-        pub redop: Redop, // .redop
-        pub vec: Option<Vec>, // {.vec}
-        pub redtype: Redtype, // .redtype
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
+        pub scope: Option<Scope>,   // {.scope}
+        pub ss: Option<Ss>,         // {.ss}
+        pub redop: Redop,           // .redop
+        pub vec: Option<Vec>,       // {.vec}
+        pub redtype: Redtype,       // .redtype
+        pub a: AddressOperand,      // [a]
+        pub b: GeneralOperand,      // b
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Ldsem as Ldsem0;
+pub use section_0::MultimemLdReduceLdsemScopeSsOpType;
+pub use section_0::MultimemLdReduceWeakSsOpType;
+pub use section_0::MultimemRedRedsemScopeSsOpType;
+pub use section_0::MultimemStStsemScopeSsType;
+pub use section_0::MultimemStWeakSsType;
+pub use section_0::Op as Op0;
+pub use section_0::Redsem as Redsem0;
+pub use section_0::Scope as Scope0;
+pub use section_0::Ss as Ss0;
+pub use section_0::Stsem as Stsem0;
+pub use section_0::Type as Type0;
+pub use section_1::AccPrec as AccPrec1;
+pub use section_1::Ldsem as Ldsem1;
+pub use section_1::MultimemLdReduceLdsemScopeSsOpAccPrecVecType;
+pub use section_1::MultimemLdReduceWeakSsOpAccPrecVecType;
+pub use section_1::MultimemRedRedsemScopeSsRedopVecRedtype;
+pub use section_1::MultimemStStsemScopeSsVecType;
+pub use section_1::MultimemStWeakSsVecType;
+pub use section_1::Op as Op1;
+pub use section_1::Redop as Redop1;
+pub use section_1::Redsem as Redsem1;
+pub use section_1::Redtype as Redtype1;
+pub use section_1::Scope as Scope1;
+pub use section_1::Ss as Ss1;
+pub use section_1::Stsem as Stsem1;
+pub use section_1::Type as Type1;
+pub use section_1::Vec as Vec1;

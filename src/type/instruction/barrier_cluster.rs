@@ -18,18 +18,23 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarrierClusterArriveSemAligned {
-        pub cluster: (), // .cluster
-        pub arrive: (), // .arrive
+        pub cluster: (),      // .cluster
+        pub arrive: (),       // .arrive
         pub sem: Option<Sem>, // {.sem}
-        pub aligned: bool, // {.aligned}
+        pub aligned: bool,    // {.aligned}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct BarrierClusterWaitAcquireAligned {
-        pub cluster: (), // .cluster
-        pub wait: (), // .wait
+        pub cluster: (),   // .cluster
+        pub wait: (),      // .wait
         pub acquire: bool, // {.acquire}
         pub aligned: bool, // {.aligned}
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::BarrierClusterArriveSemAligned;
+pub use section_0::BarrierClusterWaitAcquireAligned;
+pub use section_0::Sem as Sem0;

@@ -17,11 +17,7 @@ pub mod section_0 {
             stream.expect_string("trap")?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(Trap {
-            })
+            Ok(Trap {})
         }
     }
-
-
 }
-

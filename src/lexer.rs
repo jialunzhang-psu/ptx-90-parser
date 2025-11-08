@@ -3,6 +3,9 @@ use logos::Logos;
 pub use logos::Span;
 
 /// PTX specification token types for lexical analysis.
+///
+/// This enum represents all token types that can appear in PTX assembly code,
+/// including keywords, operators, literals, identifiers, and special markers.
 #[derive(Logos, Debug, Clone, PartialEq, Eq)]
 #[logos(error = LexError)]
 #[logos(skip r"[ \t\r\n]+")]
@@ -90,23 +93,25 @@ impl PtxToken {
     /// Extract the string value from a token, if it has one
     pub fn as_str(&self) -> &str {
         match self {
-            PtxToken::Identifier(s) |
-            PtxToken::DecimalInteger(s) |
-            PtxToken::HexInteger(s) |
-            PtxToken::BinaryInteger(s) |
-            PtxToken::OctalInteger(s) |
-            PtxToken::Float(s) |
-            PtxToken::FloatExponent(s) |
-            PtxToken::HexFloat(s) |
-            PtxToken::Register(s) |
-            PtxToken::StringLiteral(s) => s.as_str(),
+            PtxToken::Identifier(s)
+            | PtxToken::DecimalInteger(s)
+            | PtxToken::HexInteger(s)
+            | PtxToken::BinaryInteger(s)
+            | PtxToken::OctalInteger(s)
+            | PtxToken::Float(s)
+            | PtxToken::FloatExponent(s)
+            | PtxToken::HexFloat(s)
+            | PtxToken::Register(s)
+            | PtxToken::StringLiteral(s) => s.as_str(),
             _ => "",
         }
     }
 }
 
+/// Lexical analysis error type.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct LexError {
+    /// The span in the source code where the error occurred
     pub span: Span,
 }
 
@@ -116,6 +121,28 @@ impl From<Span> for LexError {
     }
 }
 
+/// Tokenize a PTX source string into a sequence of tokens with their spans.
+///
+/// This is the main entry point for lexical analysis. It converts raw PTX
+/// source code into a vector of tokens that can be parsed.
+///
+/// # Arguments
+///
+/// * `source` - The PTX source code as a string slice
+///
+/// # Returns
+///
+/// Returns a vector of tuples containing each token and its span in the source,
+/// or a `LexError` if tokenization fails.
+///
+/// # Example
+///
+/// ```no_run
+/// use ptx_parser::tokenize;
+///
+/// let source = ".version 8.5\n.target sm_90";
+/// let tokens = tokenize(source).expect("Failed to tokenize");
+/// ```
 pub fn tokenize(source: &str) -> Result<Vec<(PtxToken, Span)>, LexError> {
     let mut lexer = PtxToken::lexer(source);
     let mut tokens = Vec::new();

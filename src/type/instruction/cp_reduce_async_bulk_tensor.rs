@@ -43,13 +43,13 @@ pub mod section_0 {
         Dec, // .dec
         And, // .and
         Xor, // .xor
-        Or, // .or
+        Or,  // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum LoadMode {
         Im2colNoOffs, // .im2col_no_offs
-        Tile, // .tile
+        Tile,         // .tile
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -59,20 +59,29 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CpReduceAsyncBulkTensorDimDstSrcRedopLoadModeCompletionMechanismLevelCacheHint {
-        pub reduce: (), // .reduce
-        pub async_: (), // .async
-        pub bulk: (), // .bulk
-        pub tensor: (), // .tensor
-        pub dim: Dim, // .dim
-        pub dst: Dst, // .dst
-        pub src: Src, // .src
-        pub redop: Redop, // .redOp
-        pub load_mode: Option<LoadMode>, // {.load_mode}
+        pub reduce: (),                                // .reduce
+        pub async_: (),                                // .async
+        pub bulk: (),                                  // .bulk
+        pub tensor: (),                                // .tensor
+        pub dim: Dim,                                  // .dim
+        pub dst: Dst,                                  // .dst
+        pub src: Src,                                  // .src
+        pub redop: Redop,                              // .redOp
+        pub load_mode: Option<LoadMode>,               // {.load_mode}
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
-        pub level_cache_hint: bool, // {.level::cache_hint}
-        pub tensormap: TexHandler2, // [tensorMap, tensorCoords]
-        pub srcmem: AddressOperand, // [srcMem]
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub level_cache_hint: bool,                    // {.level::cache_hint}
+        pub tensormap: TexHandler2,                    // [tensorMap, tensorCoords]
+        pub srcmem: AddressOperand,                    // [srcMem]
+        pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::CompletionMechanism as CompletionMechanism0;
+pub use section_0::CpReduceAsyncBulkTensorDimDstSrcRedopLoadModeCompletionMechanismLevelCacheHint;
+pub use section_0::Dim as Dim0;
+pub use section_0::Dst as Dst0;
+pub use section_0::LoadMode as LoadMode0;
+pub use section_0::Redop as Redop0;
+pub use section_0::Src as Src0;

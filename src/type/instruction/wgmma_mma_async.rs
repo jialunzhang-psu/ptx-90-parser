@@ -103,18 +103,18 @@ pub mod section_0 {
         M64n240k16, // .m64n240k16
         M64n248k16, // .m64n248k16
         M64n256k16, // .m64n256k16
-        M64n16k16, // .m64n16k16
-        M64n24k16, // .m64n24k16
-        M64n32k16, // .m64n32k16
-        M64n40k16, // .m64n40k16
-        M64n48k16, // .m64n48k16
-        M64n56k16, // .m64n56k16
-        M64n64k16, // .m64n64k16
-        M64n72k16, // .m64n72k16
-        M64n80k16, // .m64n80k16
-        M64n88k16, // .m64n88k16
-        M64n96k16, // .m64n96k16
-        M64n8k16, // .m64n8k16
+        M64n16k16,  // .m64n16k16
+        M64n24k16,  // .m64n24k16
+        M64n32k16,  // .m64n32k16
+        M64n40k16,  // .m64n40k16
+        M64n48k16,  // .m64n48k16
+        M64n56k16,  // .m64n56k16
+        M64n64k16,  // .m64n64k16
+        M64n72k16,  // .m64n72k16
+        M64n80k16,  // .m64n80k16
+        M64n88k16,  // .m64n88k16
+        M64n96k16,  // .m64n96k16
+        M64n8k16,   // .m64n8k16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -125,17 +125,17 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeF16F16 {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub dtype: Dtype, // .dtype
-        pub f16: (), // .f16
-        pub f162: (), // .f16
-        pub d: GeneralOperand, // d
-        pub a_desc: GeneralOperand, // a-desc
-        pub b_desc: GeneralOperand, // b-desc
-        pub scale_d: GeneralOperand, // scale-d
+        pub mma_async: (),               // .mma_async
+        pub sync: (),                    // .sync
+        pub aligned: (),                 // .aligned
+        pub shape: Shape,                // .shape
+        pub dtype: Dtype,                // .dtype
+        pub f16: (),                     // .f16
+        pub f162: (),                    // .f16
+        pub d: GeneralOperand,           // d
+        pub a_desc: GeneralOperand,      // a-desc
+        pub b_desc: GeneralOperand,      // b-desc
+        pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_a: GeneralOperand, // imm-trans-a
@@ -144,22 +144,21 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeF16F161 {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub dtype: Dtype, // .dtype
-        pub f16: (), // .f16
-        pub f162: (), // .f16
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b_desc: GeneralOperand, // b-desc
-        pub scale_d: GeneralOperand, // scale-d
+        pub mma_async: (),               // .mma_async
+        pub sync: (),                    // .sync
+        pub aligned: (),                 // .aligned
+        pub shape: Shape,                // .shape
+        pub dtype: Dtype,                // .dtype
+        pub f16: (),                     // .f16
+        pub f162: (),                    // .f16
+        pub d: GeneralOperand,           // d
+        pub a: GeneralOperand,           // a
+        pub b_desc: GeneralOperand,      // b-desc
+        pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_b: GeneralOperand, // imm-trans-b
     }
-
 }
 
 pub mod section_1 {
@@ -187,18 +186,18 @@ pub mod section_1 {
         M64n240k16, // .m64n240k16
         M64n248k16, // .m64n248k16
         M64n256k16, // .m64n256k16
-        M64n16k16, // .m64n16k16
-        M64n24k16, // .m64n24k16
-        M64n32k16, // .m64n32k16
-        M64n40k16, // .m64n40k16
-        M64n48k16, // .m64n48k16
-        M64n56k16, // .m64n56k16
-        M64n64k16, // .m64n64k16
-        M64n72k16, // .m64n72k16
-        M64n80k16, // .m64n80k16
-        M64n88k16, // .m64n88k16
-        M64n96k16, // .m64n96k16
-        M64n8k16, // .m64n8k16
+        M64n16k16,  // .m64n16k16
+        M64n24k16,  // .m64n24k16
+        M64n32k16,  // .m64n32k16
+        M64n40k16,  // .m64n40k16
+        M64n48k16,  // .m64n48k16
+        M64n56k16,  // .m64n56k16
+        M64n64k16,  // .m64n64k16
+        M64n72k16,  // .m64n72k16
+        M64n80k16,  // .m64n80k16
+        M64n88k16,  // .m64n88k16
+        M64n96k16,  // .m64n96k16
+        M64n8k16,   // .m64n8k16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -208,17 +207,17 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeBf16Bf16 {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub dtype: Dtype, // .dtype
-        pub bf16: (), // .bf16
-        pub bf162: (), // .bf16
-        pub d: GeneralOperand, // d
-        pub a_desc: GeneralOperand, // a-desc
-        pub b_desc: GeneralOperand, // b-desc
-        pub scale_d: GeneralOperand, // scale-d
+        pub mma_async: (),               // .mma_async
+        pub sync: (),                    // .sync
+        pub aligned: (),                 // .aligned
+        pub shape: Shape,                // .shape
+        pub dtype: Dtype,                // .dtype
+        pub bf16: (),                    // .bf16
+        pub bf162: (),                   // .bf16
+        pub d: GeneralOperand,           // d
+        pub a_desc: GeneralOperand,      // a-desc
+        pub b_desc: GeneralOperand,      // b-desc
+        pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_a: GeneralOperand, // imm-trans-a
@@ -227,22 +226,21 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeBf16Bf161 {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub dtype: Dtype, // .dtype
-        pub bf16: (), // .bf16
-        pub bf162: (), // .bf16
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b_desc: GeneralOperand, // b-desc
-        pub scale_d: GeneralOperand, // scale-d
+        pub mma_async: (),               // .mma_async
+        pub sync: (),                    // .sync
+        pub aligned: (),                 // .aligned
+        pub shape: Shape,                // .shape
+        pub dtype: Dtype,                // .dtype
+        pub bf16: (),                    // .bf16
+        pub bf162: (),                   // .bf16
+        pub d: GeneralOperand,           // d
+        pub a: GeneralOperand,           // a
+        pub b_desc: GeneralOperand,      // b-desc
+        pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_b: GeneralOperand, // imm-trans-b
     }
-
 }
 
 pub mod section_2 {
@@ -270,18 +268,18 @@ pub mod section_2 {
         M64n240k8, // .m64n240k8
         M64n248k8, // .m64n248k8
         M64n256k8, // .m64n256k8
-        M64n16k8, // .m64n16k8
-        M64n24k8, // .m64n24k8
-        M64n32k8, // .m64n32k8
-        M64n40k8, // .m64n40k8
-        M64n48k8, // .m64n48k8
-        M64n56k8, // .m64n56k8
-        M64n64k8, // .m64n64k8
-        M64n72k8, // .m64n72k8
-        M64n80k8, // .m64n80k8
-        M64n88k8, // .m64n88k8
-        M64n96k8, // .m64n96k8
-        M64n8k8, // .m64n8k8
+        M64n16k8,  // .m64n16k8
+        M64n24k8,  // .m64n24k8
+        M64n32k8,  // .m64n32k8
+        M64n40k8,  // .m64n40k8
+        M64n48k8,  // .m64n48k8
+        M64n56k8,  // .m64n56k8
+        M64n64k8,  // .m64n64k8
+        M64n72k8,  // .m64n72k8
+        M64n80k8,  // .m64n80k8
+        M64n88k8,  // .m64n88k8
+        M64n96k8,  // .m64n96k8
+        M64n8k8,   // .m64n8k8
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -291,38 +289,37 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeTf32Tf32 {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub dtype: Dtype, // .dtype
-        pub tf32: (), // .tf32
-        pub tf322: (), // .tf32
-        pub d: GeneralOperand, // d
-        pub a_desc: GeneralOperand, // a-desc
-        pub b_desc: GeneralOperand, // b-desc
-        pub scale_d: GeneralOperand, // scale-d
+        pub mma_async: (),               // .mma_async
+        pub sync: (),                    // .sync
+        pub aligned: (),                 // .aligned
+        pub shape: Shape,                // .shape
+        pub dtype: Dtype,                // .dtype
+        pub tf32: (),                    // .tf32
+        pub tf322: (),                   // .tf32
+        pub d: GeneralOperand,           // d
+        pub a_desc: GeneralOperand,      // a-desc
+        pub b_desc: GeneralOperand,      // b-desc
+        pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeTf32Tf321 {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub dtype: Dtype, // .dtype
-        pub tf32: (), // .tf32
-        pub tf322: (), // .tf32
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b_desc: GeneralOperand, // b-desc
-        pub scale_d: GeneralOperand, // scale-d
+        pub mma_async: (),               // .mma_async
+        pub sync: (),                    // .sync
+        pub aligned: (),                 // .aligned
+        pub shape: Shape,                // .shape
+        pub dtype: Dtype,                // .dtype
+        pub tf32: (),                    // .tf32
+        pub tf322: (),                   // .tf32
+        pub d: GeneralOperand,           // d
+        pub a: GeneralOperand,           // a
+        pub b_desc: GeneralOperand,      // b-desc
+        pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
     }
-
 }
 
 pub mod section_3 {
@@ -350,18 +347,18 @@ pub mod section_3 {
         M64n240k32, // .m64n240k32
         M64n248k32, // .m64n248k32
         M64n256k32, // .m64n256k32
-        M64n16k32, // .m64n16k32
-        M64n24k32, // .m64n24k32
-        M64n32k32, // .m64n32k32
-        M64n40k32, // .m64n40k32
-        M64n48k32, // .m64n48k32
-        M64n56k32, // .m64n56k32
-        M64n64k32, // .m64n64k32
-        M64n72k32, // .m64n72k32
-        M64n80k32, // .m64n80k32
-        M64n88k32, // .m64n88k32
-        M64n96k32, // .m64n96k32
-        M64n8k32, // .m64n8k32
+        M64n16k32,  // .m64n16k32
+        M64n24k32,  // .m64n24k32
+        M64n32k32,  // .m64n32k32
+        M64n40k32,  // .m64n40k32
+        M64n48k32,  // .m64n48k32
+        M64n56k32,  // .m64n56k32
+        M64n64k32,  // .m64n64k32
+        M64n72k32,  // .m64n72k32
+        M64n80k32,  // .m64n80k32
+        M64n88k32,  // .m64n88k32
+        M64n96k32,  // .m64n96k32
+        M64n8k32,   // .m64n8k32
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -384,38 +381,37 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeAtypeBtype {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub d: GeneralOperand, // d
-        pub a_desc: GeneralOperand, // a-desc
-        pub b_desc: GeneralOperand, // b-desc
-        pub scale_d: GeneralOperand, // scale-d
+        pub mma_async: (),               // .mma_async
+        pub sync: (),                    // .sync
+        pub aligned: (),                 // .aligned
+        pub shape: Shape,                // .shape
+        pub dtype: Dtype,                // .dtype
+        pub atype: Atype,                // .atype
+        pub btype: Btype,                // .btype
+        pub d: GeneralOperand,           // d
+        pub a_desc: GeneralOperand,      // a-desc
+        pub b_desc: GeneralOperand,      // b-desc
+        pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeAtypeBtype1 {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b_desc: GeneralOperand, // b-desc
-        pub scale_d: GeneralOperand, // scale-d
+        pub mma_async: (),               // .mma_async
+        pub sync: (),                    // .sync
+        pub aligned: (),                 // .aligned
+        pub shape: Shape,                // .shape
+        pub dtype: Dtype,                // .dtype
+        pub atype: Atype,                // .atype
+        pub btype: Btype,                // .btype
+        pub d: GeneralOperand,           // d
+        pub a: GeneralOperand,           // a
+        pub b_desc: GeneralOperand,      // b-desc
+        pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
     }
-
 }
 
 pub mod section_4 {
@@ -431,14 +427,14 @@ pub mod section_4 {
         M64n192k32, // .m64n192k32
         M64n208k32, // .m64n208k32
         M64n224k32, // .m64n224k32
-        M64n16k32, // .m64n16k32
-        M64n24k32, // .m64n24k32
-        M64n32k32, // .m64n32k32
-        M64n48k32, // .m64n48k32
-        M64n64k32, // .m64n64k32
-        M64n80k32, // .m64n80k32
-        M64n96k32, // .m64n96k32
-        M64n8k32, // .m64n8k32
+        M64n16k32,  // .m64n16k32
+        M64n24k32,  // .m64n24k32
+        M64n32k32,  // .m64n32k32
+        M64n48k32,  // .m64n48k32
+        M64n64k32,  // .m64n64k32
+        M64n80k32,  // .m64n80k32
+        M64n96k32,  // .m64n96k32
+        M64n8k32,   // .m64n8k32
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -455,36 +451,35 @@ pub mod section_4 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeSatfiniteS32AtypeBtype {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub satfinite: bool, // {.satfinite}
-        pub s32: (), // .s32
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub d: GeneralOperand, // d
-        pub a_desc: GeneralOperand, // a-desc
-        pub b_desc: GeneralOperand, // b-desc
+        pub mma_async: (),           // .mma_async
+        pub sync: (),                // .sync
+        pub aligned: (),             // .aligned
+        pub shape: Shape,            // .shape
+        pub satfinite: bool,         // {.satfinite}
+        pub s32: (),                 // .s32
+        pub atype: Atype,            // .atype
+        pub btype: Btype,            // .btype
+        pub d: GeneralOperand,       // d
+        pub a_desc: GeneralOperand,  // a-desc
+        pub b_desc: GeneralOperand,  // b-desc
         pub scale_d: GeneralOperand, // scale-d
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeSatfiniteS32AtypeBtype1 {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub satfinite: bool, // {.satfinite}
-        pub s32: (), // .s32
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b_desc: GeneralOperand, // b-desc
+        pub mma_async: (),           // .mma_async
+        pub sync: (),                // .sync
+        pub aligned: (),             // .aligned
+        pub shape: Shape,            // .shape
+        pub satfinite: bool,         // {.satfinite}
+        pub s32: (),                 // .s32
+        pub atype: Atype,            // .atype
+        pub btype: Btype,            // .btype
+        pub d: GeneralOperand,       // d
+        pub a: GeneralOperand,       // a
+        pub b_desc: GeneralOperand,  // b-desc
         pub scale_d: GeneralOperand, // scale-d
     }
-
 }
 
 pub mod section_5 {
@@ -502,14 +497,14 @@ pub mod section_5 {
         M64n224k256, // .m64n224k256
         M64n240k256, // .m64n240k256
         M64n256k256, // .m64n256k256
-        M64n16k256, // .m64n16k256
-        M64n24k256, // .m64n24k256
-        M64n32k256, // .m64n32k256
-        M64n48k256, // .m64n48k256
-        M64n64k256, // .m64n64k256
-        M64n80k256, // .m64n80k256
-        M64n96k256, // .m64n96k256
-        M64n8k256, // .m64n8k256
+        M64n16k256,  // .m64n16k256
+        M64n24k256,  // .m64n24k256
+        M64n32k256,  // .m64n32k256
+        M64n48k256,  // .m64n48k256
+        M64n64k256,  // .m64n64k256
+        M64n80k256,  // .m64n80k256
+        M64n96k256,  // .m64n96k256
+        M64n8k256,   // .m64n8k256
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -519,36 +514,65 @@ pub mod section_5 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeS32B1B1OpPopc {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub s32: (), // .s32
-        pub b1: (), // .b1
-        pub b12: (), // .b1
-        pub op: Op, // .op
-        pub popc: (), // .popc
-        pub d: GeneralOperand, // d
-        pub a_desc: GeneralOperand, // a-desc
-        pub b_desc: GeneralOperand, // b-desc
+        pub mma_async: (),           // .mma_async
+        pub sync: (),                // .sync
+        pub aligned: (),             // .aligned
+        pub shape: Shape,            // .shape
+        pub s32: (),                 // .s32
+        pub b1: (),                  // .b1
+        pub b12: (),                 // .b1
+        pub op: Op,                  // .op
+        pub popc: (),                // .popc
+        pub d: GeneralOperand,       // d
+        pub a_desc: GeneralOperand,  // a-desc
+        pub b_desc: GeneralOperand,  // b-desc
         pub scale_d: GeneralOperand, // scale-d
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeS32B1B1OpPopc1 {
-        pub mma_async: (), // .mma_async
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub s32: (), // .s32
-        pub b1: (), // .b1
-        pub b12: (), // .b1
-        pub op: Op, // .op
-        pub popc: (), // .popc
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b_desc: GeneralOperand, // b-desc
+        pub mma_async: (),           // .mma_async
+        pub sync: (),                // .sync
+        pub aligned: (),             // .aligned
+        pub shape: Shape,            // .shape
+        pub s32: (),                 // .s32
+        pub b1: (),                  // .b1
+        pub b12: (),                 // .b1
+        pub op: Op,                  // .op
+        pub popc: (),                // .popc
+        pub d: GeneralOperand,       // d
+        pub a: GeneralOperand,       // a
+        pub b_desc: GeneralOperand,  // b-desc
         pub scale_d: GeneralOperand, // scale-d
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Dtype as Dtype0;
+pub use section_0::Shape as Shape0;
+pub use section_0::WgmmaMmaAsyncSyncAlignedShapeDtypeF16F16;
+pub use section_0::WgmmaMmaAsyncSyncAlignedShapeDtypeF16F161;
+pub use section_1::Dtype as Dtype1;
+pub use section_1::Shape as Shape1;
+pub use section_1::WgmmaMmaAsyncSyncAlignedShapeDtypeBf16Bf16;
+pub use section_1::WgmmaMmaAsyncSyncAlignedShapeDtypeBf16Bf161;
+pub use section_2::Dtype as Dtype2;
+pub use section_2::Shape as Shape2;
+pub use section_2::WgmmaMmaAsyncSyncAlignedShapeDtypeTf32Tf32;
+pub use section_2::WgmmaMmaAsyncSyncAlignedShapeDtypeTf32Tf321;
+pub use section_3::Atype as Atype3;
+pub use section_3::Btype as Btype3;
+pub use section_3::Dtype as Dtype3;
+pub use section_3::Shape as Shape3;
+pub use section_3::WgmmaMmaAsyncSyncAlignedShapeDtypeAtypeBtype;
+pub use section_3::WgmmaMmaAsyncSyncAlignedShapeDtypeAtypeBtype1;
+pub use section_4::Atype as Atype4;
+pub use section_4::Btype as Btype4;
+pub use section_4::Shape as Shape4;
+pub use section_4::WgmmaMmaAsyncSyncAlignedShapeSatfiniteS32AtypeBtype;
+pub use section_4::WgmmaMmaAsyncSyncAlignedShapeSatfiniteS32AtypeBtype1;
+pub use section_5::Op as Op5;
+pub use section_5::Shape as Shape5;
+pub use section_5::WgmmaMmaAsyncSyncAlignedShapeS32B1B1OpPopc;
+pub use section_5::WgmmaMmaAsyncSyncAlignedShapeS32B1B1OpPopc1;

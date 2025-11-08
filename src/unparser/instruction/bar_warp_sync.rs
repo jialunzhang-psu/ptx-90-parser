@@ -14,12 +14,10 @@ pub mod section_0 {
     impl PtxUnparser for BarWarpSync {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "bar");
-                    push_directive(tokens, "warp");
-                    push_directive(tokens, "sync");
-                    self.membermask.unparse_tokens(tokens);
+            push_directive(tokens, "warp");
+            push_directive(tokens, "sync");
+            self.membermask.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

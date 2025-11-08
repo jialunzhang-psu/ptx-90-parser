@@ -23,12 +23,17 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Dp4aAtypeBtype {
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
+        pub atype: Atype,      // .atype
+        pub btype: Btype,      // .btype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Atype as Atype0;
+pub use section_0::Btype as Btype0;
+pub use section_0::Dp4aAtypeBtype;

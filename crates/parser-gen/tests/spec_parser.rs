@@ -913,34 +913,34 @@ tex.grad.geom.v2.f16x2.ctype   d{|p}, [a, {b,} c], dPdx, dPdy {, e} {, f};
 
     params.sort_by(|a, b| a.name.cmp(&b.name));
     let expected_params = vec![
-            ParameterRule {
-                name: ".ctype".into(),
-                choices: vec![Modifier::Atom(".s32".into()), Modifier::Atom(".f32".into())],
-            },
-            ParameterRule {
-                name: ".dtype".into(),
-                choices: vec![
-                    Modifier::Atom(".u32".into()),
-                    Modifier::Atom(".s32".into()),
-                    Modifier::Atom(".f16".into()),
-                    Modifier::Atom(".f32".into()),
-                ],
-            },
-            ParameterRule {
-                name: ".geom".into(),
-                choices: vec![
-                    Modifier::Atom(".1d".into()),
-                    Modifier::Atom(".2d".into()),
-                    Modifier::Atom(".3d".into()),
-                    Modifier::Atom(".a1d".into()),
-                    Modifier::Atom(".a2d".into()),
-                    Modifier::Atom(".cube".into()),
-                    Modifier::Atom(".acube".into()),
-                    Modifier::Atom(".2dms".into()),
-                    Modifier::Atom(".a2dms".into()),
-                ],
-            },
-        ];
+        ParameterRule {
+            name: ".ctype".into(),
+            choices: vec![Modifier::Atom(".s32".into()), Modifier::Atom(".f32".into())],
+        },
+        ParameterRule {
+            name: ".dtype".into(),
+            choices: vec![
+                Modifier::Atom(".u32".into()),
+                Modifier::Atom(".s32".into()),
+                Modifier::Atom(".f16".into()),
+                Modifier::Atom(".f32".into()),
+            ],
+        },
+        ParameterRule {
+            name: ".geom".into(),
+            choices: vec![
+                Modifier::Atom(".1d".into()),
+                Modifier::Atom(".2d".into()),
+                Modifier::Atom(".3d".into()),
+                Modifier::Atom(".a1d".into()),
+                Modifier::Atom(".a2d".into()),
+                Modifier::Atom(".cube".into()),
+                Modifier::Atom(".acube".into()),
+                Modifier::Atom(".2dms".into()),
+                Modifier::Atom(".a2dms".into()),
+            ],
+        },
+    ];
     assert_eq!(params, expected_params);
 }
 
@@ -1493,48 +1493,48 @@ vmad.dtype.atype.btype.po{.sat}{.scale}  d, a{.asel}, b{.bsel}, c;
     let mut params = parse_parameter_rules(spec);
     params.sort_by(|a, b| a.name.cmp(&b.name));
     let expected_params = vec![
-            ParameterRule {
-                name: ".asel".into(),
-                choices: vec![
-                    Modifier::Atom(".b0".into()),
-                    Modifier::Atom(".b1".into()),
-                    Modifier::Atom(".b2".into()),
-                    Modifier::Atom(".b3".into()),
-                    Modifier::Atom(".h0".into()),
-                    Modifier::Atom(".h1".into()),
-                ],
-            },
-            ParameterRule {
-                name: ".atype".into(),
-                choices: vec![Modifier::Atom(".u32".into()), Modifier::Atom(".s32".into())],
-            },
-            ParameterRule {
-                name: ".bsel".into(),
-                choices: vec![
-                    Modifier::Atom(".b0".into()),
-                    Modifier::Atom(".b1".into()),
-                    Modifier::Atom(".b2".into()),
-                    Modifier::Atom(".b3".into()),
-                    Modifier::Atom(".h0".into()),
-                    Modifier::Atom(".h1".into()),
-                ],
-            },
-            ParameterRule {
-                name: ".btype".into(),
-                choices: vec![Modifier::Atom(".u32".into()), Modifier::Atom(".s32".into())],
-            },
-            ParameterRule {
-                name: ".dtype".into(),
-                choices: vec![Modifier::Atom(".u32".into()), Modifier::Atom(".s32".into())],
-            },
-            ParameterRule {
-                name: ".scale".into(),
-                choices: vec![
-                    Modifier::Atom(".shr7".into()),
-                    Modifier::Atom(".shr15".into()),
-                ],
-            },
-        ];
+        ParameterRule {
+            name: ".asel".into(),
+            choices: vec![
+                Modifier::Atom(".b0".into()),
+                Modifier::Atom(".b1".into()),
+                Modifier::Atom(".b2".into()),
+                Modifier::Atom(".b3".into()),
+                Modifier::Atom(".h0".into()),
+                Modifier::Atom(".h1".into()),
+            ],
+        },
+        ParameterRule {
+            name: ".atype".into(),
+            choices: vec![Modifier::Atom(".u32".into()), Modifier::Atom(".s32".into())],
+        },
+        ParameterRule {
+            name: ".bsel".into(),
+            choices: vec![
+                Modifier::Atom(".b0".into()),
+                Modifier::Atom(".b1".into()),
+                Modifier::Atom(".b2".into()),
+                Modifier::Atom(".b3".into()),
+                Modifier::Atom(".h0".into()),
+                Modifier::Atom(".h1".into()),
+            ],
+        },
+        ParameterRule {
+            name: ".btype".into(),
+            choices: vec![Modifier::Atom(".u32".into()), Modifier::Atom(".s32".into())],
+        },
+        ParameterRule {
+            name: ".dtype".into(),
+            choices: vec![Modifier::Atom(".u32".into()), Modifier::Atom(".s32".into())],
+        },
+        ParameterRule {
+            name: ".scale".into(),
+            choices: vec![
+                Modifier::Atom(".shr7".into()),
+                Modifier::Atom(".shr15".into()),
+            ],
+        },
+    ];
     assert_eq!(params, expected_params);
 }
 
@@ -1713,25 +1713,25 @@ min{.NaN}{.xorsign.abs}.bf16x2         d, a, b;";
     let mut params = parse_parameter_rules(spec);
     params.sort_by(|a, b| a.name.cmp(&b.name));
     let expected_params = vec![
-            ParameterRule {
-                name: ".atype".into(),
-                choices: vec![
-                    Modifier::Atom(".u16".into()),
-                    Modifier::Atom(".u32".into()),
-                    Modifier::Atom(".u64".into()),
-                    Modifier::Atom(".u16x2".into()),
-                    Modifier::Atom(".s16".into()),
-                    Modifier::Atom(".s64".into()),
-                ],
-            },
-            ParameterRule {
-                name: ".btype".into(),
-                choices: vec![
-                    Modifier::Atom(".s16x2".into()),
-                    Modifier::Atom(".s32".into()),
-                ],
-            },
-        ];
+        ParameterRule {
+            name: ".atype".into(),
+            choices: vec![
+                Modifier::Atom(".u16".into()),
+                Modifier::Atom(".u32".into()),
+                Modifier::Atom(".u64".into()),
+                Modifier::Atom(".u16x2".into()),
+                Modifier::Atom(".s16".into()),
+                Modifier::Atom(".s64".into()),
+            ],
+        },
+        ParameterRule {
+            name: ".btype".into(),
+            choices: vec![
+                Modifier::Atom(".s16x2".into()),
+                Modifier::Atom(".s32".into()),
+            ],
+        },
+    ];
     assert_eq!(params, expected_params);
 }
 
@@ -1740,7 +1740,10 @@ fn parse_cp_async() {
     let spec = "cp.async.cg.state.global{.level::cache_hint}{.level::prefetch_size} [dst], [src], 16{, ignore-src}{, cache-policy}";
 
     let instructions = parse_instruction_rules(spec);
-    let mut instruction = instructions.into_iter().next().expect("Expected instruction");
+    let mut instruction = instructions
+        .into_iter()
+        .next()
+        .expect("Expected instruction");
     instruction.raw.clear();
 
     let expected = InstructionRule {
@@ -1772,7 +1775,10 @@ fn test_setp_cmp_op() {
     let spec = "setp.CmpOp{.ftz}.f16x2         p|q, a, b";
 
     let instructions = parse_instruction_rules(spec);
-    let mut instruction = instructions.into_iter().next().expect("Expected instruction");
+    let mut instruction = instructions
+        .into_iter()
+        .next()
+        .expect("Expected instruction");
     instruction.raw.clear();
 
     let expected = InstructionRule {
@@ -1820,7 +1826,7 @@ fn test_imm_num() {
 }
 
 #[test]
-fn test_tld4(){
+fn test_tld4() {
     let spec = "tld4.comp.2d.v4.dtype.f32    d{|p}, [a, c] {, e} {, f};
 tld4.comp.geom.v4.dtype.f32  d{|p}, [a, b, c] {, e} {, f};  // explicit sampler
 .comp  = { .r, .g, .b, .a };
@@ -1919,7 +1925,10 @@ fn test_ld() {
     let spec = "ld{.weak}{.ss}{.cop}{.level::cache_hint}{.level::prefetch_size}{.vec}.type  d, [a]{.unified}{, cache-policy};";
 
     let instructions = parse_instruction_rules(spec);
-    let instruction = instructions.into_iter().next().expect("Expected instruction");
+    let instruction = instructions
+        .into_iter()
+        .next()
+        .expect("Expected instruction");
 
     // Print the actual parsed structure for debugging
     println!("{:#?}", instruction);

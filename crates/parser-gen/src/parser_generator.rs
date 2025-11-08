@@ -66,13 +66,16 @@ impl ParserGenerator {
 
         // Generate module name from section index
         let module_name = format!("section_{}", section_idx);
-        
+
         // Wrap everything in a module
         let mut output = String::new();
         output.push_str(&format!("pub mod {} {{\n", module_name));
         output.push_str("    use super::*;\n");
-        output.push_str(&format!("    use crate::r#type::instruction::{}::{}::*;\n\n", type_module_name, module_name));
-        
+        output.push_str(&format!(
+            "    use crate::r#type::instruction::{}::{}::*;\n\n",
+            type_module_name, module_name
+        ));
+
         // Indent enum parsers
         for line in enum_parsers_output.lines() {
             if !line.is_empty() {
@@ -81,7 +84,7 @@ impl ParserGenerator {
             output.push_str(line);
             output.push_str("\n");
         }
-        
+
         // Indent parser implementations
         for line in struct_output.lines() {
             if !line.is_empty() {
@@ -90,7 +93,7 @@ impl ParserGenerator {
             output.push_str(line);
             output.push_str("\n");
         }
-        
+
         output.push_str("}\n");
 
         GeneratedParserOutput {
@@ -115,7 +118,9 @@ use crate::r#type::common::*;"#
 
         let mut output = String::new();
         output.push_str(&format!("impl PtxParser for {} {{\n", struct_name));
-        output.push_str(&format!("    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {{\n"));
+        output.push_str(&format!(
+            "    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {{\n"
+        ));
 
         // Parse opcode
         output.push_str(&format!("        stream.expect_string(\"{}\")?;\n", opcode));
@@ -135,12 +140,15 @@ use crate::r#type::common::*;"#
                 // If the operand is optional, make the comma optional too
                 let is_optional = matches!(
                     operand.operand,
-                    AnalyzedOperandElement::Optional(_) | AnalyzedOperandElement::PipeOptionalChoice(_)
+                    AnalyzedOperandElement::Optional(_)
+                        | AnalyzedOperandElement::PipeOptionalChoice(_)
                 );
 
                 if is_optional {
                     output.push_str("        let saved_pos = stream.position();\n");
-                    output.push_str("        let has_comma = stream.expect(&PtxToken::Comma).is_ok();\n");
+                    output.push_str(
+                        "        let has_comma = stream.expect(&PtxToken::Comma).is_ok();\n",
+                    );
                     output.push_str("        if !has_comma {\n");
                     output.push_str("            stream.set_position(saved_pos);\n");
                     output.push_str("        }\n");
@@ -154,7 +162,7 @@ use crate::r#type::common::*;"#
 
         // Ensure we've consumed complete tokens (not stopped mid-token)
         output.push_str("        stream.expect_complete()?;\n");
-        
+
         // Expect semicolon at end of instruction
         output.push_str("        stream.expect(&PtxToken::Semicolon)?;\n");
 
@@ -218,11 +226,12 @@ use crate::r#type::common::*;"#
             }
             AnalyzedModifier::Choice { base, options } => {
                 let type_name = &base.1;
-                
+
                 // Generate enum parser if not already generated
                 if !self.generated_enum_parsers.contains_key(type_name) {
                     let enum_parser = self.generate_enum_parser(type_name, options);
-                    self.generated_enum_parsers.insert(type_name.clone(), enum_parser);
+                    self.generated_enum_parsers
+                        .insert(type_name.clone(), enum_parser);
                 }
 
                 format!(
@@ -263,9 +272,10 @@ use crate::r#type::common::*;"#
                         let inner_type = &base.1;
                         if !self.generated_enum_parsers.contains_key(inner_type) {
                             let enum_parser = self.generate_enum_parser(inner_type, options);
-                            self.generated_enum_parsers.insert(inner_type.clone(), enum_parser);
+                            self.generated_enum_parsers
+                                .insert(inner_type.clone(), enum_parser);
                         }
-                        
+
                         // Use try-parse pattern
                         format!(
                             "        let saved_pos = stream.position();\n        let {} = match {}::parse(stream) {{\n            Ok(val) => Some(val),\n            Err(_) => {{\n                stream.set_position(saved_pos);\n                None\n            }}\n        }};\n",
@@ -278,7 +288,10 @@ use crate::r#type::common::*;"#
                         code.push_str("        let saved_pos = stream.position();\n");
                         code.push_str(&format!("        let {} = match (|| {{\n", rust_name));
                         code.push_str(&self.generate_modifier_parser(inner, inner_rust_name));
-                        code.push_str(&format!("            Ok::<_, PtxParseError>({})\n", inner_rust_name));
+                        code.push_str(&format!(
+                            "            Ok::<_, PtxParseError>({})\n",
+                            inner_rust_name
+                        ));
                         code.push_str("        })() {\n");
                         code.push_str("            Ok(val) => Some(val),\n");
                         code.push_str("            Err(_) => {\n");
@@ -318,7 +331,7 @@ use crate::r#type::common::*;"#
             let modifier_code = self.generate_modifier_parser(modifier, rust_name);
             code.push_str(&modifier_code);
         }
-        
+
         // Ensure complete token consumption after each operand
         code.push_str("        stream.expect_complete()?;\n");
 
@@ -328,12 +341,15 @@ use crate::r#type::common::*;"#
     /// Generate parser code for an operand element
     fn generate_operand_element_parser(&mut self, element: &AnalyzedOperandElement) -> String {
         use AnalyzedOperandElement::*;
-        
+
         let rust_name = Self::get_operand_rust_name(element);
 
         match element {
             Item(_) => {
-                format!("        let {} = GeneralOperand::parse(stream)?;\n", rust_name)
+                format!(
+                    "        let {} = GeneralOperand::parse(stream)?;\n",
+                    rust_name
+                )
             }
             Address(_) => {
                 format!(
@@ -365,43 +381,50 @@ use crate::r#type::common::*;"#
                     first_name, second_name
                 )
             }
-            SquareGroup(operands) => {
-                match operands.len() {
-                    2 => format!("        let {} = TexHandler2::parse(stream)?;\n", rust_name),
-                    3 => {
-                        if operands.iter().any(|(_, _, optional)| *optional) {
-                            format!("        let {} = TexHandler3Optional::parse(stream)?;\n", rust_name)
-                        } else {
-                            format!("        let {} = TexHandler3::parse(stream)?;\n", rust_name)
-                        }
-                    }
-                    _ => {
-                        let mut code = String::new();
-                        let mut field_names = Vec::new();
-
-                        code.push_str("        stream.expect(&PtxToken::LBracket)?;\n");
-
-                        for (idx, (_, field_name, _)) in operands.iter().enumerate() {
-                            if idx > 0 {
-                                code.push_str("        stream.expect(&PtxToken::Comma)?;\n");
-                            }
-                            code.push_str(&format!("        let {} = GeneralOperand::parse(stream)?;\n", field_name));
-                            field_names.push(field_name.clone());
-                        }
-
-                        code.push_str("        stream.expect(&PtxToken::RBracket)?;\n");
-                        code.push_str(&format!(
-                            "        let {} = ({});\n",
-                            rust_name,
-                            field_names.join(", ")
-                        ));
-
-                        code
+            SquareGroup(operands) => match operands.len() {
+                2 => format!("        let {} = TexHandler2::parse(stream)?;\n", rust_name),
+                3 => {
+                    if operands.iter().any(|(_, _, optional)| *optional) {
+                        format!(
+                            "        let {} = TexHandler3Optional::parse(stream)?;\n",
+                            rust_name
+                        )
+                    } else {
+                        format!("        let {} = TexHandler3::parse(stream)?;\n", rust_name)
                     }
                 }
-            }
+                _ => {
+                    let mut code = String::new();
+                    let mut field_names = Vec::new();
+
+                    code.push_str("        stream.expect(&PtxToken::LBracket)?;\n");
+
+                    for (idx, (_, field_name, _)) in operands.iter().enumerate() {
+                        if idx > 0 {
+                            code.push_str("        stream.expect(&PtxToken::Comma)?;\n");
+                        }
+                        code.push_str(&format!(
+                            "        let {} = GeneralOperand::parse(stream)?;\n",
+                            field_name
+                        ));
+                        field_names.push(field_name.clone());
+                    }
+
+                    code.push_str("        stream.expect(&PtxToken::RBracket)?;\n");
+                    code.push_str(&format!(
+                        "        let {} = ({});\n",
+                        rust_name,
+                        field_names.join(", ")
+                    ));
+
+                    code
+                }
+            },
             CurlyGroup(_) => {
-                format!("        let {} = VectorOperand::parse(stream)?;\n", rust_name)
+                format!(
+                    "        let {} = VectorOperand::parse(stream)?;\n",
+                    rust_name
+                )
             }
             ParamList(_) => {
                 format!(
@@ -417,18 +440,22 @@ use crate::r#type::common::*;"#
             }
             Choice { base, options } => {
                 let type_name = &base.1;
-                
+
                 // Generate enum parser if not already generated
                 if !self.generated_enum_parsers.contains_key(type_name) {
                     // Convert to AnalyzedModifier format, variant names are already computed in analyzer
                     let analyzed_options: Vec<(AnalyzedModifier, String)> = options
                         .iter()
                         .map(|(ident, variant_name)| {
-                            (AnalyzedModifier::Atom((ident.clone(), String::new())), variant_name.clone())
+                            (
+                                AnalyzedModifier::Atom((ident.clone(), String::new())),
+                                variant_name.clone(),
+                            )
                         })
                         .collect();
                     let enum_parser = self.generate_enum_parser(type_name, &analyzed_options);
-                    self.generated_enum_parsers.insert(type_name.clone(), enum_parser);
+                    self.generated_enum_parsers
+                        .insert(type_name.clone(), enum_parser);
                 }
 
                 format!(
@@ -448,9 +475,17 @@ use crate::r#type::common::*;"#
             | Optional((_, rust_name))
             | ParenthesizedOperand((_, rust_name))
             | ImmediateNumber((_, rust_name)) => rust_name.clone(),
-            PipeChoice(((_, first_name), _)) | PipeOptionalChoice(((_, first_name), _)) => first_name.clone(),
-            CurlyGroup(items) => items.first().map(|(_, rust_name)| rust_name.clone()).unwrap_or_else(|| "group".to_string()),
-            SquareGroup(items) => items.first().map(|(_, rust_name, _)| rust_name.clone()).unwrap_or_else(|| "group".to_string()),
+            PipeChoice(((_, first_name), _)) | PipeOptionalChoice(((_, first_name), _)) => {
+                first_name.clone()
+            }
+            CurlyGroup(items) => items
+                .first()
+                .map(|(_, rust_name)| rust_name.clone())
+                .unwrap_or_else(|| "group".to_string()),
+            SquareGroup(items) => items
+                .first()
+                .map(|(_, rust_name, _)| rust_name.clone())
+                .unwrap_or_else(|| "group".to_string()),
             ParamList(rust_name) => rust_name.clone(),
             Choice { base, .. } => {
                 // base.1 contains the PascalCase type name (e.g., "CpSize")
@@ -461,11 +496,17 @@ use crate::r#type::common::*;"#
     }
 
     /// Generate parser for an enum type (for Choice modifiers)
-    fn generate_enum_parser(&mut self, enum_name: &str, options: &[(AnalyzedModifier, String)]) -> String {
+    fn generate_enum_parser(
+        &mut self,
+        enum_name: &str,
+        options: &[(AnalyzedModifier, String)],
+    ) -> String {
         let mut output = String::new();
 
         output.push_str(&format!("impl PtxParser for {} {{\n", enum_name));
-        output.push_str("    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {\n");
+        output.push_str(
+            "    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {\n",
+        );
 
         // Options are already sorted by text length (descending) in analyzer.rs
         // Try each variant in order (longest first)
@@ -483,7 +524,10 @@ use crate::r#type::common::*;"#
                         "            let saved_pos = stream.position();\n            if stream.expect_string(\"{}\").is_ok() {{\n",
                         ident
                     ));
-                    output.push_str(&format!("                return Ok({}::{});\n", enum_name, variant_rust_name));
+                    output.push_str(&format!(
+                        "                return Ok({}::{});\n",
+                        enum_name, variant_rust_name
+                    ));
                     output.push_str("            }\n");
                     output.push_str("            stream.set_position(saved_pos);\n");
                 }
@@ -492,20 +536,24 @@ use crate::r#type::common::*;"#
                     let mut tuple_vars = Vec::new();
 
                     for (item, item_rust_name) in items {
-                        sequence_code.push_str(&self.generate_modifier_parser(item, item_rust_name));
+                        sequence_code
+                            .push_str(&self.generate_modifier_parser(item, item_rust_name));
                         tuple_vars.push(item_rust_name.clone());
                     }
 
                     let tuple_pattern = format!("({})", tuple_vars.join(", "));
                     let variant_args = tuple_vars.join(", ");
-                    
+
                     output.push_str("            let saved_seq_pos = stream.position();\n");
                     output.push_str("            match (|| -> Result<_, PtxParseError> {\n");
                     output.push_str(&sequence_code);
                     output.push_str(&format!("                Ok({})\n", tuple_pattern));
                     output.push_str("            })() {\n");
                     output.push_str(&format!("                Ok({}) => {{\n", tuple_pattern));
-                    output.push_str(&format!("                    return Ok({}::{}({}));\n", enum_name, variant_rust_name, variant_args));
+                    output.push_str(&format!(
+                        "                    return Ok({}::{}({}));\n",
+                        enum_name, variant_rust_name, variant_args
+                    ));
                     output.push_str("                }\n");
                     output.push_str("                Err(_) => {\n");
                     output.push_str("                    stream.set_position(saved_seq_pos);\n");
@@ -527,11 +575,13 @@ use crate::r#type::common::*;"#
 
         // Generate error for when no variant matches
         output.push_str("        let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });\n");
-        output.push_str(&format!("        let expected = &[{}];\n", 
-            options.iter()
+        output.push_str(&format!(
+            "        let expected = &[{}];\n",
+            options
+                .iter()
                 .map(|(opt, _)| match opt {
                     AnalyzedModifier::Atom((ident, _)) => format!("\"{}\"", ident),
-                    _ => "\"<complex>\"".to_string()
+                    _ => "\"<complex>\"".to_string(),
                 })
                 .collect::<Vec<_>>()
                 .join(", ")
@@ -543,7 +593,6 @@ use crate::r#type::common::*;"#
 
         output
     }
-
 }
 
 // ============================================================================
@@ -555,7 +604,7 @@ use crate::r#type::common::*;"#
 /// Takes a list of (module_name, opcodes, structs) tuples
 /// Note: opcodes is now Vec<String> to support files with multiple opcodes
 pub fn generate_parser_mod_rs_content(
-    modules: &[(String, Vec<String>, Vec<(String, String)>)]
+    modules: &[(String, Vec<String>, Vec<(String, String)>)],
 ) -> String {
     let mut output = String::new();
 
@@ -579,7 +628,9 @@ pub fn generate_parser_mod_rs_content(
     output.push_str("    let start_pos = stream.position();\n");
     output.push_str("    \n");
     output.push_str("    // Peek at the opcode to determine which parser to try\n");
-    output.push_str("    let opcode = if let Ok((PtxToken::Identifier(name), _)) = stream.peek() {\n");
+    output.push_str(
+        "    let opcode = if let Ok((PtxToken::Identifier(name), _)) = stream.peek() {\n",
+    );
     output.push_str("        name.as_str()\n");
     output.push_str("    } else {\n");
     output.push_str("        let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(0..0);\n");
@@ -596,9 +647,14 @@ pub fn generate_parser_mod_rs_content(
     for (module_name, opcodes, structs) in modules {
         for opcode in opcodes {
             for (section_name, struct_name) in structs {
-                opcode_map.entry(opcode.clone())
+                opcode_map
+                    .entry(opcode.clone())
                     .or_insert_with(Vec::new)
-                    .push((module_name.clone(), section_name.clone(), struct_name.clone()));
+                    .push((
+                        module_name.clone(),
+                        section_name.clone(),
+                        struct_name.clone(),
+                    ));
             }
         }
     }
@@ -633,4 +689,102 @@ pub fn generate_parser_mod_rs_content(
     output.push_str("\n");
 
     output
+}
+
+/// Generate complete parser file from PTX specification content
+/// Returns (generated_code, ParserModuleInfo(module_name, opcodes, instruction_structs))
+pub fn generate_parser_file(
+    spec_content: &str,
+    file_name: &str,
+    module_name: &str,
+) -> Result<(String, (String, Vec<String>, Vec<(String, String)>)), Box<dyn std::error::Error>> {
+    use crate::analyzer::Analyzer;
+    use std::collections::BTreeSet;
+
+    let sections = crate::parse_spec_with_name(spec_content, file_name)?;
+
+    if sections.is_empty() {
+        return Err("No sections found in file".into());
+    }
+
+    // Analyze all sections at once
+    let mut analyzer = Analyzer::new();
+    let analyzed_sections = analyzer.analyze_sections(&sections);
+
+    if analyzed_sections.is_empty() {
+        return Err("No instructions found".into());
+    }
+
+    // Collect ALL unique opcodes from ALL instructions in the file
+    let opcodes: Vec<String> = analyzed_sections
+        .iter()
+        .flat_map(|section| section.opcodes.iter().cloned())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect();
+
+    if opcodes.is_empty() {
+        return Err("No instructions found".into());
+    }
+
+    // Generate parser definitions section by section
+    let mut all_outputs = Vec::new();
+    let mut parser_gen = ParserGenerator::new();
+
+    for (section_idx, section) in analyzed_sections.iter().enumerate() {
+        let generated = parser_gen.generate(section, section_idx, module_name);
+
+        if !generated.code.trim().is_empty() {
+            all_outputs.push(generated);
+        }
+    }
+
+    if all_outputs.is_empty() {
+        return Err("No instructions found".into());
+    }
+
+    // Collect all instruction structs with their section info
+    let all_instruction_structs: Vec<(String, String)> = analyzed_sections
+        .iter()
+        .flat_map(|section| {
+            let section_name = format!(
+                "section_{}",
+                analyzed_sections
+                    .iter()
+                    .position(|s| std::ptr::eq(s, section))
+                    .unwrap()
+            );
+            section
+                .instructions
+                .iter()
+                .map(move |instr| (section_name.clone(), instr.rust_name.clone()))
+        })
+        .collect();
+
+    let mut output = String::new();
+    output.push_str("//! Original PTX specification:\n");
+    output.push_str("//!\n");
+    for line in spec_content.lines() {
+        output.push_str("//! ");
+        output.push_str(line);
+        output.push_str("\n");
+    }
+    output.push_str("\n");
+    output.push_str("#![allow(unused)]\n");
+    output.push_str("\n");
+
+    // Add imports once
+    output.push_str(&ParserGenerator::generate_imports());
+    output.push_str("\n\n");
+
+    // Append generated code for each section
+    for gen_output in all_outputs.iter() {
+        output.push_str(&gen_output.code);
+        output.push_str("\n");
+    }
+
+    Ok((
+        output,
+        (module_name.to_string(), opcodes, all_instruction_structs),
+    ))
 }

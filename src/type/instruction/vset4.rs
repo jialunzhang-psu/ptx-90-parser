@@ -55,18 +55,18 @@ pub mod section_0 {
     pub enum Mask {
         B10B2, // .b10.b2
         B3210, // .b3210
-        B210, // .b210
-        B310, // .b310
-        B320, // .b320
-        B321, // .b321
-        B20, // .b20
-        B21, // .b21
-        B30, // .b30
-        B31, // .b31
-        B32, // .b32
-        B0, // .b0
-        B1, // .b1
-        B3, // .b3
+        B210,  // .b210
+        B310,  // .b310
+        B320,  // .b320
+        B321,  // .b321
+        B20,   // .b20
+        B21,   // .b21
+        B30,   // .b30
+        B31,   // .b31
+        B32,   // .b32
+        B0,    // .b0
+        B1,    // .b1
+        B3,    // .b3
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -139,31 +139,40 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vset4AtypeBtypeCmp {
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub cmp: Cmp, // .cmp
-        pub d: GeneralOperand, // d
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub cmp: Cmp,           // .cmp
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
-        pub asel: bool, // {.asel}
-        pub b: GeneralOperand, // b
+        pub a: GeneralOperand,  // a
+        pub asel: bool,         // {.asel}
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Vset4AtypeBtypeCmpAdd {
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub cmp: Cmp, // .cmp
-        pub add: (), // .add
-        pub d: GeneralOperand, // d
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub cmp: Cmp,           // .cmp
+        pub add: (),            // .add
+        pub d: GeneralOperand,  // d
         pub mask: Option<Mask>, // {.mask}
-        pub a: GeneralOperand, // a
-        pub asel: bool, // {.asel}
-        pub b: GeneralOperand, // b
+        pub a: GeneralOperand,  // a
+        pub asel: bool,         // {.asel}
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Atype as Atype0;
+pub use section_0::Bsel as Bsel0;
+pub use section_0::Btype as Btype0;
+pub use section_0::Cmp as Cmp0;
+pub use section_0::Mask as Mask0;
+pub use section_0::Vset4AtypeBtypeCmp;
+pub use section_0::Vset4AtypeBtypeCmpAdd;

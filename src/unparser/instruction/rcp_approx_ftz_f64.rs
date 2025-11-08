@@ -14,15 +14,13 @@ pub mod section_0 {
     impl PtxUnparser for RcpApproxFtzF64 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "rcp");
-                    push_directive(tokens, "approx");
-                    push_directive(tokens, "ftz");
-                    push_directive(tokens, "f64");
-                    self.d.unparse_tokens(tokens);
+            push_directive(tokens, "approx");
+            push_directive(tokens, "ftz");
+            push_directive(tokens, "f64");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

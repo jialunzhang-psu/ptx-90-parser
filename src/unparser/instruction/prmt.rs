@@ -15,39 +15,37 @@ pub mod section_0 {
     impl PtxUnparser for PrmtB32Mode {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "prmt");
-                    push_directive(tokens, "b32");
-                    if let Some(mode_0) = self.mode.as_ref() {
-                            match mode_0 {
-                                    Mode::Rc16 => {
-                                            push_directive(tokens, "rc16");
-                                    }
-                                    Mode::F4e => {
-                                            push_directive(tokens, "f4e");
-                                    }
-                                    Mode::B4e => {
-                                            push_directive(tokens, "b4e");
-                                    }
-                                    Mode::Rc8 => {
-                                            push_directive(tokens, "rc8");
-                                    }
-                                    Mode::Ecl => {
-                                            push_directive(tokens, "ecl");
-                                    }
-                                    Mode::Ecr => {
-                                            push_directive(tokens, "ecr");
-                                    }
-                            }
+            push_directive(tokens, "b32");
+            if let Some(mode_0) = self.mode.as_ref() {
+                match mode_0 {
+                    Mode::Rc16 => {
+                        push_directive(tokens, "rc16");
                     }
-                    self.d.unparse_tokens(tokens);
+                    Mode::F4e => {
+                        push_directive(tokens, "f4e");
+                    }
+                    Mode::B4e => {
+                        push_directive(tokens, "b4e");
+                    }
+                    Mode::Rc8 => {
+                        push_directive(tokens, "rc8");
+                    }
+                    Mode::Ecl => {
+                        push_directive(tokens, "ecl");
+                    }
+                    Mode::Ecr => {
+                        push_directive(tokens, "ecr");
+                    }
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.c.unparse_tokens(tokens);
+            self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

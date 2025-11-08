@@ -1,10 +1,9 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use ptx_parser::lexer::tokenize;
-use ptx_parser::parser::{PtxParser, PtxTokenStream};
-use ptx_parser::r#type::module::Module;
-use ptx_parser::r#type::function::{FunctionKernelDirective, FunctionStatement};
+use ptx_parser::tokenize;
+use ptx_parser::r#type::{FunctionKernelDirective, FunctionStatement, Module};
+use ptx_parser::{PtxParser, PtxTokenStream};
 
 #[test]
 fn parse_sample_ptx_files() {
@@ -45,11 +44,7 @@ fn parse_sample_file(path: &Path) -> bool {
     let tokens = match tokenize(&source) {
         Ok(tokens) => tokens,
         Err(err) => {
-            eprintln!(
-                "✗ {}: Tokenization failed: {:?}",
-                path.display(),
-                err
-            );
+            eprintln!("✗ {}: Tokenization failed: {:?}", path.display(), err);
             return false;
         }
     };
@@ -62,22 +57,18 @@ fn parse_sample_file(path: &Path) -> bool {
                 path.display(),
                 module.directives.len()
             );
-            
+
             if !stream.is_at_end() {
                 eprintln!(
                     "  Warning: {} tokens remaining after parsing",
                     tokens.len() - stream.position().index
                 );
             }
-            
+
             true
         }
         Err(err) => {
-            eprintln!(
-                "✗ {}: Module parsing failed: {}",
-                path.display(),
-                err
-            );
+            eprintln!("✗ {}: Module parsing failed: {}", path.display(), err);
             false
         }
     }
@@ -119,7 +110,7 @@ fn test_parse_labels_and_predicates() {
         .directives
         .iter()
         .find_map(|d| match d {
-            ptx_parser::r#type::module::ModuleDirective::FunctionKernel(
+            ptx_parser::r#type::ModuleDirective::FunctionKernel(
                 FunctionKernelDirective::Entry(entry),
             ) => Some(entry),
             _ => None,
@@ -205,5 +196,4 @@ fn test_parse_labels_and_predicates() {
         .as_ref()
         .expect("fifth instruction should have predicate");
     assert!(label_neg_pred.negated, "predicate should be negated");
-
 }

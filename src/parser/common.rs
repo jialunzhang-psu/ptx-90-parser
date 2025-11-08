@@ -48,7 +48,10 @@ pub(crate) fn parse_register_name(
                 {
                     // Only consume if it's a valid single-character register component
                     // Exclude multi-character .b* patterns (e.g., .b0, .b3210) which are instruction-specific modifiers
-                    if matches!(component_name.as_str(), "x" | "y" | "z" | "w" | "r" | "g" | "b" | "a") {
+                    if matches!(
+                        component_name.as_str(),
+                        "x" | "y" | "z" | "w" | "r" | "g" | "b" | "a"
+                    ) {
                         // consume the dot and identifier
                         stream.consume()?;
                         let (component, component_span) = stream.expect_identifier()?;
@@ -590,7 +593,7 @@ impl PtxParser for Operand {
 
         if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
             let (identifier, _) = stream.expect_identifier()?;
-            
+
             // Check for arithmetic expression: identifier + immediate
             let saved_pos_after_ident = stream.position();
             if stream.expect(&PtxToken::Plus).is_ok() {
@@ -600,7 +603,7 @@ impl PtxParser for Operand {
                 // If parsing offset failed, backtrack
                 stream.set_position(saved_pos_after_ident);
             }
-            
+
             return Ok(Operand::Symbol(identifier));
         }
 
@@ -876,13 +879,15 @@ impl PtxParser for Instruction {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         // Optional label (ends with colon)
         let label = try_parse_label(stream)?;
-        
+
         // Optional predicate: @{!}pred or @!pred
         let predicate = if stream.check(|t| matches!(t, PtxToken::At)) {
             stream.consume()?; // consume @
-            
+
             // Optional negation
-            let negated = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
+            let negated = stream
+                .consume_if(|t| matches!(t, PtxToken::Exclaim))
+                .is_some();
 
             // Predicate operand (can be register %p1 or identifier p)
             let operand = Operand::parse(stream)?;
@@ -891,11 +896,15 @@ impl PtxParser for Instruction {
         } else {
             None
         };
-        
+
         // Parse the actual instruction using the module-level dispatcher
         let inst = crate::parser::instruction::parse_instruction_inner(stream)?;
-        
-        Ok(Instruction { label, predicate, inst })
+
+        Ok(Instruction {
+            label,
+            predicate,
+            inst,
+        })
     }
 }
 

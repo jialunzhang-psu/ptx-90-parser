@@ -2,10 +2,10 @@
 //!
 //! abs.type  d, a;
 //! .type = { .s16, .s32, .s64 };
-//! 
+//!
 //! abs{.ftz}.f32  d, a;
 //! abs.f64        d, a;
-//! 
+//!
 //! abs{.ftz}.f16    d, a;
 //! abs{.ftz}.f16x2  d, a;
 //! abs.bf16         d, a;
@@ -55,9 +55,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".s16", ".s32", ".s64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -74,14 +80,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(AbsType {
-                type_,
-                d,
-                a,
-            })
+            Ok(AbsType { type_, d, a })
         }
     }
-
 
     impl PtxParser for AbsFtzF32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -102,15 +103,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(AbsFtzF32 {
-                ftz,
-                f32,
-                d,
-                a,
-            })
+            Ok(AbsFtzF32 { ftz, f32, d, a })
         }
     }
-
 
     impl PtxParser for AbsF64 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -125,14 +120,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(AbsF64 {
-                f64,
-                d,
-                a,
-            })
+            Ok(AbsF64 { f64, d, a })
         }
     }
-
 
     impl PtxParser for AbsFtzF16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -153,15 +143,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(AbsFtzF16 {
-                ftz,
-                f16,
-                d,
-                a,
-            })
+            Ok(AbsFtzF16 { ftz, f16, d, a })
         }
     }
-
 
     impl PtxParser for AbsFtzF16x2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -182,15 +166,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(AbsFtzF16x2 {
-                ftz,
-                f16x2,
-                d,
-                a,
-            })
+            Ok(AbsFtzF16x2 { ftz, f16x2, d, a })
         }
     }
-
 
     impl PtxParser for AbsBf16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -205,14 +183,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(AbsBf16 {
-                bf16,
-                d,
-                a,
-            })
+            Ok(AbsBf16 { bf16, d, a })
         }
     }
-
 
     impl PtxParser for AbsBf16x2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -227,14 +200,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(AbsBf16x2 {
-                bf16x2,
-                d,
-                a,
-            })
+            Ok(AbsBf16x2 { bf16x2, d, a })
         }
     }
-
-
 }
-

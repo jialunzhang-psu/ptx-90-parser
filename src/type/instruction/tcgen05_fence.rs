@@ -18,5 +18,9 @@ pub mod section_0 {
     pub struct Tcgen05FenceAfterThreadSync {
         pub fence_after_thread_sync: (), // .fence::after_thread_sync
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Tcgen05FenceAfterThreadSync;
+pub use section_0::Tcgen05FenceBeforeThreadSync;

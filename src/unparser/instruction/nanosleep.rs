@@ -14,11 +14,9 @@ pub mod section_0 {
     impl PtxUnparser for NanosleepU32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "nanosleep");
-                    push_directive(tokens, "u32");
-                    self.t.unparse_tokens(tokens);
+            push_directive(tokens, "u32");
+            self.t.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

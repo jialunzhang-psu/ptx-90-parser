@@ -22,13 +22,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(NanosleepU32 {
-                u32,
-                t,
-            })
+            Ok(NanosleepU32 { u32, t })
         }
     }
-
-
 }
-

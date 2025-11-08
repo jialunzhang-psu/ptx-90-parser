@@ -57,20 +57,19 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WmmaMmaSyncAlignedAlayoutBlayoutShapeDtypeCtype {
-        pub mma: (), // .mma
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub alayout: (), // .alayout
-        pub blayout: (), // .blayout
-        pub shape: (), // .shape
-        pub dtype: (), // .dtype
-        pub ctype: (), // .ctype
+        pub mma: (),           // .mma
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub alayout: (),       // .alayout
+        pub blayout: (),       // .blayout
+        pub shape: (),         // .shape
+        pub dtype: (),         // .dtype
+        pub ctype: (),         // .ctype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
     }
-
 }
 
 pub mod section_1 {
@@ -91,8 +90,8 @@ pub mod section_1 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
         M16n16k16, // .m16n16k16
-        M8n32k16, // .m8n32k16
-        M32n8k16, // .m32n8k16
+        M8n32k16,  // .m8n32k16
+        M32n8k16,  // .m32n8k16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -109,23 +108,22 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WmmaMmaSyncAlignedAlayoutBlayoutShapeS32AtypeBtypeS32Satfinite {
-        pub mma: (), // .mma
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub alayout: Alayout, // .alayout
-        pub blayout: Blayout, // .blayout
-        pub shape: Shape, // .shape
-        pub s32: (), // .s32
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub s322: (), // .s32
-        pub satfinite: bool, // {.satfinite}
+        pub mma: (),           // .mma
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub alayout: Alayout,  // .alayout
+        pub blayout: Blayout,  // .blayout
+        pub shape: Shape,      // .shape
+        pub s32: (),           // .s32
+        pub atype: Atype,      // .atype
+        pub btype: Btype,      // .btype
+        pub s322: (),          // .s32
+        pub satfinite: bool,   // {.satfinite}
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
     }
-
 }
 
 pub mod section_2 {
@@ -146,8 +144,8 @@ pub mod section_2 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Shape {
         M16n16k16, // .m16n16k16
-        M8n32k16, // .m8n32k16
-        M32n8k16, // .m32n8k16
+        M8n32k16,  // .m8n32k16
+        M32n8k16,  // .m32n8k16
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -162,22 +160,21 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WmmaMmaSyncAlignedAlayoutBlayoutShapeF32AtypeBtypeF32 {
-        pub mma: (), // .mma
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub alayout: Alayout, // .alayout
-        pub blayout: Blayout, // .blayout
-        pub shape: Shape, // .shape
-        pub f32: (), // .f32
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub f322: (), // .f32
+        pub mma: (),           // .mma
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub alayout: Alayout,  // .alayout
+        pub blayout: Blayout,  // .blayout
+        pub shape: Shape,      // .shape
+        pub f32: (),           // .f32
+        pub atype: Atype,      // .atype
+        pub btype: Btype,      // .btype
+        pub f322: (),          // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
     }
-
 }
 
 pub mod section_3 {
@@ -212,22 +209,21 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WmmaMmaSyncAlignedAlayoutBlayoutShapeF32AtypeBtypeF321 {
-        pub mma: (), // .mma
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub alayout: Alayout, // .alayout
-        pub blayout: Blayout, // .blayout
-        pub shape: Shape, // .shape
-        pub f32: (), // .f32
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub f322: (), // .f32
+        pub mma: (),           // .mma
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub alayout: Alayout,  // .alayout
+        pub blayout: Blayout,  // .blayout
+        pub shape: Shape,      // .shape
+        pub f32: (),           // .f32
+        pub atype: Atype,      // .atype
+        pub btype: Btype,      // .btype
+        pub f322: (),          // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
     }
-
 }
 
 pub mod section_4 {
@@ -260,23 +256,22 @@ pub mod section_4 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WmmaMmaSyncAlignedAlayoutBlayoutShapeRndF64F64F64F64 {
-        pub mma: (), // .mma
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub alayout: Alayout, // .alayout
-        pub blayout: Blayout, // .blayout
-        pub shape: Shape, // .shape
-        pub rnd: Option<Rnd>, // {.rnd}
-        pub f64: (), // .f64
-        pub f642: (), // .f64
-        pub f644: (), // .f64
-        pub f646: (), // .f64
+        pub mma: (),           // .mma
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub alayout: Alayout,  // .alayout
+        pub blayout: Blayout,  // .blayout
+        pub shape: Shape,      // .shape
+        pub rnd: Option<Rnd>,  // {.rnd}
+        pub f64: (),           // .f64
+        pub f642: (),          // .f64
+        pub f644: (),          // .f64
+        pub f646: (),          // .f64
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
     }
-
 }
 
 pub mod section_5 {
@@ -301,23 +296,22 @@ pub mod section_5 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WmmaMmaSyncAlignedRowColShapeS32AtypeBtypeS32Satfinite {
-        pub mma: (), // .mma
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub row: (), // .row
-        pub col: (), // .col
-        pub shape: Shape, // .shape
-        pub s32: (), // .s32
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub s322: (), // .s32
-        pub satfinite: bool, // {.satfinite}
+        pub mma: (),           // .mma
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub shape: Shape,      // .shape
+        pub s32: (),           // .s32
+        pub atype: Atype,      // .atype
+        pub btype: Btype,      // .btype
+        pub s322: (),          // .s32
+        pub satfinite: bool,   // {.satfinite}
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
     }
-
 }
 
 pub mod section_6 {
@@ -346,22 +340,57 @@ pub mod section_6 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct WmmaMmaOpPopcSyncAlignedRowColShapeS32AtypeBtypeS32 {
-        pub mma: (), // .mma
-        pub op: Op, // .op
-        pub popc: (), // .popc
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub row: (), // .row
-        pub col: (), // .col
-        pub shape: Shape, // .shape
-        pub s32: (), // .s32
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub s322: (), // .s32
+        pub mma: (),           // .mma
+        pub op: Op,            // .op
+        pub popc: (),          // .popc
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub shape: Shape,      // .shape
+        pub s32: (),           // .s32
+        pub atype: Atype,      // .atype
+        pub btype: Btype,      // .btype
+        pub s322: (),          // .s32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::WmmaMmaSyncAlignedAlayoutBlayoutShapeDtypeCtype;
+pub use section_1::Alayout as Alayout1;
+pub use section_1::Atype as Atype1;
+pub use section_1::Blayout as Blayout1;
+pub use section_1::Btype as Btype1;
+pub use section_1::Shape as Shape1;
+pub use section_1::WmmaMmaSyncAlignedAlayoutBlayoutShapeS32AtypeBtypeS32Satfinite;
+pub use section_2::Alayout as Alayout2;
+pub use section_2::Atype as Atype2;
+pub use section_2::Blayout as Blayout2;
+pub use section_2::Btype as Btype2;
+pub use section_2::Shape as Shape2;
+pub use section_2::WmmaMmaSyncAlignedAlayoutBlayoutShapeF32AtypeBtypeF32;
+pub use section_3::Alayout as Alayout3;
+pub use section_3::Atype as Atype3;
+pub use section_3::Blayout as Blayout3;
+pub use section_3::Btype as Btype3;
+pub use section_3::Shape as Shape3;
+pub use section_3::WmmaMmaSyncAlignedAlayoutBlayoutShapeF32AtypeBtypeF321;
+pub use section_4::Alayout as Alayout4;
+pub use section_4::Blayout as Blayout4;
+pub use section_4::Rnd as Rnd4;
+pub use section_4::Shape as Shape4;
+pub use section_4::WmmaMmaSyncAlignedAlayoutBlayoutShapeRndF64F64F64F64;
+pub use section_5::Atype as Atype5;
+pub use section_5::Btype as Btype5;
+pub use section_5::Shape as Shape5;
+pub use section_5::WmmaMmaSyncAlignedRowColShapeS32AtypeBtypeS32Satfinite;
+pub use section_6::Atype as Atype6;
+pub use section_6::Btype as Btype6;
+pub use section_6::Op as Op6;
+pub use section_6::Shape as Shape6;
+pub use section_6::WmmaMmaOpPopcSyncAlignedRowColShapeS32AtypeBtypeS32;

@@ -75,9 +75,21 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".force_unnormalized_coords", ".filter_mode", ".addr_mode_0", "addr_mode_1", "addr_mode_2"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".force_unnormalized_coords",
+                ".filter_mode",
+                ".addr_mode_0",
+                "addr_mode_1",
+                "addr_mode_2",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -112,9 +124,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".height", ".width", ".depth"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -209,9 +227,25 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".channel_data_type", ".normalized_coords", ".num_mipmap_levels", ".channel_order", ".num_samples", ".array_size", ".height", ".width", ".depth"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".channel_data_type",
+                ".normalized_coords",
+                ".num_mipmap_levels",
+                ".channel_order",
+                ".num_samples",
+                ".array_size",
+                ".height",
+                ".width",
+                ".depth",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -231,15 +265,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(TxqTqueryB32 {
-                tquery,
-                b32,
-                d,
-                a,
-            })
+            Ok(TxqTqueryB32 { tquery, b32, d, a })
         }
     }
-
 
     impl PtxParser for TxqLevelTlqueryB32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -273,7 +301,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for TxqSqueryB32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("txq")?;
@@ -289,15 +316,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(TxqSqueryB32 {
-                squery,
-                b32,
-                d,
-                a,
-            })
+            Ok(TxqSqueryB32 { squery, b32, d, a })
         }
     }
-
-
 }
-

@@ -15,20 +15,18 @@ pub mod section_0 {
     impl PtxUnparser for ApplypriorityGlobalLevelEvictionPriority {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "applypriority");
-                    if self.global {
-                            push_directive(tokens, "global");
-                    }
-                    match &self.level_eviction_priority {
-                            LevelEvictionPriority::L2EvictNormal => {
-                                    push_directive(tokens, "L2::evict_normal");
-                            }
-                    }
-                    self.a.unparse_tokens(tokens);
+            if self.global {
+                push_directive(tokens, "global");
+            }
+            match &self.level_eviction_priority {
+                LevelEvictionPriority::L2EvictNormal => {
+                    push_directive(tokens, "L2::evict_normal");
+                }
+            }
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.size.unparse_tokens(tokens);
+            self.size.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

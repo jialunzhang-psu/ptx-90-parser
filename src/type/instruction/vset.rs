@@ -77,42 +77,54 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct VsetAtypeBtypeCmp {
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub cmp: Cmp, // .cmp
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub cmp: Cmp,           // .cmp
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct VsetAtypeBtypeCmpOp2 {
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub cmp: Cmp, // .cmp
-        pub op2: Op2, // .op2
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub cmp: Cmp,           // .cmp
+        pub op2: Op2,           // .op2
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct VsetAtypeBtypeCmp1 {
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub cmp: Cmp, // .cmp
-        pub d: GeneralOperand, // d
-        pub dsel: Dsel, // .dsel
-        pub a: GeneralOperand, // a
+        pub atype: Atype,       // .atype
+        pub btype: Btype,       // .btype
+        pub cmp: Cmp,           // .cmp
+        pub d: GeneralOperand,  // d
+        pub dsel: Dsel,         // .dsel
+        pub a: GeneralOperand,  // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand, // b
+        pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand, // c
+        pub c: GeneralOperand,  // c
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Asel as Asel0;
+pub use section_0::Atype as Atype0;
+pub use section_0::Bsel as Bsel0;
+pub use section_0::Btype as Btype0;
+pub use section_0::Cmp as Cmp0;
+pub use section_0::Dsel as Dsel0;
+pub use section_0::Op2 as Op20;
+pub use section_0::VsetAtypeBtypeCmp;
+pub use section_0::VsetAtypeBtypeCmp1;
+pub use section_0::VsetAtypeBtypeCmpOp2;

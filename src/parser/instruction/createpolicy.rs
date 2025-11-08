@@ -66,9 +66,20 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::evict_unchanged", ".L2::evict_normal", ".L2::evict_first", ".L2::evict_last"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".L2::evict_unchanged",
+                ".L2::evict_normal",
+                ".L2::evict_first",
+                ".L2::evict_last",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -93,9 +104,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".L2::evict_unchanged", ".L2::evict_first"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -139,20 +156,21 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
-                range,
-                global,
-                level_primary_priority,
-                level_secondary_priority,
-                b64,
-                cache_policy,
-                a,
-                primary_size,
-                total_size,
-            })
+            Ok(
+                CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
+                    range,
+                    global,
+                    level_primary_priority,
+                    level_secondary_priority,
+                    b64,
+                    cache_policy,
+                    a,
+                    primary_size,
+                    total_size,
+                },
+            )
         }
     }
-
 
     impl PtxParser for CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -192,17 +210,18 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
-                fractional,
-                level_primary_priority,
-                level_secondary_priority,
-                b64,
-                cache_policy,
-                fraction,
-            })
+            Ok(
+                CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
+                    fractional,
+                    level_primary_priority,
+                    level_secondary_priority,
+                    b64,
+                    cache_policy,
+                    fraction,
+                },
+            )
         }
     }
-
 
     impl PtxParser for CreatepolicyCvtL2B64 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -232,7 +251,4 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
-

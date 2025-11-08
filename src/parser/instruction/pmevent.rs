@@ -20,12 +20,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(Pmevent {
-                a,
-            })
+            Ok(Pmevent { a })
         }
     }
-
 
     impl PtxParser for PmeventMask {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -37,13 +34,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(PmeventMask {
-                mask,
-                a,
-            })
+            Ok(PmeventMask { mask, a })
         }
     }
-
-
 }
-

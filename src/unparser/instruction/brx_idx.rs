@@ -15,13 +15,13 @@ pub mod section_0 {
     impl PtxUnparser for BrxIdxUni {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "brx");
-                    push_directive(tokens, "idx");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    self.index.unparse_tokens(tokens);
+            push_directive(tokens, "idx");
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            self.index.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.tlist.unparse_tokens(tokens);
+            self.tlist.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -29,16 +29,14 @@ pub mod section_0 {
     impl PtxUnparser for BrxIdxUni1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "brx");
-                    push_directive(tokens, "idx");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    self.index.unparse_tokens(tokens);
+            push_directive(tokens, "idx");
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            self.index.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.tlist.unparse_tokens(tokens);
+            self.tlist.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

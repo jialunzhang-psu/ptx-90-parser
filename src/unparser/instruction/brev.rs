@@ -15,20 +15,18 @@ pub mod section_0 {
     impl PtxUnparser for BrevType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "brev");
-                    match &self.type_ {
-                            Type::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Type::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                    }
-                    self.d.unparse_tokens(tokens);
+            match &self.type_ {
+                Type::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Type::B64 => {
+                    push_directive(tokens, "b64");
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

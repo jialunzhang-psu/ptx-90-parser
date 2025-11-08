@@ -1,7 +1,7 @@
 //! Original PTX specification:
 //!
 //! ex2.approx{.ftz}.f32  d, a;
-//! 
+//!
 //! ex2.approx.atype     d, a;
 //! ex2.approx.ftz.btype d, a;
 //! .atype = { .f16,  .f16x2};
@@ -41,9 +41,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".f16x2", ".f16"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -68,9 +74,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".bf16x2", ".bf16"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -107,7 +119,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for Ex2ApproxAtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("ex2")?;
@@ -131,7 +142,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for Ex2ApproxFtzBtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -160,7 +170,4 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
-

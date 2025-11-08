@@ -15,22 +15,20 @@ pub mod section_0 {
     impl PtxUnparser for CopysignType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "copysign");
-                    match &self.type_ {
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Type::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
-                    self.d.unparse_tokens(tokens);
+            match &self.type_ {
+                Type::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Type::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

@@ -1,11 +1,7 @@
 //! Parser generator CLI tool (debug-oriented)
 
 use clap::{Parser, Subcommand};
-use parser_gen::analyzer::Analyzer;
-use parser_gen::parser_generator::ParserGenerator;
 use parser_gen::r#type::{Modifier, Rule, Section};
-use parser_gen::type_generator::TypeGenerator;
-use parser_gen::unparser_generator::UnparserGenerator;
 use ptx_parser_gen as parser_gen;
 use std::collections::BTreeSet;
 use std::fs;
@@ -299,21 +295,6 @@ fn process_file(
     let content = fs::read_to_string(input_path)?;
     let file_name = input_path.file_name().unwrap().to_string_lossy();
 
-    // Parse the specification
-    let sections = parser_gen::parse_spec_with_name(&content, &file_name)?;
-
-    if sections.is_empty() {
-        return Err("No sections found in file".into());
-    }
-
-    // Analyze all sections at once
-    let mut analyzer = Analyzer::new();
-    let analyzed_sections = analyzer.analyze_sections(&sections);
-
-    if analyzed_sections.is_empty() {
-        return Err("No instructions found".into());
-    }
-
     // Determine module name based on the file name
     let module_name = input_path
         .file_stem()
@@ -321,67 +302,16 @@ fn process_file(
         .to_string_lossy()
         .replace('.', "_");
 
-    // Generate type definitions section by section
-    // Use a single TypeGenerator instance to track generated enums globally
-    let mut all_outputs = Vec::new();
-    let mut type_gen = TypeGenerator::new();
+    // Use the generator to create the complete file
+    let (output, instruction_structs) =
+        parser_gen::type_generator::generate_type_file(&content, &file_name, &module_name)?;
 
-    for (section_idx, section) in analyzed_sections.iter().enumerate() {
-        let generated = type_gen.generate(section, section_idx);
-
-        if !generated.code.trim().is_empty() {
-            all_outputs.push(generated);
-        }
-    }
-
-    if all_outputs.is_empty() {
-        return Err("No instructions found".into());
-    }
-
-    // Collect all instruction structs with their section info
-    let all_instruction_structs: Vec<(String, String)> = all_outputs
-        .iter()
-        .flat_map(|output| {
-            let section_name = output.module_name.clone();
-            output
-                .instruction_structs
-                .iter()
-                .map(move |struct_name| (section_name.clone(), struct_name.clone()))
-        })
-        .collect();
-
-    // Create comment header with original specification
-    let mut output = String::new();
-    output.push_str("//! Original PTX specification:\n");
-    output.push_str("//!\n");
-    for line in content.lines() {
-        output.push_str("//! ");
-        output.push_str(line);
-        output.push_str("\n");
-    }
-    output.push_str("\n");
-    output.push_str("#![allow(unused)]\n");
-    output.push_str("use crate::r#type::common::*;\n");
-    output.push_str("\n");
-
-    // Append generated code for each section
-    for (idx, gen_output) in all_outputs.iter().enumerate() {
-        if idx > 0 {
-            output.push_str("\n");
-        }
-        output.push_str(&gen_output.code);
-        if !gen_output.code.ends_with('\n') {
-            output.push('\n');
-        }
-    }
-
-    // Determine output file name based on the instruction name
-    // Use the file stem (without .txt) as the base name
+    // Determine output file name
     let output_file_name = input_path
         .file_stem()
         .unwrap()
         .to_string_lossy()
-        .replace('.', "_"); // Replace dots with underscores for valid Rust module names
+        .replace('.', "_");
 
     let output_path = output_dir.join(format!("{}.rs", output_file_name));
 
@@ -390,7 +320,7 @@ fn process_file(
 
     Ok(ModuleInfo {
         module_name,
-        instruction_structs: all_instruction_structs,
+        instruction_structs,
     })
 }
 
@@ -465,89 +395,15 @@ fn process_parser_file(
     let content = fs::read_to_string(input_path)?;
     let file_name = input_path.file_name().unwrap().to_string_lossy();
 
-    let sections = parser_gen::parse_spec_with_name(&content, &file_name)?;
-
-    if sections.is_empty() {
-        return Err("No sections found in file".into());
-    }
-
-    // Analyze all sections at once
-    let mut analyzer = Analyzer::new();
-    let analyzed_sections = analyzer.analyze_sections(&sections);
-
-    if analyzed_sections.is_empty() {
-        return Err("No instructions found".into());
-    }
-
-    // Collect ALL unique opcodes from ALL instructions in the file
-    // This is needed for files like bar.txt which contain both "bar" and "barrier" instructions
-    use std::collections::BTreeSet;
-    let opcodes: Vec<String> = analyzed_sections
-        .iter()
-        .flat_map(|section| section.opcodes.iter().cloned())
-        .collect::<BTreeSet<_>>()
-        .into_iter()
-        .collect();
-
-    if opcodes.is_empty() {
-        return Err("No instructions found".into());
-    }
-
     let module_name = input_path
         .file_stem()
         .unwrap()
         .to_string_lossy()
         .replace('.', "_");
 
-    // Generate parser definitions section by section
-    // Use a single ParserGenerator instance to track generated enums globally
-    let mut all_outputs = Vec::new();
-    let mut parser_gen = ParserGenerator::new();
-
-    for (section_idx, section) in analyzed_sections.iter().enumerate() {
-        let generated = parser_gen.generate(section, section_idx, &module_name);
-
-        if !generated.code.trim().is_empty() {
-            all_outputs.push(generated);
-        }
-    }
-
-    if all_outputs.is_empty() {
-        return Err("No instructions found".into());
-    }
-
-    // Collect all instruction structs with their section info
-    let all_instruction_structs: Vec<(String, String)> = analyzed_sections
-        .iter()
-        .flat_map(|section| {
-            let section_name = format!("section_{}", analyzed_sections.iter().position(|s| std::ptr::eq(s, section)).unwrap());
-            section.instructions.iter().map(move |instr| {
-                (section_name.clone(), instr.rust_name.clone())
-            })
-        })
-        .collect();
-
-    let mut output = String::new();
-    output.push_str("//! Original PTX specification:\n");
-    output.push_str("//!\n");
-    for line in content.lines() {
-        output.push_str("//! ");
-        output.push_str(line);
-        output.push_str("\n");
-    }
-    output.push_str("\n");
-    output.push_str("#![allow(unused)]\n");
-    output.push_str("\n");
-
-    // Add imports once
-    output.push_str(&ParserGenerator::generate_imports());
-    output.push_str("\n\n");
-
-    // Append generated code for each section
-    for gen_output in all_outputs.iter() {
-        output.push_str(&gen_output.code);
-        output.push_str("\n");
-    }
+    // Use the generator to create the complete file
+    let (output, (module_name, opcodes, instruction_structs)) =
+        parser_gen::parser_generator::generate_parser_file(&content, &file_name, &module_name)?;
 
     let output_file_name = input_path
         .file_stem()
@@ -561,7 +417,7 @@ fn process_parser_file(
     Ok(ParserModuleInfo {
         module_name,
         opcodes,
-        instruction_structs: all_instruction_structs,
+        instruction_structs,
     })
 }
 
@@ -632,69 +488,15 @@ fn process_unparser_file(
     let content = fs::read_to_string(input_path)?;
     let file_name = input_path.file_name().unwrap().to_string_lossy();
 
-    let sections = parser_gen::parse_spec_with_name(&content, &file_name)?;
-
-    if sections.is_empty() {
-        return Err("No sections found in file".into());
-    }
-
-    let mut analyzer = Analyzer::new();
-    let analyzed_sections = analyzer.analyze_sections(&sections);
-
-    if analyzed_sections.is_empty() {
-        return Err("No instructions found".into());
-    }
-
     let module_name = input_path
         .file_stem()
         .unwrap()
         .to_string_lossy()
         .replace('.', "_");
 
-    let mut all_outputs = Vec::new();
-    let mut unparser_gen = UnparserGenerator::new();
-
-    for (section_idx, section) in analyzed_sections.iter().enumerate() {
-        let generated = unparser_gen.generate(section, section_idx, &module_name);
-
-        if !generated.code.trim().is_empty() {
-            all_outputs.push(generated);
-        }
-    }
-
-    if all_outputs.is_empty() {
-        return Err("No instructions found".into());
-    }
-
-    let all_instruction_structs: Vec<(String, String)> = all_outputs
-        .iter()
-        .flat_map(|output| {
-            let section_name = output.module_name.clone();
-            output
-                .instruction_structs
-                .iter()
-                .map(move |struct_name| (section_name.clone(), struct_name.clone()))
-        })
-        .collect();
-
-    let mut output = String::new();
-    output.push_str("//! Original PTX specification:\n");
-    output.push_str("//!\n");
-    for line in content.lines() {
-        output.push_str("//! ");
-        output.push_str(line);
-        output.push_str("\n");
-    }
-    output.push_str("\n");
-    output.push_str("#![allow(unused)]\n");
-    output.push_str("\n");
-    output.push_str(&UnparserGenerator::generate_imports());
-    output.push_str("\n\n");
-
-    for gen_output in all_outputs.iter() {
-        output.push_str(&gen_output.code);
-        output.push_str("\n");
-    }
+    // Use the generator to create the complete file
+    let (output, (module_name, instruction_structs)) =
+        parser_gen::unparser_generator::generate_unparser_file(&content, &file_name, &module_name)?;
 
     let output_file_name = input_path
         .file_stem()
@@ -707,6 +509,6 @@ fn process_unparser_file(
 
     Ok(ModuleInfo {
         module_name,
-        instruction_structs: all_instruction_structs,
+        instruction_structs,
     })
 }

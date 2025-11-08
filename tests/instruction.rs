@@ -1,6 +1,6 @@
 mod util;
 
-use ptx_parser::{r#type::common::Instruction, unparser::PtxUnparser};
+use ptx_parser::{PtxUnparser, r#type::Instruction};
 use util::{parse_result, tokenize_only};
 
 const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[

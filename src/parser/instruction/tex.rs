@@ -50,9 +50,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".s32", ".f32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -97,9 +103,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".u32", ".s32", ".f16", ".f32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -194,9 +206,17 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".acube", ".a2dms", ".cube", ".2dms", ".a1d", ".a2d", ".1d", ".2d", ".3d"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
+            let expected = &[
+                ".acube", ".a2dms", ".cube", ".2dms", ".a1d", ".a2d", ".1d", ".2d", ".3d",
+            ];
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -269,7 +289,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for TexGeomV4DtypeCtype1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("tex")?;
@@ -337,7 +356,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for TexGeomV2F16x2Ctype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -408,7 +426,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for TexGeomV2F16x2Ctype1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("tex")?;
@@ -477,7 +494,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for TexBaseGeomV4DtypeCtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -550,7 +566,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for TexLevelGeomV4DtypeCtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -627,7 +642,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for TexGradGeomV4DtypeCtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -709,7 +723,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for TexBaseGeomV2F16x2Ctype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("tex")?;
@@ -782,7 +795,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for TexLevelGeomV2F16x2Ctype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -860,7 +872,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for TexGradGeomV2F16x2Ctype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -942,7 +953,4 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
-

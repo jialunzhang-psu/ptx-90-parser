@@ -81,18 +81,17 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct RedAsyncSemScopeSsCompletionMechanismOpType {
-        pub async_: (), // .async
-        pub sem: Sem, // .sem
-        pub scope: Scope, // .scope
-        pub ss: Option<Ss>, // {.ss}
+        pub async_: (),                                // .async
+        pub sem: Sem,                                  // .sem
+        pub scope: Scope,                              // .scope
+        pub ss: Option<Ss>,                            // {.ss}
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
-        pub op: Op, // .op
-        pub type_: Type, // .type
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub mbar: AddressOperand, // [mbar]
+        pub op: Op,                                    // .op
+        pub type_: Type,                               // .type
+        pub a: AddressOperand,                         // [a]
+        pub b: GeneralOperand,                         // b
+        pub mbar: AddressOperand,                      // [mbar]
     }
-
 }
 
 pub mod section_1 {
@@ -132,18 +131,17 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct RedAsyncSemScopeSsCompletionMechanismOpType1 {
-        pub async_: (), // .async
-        pub sem: Sem, // .sem
-        pub scope: Scope, // .scope
-        pub ss: Option<Ss>, // {.ss}
+        pub async_: (),                                // .async
+        pub sem: Sem,                                  // .sem
+        pub scope: Scope,                              // .scope
+        pub ss: Option<Ss>,                            // {.ss}
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
-        pub op: Op, // .op
-        pub type_: Type, // .type
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub mbar: AddressOperand, // [mbar]
+        pub op: Op,                                    // .op
+        pub type_: Type,                               // .type
+        pub a: AddressOperand,                         // [a]
+        pub b: GeneralOperand,                         // b
+        pub mbar: AddressOperand,                      // [mbar]
     }
-
 }
 
 pub mod section_2 {
@@ -173,7 +171,7 @@ pub mod section_2 {
     pub enum Op {
         And, // .and
         Xor, // .xor
-        Or, // .or
+        Or,  // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -183,18 +181,17 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct RedAsyncSemScopeSsCompletionMechanismOpType2 {
-        pub async_: (), // .async
-        pub sem: Sem, // .sem
-        pub scope: Scope, // .scope
-        pub ss: Option<Ss>, // {.ss}
+        pub async_: (),                                // .async
+        pub sem: Sem,                                  // .sem
+        pub scope: Scope,                              // .scope
+        pub ss: Option<Ss>,                            // {.ss}
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
-        pub op: Op, // .op
-        pub type_: Type, // .type
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub mbar: AddressOperand, // [mbar]
+        pub op: Op,                                    // .op
+        pub type_: Type,                               // .type
+        pub a: AddressOperand,                         // [a]
+        pub b: GeneralOperand,                         // b
+        pub mbar: AddressOperand,                      // [mbar]
     }
-
 }
 
 pub mod section_3 {
@@ -229,18 +226,17 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct RedAsyncSemScopeSsCompletionMechanismAddType {
-        pub async_: (), // .async
-        pub sem: Sem, // .sem
-        pub scope: Scope, // .scope
-        pub ss: Option<Ss>, // {.ss}
+        pub async_: (),                                // .async
+        pub sem: Sem,                                  // .sem
+        pub scope: Scope,                              // .scope
+        pub ss: Option<Ss>,                            // {.ss}
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
-        pub add: (), // .add
-        pub type_: Type, // .type
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub mbar: AddressOperand, // [mbar]
+        pub add: (),                                   // .add
+        pub type_: Type,                               // .type
+        pub a: AddressOperand,                         // [a]
+        pub b: GeneralOperand,                         // b
+        pub mbar: AddressOperand,                      // [mbar]
     }
-
 }
 
 pub mod section_4 {
@@ -254,7 +250,7 @@ pub mod section_4 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
         Cluster, // .cluster
-        Gpu, // .gpu
+        Gpu,     // .gpu
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -272,15 +268,49 @@ pub mod section_4 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct RedAsyncMmioSemScopeSsAddType {
-        pub async_: (), // .async
-        pub mmio: bool, // {.mmio}
-        pub sem: Sem, // .sem
-        pub scope: Scope, // .scope
-        pub ss: Option<Ss>, // {.ss}
-        pub add: (), // .add
-        pub type_: Type, // .type
+        pub async_: (),        // .async
+        pub mmio: bool,        // {.mmio}
+        pub sem: Sem,          // .sem
+        pub scope: Scope,      // .scope
+        pub ss: Option<Ss>,    // {.ss}
+        pub add: (),           // .add
+        pub type_: Type,       // .type
         pub a: AddressOperand, // [a]
         pub b: GeneralOperand, // b
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::CompletionMechanism as CompletionMechanism0;
+pub use section_0::Op as Op0;
+pub use section_0::RedAsyncSemScopeSsCompletionMechanismOpType;
+pub use section_0::Scope as Scope0;
+pub use section_0::Sem as Sem0;
+pub use section_0::Ss as Ss0;
+pub use section_0::Type as Type0;
+pub use section_1::CompletionMechanism as CompletionMechanism1;
+pub use section_1::Op as Op1;
+pub use section_1::RedAsyncSemScopeSsCompletionMechanismOpType1;
+pub use section_1::Scope as Scope1;
+pub use section_1::Sem as Sem1;
+pub use section_1::Ss as Ss1;
+pub use section_1::Type as Type1;
+pub use section_2::CompletionMechanism as CompletionMechanism2;
+pub use section_2::Op as Op2;
+pub use section_2::RedAsyncSemScopeSsCompletionMechanismOpType2;
+pub use section_2::Scope as Scope2;
+pub use section_2::Sem as Sem2;
+pub use section_2::Ss as Ss2;
+pub use section_2::Type as Type2;
+pub use section_3::CompletionMechanism as CompletionMechanism3;
+pub use section_3::RedAsyncSemScopeSsCompletionMechanismAddType;
+pub use section_3::Scope as Scope3;
+pub use section_3::Sem as Sem3;
+pub use section_3::Ss as Ss3;
+pub use section_3::Type as Type3;
+pub use section_4::RedAsyncMmioSemScopeSsAddType;
+pub use section_4::Scope as Scope4;
+pub use section_4::Sem as Sem4;
+pub use section_4::Ss as Ss4;
+pub use section_4::Type as Type4;

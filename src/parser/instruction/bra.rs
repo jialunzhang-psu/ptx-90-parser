@@ -26,13 +26,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(BraUni {
-                uni,
-                tgt,
-            })
+            Ok(BraUni { uni, tgt })
         }
     }
-
 
     impl PtxParser for BraUni1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -47,13 +43,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(BraUni1 {
-                uni,
-                tgt,
-            })
+            Ok(BraUni1 { uni, tgt })
         }
     }
-
-
 }
-

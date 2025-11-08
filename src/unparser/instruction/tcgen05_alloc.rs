@@ -17,24 +17,24 @@ pub mod section_0 {
     impl PtxUnparser for Tcgen05AllocCtaGroupSyncAlignedSharedCtaB32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "alloc");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    if self.shared_cta {
-                            push_directive(tokens, "shared::cta");
-                    }
-                    push_directive(tokens, "b32");
-                    self.dst.unparse_tokens(tokens);
+            push_directive(tokens, "alloc");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            if self.shared_cta {
+                push_directive(tokens, "shared::cta");
+            }
+            push_directive(tokens, "b32");
+            self.dst.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.ncols.unparse_tokens(tokens);
+            self.ncols.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -42,21 +42,21 @@ pub mod section_0 {
     impl PtxUnparser for Tcgen05DeallocCtaGroupSyncAlignedB32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "dealloc");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    push_directive(tokens, "b32");
-                    self.taddr.unparse_tokens(tokens);
+            push_directive(tokens, "dealloc");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            push_directive(tokens, "b32");
+            self.taddr.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.ncols.unparse_tokens(tokens);
+            self.ncols.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -64,20 +64,18 @@ pub mod section_0 {
     impl PtxUnparser for Tcgen05RelinquishAllocPermitCtaGroupSyncAligned {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "relinquish_alloc_permit");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
+            push_directive(tokens, "relinquish_alloc_permit");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

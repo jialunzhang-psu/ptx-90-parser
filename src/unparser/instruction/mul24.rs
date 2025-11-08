@@ -16,30 +16,28 @@ pub mod section_0 {
     impl PtxUnparser for Mul24ModeType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mul24");
-                    match &self.mode {
-                            Mode::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Mode::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                    }
-                    match &self.type_ {
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
-                    self.d.unparse_tokens(tokens);
+            match &self.mode {
+                Mode::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Mode::Lo => {
+                    push_directive(tokens, "lo");
+                }
+            }
+            match &self.type_ {
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

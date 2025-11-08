@@ -25,8 +25,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Mad24ModeType {
-        pub mode: Mode, // .mode
-        pub type_: Type, // .type
+        pub mode: Mode,        // .mode
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -35,13 +35,19 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Mad24HiSatS32 {
-        pub hi: (), // .hi
-        pub sat: (), // .sat
-        pub s32: (), // .s32
+        pub hi: (),            // .hi
+        pub sat: (),           // .sat
+        pub s32: (),           // .s32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Mad24HiSatS32;
+pub use section_0::Mad24ModeType;
+pub use section_0::Mode as Mode0;
+pub use section_0::Type as Type0;

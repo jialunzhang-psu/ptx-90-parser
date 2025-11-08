@@ -31,149 +31,151 @@ pub mod section_0 {
     impl PtxUnparser for LdWeakSsCopLevelCacheHintLevelPrefetchSizeVecType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "ld");
-                    if self.weak {
-                            push_directive(tokens, "weak");
+            if self.weak {
+                push_directive(tokens, "weak");
+            }
+            if let Some(ss_0) = self.ss.as_ref() {
+                match ss_0 {
+                    Ss::SharedCluster => {
+                        push_directive(tokens, "shared::cluster");
                     }
-                    if let Some(ss_0) = self.ss.as_ref() {
-                            match ss_0 {
-                                    Ss::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
-                                    }
-                                    Ss::ParamEntry => {
-                                            push_directive(tokens, "param::entry");
-                                    }
-                                    Ss::ParamFunc => {
-                                            push_directive(tokens, "param::func");
-                                    }
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                                    Ss::Const => {
-                                            push_directive(tokens, "const");
-                                    }
-                                    Ss::Local => {
-                                            push_directive(tokens, "local");
-                                    }
-                                    Ss::Param => {
-                                            push_directive(tokens, "param");
-                                    }
-                            }
+                    Ss::ParamEntry => {
+                        push_directive(tokens, "param::entry");
                     }
-                    if let Some(cop_1) = self.cop.as_ref() {
-                            match cop_1 {
-                                    Cop::Ca => {
-                                            push_directive(tokens, "ca");
-                                    }
-                                    Cop::Cg => {
-                                            push_directive(tokens, "cg");
-                                    }
-                                    Cop::Cs => {
-                                            push_directive(tokens, "cs");
-                                    }
-                                    Cop::Lu => {
-                                            push_directive(tokens, "lu");
-                                    }
-                                    Cop::Cv => {
-                                            push_directive(tokens, "cv");
-                                    }
-                            }
+                    Ss::ParamFunc => {
+                        push_directive(tokens, "param::func");
                     }
-                    if let Some(level_cache_hint_2) = self.level_cache_hint.as_ref() {
-                            match level_cache_hint_2 {
-                                    LevelCacheHint::L2CacheHint => {
-                                            push_directive(tokens, "L2::cache_hint");
-                                    }
-                            }
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    if let Some(level_prefetch_size_3) = self.level_prefetch_size.as_ref() {
-                            match level_prefetch_size_3 {
-                                    LevelPrefetchSize::L2128b => {
-                                            push_directive(tokens, "L2::128B");
-                                    }
-                                    LevelPrefetchSize::L2256b => {
-                                            push_directive(tokens, "L2::256B");
-                                    }
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(vec_4) = self.vec.as_ref() {
-                            match vec_4 {
-                                    Vec::V2 => {
-                                            push_directive(tokens, "v2");
-                                    }
-                                    Vec::V4 => {
-                                            push_directive(tokens, "v4");
-                                    }
-                                    Vec::V8 => {
-                                            push_directive(tokens, "v8");
-                                    }
-                            }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
                     }
-                    match &self.type_ {
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Type::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Type::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Type::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Type::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Type::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Type::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Type::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
+                    Ss::Const => {
+                        push_directive(tokens, "const");
                     }
-                    self.d.unparse_tokens(tokens);
+                    Ss::Local => {
+                        push_directive(tokens, "local");
+                    }
+                    Ss::Param => {
+                        push_directive(tokens, "param");
+                    }
+                }
+            }
+            if let Some(cop_1) = self.cop.as_ref() {
+                match cop_1 {
+                    Cop::Ca => {
+                        push_directive(tokens, "ca");
+                    }
+                    Cop::Cg => {
+                        push_directive(tokens, "cg");
+                    }
+                    Cop::Cs => {
+                        push_directive(tokens, "cs");
+                    }
+                    Cop::Lu => {
+                        push_directive(tokens, "lu");
+                    }
+                    Cop::Cv => {
+                        push_directive(tokens, "cv");
+                    }
+                }
+            }
+            if let Some(level_cache_hint_2) = self.level_cache_hint.as_ref() {
+                match level_cache_hint_2 {
+                    LevelCacheHint::L2CacheHint => {
+                        push_directive(tokens, "L2::cache_hint");
+                    }
+                }
+            }
+            if let Some(level_prefetch_size_3) = self.level_prefetch_size.as_ref() {
+                match level_prefetch_size_3 {
+                    LevelPrefetchSize::L2128b => {
+                        push_directive(tokens, "L2::128B");
+                    }
+                    LevelPrefetchSize::L2256b => {
+                        push_directive(tokens, "L2::256B");
+                    }
+                    LevelPrefetchSize::L264b => {
+                        push_directive(tokens, "L2::64B");
+                    }
+                }
+            }
+            if let Some(vec_4) = self.vec.as_ref() {
+                match vec_4 {
+                    Vec::V2 => {
+                        push_directive(tokens, "v2");
+                    }
+                    Vec::V4 => {
+                        push_directive(tokens, "v4");
+                    }
+                    Vec::V8 => {
+                        push_directive(tokens, "v8");
+                    }
+                }
+            }
+            match &self.type_ {
+                Type::B128 => {
+                    push_directive(tokens, "b128");
+                }
+                Type::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Type::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Type::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Type::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Type::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Type::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Type::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Type::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Type::F64 => {
+                    push_directive(tokens, "f64");
+                }
+                Type::B8 => {
+                    push_directive(tokens, "b8");
+                }
+                Type::U8 => {
+                    push_directive(tokens, "u8");
+                }
+                Type::S8 => {
+                    push_directive(tokens, "s8");
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
-                    if self.unified {
-                            push_directive(tokens, "unified");
-                    }
-            if self.cache_policy.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_5) = self.cache_policy.as_ref() {
-                        opt_5.unparse_tokens(tokens);
-                    }
+            self.a.unparse_tokens(tokens);
+            if self.unified {
+                push_directive(tokens, "unified");
+            }
+            if self.cache_policy.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_5) = self.cache_policy.as_ref() {
+                opt_5.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -344,114 +346,114 @@ pub mod section_0 {
     impl PtxUnparser for LdVolatileSsLevelPrefetchSizeVecType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "ld");
-                    push_directive(tokens, "volatile");
-                    if let Some(ss_13) = self.ss.as_ref() {
-                            match ss_13 {
-                                    Ss::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
-                                    }
-                                    Ss::ParamEntry => {
-                                            push_directive(tokens, "param::entry");
-                                    }
-                                    Ss::ParamFunc => {
-                                            push_directive(tokens, "param::func");
-                                    }
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Ss::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                                    Ss::Const => {
-                                            push_directive(tokens, "const");
-                                    }
-                                    Ss::Local => {
-                                            push_directive(tokens, "local");
-                                    }
-                                    Ss::Param => {
-                                            push_directive(tokens, "param");
-                                    }
-                            }
+            push_directive(tokens, "volatile");
+            if let Some(ss_13) = self.ss.as_ref() {
+                match ss_13 {
+                    Ss::SharedCluster => {
+                        push_directive(tokens, "shared::cluster");
                     }
-                    if let Some(level_prefetch_size_14) = self.level_prefetch_size.as_ref() {
-                            match level_prefetch_size_14 {
-                                    LevelPrefetchSize::L2128b => {
-                                            push_directive(tokens, "L2::128B");
-                                    }
-                                    LevelPrefetchSize::L2256b => {
-                                            push_directive(tokens, "L2::256B");
-                                    }
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
-                            }
+                    Ss::ParamEntry => {
+                        push_directive(tokens, "param::entry");
                     }
-                    if let Some(vec_15) = self.vec.as_ref() {
-                            match vec_15 {
-                                    Vec::V2 => {
-                                            push_directive(tokens, "v2");
-                                    }
-                                    Vec::V4 => {
-                                            push_directive(tokens, "v4");
-                                    }
-                                    Vec::V8 => {
-                                            push_directive(tokens, "v8");
-                                    }
-                            }
+                    Ss::ParamFunc => {
+                        push_directive(tokens, "param::func");
                     }
-                    match &self.type_ {
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Type::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Type::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Type::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Type::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Type::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Type::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Type::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    self.d.unparse_tokens(tokens);
+                    Ss::Global => {
+                        push_directive(tokens, "global");
+                    }
+                    Ss::Shared => {
+                        push_directive(tokens, "shared");
+                    }
+                    Ss::Const => {
+                        push_directive(tokens, "const");
+                    }
+                    Ss::Local => {
+                        push_directive(tokens, "local");
+                    }
+                    Ss::Param => {
+                        push_directive(tokens, "param");
+                    }
+                }
+            }
+            if let Some(level_prefetch_size_14) = self.level_prefetch_size.as_ref() {
+                match level_prefetch_size_14 {
+                    LevelPrefetchSize::L2128b => {
+                        push_directive(tokens, "L2::128B");
+                    }
+                    LevelPrefetchSize::L2256b => {
+                        push_directive(tokens, "L2::256B");
+                    }
+                    LevelPrefetchSize::L264b => {
+                        push_directive(tokens, "L2::64B");
+                    }
+                }
+            }
+            if let Some(vec_15) = self.vec.as_ref() {
+                match vec_15 {
+                    Vec::V2 => {
+                        push_directive(tokens, "v2");
+                    }
+                    Vec::V4 => {
+                        push_directive(tokens, "v4");
+                    }
+                    Vec::V8 => {
+                        push_directive(tokens, "v8");
+                    }
+                }
+            }
+            match &self.type_ {
+                Type::B128 => {
+                    push_directive(tokens, "b128");
+                }
+                Type::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Type::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Type::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Type::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Type::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Type::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Type::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Type::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Type::F64 => {
+                    push_directive(tokens, "f64");
+                }
+                Type::B8 => {
+                    push_directive(tokens, "b8");
+                }
+                Type::U8 => {
+                    push_directive(tokens, "u8");
+                }
+                Type::S8 => {
+                    push_directive(tokens, "s8");
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -803,65 +805,63 @@ pub mod section_0 {
     impl PtxUnparser for LdMmioRelaxedSysGlobalType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "ld");
-                    push_directive(tokens, "mmio");
-                    push_directive(tokens, "relaxed");
-                    push_directive(tokens, "sys");
-                    if self.global {
-                            push_directive(tokens, "global");
-                    }
-                    match &self.type_ {
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Type::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Type::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Type::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Type::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Type::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Type::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Type::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
-                    }
-                    self.d.unparse_tokens(tokens);
+            push_directive(tokens, "mmio");
+            push_directive(tokens, "relaxed");
+            push_directive(tokens, "sys");
+            if self.global {
+                push_directive(tokens, "global");
+            }
+            match &self.type_ {
+                Type::B128 => {
+                    push_directive(tokens, "b128");
+                }
+                Type::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Type::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Type::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Type::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Type::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Type::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Type::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Type::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Type::F64 => {
+                    push_directive(tokens, "f64");
+                }
+                Type::B8 => {
+                    push_directive(tokens, "b8");
+                }
+                Type::U8 => {
+                    push_directive(tokens, "u8");
+                }
+                Type::S8 => {
+                    push_directive(tokens, "s8");
+                }
+            }
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

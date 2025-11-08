@@ -30,14 +30,20 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Tcgen05CommitCtaGroupCompletionMechanismSharedClusterMulticastB64 {
-        pub commit: (), // .commit
-        pub cta_group: CtaGroup, // .cta_group
+        pub commit: (),                                // .commit
+        pub cta_group: CtaGroup,                       // .cta_group
         pub completion_mechanism: CompletionMechanism, // .completion_mechanism
-        pub shared_cluster: bool, // {.shared::cluster}
-        pub multicast: Option<Multicast>, // {.multicast}
-        pub b64: (), // .b64
-        pub mbar: AddressOperand, // [mbar]
-        pub ctamask: Option<GeneralOperand>, // {, ctaMask}
+        pub shared_cluster: bool,                      // {.shared::cluster}
+        pub multicast: Option<Multicast>,              // {.multicast}
+        pub b64: (),                                   // .b64
+        pub mbar: AddressOperand,                      // [mbar]
+        pub ctamask: Option<GeneralOperand>,           // {, ctaMask}
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::CompletionMechanism as CompletionMechanism0;
+pub use section_0::CtaGroup as CtaGroup0;
+pub use section_0::Multicast as Multicast0;
+pub use section_0::Tcgen05CommitCtaGroupCompletionMechanismSharedClusterMulticastB64;

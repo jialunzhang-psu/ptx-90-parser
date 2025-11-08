@@ -25,9 +25,9 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
         Cluster, // .cluster
-        Cta, // .cta
-        Gpu, // .gpu
-        Sys, // .sys
+        Cta,     // .cta
+        Gpu,     // .gpu
+        Sys,     // .sys
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -37,14 +37,21 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct TensormapCpFenceproxyCpQualifiersFenceQualifiersSyncAligned {
-        pub cp_fenceproxy: (), // .cp_fenceproxy
-        pub cp_qualifiers: CpQualifiers, // .cp_qualifiers
+        pub cp_fenceproxy: (),                 // .cp_fenceproxy
+        pub cp_qualifiers: CpQualifiers,       // .cp_qualifiers
         pub fence_qualifiers: FenceQualifiers, // .fence_qualifiers
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub dst: AddressOperand, // [dst]
-        pub src: AddressOperand, // [src]
-        pub size: GeneralOperand, // size
+        pub sync: (),                          // .sync
+        pub aligned: (),                       // .aligned
+        pub dst: AddressOperand,               // [dst]
+        pub src: AddressOperand,               // [src]
+        pub size: GeneralOperand,              // size
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::CpQualifiers as CpQualifiers0;
+pub use section_0::FenceQualifiers as FenceQualifiers0;
+pub use section_0::Scope as Scope0;
+pub use section_0::TensormapCpFenceproxyCpQualifiersFenceQualifiersSyncAligned;
+pub use section_0::ToProxyFromProxy as ToProxyFromProxy0;

@@ -12,16 +12,20 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Type {
         Pred, // .pred
-        B16, // .b16
-        B32, // .b32
-        B64, // .b64
+        B16,  // .b16
+        B32,  // .b32
+        B64,  // .b64
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct NotType {
-        pub type_: Type, // .type
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::NotType;
+pub use section_0::Type as Type0;

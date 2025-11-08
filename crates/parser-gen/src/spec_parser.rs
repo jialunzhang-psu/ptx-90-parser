@@ -520,7 +520,7 @@ impl<'a> TokenParser<'a> {
                 _ => Err(SpecParseError {
                     message: format!("Expected identifier, found {:?}", token),
                     span: self.current_span(),
-                })
+                }),
             }
         } else {
             Err(SpecParseError {
@@ -587,16 +587,19 @@ impl<'a> TokenParser<'a> {
         // 3. Split into segments and return Atom or Sequence
 
         let start_pos = self.pos;
-        
+
         // Find the end position (next delimiter)
         let mut end_pos = self.pos;
         while end_pos < self.tokens.len() {
             match &self.tokens[end_pos].0 {
-                PtxSpecToken::Comma | PtxSpecToken::RBrace | PtxSpecToken::RBracket | PtxSpecToken::RParen => break,
+                PtxSpecToken::Comma
+                | PtxSpecToken::RBrace
+                | PtxSpecToken::RBracket
+                | PtxSpecToken::RParen => break,
                 _ => end_pos += 1,
             }
         }
-        
+
         if start_pos >= end_pos {
             return Err(SpecParseError {
                 message: "Expected parameter choice".to_string(),
@@ -626,11 +629,11 @@ impl<'a> TokenParser<'a> {
 
         while pos < end_pos {
             let mut matched = false;
-            
+
             // Try longest match first
             for try_end in (pos + 1..=end_pos).rev() {
                 let candidate = tokens_to_string(pos, try_end);
-                
+
                 if self.identifiers.contains(&candidate) {
                     segments.push(candidate);
                     pos = try_end;
@@ -638,12 +641,12 @@ impl<'a> TokenParser<'a> {
                     break;
                 }
             }
-            
+
             if !matched {
                 // Collect unmatched tokens until we find a match
                 let segment_start = pos;
                 pos += 1;
-                
+
                 while pos < end_pos {
                     let mut has_match = false;
                     for try_end in (pos + 1..=end_pos).rev() {
@@ -652,10 +655,12 @@ impl<'a> TokenParser<'a> {
                             break;
                         }
                     }
-                    if has_match { break; }
+                    if has_match {
+                        break;
+                    }
                     pos += 1;
                 }
-                
+
                 segments.push(tokens_to_string(segment_start, pos));
             }
         }
@@ -674,21 +679,27 @@ impl<'a> TokenParser<'a> {
     fn parse_modifier_atom_with_concatenation(&mut self) -> Result<Modifier, SpecParseError> {
         // Parse a modifier like .b8x16.b6x16_p32 (for instruction modifiers)
         // Collects all tokens until we hit a delimiter or operand-like token
-        
+
         let start_pos = self.pos;
-        
+
         // Find the end position (next delimiter or operand-like token)
         let mut end_pos = self.pos;
         while end_pos < self.tokens.len() {
             match &self.tokens[end_pos].0 {
                 // Stop at delimiters
-                PtxSpecToken::Comma | PtxSpecToken::RBrace | PtxSpecToken::RBracket | PtxSpecToken::RParen |
-                PtxSpecToken::LBrace | PtxSpecToken::LBracket | PtxSpecToken::LParen |
-                PtxSpecToken::Pipe | PtxSpecToken::Semicolon => break,
+                PtxSpecToken::Comma
+                | PtxSpecToken::RBrace
+                | PtxSpecToken::RBracket
+                | PtxSpecToken::RParen
+                | PtxSpecToken::LBrace
+                | PtxSpecToken::LBracket
+                | PtxSpecToken::LParen
+                | PtxSpecToken::Pipe
+                | PtxSpecToken::Semicolon => break,
                 _ => end_pos += 1,
             }
         }
-        
+
         if start_pos >= end_pos {
             return Err(SpecParseError {
                 message: "Expected modifier".to_string(),
@@ -702,7 +713,7 @@ impl<'a> TokenParser<'a> {
             .map(|(t, _)| token_to_string(t))
             .collect::<Vec<_>>()
             .join("");
-        
+
         self.pos = end_pos;
         Ok(Modifier::Atom(result))
     }
@@ -714,7 +725,7 @@ impl<'a> TokenParser<'a> {
         // - Another . (next modifier)
         // - A consecutive identifier (one that comes after an identifier, not after . or ::)
         // - A delimiter (comma, brace, etc.)
-        
+
         // Check if this is an immediate number (no prefix) - treat as Atom for parameter choices
         if let Some(token) = self.peek() {
             match token {

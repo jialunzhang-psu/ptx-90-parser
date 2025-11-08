@@ -1,8 +1,8 @@
-pub mod common;
-pub mod function;
-pub mod instruction;
-pub mod module;
-pub mod variable;
+pub(crate) mod common;
+pub(crate) mod function;
+pub(crate) mod instruction;
+pub(crate) mod module;
+pub(crate) mod variable;
 
 use crate::lexer::PtxToken;
 

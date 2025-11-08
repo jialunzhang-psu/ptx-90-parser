@@ -16,16 +16,16 @@ pub mod section_0 {
     impl PtxUnparser for Lop3B32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "lop3");
-                    push_directive(tokens, "b32");
-                    self.d.unparse_tokens(tokens);
+            push_directive(tokens, "b32");
+            self.d.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.c.unparse_tokens(tokens);
+            self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.immlut.unparse_tokens(tokens);
+            self.immlut.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -33,31 +33,29 @@ pub mod section_0 {
     impl PtxUnparser for Lop3BoolopB32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "lop3");
-                    match &self.boolop {
-                            Boolop::And => {
-                                    push_directive(tokens, "and");
-                            }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
-                    }
-                    push_directive(tokens, "b32");
-                    self.d.unparse_tokens(tokens);
-                    tokens.push(PtxToken::Pipe);
-                    self.p.unparse_tokens(tokens);
+            match &self.boolop {
+                Boolop::And => {
+                    push_directive(tokens, "and");
+                }
+                Boolop::Or => {
+                    push_directive(tokens, "or");
+                }
+            }
+            push_directive(tokens, "b32");
+            self.d.unparse_tokens(tokens);
+            tokens.push(PtxToken::Pipe);
+            self.p.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.a.unparse_tokens(tokens);
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.b.unparse_tokens(tokens);
+            self.b.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.c.unparse_tokens(tokens);
+            self.c.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.immlut.unparse_tokens(tokens);
+            self.immlut.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.q.unparse_tokens(tokens);
+            self.q.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

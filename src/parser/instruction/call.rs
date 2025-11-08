@@ -73,7 +73,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for CallUni1 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("call")?;
@@ -118,7 +117,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for CallUni2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("call")?;
@@ -132,13 +130,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(CallUni2 {
-                uni,
-                func,
-            })
+            Ok(CallUni2 { uni, func })
         }
     }
-
 
     impl PtxParser for CallUni3 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -194,7 +188,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for CallUni4 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("call")?;
@@ -243,7 +236,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for CallUni5 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("call")?;
@@ -260,14 +252,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(CallUni5 {
-                uni,
-                fptr,
-                flist,
-            })
+            Ok(CallUni5 { uni, fptr, flist })
         }
     }
-
 
     impl PtxParser for CallUni6 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -323,7 +310,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for CallUni7 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("call")?;
@@ -372,7 +358,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for CallUni8 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("call")?;
@@ -389,14 +374,7 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(CallUni8 {
-                uni,
-                fptr,
-                fproto,
-            })
+            Ok(CallUni8 { uni, fptr, fproto })
         }
     }
-
-
 }
-

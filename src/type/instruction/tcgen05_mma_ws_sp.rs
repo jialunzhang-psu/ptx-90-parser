@@ -29,44 +29,43 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Kind {
         KindF8f6f4, // .kind::f8f6f4
-        KindTf32, // .kind::tf32
-        KindF16, // .kind::f16
+        KindTf32,   // .kind::tf32
+        KindF16,    // .kind::f16
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Tcgen05MmaWsSpCtaGroup1KindCollectorUsage {
-        pub mma: (), // .mma
-        pub ws: (), // .ws
-        pub sp: (), // .sp
-        pub cta_group_1: (), // .cta_group::1
-        pub kind: Kind, // .kind
-        pub collector_usage: bool, // {.collector_usage}
-        pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_desc: GeneralOperand, // a-desc
-        pub b_desc: GeneralOperand, // b-desc
-        pub sp_meta_tmem: AddressOperand, // [sp-meta-tmem]
-        pub idesc: GeneralOperand, // idesc
-        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub mma: (),                                       // .mma
+        pub ws: (),                                        // .ws
+        pub sp: (),                                        // .sp
+        pub cta_group_1: (),                               // .cta_group::1
+        pub kind: Kind,                                    // .kind
+        pub collector_usage: bool,                         // {.collector_usage}
+        pub d_tmem: AddressOperand,                        // [d-tmem]
+        pub a_desc: GeneralOperand,                        // a-desc
+        pub b_desc: GeneralOperand,                        // b-desc
+        pub sp_meta_tmem: AddressOperand,                  // [sp-meta-tmem]
+        pub idesc: GeneralOperand,                         // idesc
+        pub enable_input_d: GeneralOperand,                // enable-input-d
         pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Tcgen05MmaWsSpCtaGroup1KindCollectorUsage1 {
-        pub mma: (), // .mma
-        pub ws: (), // .ws
-        pub sp: (), // .sp
-        pub cta_group_1: (), // .cta_group::1
-        pub kind: Kind, // .kind
-        pub collector_usage: bool, // {.collector_usage}
-        pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: GeneralOperand, // b-desc
-        pub sp_meta_tmem: AddressOperand, // [sp-meta-tmem]
-        pub idesc: GeneralOperand, // idesc
-        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub mma: (),                                       // .mma
+        pub ws: (),                                        // .ws
+        pub sp: (),                                        // .sp
+        pub cta_group_1: (),                               // .cta_group::1
+        pub kind: Kind,                                    // .kind
+        pub collector_usage: bool,                         // {.collector_usage}
+        pub d_tmem: AddressOperand,                        // [d-tmem]
+        pub a_tmem: AddressOperand,                        // [a-tmem]
+        pub b_desc: GeneralOperand,                        // b-desc
+        pub sp_meta_tmem: AddressOperand,                  // [sp-meta-tmem]
+        pub idesc: GeneralOperand,                         // idesc
+        pub enable_input_d: GeneralOperand,                // enable-input-d
         pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
     }
-
 }
 
 pub mod section_1 {
@@ -84,8 +83,8 @@ pub mod section_1 {
     pub enum Op {
         Lastuse, // ::lastuse
         Discard, // ::discard
-        Fill, // ::fill
-        Use, // ::use
+        Fill,    // ::fill
+        Use,     // ::use
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -95,36 +94,46 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Tcgen05MmaWsSpCtaGroup1KindI8CollectorUsage {
-        pub mma: (), // .mma
-        pub ws: (), // .ws
-        pub sp: (), // .sp
-        pub cta_group_1: (), // .cta_group::1
-        pub kind_i8: (), // .kind::i8
-        pub collector_usage: Option<CollectorUsage>, // {.collector_usage}
-        pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_desc: GeneralOperand, // a-desc
-        pub b_desc: GeneralOperand, // b-desc
-        pub sp_meta_tmem: AddressOperand, // [sp-meta-tmem]
-        pub idesc: GeneralOperand, // idesc
-        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub mma: (),                                       // .mma
+        pub ws: (),                                        // .ws
+        pub sp: (),                                        // .sp
+        pub cta_group_1: (),                               // .cta_group::1
+        pub kind_i8: (),                                   // .kind::i8
+        pub collector_usage: Option<CollectorUsage>,       // {.collector_usage}
+        pub d_tmem: AddressOperand,                        // [d-tmem]
+        pub a_desc: GeneralOperand,                        // a-desc
+        pub b_desc: GeneralOperand,                        // b-desc
+        pub sp_meta_tmem: AddressOperand,                  // [sp-meta-tmem]
+        pub idesc: GeneralOperand,                         // idesc
+        pub enable_input_d: GeneralOperand,                // enable-input-d
         pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct Tcgen05MmaWsSpCtaGroup1KindI8CollectorUsage1 {
-        pub mma: (), // .mma
-        pub ws: (), // .ws
-        pub sp: (), // .sp
-        pub cta_group_1: (), // .cta_group::1
-        pub kind_i8: (), // .kind::i8
-        pub collector_usage: Option<CollectorUsage>, // {.collector_usage}
-        pub d_tmem: AddressOperand, // [d-tmem]
-        pub a_tmem: AddressOperand, // [a-tmem]
-        pub b_desc: GeneralOperand, // b-desc
-        pub sp_meta_tmem: AddressOperand, // [sp-meta-tmem]
-        pub idesc: GeneralOperand, // idesc
-        pub enable_input_d: GeneralOperand, // enable-input-d
+        pub mma: (),                                       // .mma
+        pub ws: (),                                        // .ws
+        pub sp: (),                                        // .sp
+        pub cta_group_1: (),                               // .cta_group::1
+        pub kind_i8: (),                                   // .kind::i8
+        pub collector_usage: Option<CollectorUsage>,       // {.collector_usage}
+        pub d_tmem: AddressOperand,                        // [d-tmem]
+        pub a_tmem: AddressOperand,                        // [a-tmem]
+        pub b_desc: GeneralOperand,                        // b-desc
+        pub sp_meta_tmem: AddressOperand,                  // [sp-meta-tmem]
+        pub idesc: GeneralOperand,                         // idesc
+        pub enable_input_d: GeneralOperand,                // enable-input-d
         pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Kind as Kind0;
+pub use section_0::Tcgen05MmaWsSpCtaGroup1KindCollectorUsage;
+pub use section_0::Tcgen05MmaWsSpCtaGroup1KindCollectorUsage1;
+pub use section_1::Buffer as Buffer1;
+pub use section_1::CollectorUsage as CollectorUsage1;
+pub use section_1::Op as Op1;
+pub use section_1::Tcgen05MmaWsSpCtaGroup1KindI8CollectorUsage;
+pub use section_1::Tcgen05MmaWsSpCtaGroup1KindI8CollectorUsage1;

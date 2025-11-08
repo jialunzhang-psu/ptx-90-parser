@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 
 use clap::{Parser, Subcommand};
 
-use ptx_parser::parser::parse_ptx;
+use ptx_parser::parse_ptx;
 
 #[derive(Parser)]
 #[command(name = "ptx-parser", about = "Utilities for parsing PTX assembly")]

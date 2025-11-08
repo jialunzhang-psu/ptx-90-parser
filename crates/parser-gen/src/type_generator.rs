@@ -1,12 +1,12 @@
 use std::collections::BTreeMap;
 
+use crate::analyzer::RustName;
 use crate::analyzer::{
     AnalyzedInstruction, AnalyzedModifier, AnalyzedOperandElement, AnalyzedSection,
 };
 use crate::naming;
-use crate::r#type::OperatorToken;
 use crate::r#type::IdentifierToken;
-use crate::analyzer::RustName;
+use crate::r#type::OperatorToken;
 
 /// Output collected when generating types for a PTX section
 pub struct GeneratedTypeOutput {
@@ -14,6 +14,8 @@ pub struct GeneratedTypeOutput {
     pub code: String,
     /// Struct names emitted for each instruction in order of generation
     pub instruction_structs: Vec<String>,
+    /// Enum names emitted for this section
+    pub enum_names: Vec<String>,
     /// Module name for this section
     pub module_name: String,
 }
@@ -77,10 +79,12 @@ impl TypeGenerator {
 
         // Emit all collected enum definitions for this section
         let mut enum_output = String::new();
+        let mut enum_names = Vec::new();
         for enum_name in &self.enum_order {
             if let Some(enum_def) = self.pending_enums.get(enum_name) {
                 enum_output.push_str(&Self::emit_enum_definition(enum_name, enum_def));
                 enum_output.push_str("\n\n");
+                enum_names.push(enum_name.clone());
             }
         }
 
@@ -120,6 +124,7 @@ impl TypeGenerator {
         GeneratedTypeOutput {
             code: output,
             instruction_structs: struct_names,
+            enum_names,
             module_name,
         }
     }
@@ -459,37 +464,6 @@ impl TypeGenerator {
             }
         }
     }
-
-    fn sanitize_variant_name(&self, s: &str) -> String {
-        let cleaned = s
-            .trim_start_matches('.')
-            .trim_start_matches("::")
-            .replace("::", "_")
-            .replace('.', "_")
-            .replace('-', "_")
-            .replace('*', "")
-            .replace('+', "plus");
-
-        let pascal = cleaned
-            .split('_')
-            .filter(|part| !part.is_empty())
-            .map(|part| {
-                let mut chars = part.chars();
-                match chars.next() {
-                    None => String::new(),
-                    Some(first) => {
-                        first.to_uppercase().collect::<String>() + &chars.as_str().to_lowercase()
-                    }
-                }
-            })
-            .collect::<String>();
-
-        if pascal.chars().next().map_or(false, |c| c.is_ascii_digit()) {
-            format!("_{}", pascal)
-        } else {
-            pascal
-        }
-    }
 }
 
 // ============================================================================
@@ -539,41 +513,133 @@ pub fn generate_mod_rs_content_v2(modules: &[(String, Vec<(String, String)>)]) -
     output
 }
 
-pub fn generate_mod_rs_content(modules: &[GeneratedTypeOutput]) -> String {
-    let mut output = String::new();
+/// Generate complete type file from PTX specification content
+/// Returns (generated_code, module_info)
+pub fn generate_type_file(
+    spec_content: &str,
+    file_name: &str,
+    _module_name: &str,
+) -> Result<(String, Vec<(String, String)>), Box<dyn std::error::Error>> {
+    use crate::analyzer::Analyzer;
 
-    // Generate module declarations
-    output.push_str("// Auto-generated module declarations\n");
-    output.push_str("// DO NOT EDIT MANUALLY\n\n");
+    // Parse the specification
+    let sections = crate::parse_spec_with_name(spec_content, file_name)?;
 
-    for module in modules {
-        output.push_str(&format!("pub mod {};\n", module.module_name));
+    if sections.is_empty() {
+        return Err("No sections found in file".into());
     }
-    output.push_str("\n");
 
-    // Generate Inst enum
-    output.push_str("/// Top-level instruction type encompassing all PTX instructions\n");
-    output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
-    output.push_str("pub enum Inst {\n");
+    // Analyze all sections at once
+    let mut analyzer = Analyzer::new();
+    let analyzed_sections = analyzer.analyze_sections(&sections);
 
-    for module in modules {
-        for struct_name in &module.instruction_structs {
+    if analyzed_sections.is_empty() {
+        return Err("No instructions found".into());
+    }
+
+    // Generate type definitions section by section
+    let mut all_outputs = Vec::new();
+    let mut type_gen = TypeGenerator::new();
+
+    for (section_idx, section) in analyzed_sections.iter().enumerate() {
+        let generated = type_gen.generate(section, section_idx);
+
+        if !generated.code.trim().is_empty() {
+            all_outputs.push(generated);
+        }
+    }
+
+    if all_outputs.is_empty() {
+        return Err("No instructions found".into());
+    }
+
+    // Collect all instruction structs with their section info
+    let all_instruction_structs: Vec<(String, String)> = all_outputs
+        .iter()
+        .flat_map(|output| {
+            let section_name = output.module_name.clone();
+            output
+                .instruction_structs
+                .iter()
+                .map(move |struct_name| (section_name.clone(), struct_name.clone()))
+        })
+        .collect();
+
+    // Create comment header with original specification
+    let mut output = String::new();
+    output.push_str(
+        "//! Original PTX specification:
+",
+    );
+    output.push_str(
+        "//!
+",
+    );
+    for line in spec_content.lines() {
+        output.push_str("//! ");
+        output.push_str(line);
+        output.push_str(
+            "
+",
+        );
+    }
+    output.push_str(
+        "
+",
+    );
+    output.push_str(
+        "#![allow(unused)]
+",
+    );
+    output.push_str(
+        "use crate::r#type::common::*;
+",
+    );
+    output.push_str(
+        "
+",
+    );
+
+    // Append generated code for each section
+    for (idx, gen_output) in all_outputs.iter().enumerate() {
+        if idx > 0 {
+            output.push_str("\n");
+        }
+        output.push_str(&gen_output.code);
+        if !gen_output.code.ends_with('\n') {
+            output.push('\n');
+        }
+    }
+
+    // Add re-exports with section number suffix to avoid conflicts
+    output.push_str(
+        "
+// Re-export types with section suffixes to avoid naming conflicts
+",
+    );
+    output.push_str(
+        "// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+",
+    );
+    for (idx, gen_output) in all_outputs.iter().enumerate() {
+        // Re-export structs (instruction types) - these usually don't conflict
+        for struct_name in &gen_output.instruction_structs {
             output.push_str(&format!(
-                "    {}({}::{}),\n",
-                struct_name, module.module_name, struct_name
+                "pub use {}::{};
+",
+                gen_output.module_name, struct_name
+            ));
+        }
+
+        // Re-export enums with numbered suffix to avoid conflicts
+        for enum_name in &gen_output.enum_names {
+            output.push_str(&format!(
+                "pub use {}::{} as {}{};
+",
+                gen_output.module_name, enum_name, enum_name, idx
             ));
         }
     }
 
-    output.push_str("}\n");
-    output.push_str("\n");
-
-    // Note: Instruction struct is defined in src/type/common.rs
-    // pub struct Instruction {
-    //     pub label: Option<String>,
-    //     pub predicate: Option<crate::r#type::common::Predicate>,
-    //     pub inst: Inst,
-    // }
-
-    output
+    Ok((output, all_instruction_structs))
 }

@@ -44,9 +44,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".and", ".or"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -97,7 +103,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for BarrierCtaArriveAligned {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("barrier")?;
@@ -132,7 +137,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for BarrierCtaRedPopcAlignedU32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -178,7 +182,9 @@ pub mod section_0 {
             };
             stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
+            let c_op = stream
+                .consume_if(|t| matches!(t, PtxToken::Exclaim))
+                .is_some();
             let c = GeneralOperand::parse(stream)?;
             stream.expect_complete()?;
             stream.expect_complete()?;
@@ -197,7 +203,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for BarrierCtaRedOpAlignedPred {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -242,7 +247,9 @@ pub mod section_0 {
             };
             stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
+            let c_op = stream
+                .consume_if(|t| matches!(t, PtxToken::Exclaim))
+                .is_some();
             let c = GeneralOperand::parse(stream)?;
             stream.expect_complete()?;
             stream.expect_complete()?;
@@ -261,7 +268,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for BarCtaSync {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -293,15 +299,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarCtaSync {
-                cta,
-                sync,
-                a,
-                b,
-            })
+            Ok(BarCtaSync { cta, sync, a, b })
         }
     }
-
 
     impl PtxParser for BarCtaArrive {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -322,15 +322,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarCtaArrive {
-                cta,
-                arrive,
-                a,
-                b,
-            })
+            Ok(BarCtaArrive { cta, arrive, a, b })
         }
     }
-
 
     impl PtxParser for BarCtaRedPopcU32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -370,7 +364,9 @@ pub mod section_0 {
             };
             stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
+            let c_op = stream
+                .consume_if(|t| matches!(t, PtxToken::Exclaim))
+                .is_some();
             let c = GeneralOperand::parse(stream)?;
             stream.expect_complete()?;
             stream.expect_complete()?;
@@ -388,7 +384,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for BarCtaRedOpPred {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -427,7 +422,9 @@ pub mod section_0 {
             };
             stream.expect_complete()?;
             stream.expect(&PtxToken::Comma)?;
-            let c_op = stream.consume_if(|t| matches!(t, PtxToken::Exclaim)).is_some();
+            let c_op = stream
+                .consume_if(|t| matches!(t, PtxToken::Exclaim))
+                .is_some();
             let c = GeneralOperand::parse(stream)?;
             stream.expect_complete()?;
             stream.expect_complete()?;
@@ -445,7 +442,4 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
-

@@ -17,44 +17,42 @@ pub mod section_0 {
     impl PtxUnparser for MbarrierCompleteTxSemScopeSpaceB64 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mbarrier");
-                    push_directive(tokens, "complete_tx");
-                    if let Some(sem_0) = self.sem.as_ref() {
-                            match sem_0 {
-                                    Sem::Relaxed => {
-                                            push_directive(tokens, "relaxed");
-                                    }
-                            }
+            push_directive(tokens, "complete_tx");
+            if let Some(sem_0) = self.sem.as_ref() {
+                match sem_0 {
+                    Sem::Relaxed => {
+                        push_directive(tokens, "relaxed");
                     }
-                    if let Some(scope_1) = self.scope.as_ref() {
-                            match scope_1 {
-                                    Scope::Cluster => {
-                                            push_directive(tokens, "cluster");
-                                    }
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
-                            }
+                }
+            }
+            if let Some(scope_1) = self.scope.as_ref() {
+                match scope_1 {
+                    Scope::Cluster => {
+                        push_directive(tokens, "cluster");
                     }
-                    if let Some(space_2) = self.space.as_ref() {
-                            match space_2 {
-                                    Space::SharedCluster => {
-                                            push_directive(tokens, "shared::cluster");
-                                    }
-                                    Space::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Space::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                    Scope::Cta => {
+                        push_directive(tokens, "cta");
                     }
-                    push_directive(tokens, "b64");
-                    self.addr.unparse_tokens(tokens);
+                }
+            }
+            if let Some(space_2) = self.space.as_ref() {
+                match space_2 {
+                    Space::SharedCluster => {
+                        push_directive(tokens, "shared::cluster");
+                    }
+                    Space::SharedCta => {
+                        push_directive(tokens, "shared::cta");
+                    }
+                    Space::Shared => {
+                        push_directive(tokens, "shared");
+                    }
+                }
+            }
+            push_directive(tokens, "b64");
+            self.addr.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.txcount.unparse_tokens(tokens);
+            self.txcount.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

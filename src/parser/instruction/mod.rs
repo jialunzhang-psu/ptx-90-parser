@@ -2,14 +2,14 @@
 // DO NOT EDIT MANUALLY
 #![allow(unused)]
 
-use crate::parser::{PtxParser, PtxParseError, PtxTokenStream, Span};
-use crate::r#type::instruction::Inst;
 use crate::lexer::PtxToken;
+use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::r#type::instruction::Inst;
 
 pub mod abs;
 pub mod activemask;
-pub mod add_cc;
 pub mod add;
+pub mod add_cc;
 pub mod addc;
 pub mod alloca;
 pub mod and;
@@ -33,21 +33,21 @@ pub mod clz;
 pub mod cnot;
 pub mod copysign;
 pub mod cos;
-pub mod cp_async_bulk_commit_group;
-pub mod cp_async_bulk_prefetch_tensor;
-pub mod cp_async_bulk_prefetch;
-pub mod cp_async_bulk_tensor;
+pub mod cp_async;
 pub mod cp_async_bulk;
+pub mod cp_async_bulk_commit_group;
+pub mod cp_async_bulk_prefetch;
+pub mod cp_async_bulk_prefetch_tensor;
+pub mod cp_async_bulk_tensor;
 pub mod cp_async_bulk_wait_group;
 pub mod cp_async_commit_group;
 pub mod cp_async_mbarrier_arrive;
-pub mod cp_async;
 pub mod cp_async_wait_group;
-pub mod cp_reduce_async_bulk_tensor;
 pub mod cp_reduce_async_bulk;
+pub mod cp_reduce_async_bulk_tensor;
 pub mod createpolicy;
-pub mod cvt_pack;
 pub mod cvt;
+pub mod cvt_pack;
 pub mod cvta;
 pub mod discard;
 pub mod div;
@@ -62,15 +62,15 @@ pub mod getctarank;
 pub mod griddepcontrol;
 pub mod isspacep;
 pub mod istypep;
-pub mod ld_global_nc;
 pub mod ld;
+pub mod ld_global_nc;
 pub mod ldmatrix;
 pub mod ldu;
 pub mod lg2;
 pub mod lop3;
-pub mod mad_cc;
 pub mod mad;
 pub mod mad24;
+pub mod mad_cc;
 pub mod madc;
 pub mod mapa;
 pub mod match_sync;
@@ -85,8 +85,8 @@ pub mod mbarrier_pending_count;
 pub mod mbarrier_test_wait;
 pub mod membar;
 pub mod min;
-pub mod mma_sp;
 pub mod mma;
+pub mod mma_sp;
 pub mod mov;
 pub mod movmatrix;
 pub mod mul;
@@ -100,36 +100,36 @@ pub mod pmevent;
 pub mod popc;
 pub mod prefetch;
 pub mod prmt;
-pub mod rcp_approx_ftz_f64;
 pub mod rcp;
-pub mod red_async;
+pub mod rcp_approx_ftz_f64;
 pub mod red;
+pub mod red_async;
 pub mod redux_sync;
 pub mod rem;
 pub mod ret;
-pub mod rsqrt_approx_ftz_f64;
 pub mod rsqrt;
+pub mod rsqrt_approx_ftz_f64;
 pub mod sad;
 pub mod selp;
 pub mod set;
 pub mod setmaxnreg;
 pub mod setp;
 pub mod shf;
-pub mod shfl_sync;
 pub mod shfl;
+pub mod shfl_sync;
 pub mod shl;
 pub mod shr;
 pub mod sin;
 pub mod slct;
 pub mod sqrt;
+pub mod st;
 pub mod st_async;
 pub mod st_bulk;
-pub mod st;
 pub mod stackrestore;
 pub mod stacksave;
 pub mod stmatrix;
-pub mod sub_cc;
 pub mod sub;
+pub mod sub_cc;
 pub mod subc;
 pub mod suld;
 pub mod suq;
@@ -142,10 +142,10 @@ pub mod tcgen05_commit;
 pub mod tcgen05_cp;
 pub mod tcgen05_fence;
 pub mod tcgen05_ld;
-pub mod tcgen05_mma_sp;
 pub mod tcgen05_mma;
-pub mod tcgen05_mma_ws_sp;
+pub mod tcgen05_mma_sp;
 pub mod tcgen05_mma_ws;
+pub mod tcgen05_mma_ws_sp;
 pub mod tcgen05_shift;
 pub mod tcgen05_st;
 pub mod tcgen05_wait;
@@ -160,16 +160,16 @@ pub mod vmad;
 pub mod vop;
 pub mod vop2;
 pub mod vop4;
-pub mod vote_sync;
 pub mod vote;
+pub mod vote_sync;
 pub mod vset;
 pub mod vset2;
 pub mod vset4;
 pub mod vsh;
 pub mod wgmma_commit_group;
 pub mod wgmma_fence;
-pub mod wgmma_mma_async_sp;
 pub mod wgmma_mma_async;
+pub mod wgmma_mma_async_sp;
 pub mod wgmma_wait_group;
 pub mod wmma_load;
 pub mod wmma_mma;
@@ -179,25 +179,32 @@ pub mod xor;
 /// Parse instruction without label or predicate
 pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Inst, PtxParseError> {
     let start_pos = stream.position();
-    
+
     // Peek at the opcode to determine which parser to try
     let opcode = if let Ok((PtxToken::Identifier(name), _)) = stream.peek() {
         name.as_str()
     } else {
         let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(0..0);
-        return Err(crate::parser::unexpected_value(span, &["instruction opcode"], "not an identifier"));
+        return Err(crate::parser::unexpected_value(
+            span,
+            &["instruction opcode"],
+            "not an identifier",
+        ));
     };
-    
+
     // Dispatch based on opcode
     match opcode {
         "abs" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::abs::section_0::AbsType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::abs::section_0::AbsType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::AbsType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::abs::section_0::AbsFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::abs::section_0::AbsFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AbsFtzF32(inst)),
                 Err(_) => {}
             }
@@ -207,22 +214,29 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::abs::section_0::AbsFtzF16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::abs::section_0::AbsFtzF16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AbsFtzF16(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::abs::section_0::AbsFtzF16x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::abs::section_0::AbsFtzF16x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AbsFtzF16x2(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::abs::section_0::AbsBf16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::abs::section_0::AbsBf16 as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::AbsBf16(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::abs::section_0::AbsBf16x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::abs::section_0::AbsBf16x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AbsBf16x2(inst)),
                 Err(_) => {}
             }
@@ -236,37 +250,50 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "add" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::add_cc::section_0::AddCcType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::add_cc::section_0::AddCcType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AddCcType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::add::section_0::AddType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::add::section_0::AddType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::AddType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::add::section_0::AddSatS32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::add::section_0::AddSatS32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AddSatS32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::add::section_1::AddRndFtzSatF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::add::section_1::AddRndFtzSatF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AddRndFtzSatF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::add::section_1::AddRndFtzF32x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::add::section_1::AddRndFtzF32x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AddRndFtzF32x2(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::add::section_1::AddRndF64 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::add::section_1::AddRndF64 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AddRndF64(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::add::section_2::AddRndFtzSatF16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::add::section_2::AddRndFtzSatF16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AddRndFtzSatF16(inst)),
                 Err(_) => {}
             }
@@ -276,12 +303,16 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::add::section_2::AddRndBf16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::add::section_2::AddRndBf16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AddRndBf16(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::add::section_2::AddRndBf16x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::add::section_2::AddRndBf16x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AddRndBf16x2(inst)),
                 Err(_) => {}
             }
@@ -293,21 +324,26 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "addc" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::addc::section_0::AddcCcType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::addc::section_0::AddcCcType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AddcCcType(inst)),
                 Err(_) => {}
             }
         }
         "alloca" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::alloca::section_0::AllocaType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::alloca::section_0::AllocaType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::AllocaType(inst)),
                 Err(_) => {}
             }
         }
         "and" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::and::section_0::AndType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::and::section_0::AndType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::AndType(inst)),
                 Err(_) => {}
             }
@@ -403,22 +439,30 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bar::section_0::BarCtaSync as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bar::section_0::BarCtaSync as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BarCtaSync(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bar::section_0::BarCtaArrive as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bar::section_0::BarCtaArrive as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BarCtaArrive(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bar::section_0::BarCtaRedPopcU32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bar::section_0::BarCtaRedPopcU32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BarCtaRedPopcU32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bar::section_0::BarCtaRedOpPred as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bar::section_0::BarCtaRedOpPred as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BarCtaRedOpPred(inst)),
                 Err(_) => {}
             }
@@ -450,22 +494,30 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bar::section_0::BarCtaSync as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bar::section_0::BarCtaSync as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BarCtaSync(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bar::section_0::BarCtaArrive as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bar::section_0::BarCtaArrive as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BarCtaArrive(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bar::section_0::BarCtaRedPopcU32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bar::section_0::BarCtaRedPopcU32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BarCtaRedPopcU32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bar::section_0::BarCtaRedOpPred as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bar::section_0::BarCtaRedOpPred as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BarCtaRedOpPred(inst)),
                 Err(_) => {}
             }
@@ -482,21 +534,25 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "bfe" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bfe::section_0::BfeType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bfe::section_0::BfeType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::BfeType(inst)),
                 Err(_) => {}
             }
         }
         "bfi" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bfi::section_0::BfiType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bfi::section_0::BfiType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::BfiType(inst)),
                 Err(_) => {}
             }
         }
         "bfind" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bfind::section_0::BfindType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bfind::section_0::BfindType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BfindType(inst)),
                 Err(_) => {}
             }
@@ -508,7 +564,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "bmsk" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bmsk::section_0::BmskModeB32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bmsk::section_0::BmskModeB32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BmskModeB32(inst)),
                 Err(_) => {}
             }
@@ -520,80 +578,105 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::bra::section_0::BraUni1 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::bra::section_0::BraUni1 as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::BraUni1(inst)),
                 Err(_) => {}
             }
         }
         "brev" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::brev::section_0::BrevType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::brev::section_0::BrevType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BrevType(inst)),
                 Err(_) => {}
             }
         }
         "brkpt" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::brkpt::section_0::Brkpt as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::brkpt::section_0::Brkpt as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::Brkpt(inst)),
                 Err(_) => {}
             }
         }
         "brx" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::brx_idx::section_0::BrxIdxUni as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::brx_idx::section_0::BrxIdxUni as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BrxIdxUni(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::brx_idx::section_0::BrxIdxUni1 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::brx_idx::section_0::BrxIdxUni1 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::BrxIdxUni1(inst)),
                 Err(_) => {}
             }
         }
         "call" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::call::section_0::CallUni as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::call::section_0::CallUni as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::CallUni(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::call::section_0::CallUni1 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::call::section_0::CallUni1 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CallUni1(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::call::section_0::CallUni2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::call::section_0::CallUni2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CallUni2(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::call::section_0::CallUni3 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::call::section_0::CallUni3 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CallUni3(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::call::section_0::CallUni4 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::call::section_0::CallUni4 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CallUni4(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::call::section_0::CallUni5 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::call::section_0::CallUni5 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CallUni5(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::call::section_0::CallUni6 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::call::section_0::CallUni6 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CallUni6(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::call::section_0::CallUni7 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::call::section_0::CallUni7 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CallUni7(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::call::section_0::CallUni8 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::call::section_0::CallUni8 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CallUni8(inst)),
                 Err(_) => {}
             }
@@ -622,14 +705,17 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "clz" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::clz::section_0::ClzType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::clz::section_0::ClzType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::ClzType(inst)),
                 Err(_) => {}
             }
         }
         "cnot" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::cnot::section_0::CnotType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::cnot::section_0::CnotType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CnotType(inst)),
                 Err(_) => {}
             }
@@ -643,7 +729,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "cos" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::cos::section_0::CosApproxFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::cos::section_0::CosApproxFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CosApproxFtzF32(inst)),
                 Err(_) => {}
             }
@@ -911,12 +999,16 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "cvta" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::cvta::section_0::CvtaSpaceSize as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::cvta::section_0::CvtaSpaceSize as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CvtaSpaceSize(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::cvta::section_0::CvtaToSpaceSize as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::cvta::section_0::CvtaToSpaceSize as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::CvtaToSpaceSize(inst)),
                 Err(_) => {}
             }
@@ -930,27 +1022,36 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "div" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::div::section_0::DivType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::div::section_0::DivType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::DivType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::div::section_0::DivApproxFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::div::section_0::DivApproxFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::DivApproxFtzF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::div::section_0::DivFullFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::div::section_0::DivFullFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::DivFullFtzF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::div::section_0::DivRndFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::div::section_0::DivRndFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::DivRndFtzF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::div::section_0::DivRndF64 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::div::section_0::DivRndF64 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::DivRndF64(inst)),
                 Err(_) => {}
             }
@@ -964,26 +1065,34 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "dp4a" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::dp4a::section_0::Dp4aAtypeBtype as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::dp4a::section_0::Dp4aAtypeBtype as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::Dp4aAtypeBtype(inst)),
                 Err(_) => {}
             }
         }
         "elect" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::elect_sync::section_0::ElectSync as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::elect_sync::section_0::ElectSync as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::ElectSync(inst)),
                 Err(_) => {}
             }
         }
         "ex2" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::ex2::section_0::Ex2ApproxFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::ex2::section_0::Ex2ApproxFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::Ex2ApproxFtzF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::ex2::section_0::Ex2ApproxAtype as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::ex2::section_0::Ex2ApproxAtype as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::Ex2ApproxAtype(inst)),
                 Err(_) => {}
             }
@@ -1002,7 +1111,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "fence" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::membar::section_0::FenceSemScope as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::membar::section_0::FenceSemScope as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::FenceSemScope(inst)),
                 Err(_) => {}
             }
@@ -1047,7 +1158,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::membar::section_0::MembarLevel as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::membar::section_0::MembarLevel as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MembarLevel(inst)),
                 Err(_) => {}
             }
@@ -1059,22 +1172,30 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "fma" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::fma::section_0::FmaRndFtzSatF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::fma::section_0::FmaRndFtzSatF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::FmaRndFtzSatF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::fma::section_0::FmaRndFtzF32x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::fma::section_0::FmaRndFtzF32x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::FmaRndFtzF32x2(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::fma::section_0::FmaRndF64 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::fma::section_0::FmaRndF64 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::FmaRndF64(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::fma::section_1::FmaRndFtzSatF16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::fma::section_1::FmaRndFtzSatF16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::FmaRndFtzSatF16(inst)),
                 Err(_) => {}
             }
@@ -1084,7 +1205,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::fma::section_1::FmaRndFtzReluF16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::fma::section_1::FmaRndFtzReluF16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::FmaRndFtzReluF16(inst)),
                 Err(_) => {}
             }
@@ -1094,12 +1217,16 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::fma::section_1::FmaRndReluBf16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::fma::section_1::FmaRndReluBf16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::FmaRndReluBf16(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::fma::section_1::FmaRndReluBf16x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::fma::section_1::FmaRndReluBf16x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::FmaRndReluBf16x2(inst)),
                 Err(_) => {}
             }
@@ -1154,7 +1281,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "istypep" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::istypep::section_0::IstypepType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::istypep::section_0::IstypepType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::IstypepType(inst)),
                 Err(_) => {}
             }
@@ -1230,89 +1359,118 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "ldu" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::ldu::section_0::LduSsType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::ldu::section_0::LduSsType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::LduSsType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::ldu::section_0::LduSsVecType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::ldu::section_0::LduSsVecType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::LduSsVecType(inst)),
                 Err(_) => {}
             }
         }
         "lg2" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::lg2::section_0::Lg2ApproxFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::lg2::section_0::Lg2ApproxFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::Lg2ApproxFtzF32(inst)),
                 Err(_) => {}
             }
         }
         "lop3" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::lop3::section_0::Lop3B32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::lop3::section_0::Lop3B32 as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::Lop3B32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::lop3::section_0::Lop3BoolopB32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::lop3::section_0::Lop3BoolopB32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::Lop3BoolopB32(inst)),
                 Err(_) => {}
             }
         }
         "mad" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mad_cc::section_0::MadHiloCcType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mad_cc::section_0::MadHiloCcType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MadHiloCcType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mad::section_0::MadModeType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mad::section_0::MadModeType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MadModeType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mad::section_0::MadHiSatS32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mad::section_0::MadHiSatS32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MadHiSatS32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mad::section_0::MadFtzSatF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mad::section_0::MadFtzSatF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MadFtzSatF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mad::section_0::MadRndFtzSatF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mad::section_0::MadRndFtzSatF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MadRndFtzSatF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mad::section_0::MadRndF64 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mad::section_0::MadRndF64 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MadRndF64(inst)),
                 Err(_) => {}
             }
         }
         "mad24" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mad24::section_0::Mad24ModeType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mad24::section_0::Mad24ModeType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::Mad24ModeType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mad24::section_0::Mad24HiSatS32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mad24::section_0::Mad24HiSatS32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::Mad24HiSatS32(inst)),
                 Err(_) => {}
             }
         }
         "madc" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::madc::section_0::MadcHiloCcType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::madc::section_0::MadcHiloCcType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MadcHiloCcType(inst)),
                 Err(_) => {}
             }
         }
         "mapa" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mapa::section_0::MapaSpaceType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mapa::section_0::MapaSpaceType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MapaSpaceType(inst)),
                 Err(_) => {}
             }
@@ -1331,12 +1489,15 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "max" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::max::section_0::MaxAtype as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::max::section_0::MaxAtype as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::MaxAtype(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::max::section_0::MaxReluBtype as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::max::section_0::MaxReluBtype as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MaxReluBtype(inst)),
                 Err(_) => {}
             }
@@ -1346,7 +1507,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::max::section_0::MaxFtzNanAbsF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::max::section_0::MaxFtzNanAbsF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MaxFtzNanAbsF32(inst)),
                 Err(_) => {}
             }
@@ -1475,7 +1638,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "membar" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::membar::section_0::FenceSemScope as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::membar::section_0::FenceSemScope as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::FenceSemScope(inst)),
                 Err(_) => {}
             }
@@ -1520,7 +1685,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::membar::section_0::MembarLevel as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::membar::section_0::MembarLevel as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MembarLevel(inst)),
                 Err(_) => {}
             }
@@ -1532,12 +1699,15 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "min" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::min::section_0::MinAtype as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::min::section_0::MinAtype as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::MinAtype(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::min::section_0::MinReluBtype as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::min::section_0::MinReluBtype as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MinReluBtype(inst)),
                 Err(_) => {}
             }
@@ -1547,7 +1717,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::min::section_0::MinFtzNanAbsF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::min::section_0::MinFtzNanAbsF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MinFtzNanAbsF32(inst)),
                 Err(_) => {}
             }
@@ -1721,7 +1893,8 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "mov" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mov::section_0::MovType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mov::section_0::MovType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::MovType(inst)),
                 Err(_) => {}
             }
@@ -1736,17 +1909,20 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mov::section_0::MovU321 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mov::section_0::MovU321 as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::MovU321(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mov::section_0::MovU641 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mov::section_0::MovU641 as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::MovU641(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mov::section_1::MovType1 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mov::section_1::MovType1 as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::MovType1(inst)),
                 Err(_) => {}
             }
@@ -1760,27 +1936,37 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "mul" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mul::section_0::MulModeType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mul::section_0::MulModeType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MulModeType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mul::section_1::MulRndFtzSatF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mul::section_1::MulRndFtzSatF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MulRndFtzSatF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mul::section_1::MulRndFtzF32x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mul::section_1::MulRndFtzF32x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MulRndFtzF32x2(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mul::section_1::MulRndF64 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mul::section_1::MulRndF64 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MulRndF64(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mul::section_2::MulRndFtzSatF16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mul::section_2::MulRndFtzSatF16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MulRndFtzSatF16(inst)),
                 Err(_) => {}
             }
@@ -1790,19 +1976,25 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mul::section_2::MulRndBf16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mul::section_2::MulRndBf16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MulRndBf16(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mul::section_2::MulRndBf16x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mul::section_2::MulRndBf16x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::MulRndBf16x2(inst)),
                 Err(_) => {}
             }
         }
         "mul24" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::mul24::section_0::Mul24ModeType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::mul24::section_0::Mul24ModeType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::Mul24ModeType(inst)),
                 Err(_) => {}
             }
@@ -1868,12 +2060,15 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "neg" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::neg::section_0::NegType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::neg::section_0::NegType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::NegType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::neg::section_0::NegFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::neg::section_0::NegFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::NegFtzF32(inst)),
                 Err(_) => {}
             }
@@ -1883,29 +2078,37 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::neg::section_0::NegFtzF16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::neg::section_0::NegFtzF16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::NegFtzF16(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::neg::section_0::NegFtzF16x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::neg::section_0::NegFtzF16x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::NegFtzF16x2(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::neg::section_0::NegBf16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::neg::section_0::NegBf16 as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::NegBf16(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::neg::section_0::NegBf16x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::neg::section_0::NegBf16x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::NegBf16x2(inst)),
                 Err(_) => {}
             }
         }
         "not" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::not::section_0::NotType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::not::section_0::NotType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::NotType(inst)),
                 Err(_) => {}
             }
@@ -1919,19 +2122,25 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "pmevent" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::pmevent::section_0::Pmevent as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::pmevent::section_0::Pmevent as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::Pmevent(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::pmevent::section_0::PmeventMask as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::pmevent::section_0::PmeventMask as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::PmeventMask(inst)),
                 Err(_) => {}
             }
         }
         "popc" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::popc::section_0::PopcType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::popc::section_0::PopcType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::PopcType(inst)),
                 Err(_) => {}
             }
@@ -1948,7 +2157,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::prefetch::section_0::PrefetchuL1 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::prefetch::section_0::PrefetchuL1 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::PrefetchuL1(inst)),
                 Err(_) => {}
             }
@@ -1970,7 +2181,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::prefetch::section_0::PrefetchuL1 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::prefetch::section_0::PrefetchuL1 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::PrefetchuL1(inst)),
                 Err(_) => {}
             }
@@ -1982,7 +2195,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "prmt" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::prmt::section_0::PrmtB32Mode as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::prmt::section_0::PrmtB32Mode as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::PrmtB32Mode(inst)),
                 Err(_) => {}
             }
@@ -1994,17 +2209,23 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::rcp::section_0::RcpApproxFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::rcp::section_0::RcpApproxFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::RcpApproxFtzF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::rcp::section_0::RcpRndFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::rcp::section_0::RcpRndFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::RcpRndFtzF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::rcp::section_0::RcpRndF64 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::rcp::section_0::RcpRndF64 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::RcpRndF64(inst)),
                 Err(_) => {}
             }
@@ -2095,7 +2316,8 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "rem" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::rem::section_0::RemType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::rem::section_0::RemType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::RemType(inst)),
                 Err(_) => {}
             }
@@ -2119,21 +2341,26 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::rsqrt::section_0::RsqrtApproxF64 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::rsqrt::section_0::RsqrtApproxF64 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::RsqrtApproxF64(inst)),
                 Err(_) => {}
             }
         }
         "sad" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sad::section_0::SadType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sad::section_0::SadType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::SadType(inst)),
                 Err(_) => {}
             }
         }
         "selp" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::selp::section_0::SelpType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::selp::section_0::SelpType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SelpType(inst)),
                 Err(_) => {}
             }
@@ -2229,7 +2456,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::setp::section_1::SetpCmpopFtzF16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::setp::section_1::SetpCmpopFtzF16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SetpCmpopFtzF16(inst)),
                 Err(_) => {}
             }
@@ -2249,7 +2478,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::setp::section_1::SetpCmpopBf16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::setp::section_1::SetpCmpopBf16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SetpCmpopBf16(inst)),
                 Err(_) => {}
             }
@@ -2259,7 +2490,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::setp::section_1::SetpCmpopBf16x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::setp::section_1::SetpCmpopBf16x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SetpCmpopBf16x2(inst)),
                 Err(_) => {}
             }
@@ -2271,12 +2504,16 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "shf" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::shf::section_0::ShfLModeB32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::shf::section_0::ShfLModeB32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::ShfLModeB32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::shf::section_0::ShfRModeB32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::shf::section_0::ShfRModeB32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::ShfRModeB32(inst)),
                 Err(_) => {}
             }
@@ -2288,40 +2525,50 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::shfl::section_0::ShflModeB32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::shfl::section_0::ShflModeB32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::ShflModeB32(inst)),
                 Err(_) => {}
             }
         }
         "shl" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::shl::section_0::ShlType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::shl::section_0::ShlType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::ShlType(inst)),
                 Err(_) => {}
             }
         }
         "shr" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::shr::section_0::ShrType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::shr::section_0::ShrType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::ShrType(inst)),
                 Err(_) => {}
             }
         }
         "sin" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sin::section_0::SinApproxFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sin::section_0::SinApproxFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SinApproxFtzF32(inst)),
                 Err(_) => {}
             }
         }
         "slct" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::slct::section_0::SlctDtypeS32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::slct::section_0::SlctDtypeS32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SlctDtypeS32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::slct::section_0::SlctFtzDtypeF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::slct::section_0::SlctFtzDtypeF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SlctFtzDtypeF32(inst)),
                 Err(_) => {}
             }
@@ -2333,12 +2580,16 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sqrt::section_0::SqrtRndFtzF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sqrt::section_0::SqrtRndFtzF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SqrtRndFtzF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sqrt::section_0::SqrtRndF64 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sqrt::section_0::SqrtRndF64 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SqrtRndF64(inst)),
                 Err(_) => {}
             }
@@ -2413,37 +2664,50 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "sub" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sub_cc::section_0::SubCcType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sub_cc::section_0::SubCcType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SubCcType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sub::section_0::SubType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sub::section_0::SubType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::SubType(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sub::section_0::SubSatS32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sub::section_0::SubSatS32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SubSatS32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sub::section_1::SubRndFtzSatF32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sub::section_1::SubRndFtzSatF32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SubRndFtzSatF32(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sub::section_1::SubRndFtzF32x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sub::section_1::SubRndFtzF32x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SubRndFtzF32x2(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sub::section_1::SubRndF64 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sub::section_1::SubRndF64 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SubRndF64(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sub::section_2::SubRndFtzSatF16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sub::section_2::SubRndFtzSatF16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SubRndFtzSatF16(inst)),
                 Err(_) => {}
             }
@@ -2453,12 +2717,16 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sub::section_2::SubRndBf16 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sub::section_2::SubRndBf16 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SubRndBf16(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::sub::section_2::SubRndBf16x2 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::sub::section_2::SubRndBf16x2 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SubRndBf16x2(inst)),
                 Err(_) => {}
             }
@@ -2470,7 +2738,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "subc" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::subc::section_0::SubcCcType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::subc::section_0::SubcCcType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SubcCcType(inst)),
                 Err(_) => {}
             }
@@ -2484,7 +2754,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "suq" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::suq::section_0::SuqQueryB32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::suq::section_0::SuqQueryB32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SuqQueryB32(inst)),
                 Err(_) => {}
             }
@@ -2520,14 +2792,18 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "szext" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::szext::section_0::SzextModeType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::szext::section_0::SzextModeType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::SzextModeType(inst)),
                 Err(_) => {}
             }
         }
         "tanh" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::tanh::section_0::TanhApproxType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::tanh::section_0::TanhApproxType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::TanhApproxType(inst)),
                 Err(_) => {}
             }
@@ -2823,7 +3099,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "testp" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::testp::section_0::TestpOpType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::testp::section_0::TestpOpType as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::TestpOpType(inst)),
                 Err(_) => {}
             }
@@ -2901,7 +3179,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "txq" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::txq::section_0::TxqTqueryB32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::txq::section_0::TxqTqueryB32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::TxqTqueryB32(inst)),
                 Err(_) => {}
             }
@@ -2911,7 +3191,9 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::txq::section_0::TxqSqueryB32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::txq::section_0::TxqSqueryB32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::TxqSqueryB32(inst)),
                 Err(_) => {}
             }
@@ -3868,12 +4150,16 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::vote::section_0::VoteModePred as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::vote::section_0::VoteModePred as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::VoteModePred(inst)),
                 Err(_) => {}
             }
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::vote::section_0::VoteBallotB32 as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::vote::section_0::VoteBallotB32 as PtxParser>::parse(
+                stream,
+            ) {
                 Ok(inst) => return Ok(Inst::VoteBallotB32(inst)),
                 Err(_) => {}
             }
@@ -4460,16 +4746,20 @@ pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Ins
         }
         "xor" => {
             stream.set_position(start_pos);
-            match <crate::r#type::instruction::xor::section_0::XorType as PtxParser>::parse(stream) {
+            match <crate::r#type::instruction::xor::section_0::XorType as PtxParser>::parse(stream)
+            {
                 Ok(inst) => return Ok(Inst::XorType(inst)),
                 Err(_) => {}
             }
         }
         _ => {}
     }
-    
+
     // If no parser matched, return error
     let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(0..0);
-    Err(crate::parser::unexpected_value(span, &["valid PTX instruction"], "no matching instruction format"))
+    Err(crate::parser::unexpected_value(
+        span,
+        &["valid PTX instruction"],
+        "no matching instruction format",
+    ))
 }
-

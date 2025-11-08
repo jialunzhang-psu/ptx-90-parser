@@ -21,25 +21,25 @@ pub mod section_0 {
     impl PtxUnparser for PrefetchSpaceLevel {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "prefetch");
-                    if let Some(space_0) = self.space.as_ref() {
-                            match space_0 {
-                                    Space::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Space::Local => {
-                                            push_directive(tokens, "local");
-                                    }
-                            }
+            if let Some(space_0) = self.space.as_ref() {
+                match space_0 {
+                    Space::Global => {
+                        push_directive(tokens, "global");
                     }
-                    match &self.level {
-                            Level::L1 => {
-                                    push_directive(tokens, "L1");
-                            }
-                            Level::L2 => {
-                                    push_directive(tokens, "L2");
-                            }
+                    Space::Local => {
+                        push_directive(tokens, "local");
                     }
-                    self.a.unparse_tokens(tokens);
+                }
+            }
+            match &self.level {
+                Level::L1 => {
+                    push_directive(tokens, "L1");
+                }
+                Level::L2 => {
+                    push_directive(tokens, "L2");
+                }
+            }
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -47,16 +47,16 @@ pub mod section_0 {
     impl PtxUnparser for PrefetchGlobalLevelEvictionPriority {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "prefetch");
-                    push_directive(tokens, "global");
-                    match &self.level_eviction_priority {
-                            LevelEvictionPriority::L2EvictNormal => {
-                                    push_directive(tokens, "L2::evict_normal");
-                            }
-                            LevelEvictionPriority::L2EvictLast => {
-                                    push_directive(tokens, "L2::evict_last");
-                            }
-                    }
-                    self.a.unparse_tokens(tokens);
+            push_directive(tokens, "global");
+            match &self.level_eviction_priority {
+                LevelEvictionPriority::L2EvictNormal => {
+                    push_directive(tokens, "L2::evict_normal");
+                }
+                LevelEvictionPriority::L2EvictLast => {
+                    push_directive(tokens, "L2::evict_last");
+                }
+            }
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -64,8 +64,8 @@ pub mod section_0 {
     impl PtxUnparser for PrefetchuL1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "prefetchu");
-                    push_directive(tokens, "L1");
-                    self.a.unparse_tokens(tokens);
+            push_directive(tokens, "L1");
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -73,21 +73,19 @@ pub mod section_0 {
     impl PtxUnparser for PrefetchTensormapSpaceTensormap {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "prefetch");
-                    if let Some(tensormap_space_1) = self.tensormap_space.as_ref() {
-                            match tensormap_space_1 {
-                                    TensormapSpace::Const => {
-                                            push_directive(tokens, "const");
-                                    }
-                                    TensormapSpace::Param => {
-                                            push_directive(tokens, "param");
-                                    }
-                            }
+            if let Some(tensormap_space_1) = self.tensormap_space.as_ref() {
+                match tensormap_space_1 {
+                    TensormapSpace::Const => {
+                        push_directive(tokens, "const");
                     }
-                    push_directive(tokens, "tensormap");
-                    self.a.unparse_tokens(tokens);
+                    TensormapSpace::Param => {
+                        push_directive(tokens, "param");
+                    }
+                }
+            }
+            push_directive(tokens, "tensormap");
+            self.a.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

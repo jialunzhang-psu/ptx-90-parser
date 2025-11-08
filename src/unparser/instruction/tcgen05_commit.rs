@@ -18,39 +18,39 @@ pub mod section_0 {
     impl PtxUnparser for Tcgen05CommitCtaGroupCompletionMechanismSharedClusterMulticastB64 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "commit");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
+            push_directive(tokens, "commit");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            match &self.completion_mechanism {
+                CompletionMechanism::MbarrierArriveOne => {
+                    push_directive(tokens, "mbarrier::arrive::one");
+                }
+            }
+            if self.shared_cluster {
+                push_directive(tokens, "shared::cluster");
+            }
+            if let Some(multicast_0) = self.multicast.as_ref() {
+                match multicast_0 {
+                    Multicast::MulticastCluster => {
+                        push_directive(tokens, "multicast::cluster");
                     }
-                    match &self.completion_mechanism {
-                            CompletionMechanism::MbarrierArriveOne => {
-                                    push_directive(tokens, "mbarrier::arrive::one");
-                            }
-                    }
-                    if self.shared_cluster {
-                            push_directive(tokens, "shared::cluster");
-                    }
-                    if let Some(multicast_0) = self.multicast.as_ref() {
-                            match multicast_0 {
-                                    Multicast::MulticastCluster => {
-                                            push_directive(tokens, "multicast::cluster");
-                                    }
-                            }
-                    }
-                    push_directive(tokens, "b64");
-                    self.mbar.unparse_tokens(tokens);
-            if self.ctamask.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_1) = self.ctamask.as_ref() {
-                        opt_1.unparse_tokens(tokens);
-                    }
+                }
+            }
+            push_directive(tokens, "b64");
+            self.mbar.unparse_tokens(tokens);
+            if self.ctamask.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_1) = self.ctamask.as_ref() {
+                opt_1.unparse_tokens(tokens);
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

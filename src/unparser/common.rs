@@ -475,7 +475,7 @@ impl PtxUnparser for crate::r#type::common::Instruction {
             tokens.push(PtxToken::Identifier(label.clone()));
             tokens.push(PtxToken::Colon);
         }
-        
+
         // Emit predicate if present
         if let Some(predicate) = &self.predicate {
             tokens.push(PtxToken::At);
@@ -484,7 +484,7 @@ impl PtxUnparser for crate::r#type::common::Instruction {
             }
             predicate.operand.unparse_tokens(tokens);
         }
-        
+
         // Emit the instruction
         self.inst.unparse_tokens(tokens);
     }

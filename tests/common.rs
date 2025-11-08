@@ -1,5 +1,5 @@
 mod util;
-use ptx_parser::{parser::ParseErrorKind, r#type::common::*};
+use ptx_parser::{ParseErrorKind, r#type::*};
 use util::*;
 
 #[test]
@@ -291,17 +291,14 @@ fn parses_arithmetic_expressions() {
         Operand::SymbolOffset("sh".into(), Immediate("4".into()))
     );
     assert_roundtrip::<Operand>("sh + 4");
-    
+
     assert_eq!(
         parse::<Operand>("var + 0x10"),
         Operand::SymbolOffset("var".into(), Immediate("0x10".into()))
     );
     assert_roundtrip::<Operand>("var + 0x10");
-    
+
     // Test that plain symbols still work
-    assert_eq!(
-        parse::<Operand>("symbol"),
-        Operand::Symbol("symbol".into())
-    );
+    assert_eq!(parse::<Operand>("symbol"), Operand::Symbol("symbol".into()));
     assert_roundtrip::<Operand>("symbol");
 }

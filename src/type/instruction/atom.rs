@@ -41,37 +41,37 @@ pub mod section_0 {
         Relaxed, // .relaxed
         Acquire, // .acquire
         Release, // .release
-        AcqRel, // .acq_rel
+        AcqRel,  // .acq_rel
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
         Cluster, // .cluster
-        Cta, // .cta
-        Gpu, // .gpu
-        Sys, // .sys
+        Cta,     // .cta
+        Gpu,     // .gpu
+        Sys,     // .sys
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Space {
         SharedCluster, // .shared::cluster
-        SharedCta, // .shared::cta
-        Global, // .global
-        Shared, // .shared
+        SharedCta,     // .shared::cta
+        Global,        // .global
+        Shared,        // .shared
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Op {
         Exch, // .exch
-        And, // .and
-        Xor, // .xor
-        Cas, // .cas
-        Add, // .add
-        Inc, // .inc
-        Dec, // .dec
-        Min, // .min
-        Max, // .max
-        Or, // .or
+        And,  // .and
+        Xor,  // .xor
+        Cas,  // .cas
+        Add,  // .add
+        Inc,  // .inc
+        Dec,  // .dec
+        Min,  // .min
+        Max,  // .max
+        Or,   // .or
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -93,131 +93,130 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeSpaceOpLevelCacheHintType {
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub space: Option<Space>, // {.space}
-        pub op: Op, // .op
+        pub sem: Option<Sem>,                         // {.sem}
+        pub scope: Option<Scope>,                     // {.scope}
+        pub space: Option<Space>,                     // {.space}
+        pub op: Op,                                   // .op
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub type_: Type, // .type
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub type_: Type,                              // .type
+        pub d: GeneralOperand,                        // d
+        pub a: AddressOperand,                        // [a]
+        pub b: GeneralOperand,                        // b
+        pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeSpaceOpType {
-        pub sem: Option<Sem>, // {.sem}
+        pub sem: Option<Sem>,     // {.sem}
         pub scope: Option<Scope>, // {.scope}
         pub space: Option<Space>, // {.space}
-        pub op: Op, // .op
-        pub type_: Type, // .type
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub c: GeneralOperand, // c
+        pub op: Op,               // .op
+        pub type_: Type,          // .type
+        pub d: GeneralOperand,    // d
+        pub a: AddressOperand,    // [a]
+        pub b: GeneralOperand,    // b
+        pub c: GeneralOperand,    // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeSpaceCasB16 {
-        pub sem: Option<Sem>, // {.sem}
+        pub sem: Option<Sem>,     // {.sem}
         pub scope: Option<Scope>, // {.scope}
         pub space: Option<Space>, // {.space}
-        pub cas: (), // .cas
-        pub b16: (), // .b16
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub c: GeneralOperand, // c
+        pub cas: (),              // .cas
+        pub b16: (),              // .b16
+        pub d: GeneralOperand,    // d
+        pub a: AddressOperand,    // [a]
+        pub b: GeneralOperand,    // b
+        pub c: GeneralOperand,    // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeSpaceCasB128 {
-        pub sem: Option<Sem>, // {.sem}
+        pub sem: Option<Sem>,     // {.sem}
         pub scope: Option<Scope>, // {.scope}
         pub space: Option<Space>, // {.space}
-        pub cas: (), // .cas
-        pub b128: (), // .b128
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub c: GeneralOperand, // c
+        pub cas: (),              // .cas
+        pub b128: (),             // .b128
+        pub d: GeneralOperand,    // d
+        pub a: AddressOperand,    // [a]
+        pub b: GeneralOperand,    // b
+        pub c: GeneralOperand,    // c
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeSpaceExchLevelCacheHintB128 {
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub space: Option<Space>, // {.space}
-        pub exch: (), // .exch
+        pub sem: Option<Sem>,                         // {.sem}
+        pub scope: Option<Scope>,                     // {.scope}
+        pub space: Option<Space>,                     // {.space}
+        pub exch: (),                                 // .exch
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub b128: (), // .b128
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub b128: (),                                 // .b128
+        pub d: GeneralOperand,                        // d
+        pub a: AddressOperand,                        // [a]
+        pub b: GeneralOperand,                        // b
+        pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeSpaceAddNoftzLevelCacheHintF16 {
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub space: Option<Space>, // {.space}
-        pub add: (), // .add
-        pub noftz: (), // .noftz
+        pub sem: Option<Sem>,                         // {.sem}
+        pub scope: Option<Scope>,                     // {.scope}
+        pub space: Option<Space>,                     // {.space}
+        pub add: (),                                  // .add
+        pub noftz: (),                                // .noftz
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub f16: (), // .f16
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub f16: (),                                  // .f16
+        pub d: GeneralOperand,                        // d
+        pub a: AddressOperand,                        // [a]
+        pub b: GeneralOperand,                        // b
+        pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeSpaceAddNoftzLevelCacheHintF16x2 {
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub space: Option<Space>, // {.space}
-        pub add: (), // .add
-        pub noftz: (), // .noftz
+        pub sem: Option<Sem>,                         // {.sem}
+        pub scope: Option<Scope>,                     // {.scope}
+        pub space: Option<Space>,                     // {.space}
+        pub add: (),                                  // .add
+        pub noftz: (),                                // .noftz
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub f16x2: (), // .f16x2
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub f16x2: (),                                // .f16x2
+        pub d: GeneralOperand,                        // d
+        pub a: AddressOperand,                        // [a]
+        pub b: GeneralOperand,                        // b
+        pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeSpaceAddNoftzLevelCacheHintBf16 {
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub space: Option<Space>, // {.space}
-        pub add: (), // .add
-        pub noftz: (), // .noftz
+        pub sem: Option<Sem>,                         // {.sem}
+        pub scope: Option<Scope>,                     // {.scope}
+        pub space: Option<Space>,                     // {.space}
+        pub add: (),                                  // .add
+        pub noftz: (),                                // .noftz
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub bf16: (), // .bf16
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub bf16: (),                                 // .bf16
+        pub d: GeneralOperand,                        // d
+        pub a: AddressOperand,                        // [a]
+        pub b: GeneralOperand,                        // b
+        pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeSpaceAddNoftzLevelCacheHintBf16x2 {
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub space: Option<Space>, // {.space}
-        pub add: (), // .add
-        pub noftz: (), // .noftz
+        pub sem: Option<Sem>,                         // {.sem}
+        pub scope: Option<Scope>,                     // {.scope}
+        pub space: Option<Space>,                     // {.space}
+        pub add: (),                                  // .add
+        pub noftz: (),                                // .noftz
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub bf16x2: (), // .bf16x2
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub bf16x2: (),                               // .bf16x2
+        pub d: GeneralOperand,                        // d
+        pub a: AddressOperand,                        // [a]
+        pub b: GeneralOperand,                        // b
+        pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
     }
-
 }
 
 pub mod section_1 {
@@ -228,15 +227,15 @@ pub mod section_1 {
         Relaxed, // .relaxed
         Acquire, // .acquire
         Release, // .release
-        AcqRel, // .acq_rel
+        AcqRel,  // .acq_rel
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
         Cluster, // .cluster
-        Cta, // .cta
-        Gpu, // .gpu
-        Sys, // .sys
+        Cta,     // .cta
+        Gpu,     // .gpu
+        Sys,     // .sys
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -267,60 +266,88 @@ pub mod section_1 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum HalfWordType {
         Bf16, // .bf16
-        F16, // .f16
+        F16,  // .f16
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum PackedType {
         Bf16x2, // .bf16x2
-        F16x2, // .f16x2
+        F16x2,  // .f16x2
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeGlobalAddLevelCacheHintVec32BitF32 {
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub global: bool, // {.global}
-        pub add: (), // .add
+        pub sem: Option<Sem>,                         // {.sem}
+        pub scope: Option<Scope>,                     // {.scope}
+        pub global: bool,                             // {.global}
+        pub add: (),                                  // .add
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub vec_32_bit: Vec32Bit, // .vec_32_bit
-        pub f32: (), // .f32
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub vec_32_bit: Vec32Bit,                     // .vec_32_bit
+        pub f32: (),                                  // .f32
+        pub d: GeneralOperand,                        // d
+        pub a: AddressOperand,                        // [a]
+        pub b: GeneralOperand,                        // b
+        pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeGlobalOpNoftzLevelCacheHintVec16BitHalfWordType {
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub global: bool, // {.global}
-        pub op: Op, // .op
-        pub noftz: (), // .noftz
+        pub sem: Option<Sem>,                         // {.sem}
+        pub scope: Option<Scope>,                     // {.scope}
+        pub global: bool,                             // {.global}
+        pub op: Op,                                   // .op
+        pub noftz: (),                                // .noftz
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub vec_16_bit: Vec16Bit, // .vec_16_bit
-        pub half_word_type: HalfWordType, // .half_word_type
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub vec_16_bit: Vec16Bit,                     // .vec_16_bit
+        pub half_word_type: HalfWordType,             // .half_word_type
+        pub d: GeneralOperand,                        // d
+        pub a: AddressOperand,                        // [a]
+        pub b: GeneralOperand,                        // b
+        pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct AtomSemScopeGlobalOpNoftzLevelCacheHintVec32BitPackedType {
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub global: bool, // {.global}
-        pub op: Op, // .op
-        pub noftz: (), // .noftz
+        pub sem: Option<Sem>,                         // {.sem}
+        pub scope: Option<Scope>,                     // {.scope}
+        pub global: bool,                             // {.global}
+        pub op: Op,                                   // .op
+        pub noftz: (),                                // .noftz
         pub level_cache_hint: Option<LevelCacheHint>, // {.level::cache_hint}
-        pub vec_32_bit: Vec32Bit, // .vec_32_bit
-        pub packed_type: PackedType, // .packed_type
-        pub d: GeneralOperand, // d
-        pub a: AddressOperand, // [a]
-        pub b: GeneralOperand, // b
-        pub cache_policy: Option<GeneralOperand>, // {, cache-policy}
+        pub vec_32_bit: Vec32Bit,                     // .vec_32_bit
+        pub packed_type: PackedType,                  // .packed_type
+        pub d: GeneralOperand,                        // d
+        pub a: AddressOperand,                        // [a]
+        pub b: GeneralOperand,                        // b
+        pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::AtomSemScopeSpaceAddNoftzLevelCacheHintBf16;
+pub use section_0::AtomSemScopeSpaceAddNoftzLevelCacheHintBf16x2;
+pub use section_0::AtomSemScopeSpaceAddNoftzLevelCacheHintF16;
+pub use section_0::AtomSemScopeSpaceAddNoftzLevelCacheHintF16x2;
+pub use section_0::AtomSemScopeSpaceCasB16;
+pub use section_0::AtomSemScopeSpaceCasB128;
+pub use section_0::AtomSemScopeSpaceExchLevelCacheHintB128;
+pub use section_0::AtomSemScopeSpaceOpLevelCacheHintType;
+pub use section_0::AtomSemScopeSpaceOpType;
+pub use section_0::LevelCacheHint as LevelCacheHint0;
+pub use section_0::Op as Op0;
+pub use section_0::Scope as Scope0;
+pub use section_0::Sem as Sem0;
+pub use section_0::Space as Space0;
+pub use section_0::Type as Type0;
+pub use section_1::AtomSemScopeGlobalAddLevelCacheHintVec32BitF32;
+pub use section_1::AtomSemScopeGlobalOpNoftzLevelCacheHintVec16BitHalfWordType;
+pub use section_1::AtomSemScopeGlobalOpNoftzLevelCacheHintVec32BitPackedType;
+pub use section_1::HalfWordType as HalfWordType1;
+pub use section_1::LevelCacheHint as LevelCacheHint1;
+pub use section_1::Op as Op1;
+pub use section_1::PackedType as PackedType1;
+pub use section_1::Scope as Scope1;
+pub use section_1::Sem as Sem1;
+pub use section_1::Vec16Bit as Vec16Bit1;
+pub use section_1::Vec32Bit as Vec32Bit1;

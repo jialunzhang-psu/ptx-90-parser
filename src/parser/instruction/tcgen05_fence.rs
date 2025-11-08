@@ -27,7 +27,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for Tcgen05FenceAfterThreadSync {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("tcgen05")?;
@@ -41,7 +40,4 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
-

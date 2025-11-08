@@ -54,33 +54,33 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Dtype {
         Bf16, // .bf16
-        U16, // .u16
-        U32, // .u32
-        U64, // .u64
-        S16, // .s16
-        S32, // .s32
-        S64, // .s64
-        F16, // .f16
-        F32, // .f32
-        F64, // .f64
-        U8, // .u8
-        S8, // .s8
+        U16,  // .u16
+        U32,  // .u32
+        U64,  // .u64
+        S16,  // .s16
+        S32,  // .s32
+        S64,  // .s64
+        F16,  // .f16
+        F32,  // .f32
+        F64,  // .f64
+        U8,   // .u8
+        S8,   // .s8
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum Atype {
         Bf16, // .bf16
-        U16, // .u16
-        U32, // .u32
-        U64, // .u64
-        S16, // .s16
-        S32, // .s32
-        S64, // .s64
-        F16, // .f16
-        F32, // .f32
-        F64, // .f64
-        U8, // .u8
-        S8, // .s8
+        U16,  // .u16
+        U32,  // .u32
+        U64,  // .u64
+        S16,  // .s16
+        S32,  // .s32
+        S64,  // .s64
+        F16,  // .f16
+        F32,  // .f32
+        F64,  // .f64
+        U8,   // .u8
+        S8,   // .s8
     }
 
     #[derive(Debug, Clone, PartialEq)]
@@ -140,43 +140,43 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtIrndFtzSatDtypeAtype {
         pub irnd: Option<Irnd>, // {.irnd}
-        pub ftz: bool, // {.ftz}
-        pub sat: bool, // {.sat}
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
+        pub ftz: bool,          // {.ftz}
+        pub sat: bool,          // {.sat}
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtFrndFtzSatDtypeAtype {
         pub frnd: Option<Frnd>, // {.frnd}
-        pub ftz: bool, // {.ftz}
-        pub sat: bool, // {.sat}
-        pub dtype: Dtype, // .dtype
-        pub atype: Atype, // .atype
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
+        pub ftz: bool,          // {.ftz}
+        pub sat: bool,          // {.sat}
+        pub dtype: Dtype,       // .dtype
+        pub atype: Atype,       // .atype
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtFrnd2ReluSatfiniteF16F32 {
-        pub frnd2: Frnd2, // .frnd2
-        pub relu: bool, // {.relu}
-        pub satfinite: bool, // {.satfinite}
-        pub f16: (), // .f16
-        pub f32: (), // .f32
+        pub frnd2: Frnd2,      // .frnd2
+        pub relu: bool,        // {.relu}
+        pub satfinite: bool,   // {.satfinite}
+        pub f16: (),           // .f16
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtFrnd2ReluSatfiniteF16x2F32 {
-        pub frnd2: Frnd2, // .frnd2
-        pub relu: bool, // {.relu}
-        pub satfinite: bool, // {.satfinite}
-        pub f16x2: (), // .f16x2
-        pub f32: (), // .f32
+        pub frnd2: Frnd2,      // .frnd2
+        pub relu: bool,        // {.relu}
+        pub satfinite: bool,   // {.satfinite}
+        pub f16x2: (),         // .f16x2
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -184,35 +184,35 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRsReluSatfiniteF16x2F32 {
-        pub rs: (), // .rs
-        pub relu: bool, // {.relu}
-        pub satfinite: bool, // {.satfinite}
-        pub f16x2: (), // .f16x2
-        pub f32: (), // .f32
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
+        pub rs: (),                // .rs
+        pub relu: bool,            // {.relu}
+        pub satfinite: bool,       // {.satfinite}
+        pub f16x2: (),             // .f16x2
+        pub f32: (),               // .f32
+        pub d: GeneralOperand,     // d
+        pub a: GeneralOperand,     // a
+        pub b: GeneralOperand,     // b
         pub rbits: GeneralOperand, // rbits
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtFrnd2ReluSatfiniteBf16F32 {
-        pub frnd2: Frnd2, // .frnd2
-        pub relu: bool, // {.relu}
-        pub satfinite: bool, // {.satfinite}
-        pub bf16: (), // .bf16
-        pub f32: (), // .f32
+        pub frnd2: Frnd2,      // .frnd2
+        pub relu: bool,        // {.relu}
+        pub satfinite: bool,   // {.satfinite}
+        pub bf16: (),          // .bf16
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtFrnd2ReluSatfiniteBf16x2F32 {
-        pub frnd2: Frnd2, // .frnd2
-        pub relu: bool, // {.relu}
-        pub satfinite: bool, // {.satfinite}
-        pub bf16x2: (), // .bf16x2
-        pub f32: (), // .f32
+        pub frnd2: Frnd2,      // .frnd2
+        pub relu: bool,        // {.relu}
+        pub satfinite: bool,   // {.satfinite}
+        pub bf16x2: (),        // .bf16x2
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -220,157 +220,157 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRsReluSatfiniteBf16x2F32 {
-        pub rs: (), // .rs
-        pub relu: bool, // {.relu}
-        pub satfinite: bool, // {.satfinite}
-        pub bf16x2: (), // .bf16x2
-        pub f32: (), // .f32
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
+        pub rs: (),                // .rs
+        pub relu: bool,            // {.relu}
+        pub satfinite: bool,       // {.satfinite}
+        pub bf16x2: (),            // .bf16x2
+        pub f32: (),               // .f32
+        pub d: GeneralOperand,     // d
+        pub a: GeneralOperand,     // a
+        pub b: GeneralOperand,     // b
         pub rbits: GeneralOperand, // rbits
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRnaSatfiniteTf32F32 {
-        pub rna: (), // .rna
-        pub satfinite: bool, // {.satfinite}
-        pub tf32: (), // .tf32
-        pub f32: (), // .f32
+        pub rna: (),           // .rna
+        pub satfinite: bool,   // {.satfinite}
+        pub tf32: (),          // .tf32
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtFrnd2SatfiniteReluTf32F32 {
-        pub frnd2: Frnd2, // .frnd2
-        pub satfinite: bool, // {.satfinite}
-        pub relu: bool, // {.relu}
-        pub tf32: (), // .tf32
-        pub f32: (), // .f32
+        pub frnd2: Frnd2,      // .frnd2
+        pub satfinite: bool,   // {.satfinite}
+        pub relu: bool,        // {.relu}
+        pub tf32: (),          // .tf32
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRnSatfiniteReluF8x2typeF32 {
-        pub rn: (), // .rn
-        pub satfinite: (), // .satfinite
-        pub relu: bool, // {.relu}
+        pub rn: (),             // .rn
+        pub satfinite: (),      // .satfinite
+        pub relu: bool,         // {.relu}
         pub f8x2type: F8x2type, // .f8x2type
-        pub f32: (), // .f32
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
+        pub f32: (),            // .f32
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
+        pub b: GeneralOperand,  // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRnSatfiniteReluF8x2typeF16x2 {
-        pub rn: (), // .rn
-        pub satfinite: (), // .satfinite
-        pub relu: bool, // {.relu}
+        pub rn: (),             // .rn
+        pub satfinite: (),      // .satfinite
+        pub relu: bool,         // {.relu}
         pub f8x2type: F8x2type, // .f8x2type
-        pub f16x2: (), // .f16x2
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
+        pub f16x2: (),          // .f16x2
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRnReluF16x2F8x2type {
-        pub rn: (), // .rn
-        pub relu: bool, // {.relu}
-        pub f16x2: (), // .f16x2
+        pub rn: (),             // .rn
+        pub relu: bool,         // {.relu}
+        pub f16x2: (),          // .f16x2
         pub f8x2type: F8x2type, // .f8x2type
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRsReluSatfiniteF8x4typeF32 {
-        pub rs: (), // .rs
-        pub relu: bool, // {.relu}
-        pub satfinite: (), // .satfinite
-        pub f8x4type: F8x4type, // .f8x4type
-        pub f32: (), // .f32
-        pub d: GeneralOperand, // d
-        pub a: VectorOperand, // {a, b, e, f}
+        pub rs: (),                // .rs
+        pub relu: bool,            // {.relu}
+        pub satfinite: (),         // .satfinite
+        pub f8x4type: F8x4type,    // .f8x4type
+        pub f32: (),               // .f32
+        pub d: GeneralOperand,     // d
+        pub a: VectorOperand,      // {a, b, e, f}
         pub rbits: GeneralOperand, // rbits
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRnSatfiniteReluF4x2typeF32 {
-        pub rn: (), // .rn
-        pub satfinite: (), // .satfinite
-        pub relu: bool, // {.relu}
+        pub rn: (),             // .rn
+        pub satfinite: (),      // .satfinite
+        pub relu: bool,         // {.relu}
         pub f4x2type: F4x2type, // .f4x2type
-        pub f32: (), // .f32
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
+        pub f32: (),            // .f32
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
+        pub b: GeneralOperand,  // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRnReluF16x2F4x2type {
-        pub rn: (), // .rn
-        pub relu: bool, // {.relu}
-        pub f16x2: (), // .f16x2
+        pub rn: (),             // .rn
+        pub relu: bool,         // {.relu}
+        pub f16x2: (),          // .f16x2
         pub f4x2type: F4x2type, // .f4x2type
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRsReluSatfiniteF4x4typeF32 {
-        pub rs: (), // .rs
-        pub relu: bool, // {.relu}
-        pub satfinite: (), // .satfinite
-        pub f4x4type: F4x4type, // .f4x4type
-        pub f32: (), // .f32
-        pub d: GeneralOperand, // d
-        pub a: VectorOperand, // {a, b, e, f}
+        pub rs: (),                // .rs
+        pub relu: bool,            // {.relu}
+        pub satfinite: (),         // .satfinite
+        pub f4x4type: F4x4type,    // .f4x4type
+        pub f32: (),               // .f32
+        pub d: GeneralOperand,     // d
+        pub a: VectorOperand,      // {a, b, e, f}
         pub rbits: GeneralOperand, // rbits
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRnSatfiniteReluF6x2typeF32 {
-        pub rn: (), // .rn
-        pub satfinite: (), // .satfinite
-        pub relu: bool, // {.relu}
+        pub rn: (),             // .rn
+        pub satfinite: (),      // .satfinite
+        pub relu: bool,         // {.relu}
         pub f6x2type: F6x2type, // .f6x2type
-        pub f32: (), // .f32
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
+        pub f32: (),            // .f32
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
+        pub b: GeneralOperand,  // b
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRnReluF16x2F6x2type {
-        pub rn: (), // .rn
-        pub relu: bool, // {.relu}
-        pub f16x2: (), // .f16x2
+        pub rn: (),             // .rn
+        pub relu: bool,         // {.relu}
+        pub f16x2: (),          // .f16x2
         pub f6x2type: F6x2type, // .f6x2type
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
+        pub d: GeneralOperand,  // d
+        pub a: GeneralOperand,  // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRsReluSatfiniteF6x4typeF32 {
-        pub rs: (), // .rs
-        pub relu: bool, // {.relu}
-        pub satfinite: (), // .satfinite
-        pub f6x4type: F6x4type, // .f6x4type
-        pub f32: (), // .f32
-        pub d: GeneralOperand, // d
-        pub a: VectorOperand, // {a, b, e, f}
+        pub rs: (),                // .rs
+        pub relu: bool,            // {.relu}
+        pub satfinite: (),         // .satfinite
+        pub f6x4type: F6x4type,    // .f6x4type
+        pub f32: (),               // .f32
+        pub d: GeneralOperand,     // d
+        pub a: VectorOperand,      // {a, b, e, f}
         pub rbits: GeneralOperand, // rbits
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtFrnd3SatfiniteUe8m0x2F32 {
-        pub frnd3: Frnd3, // .frnd3
-        pub satfinite: bool, // {.satfinite}
-        pub ue8m0x2: (), // .ue8m0x2
-        pub f32: (), // .f32
+        pub frnd3: Frnd3,      // .frnd3
+        pub satfinite: bool,   // {.satfinite}
+        pub ue8m0x2: (),       // .ue8m0x2
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -378,21 +378,58 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtFrnd3SatfiniteUe8m0x2Bf16x2 {
-        pub frnd3: Frnd3, // .frnd3
-        pub satfinite: bool, // {.satfinite}
-        pub ue8m0x2: (), // .ue8m0x2
-        pub bf16x2: (), // .bf16x2
+        pub frnd3: Frnd3,      // .frnd3
+        pub satfinite: bool,   // {.satfinite}
+        pub ue8m0x2: (),       // .ue8m0x2
+        pub bf16x2: (),        // .bf16x2
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct CvtRnBf16x2Ue8m0x2 {
-        pub rn: (), // .rn
-        pub bf16x2: (), // .bf16x2
-        pub ue8m0x2: (), // .ue8m0x2
+        pub rn: (),            // .rn
+        pub bf16x2: (),        // .bf16x2
+        pub ue8m0x2: (),       // .ue8m0x2
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Atype as Atype0;
+pub use section_0::CvtFrnd2ReluSatfiniteBf16F32;
+pub use section_0::CvtFrnd2ReluSatfiniteBf16x2F32;
+pub use section_0::CvtFrnd2ReluSatfiniteF16F32;
+pub use section_0::CvtFrnd2ReluSatfiniteF16x2F32;
+pub use section_0::CvtFrnd2SatfiniteReluTf32F32;
+pub use section_0::CvtFrnd3SatfiniteUe8m0x2Bf16x2;
+pub use section_0::CvtFrnd3SatfiniteUe8m0x2F32;
+pub use section_0::CvtFrndFtzSatDtypeAtype;
+pub use section_0::CvtIrndFtzSatDtypeAtype;
+pub use section_0::CvtRnBf16x2Ue8m0x2;
+pub use section_0::CvtRnReluF16x2F4x2type;
+pub use section_0::CvtRnReluF16x2F6x2type;
+pub use section_0::CvtRnReluF16x2F8x2type;
+pub use section_0::CvtRnSatfiniteReluF4x2typeF32;
+pub use section_0::CvtRnSatfiniteReluF6x2typeF32;
+pub use section_0::CvtRnSatfiniteReluF8x2typeF16x2;
+pub use section_0::CvtRnSatfiniteReluF8x2typeF32;
+pub use section_0::CvtRnaSatfiniteTf32F32;
+pub use section_0::CvtRsReluSatfiniteBf16x2F32;
+pub use section_0::CvtRsReluSatfiniteF4x4typeF32;
+pub use section_0::CvtRsReluSatfiniteF6x4typeF32;
+pub use section_0::CvtRsReluSatfiniteF8x4typeF32;
+pub use section_0::CvtRsReluSatfiniteF16x2F32;
+pub use section_0::Dtype as Dtype0;
+pub use section_0::F4x2type as F4x2type0;
+pub use section_0::F4x4type as F4x4type0;
+pub use section_0::F6x2type as F6x2type0;
+pub use section_0::F6x4type as F6x4type0;
+pub use section_0::F8x2type as F8x2type0;
+pub use section_0::F8x4type as F8x4type0;
+pub use section_0::Frnd as Frnd0;
+pub use section_0::Frnd2 as Frnd20;
+pub use section_0::Frnd3 as Frnd30;
+pub use section_0::Irnd as Irnd0;

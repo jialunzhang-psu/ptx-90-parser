@@ -14,14 +14,12 @@ pub mod section_0 {
     impl PtxUnparser for MbarrierPendingCountB64 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "mbarrier");
-                    push_directive(tokens, "pending_count");
-                    push_directive(tokens, "b64");
-                    self.count.unparse_tokens(tokens);
+            push_directive(tokens, "pending_count");
+            push_directive(tokens, "b64");
+            self.count.unparse_tokens(tokens);
             tokens.push(PtxToken::Comma);
-                    self.state.unparse_tokens(tokens);
+            self.state.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

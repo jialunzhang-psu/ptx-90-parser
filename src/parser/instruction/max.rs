@@ -5,11 +5,11 @@
 //! .atype = { .u16, .u32, .u64,
 //! .u16x2, .s16, .s64 };
 //! .btype = { .s16x2, .s32 };
-//! 
+//!
 //! max{.ftz}{.NaN}{.xorsign.abs}.f32  d, a, b;
 //! max{.ftz}{.NaN}{.abs}.f32          d, a, b, c;
 //! max.f64                            d, a, b;
-//! 
+//!
 //! max{.ftz}{.NaN}{.xorsign.abs}.f16      d, a, b;
 //! max{.ftz}{.NaN}{.xorsign.abs}.f16x2    d, a, b;
 //! max{.NaN}{.xorsign.abs}.bf16           d, a, b;
@@ -89,9 +89,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".u16x2", ".u16", ".u32", ".u64", ".s16", ".s64"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -116,9 +122,15 @@ pub mod section_0 {
                 stream.set_position(saved_pos);
             }
             stream.set_position(saved_pos);
-            let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });
+            let span = stream
+                .peek()
+                .map(|(_, s)| s.clone())
+                .unwrap_or(Span { start: 0, end: 0 });
             let expected = &[".s16x2", ".s32"];
-            let found = stream.peek().map(|(t, _)| format!("{:?}", t)).unwrap_or_else(|_| "<end of input>".to_string());
+            let found = stream
+                .peek()
+                .map(|(t, _)| format!("{:?}", t))
+                .unwrap_or_else(|_| "<end of input>".to_string());
             Err(crate::parser::unexpected_value(span, expected, found))
         }
     }
@@ -138,15 +150,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(MaxAtype {
-                atype,
-                d,
-                a,
-                b,
-            })
+            Ok(MaxAtype { atype, d, a, b })
         }
     }
-
 
     impl PtxParser for MaxReluBtype {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -178,7 +184,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for MaxFtzNanXorsignAbsF32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -225,7 +230,6 @@ pub mod section_0 {
             })
         }
     }
-
 
     impl PtxParser for MaxFtzNanAbsF32 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -277,7 +281,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for MaxF64 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("max")?;
@@ -294,15 +297,9 @@ pub mod section_0 {
             stream.expect_complete()?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(MaxF64 {
-                f64,
-                d,
-                a,
-                b,
-            })
+            Ok(MaxF64 { f64, d, a, b })
         }
     }
-
 
     impl PtxParser for MaxFtzNanXorsignAbsF16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
@@ -350,7 +347,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for MaxFtzNanXorsignAbsF16x2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("max")?;
@@ -397,7 +393,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for MaxNanXorsignAbsBf16 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("max")?;
@@ -437,7 +432,6 @@ pub mod section_0 {
         }
     }
 
-
     impl PtxParser for MaxNanXorsignAbsBf16x2 {
         fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
             stream.expect_string("max")?;
@@ -476,7 +470,4 @@ pub mod section_0 {
             })
         }
     }
-
-
 }
-

@@ -15,10 +15,10 @@ pub mod section_0 {
     impl PtxUnparser for BraUni {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "bra");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    self.tgt.unparse_tokens(tokens);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            self.tgt.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
@@ -26,13 +26,11 @@ pub mod section_0 {
     impl PtxUnparser for BraUni1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "bra");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    self.tgt.unparse_tokens(tokens);
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            self.tgt.unparse_tokens(tokens);
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

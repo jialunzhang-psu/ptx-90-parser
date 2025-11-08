@@ -17,8 +17,12 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct StacksaveType {
-        pub type_: Type, // .type
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::StacksaveType;
+pub use section_0::Type as Type0;

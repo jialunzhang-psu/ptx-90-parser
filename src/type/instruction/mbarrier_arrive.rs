@@ -24,76 +24,86 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq)]
     pub enum Scope {
         Cluster, // .cluster
-        Cta, // .cta
+        Cta,     // .cta
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub enum State {
         SharedCta, // .shared::cta
-        Shared, // .shared
+        Shared,    // .shared
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MbarrierArriveSemScopeStateB64 {
-        pub arrive: (), // .arrive
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub state: Option<State>, // {.state}
-        pub b64: (), // .b64
-        pub state2: GeneralOperand, // state
-        pub addr: AddressOperand, // [addr]
+        pub arrive: (),                    // .arrive
+        pub sem: Option<Sem>,              // {.sem}
+        pub scope: Option<Scope>,          // {.scope}
+        pub state: Option<State>,          // {.state}
+        pub b64: (),                       // .b64
+        pub state2: GeneralOperand,        // state
+        pub addr: AddressOperand,          // [addr]
         pub count: Option<GeneralOperand>, // {, count}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MbarrierArriveSemScopeSharedClusterB64 {
-        pub arrive: (), // .arrive
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub shared_cluster: bool, // {.shared::cluster}
-        pub b64: (), // .b64
-        pub operand: GeneralOperand, // _
-        pub addr: AddressOperand, // [addr]
+        pub arrive: (),                    // .arrive
+        pub sem: Option<Sem>,              // {.sem}
+        pub scope: Option<Scope>,          // {.scope}
+        pub shared_cluster: bool,          // {.shared::cluster}
+        pub b64: (),                       // .b64
+        pub operand: GeneralOperand,       // _
+        pub addr: AddressOperand,          // [addr]
         pub count: Option<GeneralOperand>, // {, count}
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MbarrierArriveExpectTxSemScopeStateB64 {
-        pub arrive: (), // .arrive
-        pub expect_tx: (), // .expect_tx
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub state: Option<State>, // {.state}
-        pub b64: (), // .b64
-        pub state2: GeneralOperand, // state
-        pub addr: AddressOperand, // [addr]
+        pub arrive: (),              // .arrive
+        pub expect_tx: (),           // .expect_tx
+        pub sem: Option<Sem>,        // {.sem}
+        pub scope: Option<Scope>,    // {.scope}
+        pub state: Option<State>,    // {.state}
+        pub b64: (),                 // .b64
+        pub state2: GeneralOperand,  // state
+        pub addr: AddressOperand,    // [addr]
         pub txcount: GeneralOperand, // txCount
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MbarrierArriveExpectTxSemScopeSharedClusterB64 {
-        pub arrive: (), // .arrive
-        pub expect_tx: (), // .expect_tx
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub shared_cluster: bool, // {.shared::cluster}
-        pub b64: (), // .b64
+        pub arrive: (),              // .arrive
+        pub expect_tx: (),           // .expect_tx
+        pub sem: Option<Sem>,        // {.sem}
+        pub scope: Option<Scope>,    // {.scope}
+        pub shared_cluster: bool,    // {.shared::cluster}
+        pub b64: (),                 // .b64
         pub operand: GeneralOperand, // _
-        pub addr: AddressOperand, // [addr]
+        pub addr: AddressOperand,    // [addr]
         pub txcount: GeneralOperand, // txCount
     }
 
     #[derive(Debug, Clone, PartialEq)]
     pub struct MbarrierArriveNocompleteReleaseCtaStateB64 {
-        pub arrive: (), // .arrive
-        pub nocomplete: (), // .noComplete
-        pub release: bool, // {.release}
-        pub cta: bool, // {.cta}
-        pub state: Option<State>, // {.state}
-        pub b64: (), // .b64
+        pub arrive: (),             // .arrive
+        pub nocomplete: (),         // .noComplete
+        pub release: bool,          // {.release}
+        pub cta: bool,              // {.cta}
+        pub state: Option<State>,   // {.state}
+        pub b64: (),                // .b64
         pub state2: GeneralOperand, // state
-        pub addr: AddressOperand, // [addr]
-        pub count: GeneralOperand, // count
+        pub addr: AddressOperand,   // [addr]
+        pub count: GeneralOperand,  // count
     }
-
 }
+
+// Re-export types with section suffixes to avoid naming conflicts
+// e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::MbarrierArriveExpectTxSemScopeSharedClusterB64;
+pub use section_0::MbarrierArriveExpectTxSemScopeStateB64;
+pub use section_0::MbarrierArriveNocompleteReleaseCtaStateB64;
+pub use section_0::MbarrierArriveSemScopeSharedClusterB64;
+pub use section_0::MbarrierArriveSemScopeStateB64;
+pub use section_0::Scope as Scope0;
+pub use section_0::Sem as Sem0;
+pub use section_0::State as State0;

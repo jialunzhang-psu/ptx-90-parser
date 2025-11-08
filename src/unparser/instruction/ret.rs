@@ -14,12 +14,10 @@ pub mod section_0 {
     impl PtxUnparser for RetUni {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "ret");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

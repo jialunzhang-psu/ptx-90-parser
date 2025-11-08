@@ -14,12 +14,10 @@ pub mod section_0 {
     impl PtxUnparser for WgmmaFenceSyncAligned {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
             push_opcode(tokens, "wgmma");
-                    push_directive(tokens, "fence");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
+            push_directive(tokens, "fence");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
             tokens.push(PtxToken::Semicolon);
         }
     }
-
 }
-

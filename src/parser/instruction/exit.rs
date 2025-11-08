@@ -17,11 +17,7 @@ pub mod section_0 {
             stream.expect_string("exit")?;
             stream.expect_complete()?;
             stream.expect(&PtxToken::Semicolon)?;
-            Ok(Exit {
-            })
+            Ok(Exit {})
         }
     }
-
-
 }
-
