@@ -237,7 +237,7 @@ dependencies = [
 
 [[package]]
 name = "ptx-90-parser"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "clap",
  "logos",
