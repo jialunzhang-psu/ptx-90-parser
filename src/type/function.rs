@@ -39,7 +39,6 @@ pub struct FuncFunction {
 /// Statements contained within a PTX function body.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct FunctionBody {
-    pub entry_directives: Vec<FunctionEntryDirective>,
     pub statements: Vec<FunctionStatement>,
 }
 
@@ -70,39 +69,14 @@ pub struct FunctionDim3 {
     pub z: Option<u32>,
 }
 
-/// Entry directives that appear before executable statements in a function body.
-#[derive(Debug, Clone, PartialEq)]
-pub enum FunctionEntryDirective {
-    Reg(RegisterDirective),
-    Local(VariableDirective),
-    Param(VariableDirective),
-    Shared(VariableDirective),
-    Pragma(PragmaDirective),
-    Loc(LocationDirective),
-    Dwarf(DwarfDirective),
-}
-
 /// Nested statement block enclosed in braces.
 /// Executable items that appear within a function body.
 #[derive(Debug, Clone, PartialEq)]
 pub enum FunctionStatement {
+    Label(String),
     Directive(StatementDirective),
     Instruction(Instruction),
-    ExternCallBlock(ExternCallBlock),
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct ExternCallBlock {
-    pub declarations: Vec<FunctionEntryDirective>,
-    pub setup: Vec<ExternCallSetup>,
-    pub call: Instruction,
-    pub post_call: Vec<Instruction>,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum ExternCallSetup {
-    Param(VariableDirective),
-    Store(Instruction),
+    Block(Vec<FunctionStatement>),
 }
 
 /// .reg .ty name<range>
@@ -118,10 +92,14 @@ pub struct RegisterDirective {
 /// Directive that applies to individual statements.
 #[derive(Debug, Clone, PartialEq)]
 pub enum StatementDirective {
-    Dwarf(DwarfDirective),
     Loc(LocationDirective),
     Pragma(PragmaDirective),
     Section(StatementSectionDirective),
+    Reg(RegisterDirective),
+    Local(VariableDirective),
+    Param(VariableDirective),
+    Shared(VariableDirective),
+    Dwarf(DwarfDirective),
 }
 
 /// Raw dwarf directive emitted by the compiler (e.g. @@dwarf).

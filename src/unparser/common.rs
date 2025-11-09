@@ -470,12 +470,6 @@ impl PtxUnparser for VariableSymbol {
 
 impl PtxUnparser for crate::r#type::common::Instruction {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
-        // Emit label if present
-        if let Some(label) = &self.label {
-            tokens.push(PtxToken::Identifier(label.clone()));
-            tokens.push(PtxToken::Colon);
-        }
-
         // Emit predicate if present
         if let Some(predicate) = &self.predicate {
             tokens.push(PtxToken::At);

@@ -873,13 +873,8 @@ pub(crate) fn try_parse_label(
 }
 
 impl PtxParser for Instruction {
-    /// Parse a PTX instruction with optional label and predicate
-    ///
-    /// Format: [label:] [@{!}pred] instruction
+    /// Parse a PTX instruction with optional predicate
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        // Optional label (ends with colon)
-        let label = try_parse_label(stream)?;
-
         // Optional predicate: @{!}pred or @!pred
         let predicate = if stream.check(|t| matches!(t, PtxToken::At)) {
             stream.consume()?; // consume @
@@ -900,11 +895,7 @@ impl PtxParser for Instruction {
         // Parse the actual instruction using the module-level dispatcher
         let inst = crate::parser::instruction::parse_instruction_inner(stream)?;
 
-        Ok(Instruction {
-            label,
-            predicate,
-            inst,
-        })
+        Ok(Instruction { predicate, inst })
     }
 }
 

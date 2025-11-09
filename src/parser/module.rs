@@ -54,27 +54,6 @@ fn token_to_string(token: &PtxToken) -> String {
     }
 }
 
-fn classify_next_directive(stream: &PtxTokenStream) -> Option<String> {
-    let mut iter = stream.remaining().iter();
-    while let Some((token, _)) = iter.next() {
-        match token {
-            PtxToken::Dot => {
-                // Check if next token is an identifier
-                if let Some((PtxToken::Identifier(name), _)) = iter.next() {
-                    match name.as_str() {
-                        "visible" | "extern" | "weak" | "common" => continue,
-                        other => return Some(other.to_string()),
-                    }
-                } else {
-                    return None;
-                }
-            }
-            _ => return None,
-        }
-    }
-    None
-}
-
 impl PtxParser for VersionDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let (token, span) = stream.consume()?;
@@ -268,7 +247,7 @@ impl PtxParser for ModuleDebugDirective {
 
 impl PtxParser for LinkingDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (linkage, _) = parse_code_or_data_linkage(stream)?;
+        let linkage = CodeOrDataLinkage::parse(stream)?;
         let mut prototype = String::new();
         loop {
             let next = stream.peek();
@@ -298,68 +277,44 @@ impl PtxParser for LinkingDirective {
     }
 }
 
-fn parse_code_or_data_linkage(
-    stream: &mut PtxTokenStream,
-) -> Result<(CodeOrDataLinkage, std::ops::Range<usize>), PtxParseError> {
-    let (directive, span) = stream.expect_directive()?;
-    match directive.as_str() {
-        "visible" => Ok((CodeOrDataLinkage::Visible, span.clone())),
-        "extern" => Ok((CodeOrDataLinkage::Extern, span.clone())),
-        "weak" => Ok((CodeOrDataLinkage::Weak, span.clone())),
-        "common" => Ok((CodeOrDataLinkage::Common, span.clone())),
-        _ => Err(unexpected_value(
-            span.clone(),
-            &[".visible", ".extern", ".weak", ".common"],
-            format!(".{directive}"),
-        )),
-    }
-}
-
 impl PtxParser for ModuleDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let Some(name) = classify_next_directive(stream) else {
-            let span = stream.peek()?.1.clone();
-            return Err(unexpected_value(span, &["directive"], "".to_string()));
-        };
+        let position = stream.position();
 
-        match name.as_str() {
-            "version" | "target" | "address_size" => {
-                let info = ModuleInfoDirectiveKind::parse(stream)?;
-                Ok(ModuleDirective::ModuleInfo(info))
-            }
-            "file" | "section" => {
-                let debug = ModuleDebugDirective::parse(stream)?;
-                Ok(ModuleDirective::Debug(debug))
-            }
-            "entry" | "func" | "alias" => {
-                let function = FunctionKernelDirective::parse(stream)?;
-                Ok(ModuleDirective::FunctionKernel(function))
-            }
-            "global" | "const" | "shared" | "tex" => {
-                let variable = ModuleVariableDirective::parse(stream)?;
-                Ok(ModuleDirective::ModuleVariable(variable))
-            }
-            _ => {
-                let position = stream.position();
-                if let Ok(variable) = ModuleVariableDirective::parse(stream) {
-                    return Ok(ModuleDirective::ModuleVariable(variable));
-                }
-                stream.set_position(position);
-                if let Ok(function) = FunctionKernelDirective::parse(stream) {
-                    return Ok(ModuleDirective::FunctionKernel(function));
-                }
-                stream.set_position(position);
-                let span = stream
-                    .peek()
-                    .map(|(_, span)| span.clone())
-                    .unwrap_or(position.index..position.index);
-                Err(unexpected_value(
-                    span,
-                    &["module directive"],
-                    "unrecognised directive".to_string(),
-                ))
-            }
+        if let Ok(info) = ModuleInfoDirectiveKind::parse(stream) {
+            return Ok(ModuleDirective::ModuleInfo(info));
         }
+        stream.set_position(position);
+
+        if let Ok(debug) = ModuleDebugDirective::parse(stream) {
+            return Ok(ModuleDirective::Debug(debug));
+        }
+        stream.set_position(position);
+
+        if let Ok(function) = FunctionKernelDirective::parse(stream) {
+            return Ok(ModuleDirective::FunctionKernel(function));
+        }
+        stream.set_position(position);
+
+        if let Ok(variable) = ModuleVariableDirective::parse(stream) {
+            return Ok(ModuleDirective::ModuleVariable(variable));
+        }
+        stream.set_position(position);
+
+        if let Ok(linking) = LinkingDirective::parse(stream) {
+            return Ok(ModuleDirective::Linking(linking));
+        }
+        stream.set_position(position);
+
+        let span = stream
+            .peek()
+            .map(|(_, span)| span.clone())
+            .unwrap_or(position.index..position.index);
+        Err(unexpected_value(
+            span,
+            &["module directive"],
+            "unrecognised directive".to_string(),
+        ))
     }
 }
 

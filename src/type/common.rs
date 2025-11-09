@@ -347,7 +347,6 @@ pub struct Predicate {
 /// Format: [label:] [@{!}pred] instruction
 #[derive(Debug, Clone, PartialEq)]
 pub struct Instruction {
-    pub label: Option<String>,
     pub predicate: Option<Predicate>,
     pub inst: crate::r#type::instruction::Inst,
 }

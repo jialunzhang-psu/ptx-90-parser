@@ -37,11 +37,13 @@ pub use module::{
 
 // Re-export function types
 pub use function::{
-    DwarfDirective, EntryFunction, ExternCallBlock, ExternCallSetup, FuncFunction, FunctionAlias,
-    FunctionBody, FunctionDim3, FunctionEntryDirective, FunctionHeaderDirective,
-    FunctionKernelDirective, FunctionStatement, LocationDirective, PragmaDirective,
-    RegisterDirective, StatementDirective, StatementSectionDirective,
+    DwarfDirective, EntryFunction, FuncFunction, FunctionAlias, FunctionBody, FunctionDim3,
+    FunctionHeaderDirective, FunctionKernelDirective, FunctionStatement, LocationDirective,
+    PragmaDirective, RegisterDirective, StatementDirective, StatementSectionDirective,
 };
 
 // Re-export variable types
-pub use variable::{ModuleVariableDirective, VariableDirective};
+pub use variable::{
+    GlobalInitializer, InitializerValue, ModuleVariableDirective, NumericLiteral,
+    VariableDirective, VariableModifier,
+};

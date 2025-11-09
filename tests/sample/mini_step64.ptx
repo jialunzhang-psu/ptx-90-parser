@@ -1,0 +1,44 @@
+.version 8.5
+.target sm_80
+.address_size 64
+
+.file   1 "mini_step64.cu"
+
+.visible symbol_linkage;
+.visible .global .align 8 .u64 g_data[2] = {1, 2};
+.visible .const .align 4 .b32 const_values[2] = {3, 4};
+
+.visible .func helper(.param .b32 helper_param)
+{
+    .reg .b32 %r0;
+    mov.u32 %r0, %r0;
+    ret;
+}
+
+.visible .entry step64_kernel(
+    .param .u64 param0,
+    .param .u32 param1
+)
+{
+    .reg .pred %p1;
+    .reg .b32 %r1;
+    .reg .b32 %r2;
+    .reg .b64 %rd1;
+    .loc 1 42 3
+    mov.u32 %r1, %tid.x;
+    mov.u32 %r2, %ntid.x;
+    add.s32 %r1, %r1, %r2;
+    .pragma nounroll;
+$L_loop:
+    .loc 1 42 3
+    setp.eq.s32 %p1, %r1, 0;
+    @%p1 bra $L_exit;
+    {
+        .reg .b32 %r3;
+        mov.u32 %r3, %r1;
+    }
+    add.s32 %r1, %r1, -1;
+    bra $L_loop;
+$L_exit:
+    ret;
+}

@@ -2,7 +2,10 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use ptx_parser::tokenize;
-use ptx_parser::r#type::{FunctionKernelDirective, FunctionStatement, Module};
+use ptx_parser::r#type::{
+    instruction::Inst, FunctionKernelDirective, FunctionStatement, Instruction, Module,
+    ModuleDirective, ModuleInfoDirectiveKind,
+};
 use ptx_parser::{PtxParser, PtxTokenStream};
 
 #[test]
@@ -52,6 +55,7 @@ fn parse_sample_file(path: &Path) -> bool {
     let mut stream = PtxTokenStream::new(&tokens);
     match Module::parse(&mut stream) {
         Ok(module) => {
+            validate_module_ast(&module, path);
             eprintln!(
                 "✓ {}: Successfully parsed {} directives",
                 path.display(),
@@ -72,6 +76,140 @@ fn parse_sample_file(path: &Path) -> bool {
             false
         }
     }
+}
+
+fn validate_module_ast(module: &Module, path: &Path) {
+    let mut seen_function = false;
+    let mut seen_version = false;
+    let mut seen_target = false;
+    let mut seen_address = false;
+
+    for (idx, directive) in module.directives.iter().enumerate() {
+        match directive {
+            ModuleDirective::ModuleInfo(info) => {
+                assert!(
+                    !seen_function,
+                    "{}: module info directive found after function directive at index {}",
+                    path.display(),
+                    idx
+                );
+
+                match info {
+                    ModuleInfoDirectiveKind::Version(version) => {
+                        seen_version = true;
+                        assert!(
+                            version.major > 0,
+                            "{}: version major should be > 0",
+                            path.display()
+                        );
+                    }
+                    ModuleInfoDirectiveKind::Target(target) => {
+                        seen_target = true;
+                        assert!(
+                            !target.entries.is_empty(),
+                            "{}: target directive should contain entries",
+                            path.display()
+                        );
+                    }
+                    ModuleInfoDirectiveKind::AddressSize(address) => {
+                        seen_address = true;
+                        assert!(
+                            address.size == 32 || address.size == 64,
+                            "{}: address_size must be 32 or 64",
+                            path.display()
+                        );
+                    }
+                }
+            }
+            ModuleDirective::FunctionKernel(function) => {
+                seen_function = true;
+                if let Some((name, instruction_count)) = instruction_count_for_function(function) {
+                    if instruction_count == 1 {
+                        let only_ret = first_instruction_in_function(function)
+                            .map(|inst| matches!(inst.inst, Inst::RetUni(_)))
+                            .unwrap_or(false);
+                        if !only_ret {
+                            panic!(
+                                "{}: kernel/function `{}` contains exactly 1 executable statement",
+                                path.display(),
+                                name
+                            );
+                        }
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    assert!(
+        seen_version && seen_target && seen_address,
+        "{}: module missing required module info directives (version: {}, target: {}, address_size: {})",
+        path.display(),
+        seen_version,
+        seen_target,
+        seen_address
+    );
+    assert!(
+        seen_function,
+        "{}: module should contain at least one function or kernel directive",
+        path.display()
+    );
+}
+
+fn instruction_count_for_function<'a>(
+    function: &'a FunctionKernelDirective,
+) -> Option<(&'a str, usize)> {
+    match function {
+        FunctionKernelDirective::Entry(entry) => {
+            Some((entry.name.as_str(), instruction_count_in_body(&entry.body)))
+        }
+        FunctionKernelDirective::Func(func) => {
+            Some((func.name.as_str(), instruction_count_in_body(&func.body)))
+        }
+        FunctionKernelDirective::Alias(_) => None,
+    }
+}
+
+fn instruction_count_in_body(body: &ptx_parser::r#type::FunctionBody) -> usize {
+    body.statements
+        .iter()
+        .map(instruction_count_in_statement)
+        .sum()
+}
+
+fn instruction_count_in_statement(statement: &FunctionStatement) -> usize {
+    match statement {
+        FunctionStatement::Label(_) => 0,
+        FunctionStatement::Instruction(_) => 1,
+        FunctionStatement::Directive(_) => 0,
+        FunctionStatement::Block(statements) => {
+            statements.iter().map(instruction_count_in_statement).sum()
+        }
+    }
+}
+
+fn first_instruction_in_function(function: &FunctionKernelDirective) -> Option<&Instruction> {
+    match function {
+        FunctionKernelDirective::Entry(entry) => first_instruction_in_statements(&entry.body.statements),
+        FunctionKernelDirective::Func(func) => first_instruction_in_statements(&func.body.statements),
+        FunctionKernelDirective::Alias(_) => None,
+    }
+}
+
+fn first_instruction_in_statements(statements: &[FunctionStatement]) -> Option<&Instruction> {
+    for statement in statements {
+        match statement {
+            FunctionStatement::Instruction(inst) => return Some(inst),
+            FunctionStatement::Block(block) => {
+                if let Some(inst) = first_instruction_in_statements(block) {
+                    return Some(inst);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
 }
 
 #[test]
@@ -117,29 +255,30 @@ fn test_parse_labels_and_predicates() {
         })
         .expect("should find entry function");
 
-    // Extract instructions from the function body
-    let instructions: Vec<_> = entry
-        .body
-        .statements
-        .iter()
-        .filter_map(|stmt| match stmt {
-            FunctionStatement::Instruction(inst) => Some(inst),
-            _ => None,
-        })
-        .collect();
+    // Extract instructions with their preceding labels
+    let mut labeled_instructions = Vec::new();
+    let mut pending_label: Option<String> = None;
+    for statement in &entry.body.statements {
+        match statement {
+            FunctionStatement::Label(name) => pending_label = Some(name.clone()),
+            FunctionStatement::Instruction(inst) => {
+                labeled_instructions.push((pending_label.take(), inst));
+            }
+            _ => {}
+        }
+    }
 
-    // We should have 6 instructions (excluding ret which is also an instruction)
     assert!(
-        instructions.len() >= 6,
+        labeled_instructions.len() >= 6,
         "should have at least 6 instructions, found {}",
-        instructions.len()
+        labeled_instructions.len()
     );
 
     // Test 1: Instruction with label only
-    let inst_with_label = &instructions[0];
+    let (first_label, inst_with_label) = &labeled_instructions[0];
     assert_eq!(
-        inst_with_label.label,
-        Some("loop_start".to_string()),
+        first_label.as_deref(),
+        Some("loop_start"),
         "first instruction should have label 'loop_start'"
     );
     assert!(
@@ -148,9 +287,9 @@ fn test_parse_labels_and_predicates() {
     );
 
     // Test 2: Instruction with predicate only
-    let inst_with_pred = &instructions[1];
+    let (second_label, inst_with_pred) = &labeled_instructions[1];
     assert!(
-        inst_with_pred.label.is_none(),
+        second_label.is_none(),
         "second instruction should not have label"
     );
     let pred = inst_with_pred
@@ -160,9 +299,9 @@ fn test_parse_labels_and_predicates() {
     assert!(!pred.negated, "predicate should not be negated");
 
     // Test 3: Instruction with negated predicate
-    let inst_with_neg_pred = &instructions[2];
+    let (third_label, inst_with_neg_pred) = &labeled_instructions[2];
     assert!(
-        inst_with_neg_pred.label.is_none(),
+        third_label.is_none(),
         "third instruction should not have label"
     );
     let neg_pred = inst_with_neg_pred
@@ -172,10 +311,10 @@ fn test_parse_labels_and_predicates() {
     assert!(neg_pred.negated, "predicate should be negated");
 
     // Test 4: Instruction with both label and predicate
-    let inst_with_both = &instructions[3];
+    let (fourth_label, inst_with_both) = &labeled_instructions[3];
     assert_eq!(
-        inst_with_both.label,
-        Some("continue_label".to_string()),
+        fourth_label.as_deref(),
+        Some("continue_label"),
         "fourth instruction should have label 'continue_label'"
     );
     let both_pred = inst_with_both
@@ -185,10 +324,10 @@ fn test_parse_labels_and_predicates() {
     assert!(!both_pred.negated, "predicate should not be negated");
 
     // Test 5: Instruction with label and negated predicate
-    let inst_with_label_neg = &instructions[4];
+    let (fifth_label, inst_with_label_neg) = &labeled_instructions[4];
     assert_eq!(
-        inst_with_label_neg.label,
-        Some("exit_label".to_string()),
+        fifth_label.as_deref(),
+        Some("exit_label"),
         "fifth instruction should have label 'exit_label'"
     );
     let label_neg_pred = inst_with_label_neg

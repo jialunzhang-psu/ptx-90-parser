@@ -27,12 +27,6 @@ enum VariableDirectiveKind {
     Other,
 }
 
-struct ParsedVariableDirective {
-    directive: VariableDirective,
-    kind: VariableDirectiveKind,
-    leading_span: Option<Span>,
-}
-
 fn is_data_type_directive(name: &str) -> bool {
     DATA_TYPE_NAMES.iter().any(|candidate| candidate == &name)
 }
@@ -307,170 +301,159 @@ impl PtxParser for VariableModifier {
     }
 }
 
-fn parse_variable_directive_internal(
-    stream: &mut PtxTokenStream,
-) -> Result<ParsedVariableDirective, PtxParseError> {
-    let first_span = stream.peek().ok().map(|(_, span)| span.clone());
-
-    let mut address_space: Option<AddressSpace> = None;
-    let mut attributes = Vec::new();
-    let mut modifiers = Vec::new();
-    let mut ty: Option<DataType> = None;
-    let mut array = Vec::new();
-    let mut initializer = None;
-    let mut seen_tex = false;
-    let mut kind = VariableDirectiveKind::Other;
-    let mut kind_span = None;
-
-    loop {
-        let Some((directive, directive_span)) = peek_directive(stream)? else {
-            break;
-        };
-        match directive.as_str() {
-            "tex" => {
-                stream.expect_directive()?;
-                if !seen_tex {
-                    seen_tex = true;
-                    kind = VariableDirectiveKind::Tex;
-                    kind_span = Some(directive_span);
-                }
-            }
-            "global" | "const" | "shared" | "local" | "param" | "reg" => {
-                if address_space.is_some() {
-                    return Err(unexpected_value(
-                        directive_span.clone(),
-                        &["single address space qualifier"],
-                        format!(".{directive}"),
-                    ));
-                }
-                let space = AddressSpace::parse(stream)?;
-                address_space = Some(space);
-                match space {
-                    AddressSpace::Global => {
-                        kind = VariableDirectiveKind::Global;
-                        kind_span = Some(directive_span);
-                    }
-                    AddressSpace::Const => {
-                        kind = VariableDirectiveKind::Const;
-                        kind_span = Some(directive_span);
-                    }
-                    AddressSpace::Shared => {
-                        kind = VariableDirectiveKind::Shared;
-                        kind_span = Some(directive_span);
-                    }
-                    _ => {}
-                }
-            }
-            "managed" | "unified" => {
-                attributes.push(AttributeDirective::parse(stream)?);
-            }
-            "align" | "ptr" | "visible" | "extern" | "weak" | "common" => {
-                modifiers.push(VariableModifier::parse(stream)?);
-            }
-            other if is_vector_modifier(other) => {
-                modifiers.push(VariableModifier::parse(stream)?);
-            }
-            other if is_data_type_directive(other) => {
-                if ty.is_some() {
-                    return Err(unexpected_value(
-                        directive_span.clone(),
-                        &["single data type qualifier"],
-                        format!(".{other}"),
-                    ));
-                }
-                ty = Some(DataType::parse(stream)?);
-            }
-            _ => break,
-        }
-    }
-
-    let (name, _) = stream.expect_identifier()?;
-
-    loop {
-        if stream
-            .consume_if(|token| matches!(token, PtxToken::LBracket))
-            .is_none()
-        {
-            break;
-        }
-
-        if stream
-            .consume_if(|token| matches!(token, PtxToken::RBracket))
-            .is_some()
-        {
-            array.push(None);
-            continue;
-        }
-
-        let size_span = stream.peek()?.1.clone();
-        let literal = NumericLiteral::parse(stream)?;
-        let size = match literal {
-            NumericLiteral::Unsigned(value) => value,
-            NumericLiteral::Signed(value) if value >= 0 => value as u64,
-            _ => {
-                return Err(invalid_literal(
-                    size_span.clone(),
-                    "array size must be a non-negative integer",
-                ));
-            }
-        };
-
-        stream.expect(&PtxToken::RBracket)?;
-        array.push(Some(size));
-    }
-
-    if stream
-        .consume_if(|token| matches!(token, PtxToken::Equals))
-        .is_some()
-    {
-        initializer = Some(GlobalInitializer::parse(stream)?);
-    }
-
-    stream.expect(&PtxToken::Semicolon)?;
-
-    let mut final_kind = kind;
-    if seen_tex {
-        final_kind = VariableDirectiveKind::Tex;
-    } else if matches!(final_kind, VariableDirectiveKind::Other) {
-        final_kind = match address_space {
-            Some(AddressSpace::Shared) => VariableDirectiveKind::Shared,
-            Some(AddressSpace::Global) => VariableDirectiveKind::Global,
-            Some(AddressSpace::Const) => VariableDirectiveKind::Const,
-            _ => VariableDirectiveKind::Other,
-        };
-    }
-
-    let directive = VariableDirective {
-        address_space,
-        attributes,
-        ty,
-        modifiers,
-        name,
-        array,
-        initializer,
-        raw: String::new(),
-    };
-
-    Ok(ParsedVariableDirective {
-        directive,
-        kind: final_kind,
-        leading_span: kind_span.or(first_span),
-    })
-}
-
 impl VariableDirective {
     fn parse_with_kind(
         stream: &mut PtxTokenStream,
     ) -> Result<(VariableDirective, VariableDirectiveKind, Option<Span>), PtxParseError> {
-        let parsed = parse_variable_directive_internal(stream)?;
-        Ok((parsed.directive, parsed.kind, parsed.leading_span))
+        let first_span = stream.peek().ok().map(|(_, span)| span.clone());
+
+        let mut address_space: Option<AddressSpace> = None;
+        let mut attributes = Vec::new();
+        let mut modifiers = Vec::new();
+        let mut ty: Option<DataType> = None;
+        let mut array = Vec::new();
+        let mut initializer = None;
+        let mut seen_tex = false;
+        let mut kind = VariableDirectiveKind::Other;
+        let mut kind_span = None;
+
+        loop {
+            let Some((directive, directive_span)) = peek_directive(stream)? else {
+                break;
+            };
+            match directive.as_str() {
+                "tex" => {
+                    stream.expect_directive()?;
+                    if !seen_tex {
+                        seen_tex = true;
+                        kind = VariableDirectiveKind::Tex;
+                        kind_span = Some(directive_span);
+                    }
+                }
+                "global" | "const" | "shared" | "local" | "param" | "reg" => {
+                    if address_space.is_some() {
+                        return Err(unexpected_value(
+                            directive_span.clone(),
+                            &["single address space qualifier"],
+                            format!(".{directive}"),
+                        ));
+                    }
+                    let space = AddressSpace::parse(stream)?;
+                    address_space = Some(space);
+                    match space {
+                        AddressSpace::Global => {
+                            kind = VariableDirectiveKind::Global;
+                            kind_span = Some(directive_span.clone());
+                        }
+                        AddressSpace::Const => {
+                            kind = VariableDirectiveKind::Const;
+                            kind_span = Some(directive_span.clone());
+                        }
+                        AddressSpace::Shared => {
+                            kind = VariableDirectiveKind::Shared;
+                            kind_span = Some(directive_span.clone());
+                        }
+                        _ => {}
+                    }
+                }
+                "managed" | "unified" => {
+                    attributes.push(AttributeDirective::parse(stream)?);
+                }
+                "align" | "ptr" | "visible" | "extern" | "weak" | "common" => {
+                    modifiers.push(VariableModifier::parse(stream)?);
+                }
+                other if is_vector_modifier(other) => {
+                    modifiers.push(VariableModifier::parse(stream)?);
+                }
+                other if is_data_type_directive(other) => {
+                    if ty.is_some() {
+                        return Err(unexpected_value(
+                            directive_span.clone(),
+                            &["single data type qualifier"],
+                            format!(".{other}"),
+                        ));
+                    }
+                    ty = Some(DataType::parse(stream)?);
+                }
+                _ => break,
+            }
+        }
+
+        let (name, _) = stream.expect_identifier()?;
+
+        loop {
+            if stream
+                .consume_if(|token| matches!(token, PtxToken::LBracket))
+                .is_none()
+            {
+                break;
+            }
+
+            if stream
+                .consume_if(|token| matches!(token, PtxToken::RBracket))
+                .is_some()
+            {
+                array.push(None);
+                continue;
+            }
+
+            let size_span = stream.peek()?.1.clone();
+            let literal = NumericLiteral::parse(stream)?;
+            let size = match literal {
+                NumericLiteral::Unsigned(value) => value,
+                NumericLiteral::Signed(value) if value >= 0 => value as u64,
+                _ => {
+                    return Err(invalid_literal(
+                        size_span.clone(),
+                        "array size must be a non-negative integer",
+                    ));
+                }
+            };
+
+            stream.expect(&PtxToken::RBracket)?;
+            array.push(Some(size));
+        }
+
+        if stream
+            .consume_if(|token| matches!(token, PtxToken::Equals))
+            .is_some()
+        {
+            initializer = Some(GlobalInitializer::parse(stream)?);
+        }
+
+        stream.expect(&PtxToken::Semicolon)?;
+
+        let mut final_kind = kind;
+        if seen_tex {
+            final_kind = VariableDirectiveKind::Tex;
+        } else if matches!(final_kind, VariableDirectiveKind::Other) {
+            final_kind = match address_space {
+                Some(AddressSpace::Shared) => VariableDirectiveKind::Shared,
+                Some(AddressSpace::Global) => VariableDirectiveKind::Global,
+                Some(AddressSpace::Const) => VariableDirectiveKind::Const,
+                _ => VariableDirectiveKind::Other,
+            };
+        }
+
+        let directive = VariableDirective {
+            address_space,
+            attributes,
+            ty,
+            modifiers,
+            name,
+            array,
+            initializer,
+            raw: String::new(),
+        };
+
+        Ok((directive, final_kind, kind_span.or(first_span)))
     }
 }
 
 impl PtxParser for VariableDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let parsed = parse_variable_directive_internal(stream)?;
-        Ok(parsed.directive)
+        let (directive, _, _) = VariableDirective::parse_with_kind(stream)?;
+        Ok(directive)
     }
 }
 

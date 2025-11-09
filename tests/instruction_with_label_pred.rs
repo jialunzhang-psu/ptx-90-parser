@@ -1,14 +1,51 @@
 mod util;
 
-use ptx_parser::{PtxUnlexer, PtxUnparser, r#type::Instruction};
+use ptx_parser::{
+    PtxParser, PtxToken, PtxTokenStream, PtxUnlexer, PtxUnparser, tokenize,
+    r#type::{FunctionStatement, Instruction},
+};
+
+fn parse_statements(source: &str) -> Vec<FunctionStatement> {
+    let tokens = tokenize(source).expect("tokenization should succeed");
+    let mut stream = PtxTokenStream::new(&tokens);
+    let mut statements = Vec::new();
+    while !stream.is_at_end() {
+        statements
+            .push(FunctionStatement::parse(&mut stream).expect("statement parse should succeed"));
+    }
+    statements
+}
+
+fn parse_label_and_instruction(source: &str) -> (String, Instruction) {
+    let mut statements = parse_statements(source).into_iter();
+    let label_stmt = statements.next().expect("expected label statement");
+    let label = match label_stmt {
+        FunctionStatement::Label(name) => name,
+        other => panic!("expected label statement, got {:?}", other),
+    };
+
+    let inst_stmt = statements.next().expect("expected instruction statement");
+    let inst = match inst_stmt {
+        FunctionStatement::Instruction(inst) => inst,
+        other => panic!("expected instruction after label, got {:?}", other),
+    };
+
+    (label, inst)
+}
+
+fn unparse_statements(statements: &[FunctionStatement]) -> Vec<PtxToken> {
+    let mut tokens = Vec::new();
+    for statement in statements {
+        tokens.extend(statement.to_tokens());
+    }
+    tokens
+}
 
 #[test]
 fn test_instruction_with_label_only() {
-    let input = "loop_start: add.s32 %r1, %r2, %r3;";
-    let result: Instruction = util::parse(input);
-
-    assert_eq!(result.label, Some("loop_start".to_string()));
-    assert_eq!(result.predicate, None);
+    let (label, inst) = parse_label_and_instruction("loop_start: add.s32 %r1, %r2, %r3;");
+    assert_eq!(label, "loop_start");
+    assert!(inst.predicate.is_none());
 }
 
 #[test]
@@ -16,9 +53,7 @@ fn test_instruction_with_predicate_only() {
     let input = "@%p0 bra exit_label;";
     let result: Instruction = util::parse(input);
 
-    assert_eq!(result.label, None);
     assert!(result.predicate.is_some());
-
     let predicate = result.predicate.unwrap();
     assert_eq!(predicate.negated, false);
 }
@@ -28,35 +63,26 @@ fn test_instruction_with_negated_predicate() {
     let input = "@!%p0 add.s32 %r1, %r2, %r3;";
     let result: Instruction = util::parse(input);
 
-    assert_eq!(result.label, None);
-    assert!(result.predicate.is_some());
-
-    let predicate = result.predicate.unwrap();
-    assert_eq!(predicate.negated, true);
+    let predicate = result.predicate.expect("predicate should exist");
+    assert!(predicate.negated, "predicate should be negated");
 }
 
 #[test]
 fn test_instruction_with_label_and_predicate() {
-    let input = "my_label: @%p1 setp.eq.s32 %p0, %r1, %r2;";
-    let result: Instruction = util::parse(input);
+    let (label, inst) = parse_label_and_instruction("my_label: @%p1 setp.eq.s32 %p0, %r1, %r2;");
+    assert_eq!(label, "my_label");
 
-    assert_eq!(result.label, Some("my_label".to_string()));
-    assert!(result.predicate.is_some());
-
-    let predicate = result.predicate.unwrap();
-    assert_eq!(predicate.negated, false);
+    let predicate = inst.predicate.expect("predicate should exist");
+    assert!(!predicate.negated);
 }
 
 #[test]
 fn test_instruction_with_label_and_negated_predicate() {
-    let input = "exit_point: @!%p0 ret;";
-    let result: Instruction = util::parse(input);
+    let (label, inst) = parse_label_and_instruction("exit_point: @!%p0 ret;");
+    assert_eq!(label, "exit_point");
 
-    assert_eq!(result.label, Some("exit_point".to_string()));
-    assert!(result.predicate.is_some());
-
-    let predicate = result.predicate.unwrap();
-    assert_eq!(predicate.negated, true);
+    let predicate = inst.predicate.expect("predicate should exist");
+    assert!(predicate.negated);
 }
 
 #[test]
@@ -64,16 +90,16 @@ fn test_instruction_without_label_or_predicate() {
     let input = "mov.u32 %r0, %r1;";
     let result: Instruction = util::parse(input);
 
-    assert_eq!(result.label, None);
-    assert_eq!(result.predicate, None);
+    assert!(result.predicate.is_none());
 }
 
 #[test]
 fn test_complex_label_names() {
-    let input = "loop_start_123: add.s32 %r1, %r2, %r3;";
-    let result: Instruction = util::parse(input);
-
-    assert_eq!(result.label, Some("loop_start_123".to_string()));
+    let statements = parse_statements("loop_start_123: add.s32 %r1, %r2, %r3;");
+    match &statements[0] {
+        FunctionStatement::Label(name) => assert_eq!(name, "loop_start_123"),
+        other => panic!("expected label statement, got {:?}", other),
+    }
 }
 
 #[test]
@@ -86,18 +112,21 @@ fn test_multiple_instructions_in_sequence() {
     ];
 
     for input in inputs {
-        let result: Instruction = util::parse(input);
-        // Just verify they all parse successfully without panicking
-        let _ = result.inst;
+        let statements = parse_statements(input);
+        assert!(
+            statements
+                .iter()
+                .any(|stmt| matches!(stmt, FunctionStatement::Instruction(_))),
+            "expected at least one instruction in {input}"
+        );
     }
 }
 
 #[test]
 fn test_unparse_instruction_with_label() {
-    let input = "my_label: add.s32 %r1, %r2, %r3;";
-    let parsed: Instruction = util::parse(input);
-    let tokens = parsed.to_tokens();
-    let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
+    let statements = parse_statements("my_label: add.s32 %r1, %r2, %r3;");
+    let tokens = unparse_statements(&statements);
+    let unparsed = PtxUnlexer::to_string(&tokens).expect("unparse failed");
 
     assert!(unparsed.contains("my_label:"));
     assert!(unparsed.contains("add.s32"));
@@ -117,30 +146,20 @@ fn test_unparse_instruction_with_predicate() {
 
 #[test]
 fn test_unparse_instruction_with_label_and_predicate() {
-    let input = "check: @!%p0 ret;";
-    let parsed: Instruction = util::parse(input);
-    let tokens = parsed.to_tokens();
-    let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
-
-    eprintln!("Unparsed: {}", unparsed);
-    assert!(unparsed.contains("check:"));
-    assert!(unparsed.contains("@"));
-    assert!(unparsed.contains("!"));
-    assert!(unparsed.contains("p0"));
-    assert!(unparsed.contains("ret"));
+    let statements = parse_statements("check: @!%p0 ret;");
+    let tokens = unparse_statements(&statements);
+    assert!(tokens.contains(&PtxToken::Identifier("check".into())));
+    assert!(tokens.contains(&PtxToken::At));
+    assert!(tokens.contains(&PtxToken::Exclaim));
+    assert!(tokens.contains(&PtxToken::Register("%p0".into())));
 }
 
 #[test]
 fn test_roundtrip_with_label() {
-    let input = "loop: add.s32 %r1, %r2, %r3;";
-    let parsed: Instruction = util::parse(input);
-    let tokens = parsed.to_tokens();
-    let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
-
-    // Parse the unparsed output again
-    let reparsed: Instruction = util::parse(&unparsed);
-    assert_eq!(parsed.label, reparsed.label);
-    assert_eq!(parsed.predicate.is_some(), reparsed.predicate.is_some());
+    let statements = parse_statements("loop: add.s32 %r1, %r2, %r3;");
+    let tokens = unparse_statements(&statements);
+    let reparsed = parse_statements(&PtxUnlexer::to_string(&tokens).expect("unparse failed"));
+    assert_eq!(statements, reparsed);
 }
 
 #[test]
@@ -150,24 +169,15 @@ fn test_roundtrip_with_predicate() {
     let tokens = parsed.to_tokens();
     let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
 
-    // Parse the unparsed output again
     let reparsed: Instruction = util::parse(&unparsed);
-    assert_eq!(parsed.label, reparsed.label);
     assert_eq!(parsed.predicate.is_some(), reparsed.predicate.is_some());
 }
 
 #[test]
 fn test_roundtrip_with_label_and_predicate() {
-    let input = "branch_target: @!%p0 bra done;";
-    let parsed: Instruction = util::parse(input);
-    let tokens = parsed.to_tokens();
+    let statements = parse_statements("branch_target: @!%p0 bra done;");
+    let tokens = unparse_statements(&statements);
     let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
-
-    // Parse the unparsed output again
-    let reparsed: Instruction = util::parse(&unparsed);
-    assert_eq!(parsed.label, reparsed.label);
-    assert_eq!(parsed.predicate.is_some(), reparsed.predicate.is_some());
-    if let (Some(pred1), Some(pred2)) = (&parsed.predicate, &reparsed.predicate) {
-        assert_eq!(pred1.negated, pred2.negated);
-    }
+    let reparsed = parse_statements(&unparsed);
+    assert_eq!(statements, reparsed);
 }
