@@ -82,12 +82,12 @@ impl PtxParser for NumericLiteral {
                         return Err(invalid_literal(span.clone(), "signed integer underflow"));
                     }
                     let signed = -(value as i128);
-                    Ok(NumericLiteral::Signed(signed as i64))
+                    Ok(NumericLiteral::Signed { value: signed as i64, span })
                 } else {
                     if value > u64::MAX as u128 {
                         return Err(invalid_literal(span.clone(), "unsigned integer overflow"));
                     }
-                    Ok(NumericLiteral::Unsigned(value as u64))
+                    Ok(NumericLiteral::Unsigned { value: value as u64, span })
                 }
             }
             PtxToken::HexInteger(text) => {
@@ -102,12 +102,12 @@ impl PtxParser for NumericLiteral {
                         return Err(invalid_literal(span.clone(), "signed integer underflow"));
                     }
                     let signed = -(value as i128);
-                    Ok(NumericLiteral::Signed(signed as i64))
+                    Ok(NumericLiteral::Signed { value: signed as i64, span })
                 } else {
                     if value > u64::MAX as u128 {
                         return Err(invalid_literal(span.clone(), "unsigned integer overflow"));
                     }
-                    Ok(NumericLiteral::Unsigned(value as u64))
+                    Ok(NumericLiteral::Unsigned { value: value as u64, span })
                 }
             }
             PtxToken::BinaryInteger(text) => {
@@ -122,12 +122,12 @@ impl PtxParser for NumericLiteral {
                         return Err(invalid_literal(span.clone(), "signed integer underflow"));
                     }
                     let signed = -(value as i128);
-                    Ok(NumericLiteral::Signed(signed as i64))
+                    Ok(NumericLiteral::Signed { value: signed as i64, span })
                 } else {
                     if value > u64::MAX as u128 {
                         return Err(invalid_literal(span.clone(), "unsigned integer overflow"));
                     }
-                    Ok(NumericLiteral::Unsigned(value as u64))
+                    Ok(NumericLiteral::Unsigned { value: value as u64, span })
                 }
             }
             PtxToken::OctalInteger(text) => {
@@ -139,12 +139,12 @@ impl PtxParser for NumericLiteral {
                         return Err(invalid_literal(span.clone(), "signed integer underflow"));
                     }
                     let signed = -(value as i128);
-                    Ok(NumericLiteral::Signed(signed as i64))
+                    Ok(NumericLiteral::Signed { value: signed as i64, span })
                 } else {
                     if value > u64::MAX as u128 {
                         return Err(invalid_literal(span.clone(), "unsigned integer overflow"));
                     }
-                    Ok(NumericLiteral::Unsigned(value as u64))
+                    Ok(NumericLiteral::Unsigned { value: value as u64, span })
                 }
             }
             PtxToken::Float(text) | PtxToken::FloatExponent(text) => {
@@ -154,7 +154,7 @@ impl PtxParser for NumericLiteral {
                 if negative {
                     value = -value;
                 }
-                Ok(NumericLiteral::Float64(value.to_bits()))
+                Ok(NumericLiteral::Float64 { value: value.to_bits(), span })
             }
             PtxToken::HexFloat(text) => {
                 if text.len() < 3 {
@@ -171,7 +171,7 @@ impl PtxParser for NumericLiteral {
                         if negative {
                             bits ^= 0x8000_0000;
                         }
-                        Ok(NumericLiteral::Float32(bits))
+                        Ok(NumericLiteral::Float32 { value: bits, span })
                     }
                     "0d" => {
                         let mut bits = u64::from_str_radix(digits, 16)
@@ -179,7 +179,7 @@ impl PtxParser for NumericLiteral {
                         if negative {
                             bits ^= 0x8000_0000_0000_0000;
                         }
-                        Ok(NumericLiteral::Float64(bits))
+                        Ok(NumericLiteral::Float64 { value: bits, span })
                     }
                     _ => Err(invalid_literal(
                         span.clone(),
@@ -199,19 +199,21 @@ impl PtxParser for NumericLiteral {
 impl PtxParser for InitializerValue {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         if let Some((token, span)) = stream.peek().ok() {
+            let span = span.clone();
             match token {
                 PtxToken::StringLiteral(value) => {
                     let value = value.clone();
                     stream.consume()?;
-                    return Ok(InitializerValue::StringLiteral(value));
+                    return Ok(InitializerValue::StringLiteral { value, span });
                 }
                 PtxToken::Identifier(_) => {
-                    let (symbol, _) = stream.expect_identifier()?;
-                    return Ok(InitializerValue::Symbol(symbol));
+                    let (name, span) = stream.expect_identifier()?;
+                    return Ok(InitializerValue::Symbol { name, span: span.clone() });
                 }
                 PtxToken::Plus | PtxToken::Minus => {
                     let literal = NumericLiteral::parse(stream)?;
-                    return Ok(InitializerValue::Numeric(literal));
+                    let span = literal.span();
+                    return Ok(InitializerValue::Numeric { value: literal, span });
                 }
                 PtxToken::DecimalInteger(_)
                 | PtxToken::HexInteger(_)
@@ -221,7 +223,8 @@ impl PtxParser for InitializerValue {
                 | PtxToken::FloatExponent(_)
                 | PtxToken::HexFloat(_) => {
                     let literal = NumericLiteral::parse(stream)?;
-                    return Ok(InitializerValue::Numeric(literal));
+                    let span = literal.span();
+                    return Ok(InitializerValue::Numeric { value: literal, span });
                 }
                 _ => {
                     return Err(unexpected_value(
@@ -243,6 +246,7 @@ impl PtxParser for InitializerValue {
 
 impl PtxParser for GlobalInitializer {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_span = stream.peek()?.1.clone();
         if stream
             .consume_if(|token| matches!(token, PtxToken::LBrace))
             .is_some()
@@ -260,11 +264,13 @@ impl PtxParser for GlobalInitializer {
                     }
                 }
             }
-            stream.expect(&PtxToken::RBrace)?;
-            Ok(GlobalInitializer::Aggregate(children))
+            let (_, end_span) = stream.expect(&PtxToken::RBrace)?;
+            let span = start_span.start..end_span.end;
+            Ok(GlobalInitializer::Aggregate { values: children, span })
         } else {
             let value = InitializerValue::parse(stream)?;
-            Ok(GlobalInitializer::Scalar(value))
+            let span = value.span();
+            Ok(GlobalInitializer::Scalar { value, span })
         }
     }
 }
@@ -276,19 +282,31 @@ impl PtxParser for VariableModifier {
         match directive.as_str() {
             "align" => {
                 let value = parse_alignment_value(stream)?;
-                Ok(VariableModifier::Alignment(value))
+                Ok(VariableModifier::Alignment { value, span })
             }
-            "ptr" => Ok(VariableModifier::Ptr),
-            "visible" => Ok(VariableModifier::Linkage(DataLinkage::Visible)),
-            "extern" => Ok(VariableModifier::Linkage(DataLinkage::Extern)),
-            "weak" => Ok(VariableModifier::Linkage(DataLinkage::Weak)),
-            "common" => Ok(VariableModifier::Linkage(DataLinkage::Common)),
+            "ptr" => Ok(VariableModifier::Ptr { span }),
+            "visible" => Ok(VariableModifier::Linkage {
+                linkage: DataLinkage::Visible { span: span.clone() },
+                span
+            }),
+            "extern" => Ok(VariableModifier::Linkage {
+                linkage: DataLinkage::Extern { span: span.clone() },
+                span
+            }),
+            "weak" => Ok(VariableModifier::Linkage {
+                linkage: DataLinkage::Weak { span: span.clone() },
+                span
+            }),
+            "common" => Ok(VariableModifier::Linkage {
+                linkage: DataLinkage::Common { span: span.clone() },
+                span
+            }),
             other if is_vector_modifier(other) => {
                 let digits = &other[1..];
                 let value = digits
                     .parse::<u32>()
                     .map_err(|_| invalid_literal(span.clone(), "invalid vector width"))?;
-                Ok(VariableModifier::Vector(value))
+                Ok(VariableModifier::Vector { value, span })
             }
             other => Err(unexpected_value(
                 span.clone(),
@@ -339,22 +357,22 @@ impl VariableDirective {
                         ));
                     }
                     let space = AddressSpace::parse(stream)?;
-                    address_space = Some(space);
                     match space {
-                        AddressSpace::Global => {
+                        AddressSpace::Global { .. } => {
                             kind = VariableDirectiveKind::Global;
                             kind_span = Some(directive_span.clone());
                         }
-                        AddressSpace::Const => {
+                        AddressSpace::Const { .. } => {
                             kind = VariableDirectiveKind::Const;
                             kind_span = Some(directive_span.clone());
                         }
-                        AddressSpace::Shared => {
+                        AddressSpace::Shared { .. } => {
                             kind = VariableDirectiveKind::Shared;
                             kind_span = Some(directive_span.clone());
                         }
                         _ => {}
                     }
+                    address_space = Some(space);
                 }
                 "managed" | "unified" => {
                     attributes.push(AttributeDirective::parse(stream)?);
@@ -400,8 +418,8 @@ impl VariableDirective {
             let size_span = stream.peek()?.1.clone();
             let literal = NumericLiteral::parse(stream)?;
             let size = match literal {
-                NumericLiteral::Unsigned(value) => value,
-                NumericLiteral::Signed(value) if value >= 0 => value as u64,
+                NumericLiteral::Unsigned { value, .. } => value,
+                NumericLiteral::Signed { value, .. } if value >= 0 => value as u64,
                 _ => {
                     return Err(invalid_literal(
                         size_span.clone(),
@@ -428,12 +446,15 @@ impl VariableDirective {
             final_kind = VariableDirectiveKind::Tex;
         } else if matches!(final_kind, VariableDirectiveKind::Other) {
             final_kind = match address_space {
-                Some(AddressSpace::Shared) => VariableDirectiveKind::Shared,
-                Some(AddressSpace::Global) => VariableDirectiveKind::Global,
-                Some(AddressSpace::Const) => VariableDirectiveKind::Const,
+                Some(AddressSpace::Shared { .. }) => VariableDirectiveKind::Shared,
+                Some(AddressSpace::Global { .. }) => VariableDirectiveKind::Global,
+                Some(AddressSpace::Const { .. }) => VariableDirectiveKind::Const,
                 _ => VariableDirectiveKind::Other,
             };
         }
+
+        let end_span = stream.peek().ok().map(|(_, s)| s.clone()).unwrap_or(0..0);
+        let span = first_span.map(|s| s.start..end_span.end).unwrap_or(0..0);
 
         let directive = VariableDirective {
             address_space,
@@ -443,10 +464,10 @@ impl VariableDirective {
             name,
             array,
             initializer,
-            raw: String::new(),
+            span: span.clone(),
         };
 
-        Ok((directive, final_kind, kind_span.or(first_span)))
+        Ok((directive, final_kind, kind_span.or(Some(span))))
     }
 }
 
@@ -459,14 +480,27 @@ impl PtxParser for VariableDirective {
 
 impl PtxParser for ModuleVariableDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (directive, kind, span) = VariableDirective::parse_with_kind(stream)?;
+        let (directive, kind, span_opt) = VariableDirective::parse_with_kind(stream)?;
+        let span = span_opt.unwrap_or(0..0);
         match kind {
-            VariableDirectiveKind::Tex => Ok(ModuleVariableDirective::Tex(directive)),
-            VariableDirectiveKind::Shared => Ok(ModuleVariableDirective::Shared(directive)),
-            VariableDirectiveKind::Global => Ok(ModuleVariableDirective::Global(directive)),
-            VariableDirectiveKind::Const => Ok(ModuleVariableDirective::Const(directive)),
+            VariableDirectiveKind::Tex => Ok(ModuleVariableDirective::Tex {
+                directive,
+                span
+            }),
+            VariableDirectiveKind::Shared => Ok(ModuleVariableDirective::Shared {
+                directive,
+                span
+            }),
+            VariableDirectiveKind::Global => Ok(ModuleVariableDirective::Global {
+                directive,
+                span
+            }),
+            VariableDirectiveKind::Const => Ok(ModuleVariableDirective::Const {
+                directive,
+                span: span.clone()
+            }),
             VariableDirectiveKind::Other => Err(unexpected_value(
-                span.unwrap_or(0..0),
+                span,
                 &[".tex", ".shared", ".global", ".const"],
                 "variable directive".to_string(),
             )),

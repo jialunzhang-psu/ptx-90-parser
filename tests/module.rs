@@ -86,7 +86,7 @@ fn validate_module_ast(module: &Module, path: &Path) {
 
     for (idx, directive) in module.directives.iter().enumerate() {
         match directive {
-            ModuleDirective::ModuleInfo(info) => {
+            ModuleDirective::ModuleInfo { directive: info, .. } => {
                 assert!(
                     !seen_function,
                     "{}: module info directive found after function directive at index {}",
@@ -95,7 +95,7 @@ fn validate_module_ast(module: &Module, path: &Path) {
                 );
 
                 match info {
-                    ModuleInfoDirectiveKind::Version(version) => {
+                    ModuleInfoDirectiveKind::Version { directive: version, .. } => {
                         seen_version = true;
                         assert!(
                             version.major > 0,
@@ -103,7 +103,7 @@ fn validate_module_ast(module: &Module, path: &Path) {
                             path.display()
                         );
                     }
-                    ModuleInfoDirectiveKind::Target(target) => {
+                    ModuleInfoDirectiveKind::Target { directive: target, .. } => {
                         seen_target = true;
                         assert!(
                             !target.entries.is_empty(),
@@ -111,7 +111,7 @@ fn validate_module_ast(module: &Module, path: &Path) {
                             path.display()
                         );
                     }
-                    ModuleInfoDirectiveKind::AddressSize(address) => {
+                    ModuleInfoDirectiveKind::AddressSize { directive: address, .. } => {
                         seen_address = true;
                         assert!(
                             address.size == 32 || address.size == 64,
@@ -121,7 +121,7 @@ fn validate_module_ast(module: &Module, path: &Path) {
                     }
                 }
             }
-            ModuleDirective::FunctionKernel(function) => {
+            ModuleDirective::FunctionKernel { directive: function, .. } => {
                 seen_function = true;
                 if let Some((name, instruction_count)) = instruction_count_for_function(function) {
                     if instruction_count == 1 {
@@ -161,13 +161,13 @@ fn instruction_count_for_function<'a>(
     function: &'a FunctionKernelDirective,
 ) -> Option<(&'a str, usize)> {
     match function {
-        FunctionKernelDirective::Entry(entry) => {
+        FunctionKernelDirective::Entry { function: entry, .. } => {
             Some((entry.name.as_str(), instruction_count_in_body(&entry.body)))
         }
-        FunctionKernelDirective::Func(func) => {
+        FunctionKernelDirective::Func { function: func, .. } => {
             Some((func.name.as_str(), instruction_count_in_body(&func.body)))
         }
-        FunctionKernelDirective::Alias(_) => None,
+        FunctionKernelDirective::Alias { .. } => None,
     }
 }
 
@@ -180,10 +180,10 @@ fn instruction_count_in_body(body: &ptx_parser::r#type::FunctionBody) -> usize {
 
 fn instruction_count_in_statement(statement: &FunctionStatement) -> usize {
     match statement {
-        FunctionStatement::Label(_) => 0,
-        FunctionStatement::Instruction(_) => 1,
-        FunctionStatement::Directive(_) => 0,
-        FunctionStatement::Block(statements) => {
+        FunctionStatement::Label { .. } => 0,
+        FunctionStatement::Instruction { .. } => 1,
+        FunctionStatement::Directive { .. } => 0,
+        FunctionStatement::Block { statements, .. } => {
             statements.iter().map(instruction_count_in_statement).sum()
         }
     }
@@ -191,17 +191,17 @@ fn instruction_count_in_statement(statement: &FunctionStatement) -> usize {
 
 fn first_instruction_in_function(function: &FunctionKernelDirective) -> Option<&Instruction> {
     match function {
-        FunctionKernelDirective::Entry(entry) => first_instruction_in_statements(&entry.body.statements),
-        FunctionKernelDirective::Func(func) => first_instruction_in_statements(&func.body.statements),
-        FunctionKernelDirective::Alias(_) => None,
+        FunctionKernelDirective::Entry { function: entry, .. } => first_instruction_in_statements(&entry.body.statements),
+        FunctionKernelDirective::Func { function: func, .. } => first_instruction_in_statements(&func.body.statements),
+        FunctionKernelDirective::Alias { .. } => None,
     }
 }
 
 fn first_instruction_in_statements(statements: &[FunctionStatement]) -> Option<&Instruction> {
     for statement in statements {
         match statement {
-            FunctionStatement::Instruction(inst) => return Some(inst),
-            FunctionStatement::Block(block) => {
+            FunctionStatement::Instruction { instruction: inst, .. } => return Some(inst),
+            FunctionStatement::Block { statements: block, .. } => {
                 if let Some(inst) = first_instruction_in_statements(block) {
                     return Some(inst);
                 }
@@ -248,9 +248,10 @@ fn test_parse_labels_and_predicates() {
         .directives
         .iter()
         .find_map(|d| match d {
-            ptx_parser::r#type::ModuleDirective::FunctionKernel(
-                FunctionKernelDirective::Entry(entry),
-            ) => Some(entry),
+            ptx_parser::r#type::ModuleDirective::FunctionKernel {
+                directive: FunctionKernelDirective::Entry { function: entry, .. },
+                ..
+            } => Some(entry),
             _ => None,
         })
         .expect("should find entry function");
@@ -260,8 +261,8 @@ fn test_parse_labels_and_predicates() {
     let mut pending_label: Option<String> = None;
     for statement in &entry.body.statements {
         match statement {
-            FunctionStatement::Label(name) => pending_label = Some(name.clone()),
-            FunctionStatement::Instruction(inst) => {
+            FunctionStatement::Label { name, .. } => pending_label = Some(name.clone()),
+            FunctionStatement::Instruction { instruction: inst, .. } => {
                 labeled_instructions.push((pending_label.take(), inst));
             }
             _ => {}

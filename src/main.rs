@@ -72,21 +72,21 @@ fn print_ast(path: &Path, compact: bool) -> Result<(), Box<dyn std::error::Error
 fn print_compact_module(module: &ptx_parser::r#type::Module) {
     for directive in &module.directives {
         match directive {
-            ptx_parser::r#type::ModuleDirective::ModuleInfo(info) => match info {
-                ptx_parser::r#type::ModuleInfoDirectiveKind::Version(version) => {
+            ptx_parser::r#type::ModuleDirective::ModuleInfo { directive: info, .. } => match info {
+                ptx_parser::r#type::ModuleInfoDirectiveKind::Version { directive: version, .. } => {
                     println!(".version {}.{}", version.major, version.minor);
                 }
-                ptx_parser::r#type::ModuleInfoDirectiveKind::Target(target) => {
+                ptx_parser::r#type::ModuleInfoDirectiveKind::Target { directive: target, .. } => {
                     println!(".target {}", target.entries.join(", "));
                 }
-                ptx_parser::r#type::ModuleInfoDirectiveKind::AddressSize(addr) => {
+                ptx_parser::r#type::ModuleInfoDirectiveKind::AddressSize { directive: addr, .. } => {
                     println!(".address_size {}", addr.size);
                 }
             },
-            ptx_parser::r#type::ModuleDirective::FunctionKernel(function) => {
+            ptx_parser::r#type::ModuleDirective::FunctionKernel { directive: function, .. } => {
                 print_function_directive(function);
             }
-            ptx_parser::r#type::ModuleDirective::ModuleVariable(var) => {
+            ptx_parser::r#type::ModuleDirective::ModuleVariable { directive: var, .. } => {
                 print_module_variable(var);
             }
             other => println!("{:?}", other),
@@ -97,10 +97,10 @@ fn print_compact_module(module: &ptx_parser::r#type::Module) {
 fn print_module_variable(var: &ptx_parser::r#type::ModuleVariableDirective) {
     use ptx_parser::r#type::ModuleVariableDirective::*;
     match var {
-        Global(decl) => println!(".global {}", describe_variable_decl(decl)),
-        Shared(decl) => println!(".shared {}", describe_variable_decl(decl)),
-        Const(decl) => println!(".const {}", describe_variable_decl(decl)),
-        Tex(decl) => println!(".tex {}", describe_variable_decl(decl)),
+        Global { directive: decl, .. } => println!(".global {}", describe_variable_decl(decl)),
+        Shared { directive: decl, .. } => println!(".shared {}", describe_variable_decl(decl)),
+        Const { directive: decl, .. } => println!(".const {}", describe_variable_decl(decl)),
+        Tex { directive: decl, .. } => println!(".tex {}", describe_variable_decl(decl)),
     }
 }
 
@@ -116,15 +116,15 @@ fn describe_variable_decl(decl: &ptx_parser::r#type::VariableDirective) -> Strin
 fn print_function_directive(function: &ptx_parser::r#type::FunctionKernelDirective) {
     use ptx_parser::r#type::FunctionKernelDirective::*;
     match function {
-        Entry(entry) => {
+        Entry { function: entry, .. } => {
             println!(".entry {} (params: {})", entry.name, entry.params.len());
             print_function_body(&entry.body, 2);
         }
-        Func(func) => {
+        Func { function: func, .. } => {
             println!(".func {} (params: {})", func.name, func.params.len());
             print_function_body(&func.body, 2);
         }
-        Alias(alias) => {
+        Alias { alias, .. } => {
             println!(".alias {} -> {}", alias.alias, alias.target);
         }
     }
@@ -139,16 +139,16 @@ fn print_function_body(body: &ptx_parser::r#type::FunctionBody, indent: usize) {
 fn print_function_statement(statement: &ptx_parser::r#type::FunctionStatement, indent: usize) {
     let indent_str = " ".repeat(indent);
     match statement {
-        ptx_parser::r#type::FunctionStatement::Label(name) => {
+        ptx_parser::r#type::FunctionStatement::Label { name, .. } => {
             println!("{indent_str}{name}:");
         }
-        ptx_parser::r#type::FunctionStatement::Instruction(inst) => {
+        ptx_parser::r#type::FunctionStatement::Instruction { instruction: inst, .. } => {
             println!("{indent_str}{:?}", inst);
         }
-        ptx_parser::r#type::FunctionStatement::Directive(dir) => {
+        ptx_parser::r#type::FunctionStatement::Directive { directive: dir, .. } => {
             println!("{indent_str}{:?}", dir);
         }
-        ptx_parser::r#type::FunctionStatement::Block(block) => {
+        ptx_parser::r#type::FunctionStatement::Block { statements: block, .. } => {
             println!("{indent_str}{{");
             for stmt in block {
                 print_function_statement(stmt, indent + 2);

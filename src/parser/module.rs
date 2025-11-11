@@ -56,6 +56,7 @@ fn token_to_string(token: &PtxToken) -> String {
 
 impl PtxParser for VersionDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_pos = stream.position().index;
         let (token, span) = stream.consume()?;
         match token {
             PtxToken::DecimalInteger(text) => {
@@ -76,7 +77,8 @@ impl PtxParser for VersionDirective {
                         ));
                     }
                 };
-                Ok(VersionDirective { major, minor })
+                let end_pos = stream.position().index;
+                Ok(VersionDirective { major, minor, span: start_pos..end_pos })
             }
             PtxToken::Float(value) | PtxToken::FloatExponent(value) => {
                 let mut parts = value.split('.');
@@ -95,7 +97,8 @@ impl PtxParser for VersionDirective {
                 let minor = minor_part.parse::<u32>().map_err(|_| {
                     unexpected_value(span.clone(), &["decimal literal"], value.clone())
                 })?;
-                Ok(VersionDirective { major, minor })
+                let end_pos = stream.position().index;
+                Ok(VersionDirective { major, minor, span: start_pos..end_pos })
             }
             _ => Err(unexpected_value(
                 span.clone(),
@@ -108,6 +111,7 @@ impl PtxParser for VersionDirective {
 
 impl PtxParser for TargetDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_pos = stream.position().index;
         let mut entries = Vec::new();
         loop {
             let next = stream.peek();
@@ -141,33 +145,43 @@ impl PtxParser for TargetDirective {
                 "".to_string(),
             ));
         }
+        let end_pos = stream.position().index;
         Ok(TargetDirective {
-            entries: entries.clone(),
-            raw: entries.join(", "),
+            entries,
+            span: start_pos..end_pos,
         })
     }
 }
 
 impl PtxParser for AddressSizeDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_pos = stream.position().index;
         let (size, _) = parse_decimal_u32(stream)?;
-        Ok(AddressSizeDirective { size })
+        let end_pos = stream.position().index;
+        Ok(AddressSizeDirective { size, span: start_pos..end_pos })
     }
 }
 
 impl PtxParser for ModuleInfoDirectiveKind {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_pos = stream.position().index;
         let (directive, span) = stream.expect_directive()?;
         match directive.as_str() {
-            "version" => Ok(ModuleInfoDirectiveKind::Version(VersionDirective::parse(
-                stream,
-            )?)),
-            "target" => Ok(ModuleInfoDirectiveKind::Target(TargetDirective::parse(
-                stream,
-            )?)),
-            "address_size" => Ok(ModuleInfoDirectiveKind::AddressSize(
-                AddressSizeDirective::parse(stream)?,
-            )),
+            "version" => {
+                let directive = VersionDirective::parse(stream)?;
+                let end_pos = stream.position().index;
+                Ok(ModuleInfoDirectiveKind::Version { directive, span: start_pos..end_pos })
+            }
+            "target" => {
+                let directive = TargetDirective::parse(stream)?;
+                let end_pos = stream.position().index;
+                Ok(ModuleInfoDirectiveKind::Target { directive, span: start_pos..end_pos })
+            }
+            "address_size" => {
+                let directive = AddressSizeDirective::parse(stream)?;
+                let end_pos = stream.position().index;
+                Ok(ModuleInfoDirectiveKind::AddressSize { directive, span: start_pos..end_pos })
+            }
             other => Err(unexpected_value(
                 span,
                 &[".version", ".target", ".address_size"],
@@ -179,6 +193,7 @@ impl PtxParser for ModuleInfoDirectiveKind {
 
 impl PtxParser for FileDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_pos = stream.position().index;
         let (index, _) = parse_decimal_u32(stream)?;
         let (token, span) = stream.consume()?;
         let path = match token {
@@ -191,12 +206,14 @@ impl PtxParser for FileDirective {
                 ));
             }
         };
-        Ok(FileDirective { index, path })
+        let end_pos = stream.position().index;
+        Ok(FileDirective { index, path, span: start_pos..end_pos })
     }
 }
 
 impl PtxParser for SectionDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_pos = stream.position().index;
         let (token, span) = stream.consume()?;
         let name = match token {
             PtxToken::Identifier(value) => value.clone(),
@@ -224,18 +241,26 @@ impl PtxParser for SectionDirective {
             attributes.push(token_to_string(tok));
         }
 
-        Ok(SectionDirective { name, attributes })
+        let end_pos = stream.position().index;
+        Ok(SectionDirective { name, attributes, span: start_pos..end_pos })
     }
 }
 
 impl PtxParser for ModuleDebugDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_pos = stream.position().index;
         let (directive, span) = stream.expect_directive()?;
         match directive.as_str() {
-            "file" => Ok(ModuleDebugDirective::File(FileDirective::parse(stream)?)),
-            "section" => Ok(ModuleDebugDirective::Section(SectionDirective::parse(
-                stream,
-            )?)),
+            "file" => {
+                let directive = FileDirective::parse(stream)?;
+                let end_pos = stream.position().index;
+                Ok(ModuleDebugDirective::File { directive, span: start_pos..end_pos })
+            }
+            "section" => {
+                let directive = SectionDirective::parse(stream)?;
+                let end_pos = stream.position().index;
+                Ok(ModuleDebugDirective::Section { directive, span: start_pos..end_pos })
+            }
             other => Err(unexpected_value(
                 span,
                 &[".file", ".section"],
@@ -247,6 +272,7 @@ impl PtxParser for ModuleDebugDirective {
 
 impl PtxParser for LinkingDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_pos = stream.position().index;
         let linkage = CodeOrDataLinkage::parse(stream)?;
         let mut prototype = String::new();
         loop {
@@ -269,10 +295,11 @@ impl PtxParser for LinkingDirective {
                 }
             }
         }
+        let end_pos = stream.position().index;
         Ok(LinkingDirective {
             kind: linkage,
-            prototype: prototype.clone(),
-            raw: prototype,
+            prototype,
+            span: start_pos..end_pos,
         })
     }
 }
@@ -280,29 +307,35 @@ impl PtxParser for LinkingDirective {
 impl PtxParser for ModuleDirective {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let position = stream.position();
+        let start_pos = position.index;
 
         if let Ok(info) = ModuleInfoDirectiveKind::parse(stream) {
-            return Ok(ModuleDirective::ModuleInfo(info));
+            let end_pos = stream.position().index;
+            return Ok(ModuleDirective::ModuleInfo { directive: info, span: start_pos..end_pos });
         }
         stream.set_position(position);
 
         if let Ok(debug) = ModuleDebugDirective::parse(stream) {
-            return Ok(ModuleDirective::Debug(debug));
+            let end_pos = stream.position().index;
+            return Ok(ModuleDirective::Debug { directive: debug, span: start_pos..end_pos });
         }
         stream.set_position(position);
 
         if let Ok(function) = FunctionKernelDirective::parse(stream) {
-            return Ok(ModuleDirective::FunctionKernel(function));
+            let end_pos = stream.position().index;
+            return Ok(ModuleDirective::FunctionKernel { directive: function, span: start_pos..end_pos });
         }
         stream.set_position(position);
 
         if let Ok(variable) = ModuleVariableDirective::parse(stream) {
-            return Ok(ModuleDirective::ModuleVariable(variable));
+            let end_pos = stream.position().index;
+            return Ok(ModuleDirective::ModuleVariable { directive: variable, span: start_pos..end_pos });
         }
         stream.set_position(position);
 
         if let Ok(linking) = LinkingDirective::parse(stream) {
-            return Ok(ModuleDirective::Linking(linking));
+            let end_pos = stream.position().index;
+            return Ok(ModuleDirective::Linking { directive: linking, span: start_pos..end_pos });
         }
         stream.set_position(position);
 
@@ -320,6 +353,7 @@ impl PtxParser for ModuleDirective {
 
 impl PtxParser for Module {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_pos = stream.position().index;
         let mut directives = Vec::new();
         while !stream.is_at_end() {
             if stream.is_at_end() {
@@ -328,6 +362,7 @@ impl PtxParser for Module {
             let directive = ModuleDirective::parse(stream)?;
             directives.push(directive);
         }
-        Ok(Module { directives })
+        let end_pos = stream.position().index;
+        Ok(Module { directives, span: start_pos..end_pos })
     }
 }

@@ -59,11 +59,11 @@ impl PtxUnparser for RegisterDirective {
 impl PtxUnparser for StatementDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            StatementDirective::Reg(register) => register.unparse_tokens(tokens),
-            StatementDirective::Local(variable)
-            | StatementDirective::Param(variable)
-            | StatementDirective::Shared(variable) => variable.unparse_tokens(tokens),
-            StatementDirective::Pragma(pragma) => {
+            StatementDirective::Reg { directive: register, .. } => register.unparse_tokens(tokens),
+            StatementDirective::Local { directive: variable, .. }
+            | StatementDirective::Param { directive: variable, .. }
+            | StatementDirective::Shared { directive: variable, .. } => variable.unparse_tokens(tokens),
+            StatementDirective::Pragma { directive: pragma, .. } => {
                 push_directive(tokens, "pragma");
                 for (idx, argument) in pragma.arguments.iter().enumerate() {
                     if idx > 0 {
@@ -73,7 +73,7 @@ impl PtxUnparser for StatementDirective {
                 }
                 tokens.push(PtxToken::Semicolon);
             }
-            StatementDirective::Loc(loc) => {
+            StatementDirective::Loc { directive: loc, .. } => {
                 push_directive(tokens, "loc");
                 push_decimal(tokens, loc.file_index);
                 push_decimal(tokens, loc.line);
@@ -83,7 +83,7 @@ impl PtxUnparser for StatementDirective {
                 }
                 tokens.push(PtxToken::Semicolon);
             }
-            StatementDirective::Dwarf(dwarf) => {
+            StatementDirective::Dwarf { directive: dwarf, .. } => {
                 push_directive(tokens, "dwarf");
                 push_identifier(tokens, &dwarf.keyword);
                 for argument in &dwarf.arguments {
@@ -92,7 +92,7 @@ impl PtxUnparser for StatementDirective {
                 }
                 tokens.push(PtxToken::Semicolon);
             }
-            StatementDirective::Section(section) => {
+            StatementDirective::Section { directive: section, .. } => {
                 push_directive(tokens, "section");
                 push_token_from_str(tokens, &section.name);
                 for argument in &section.arguments {
@@ -108,13 +108,13 @@ impl PtxUnparser for StatementDirective {
 impl PtxUnparser for FunctionStatement {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            FunctionStatement::Label(name) => {
+            FunctionStatement::Label { name, .. } => {
                 push_identifier(tokens, name);
                 tokens.push(PtxToken::Colon);
             }
-            FunctionStatement::Instruction(instruction) => instruction.unparse_tokens(tokens),
-            FunctionStatement::Directive(directive) => directive.unparse_tokens(tokens),
-            FunctionStatement::Block(block) => {
+            FunctionStatement::Instruction { instruction, .. } => instruction.unparse_tokens(tokens),
+            FunctionStatement::Directive { directive, .. } => directive.unparse_tokens(tokens),
+            FunctionStatement::Block { statements: block, .. } => {
                 tokens.push(PtxToken::LBrace);
                 for statement in block {
                     statement.unparse_tokens(tokens);
@@ -152,52 +152,52 @@ impl PtxUnparser for FunctionDim3 {
 impl PtxUnparser for FunctionHeaderDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            FunctionHeaderDirective::Linkage(linkage) => linkage.unparse_tokens(tokens),
-            FunctionHeaderDirective::NoReturn => push_directive(tokens, "noreturn"),
-            FunctionHeaderDirective::AbiPreserve(value) => {
+            FunctionHeaderDirective::Linkage { linkage, .. } => linkage.unparse_tokens(tokens),
+            FunctionHeaderDirective::NoReturn { .. } => push_directive(tokens, "noreturn"),
+            FunctionHeaderDirective::AbiPreserve { value, .. } => {
                 push_directive(tokens, "abipreserve");
                 push_decimal(tokens, *value);
             }
-            FunctionHeaderDirective::AbiPreserveControl(value) => {
+            FunctionHeaderDirective::AbiPreserveControl { value, .. } => {
                 push_directive(tokens, "abipreserve_control");
                 push_decimal(tokens, *value);
             }
-            FunctionHeaderDirective::MaxClusterRank(value) => {
+            FunctionHeaderDirective::MaxClusterRank { value, .. } => {
                 push_directive(tokens, "maxclusterrank");
                 push_decimal(tokens, *value);
             }
-            FunctionHeaderDirective::BlocksAreClusters => {
+            FunctionHeaderDirective::BlocksAreClusters { .. } => {
                 push_directive(tokens, "blocksareclusters")
             }
-            FunctionHeaderDirective::ExplicitCluster(dim) => {
+            FunctionHeaderDirective::ExplicitCluster { dim, .. } => {
                 push_directive(tokens, "explicitcluster");
                 dim.unparse_tokens(tokens);
             }
-            FunctionHeaderDirective::ReqNctaPerCluster(dim) => {
+            FunctionHeaderDirective::ReqNctaPerCluster { dim, .. } => {
                 push_directive(tokens, "reqnctapercluster");
                 dim.unparse_tokens(tokens);
             }
-            FunctionHeaderDirective::MaxNReg(value) => {
+            FunctionHeaderDirective::MaxNReg { value, .. } => {
                 push_directive(tokens, "maxnreg");
                 push_decimal(tokens, *value);
             }
-            FunctionHeaderDirective::MaxNTid(dim) => {
+            FunctionHeaderDirective::MaxNTid { dim, .. } => {
                 push_directive(tokens, "maxntid");
                 dim.unparse_tokens(tokens);
             }
-            FunctionHeaderDirective::MinNCtaPerSm(value) => {
+            FunctionHeaderDirective::MinNCtaPerSm { value, .. } => {
                 push_directive(tokens, "minnctapersm");
                 push_decimal(tokens, *value);
             }
-            FunctionHeaderDirective::ReqNTid(dim) => {
+            FunctionHeaderDirective::ReqNTid { dim, .. } => {
                 push_directive(tokens, "reqntid");
                 dim.unparse_tokens(tokens);
             }
-            FunctionHeaderDirective::MaxNCtaPerSm(value) => {
+            FunctionHeaderDirective::MaxNCtaPerSm { value, .. } => {
                 push_directive(tokens, "maxnctapersm");
                 push_decimal(tokens, *value);
             }
-            FunctionHeaderDirective::Pragma(arguments) => {
+            FunctionHeaderDirective::Pragma { args: arguments, .. } => {
                 push_directive(tokens, "pragma");
                 for argument in arguments {
                     tokens.push(PtxToken::Identifier(argument.clone()));
@@ -262,9 +262,9 @@ impl PtxUnparser for FuncFunction {
 impl PtxUnparser for FunctionKernelDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            FunctionKernelDirective::Entry(entry) => entry.unparse_tokens(tokens),
-            FunctionKernelDirective::Func(func) => func.unparse_tokens(tokens),
-            FunctionKernelDirective::Alias(alias) => alias.unparse_tokens(tokens),
+            FunctionKernelDirective::Entry { function: entry, .. } => entry.unparse_tokens(tokens),
+            FunctionKernelDirective::Func { function: func, .. } => func.unparse_tokens(tokens),
+            FunctionKernelDirective::Alias { alias, .. } => alias.unparse_tokens(tokens),
         }
     }
 }

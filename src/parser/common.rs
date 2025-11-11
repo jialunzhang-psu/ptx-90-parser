@@ -137,9 +137,9 @@ impl PtxParser for CodeLinkage {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let (directive, span) = stream.expect_directive()?;
         match directive.as_str() {
-            "visible" => Ok(CodeLinkage::Visible),
-            "extern" => Ok(CodeLinkage::Extern),
-            "weak" => Ok(CodeLinkage::Weak),
+            "visible" => Ok(CodeLinkage::Visible { span }),
+            "extern" => Ok(CodeLinkage::Extern { span }),
+            "weak" => Ok(CodeLinkage::Weak { span }),
             other => Err(unexpected_value(
                 span,
                 &[".visible", ".extern", ".weak"],
@@ -153,10 +153,10 @@ impl PtxParser for DataLinkage {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let (directive, span) = stream.expect_directive()?;
         match directive.as_str() {
-            "visible" => Ok(DataLinkage::Visible),
-            "extern" => Ok(DataLinkage::Extern),
-            "weak" => Ok(DataLinkage::Weak),
-            "common" => Ok(DataLinkage::Common),
+            "visible" => Ok(DataLinkage::Visible { span }),
+            "extern" => Ok(DataLinkage::Extern { span }),
+            "weak" => Ok(DataLinkage::Weak { span }),
+            "common" => Ok(DataLinkage::Common { span }),
             other => Err(unexpected_value(
                 span,
                 &[".visible", ".extern", ".weak", ".common"],
@@ -170,10 +170,10 @@ impl PtxParser for CodeOrDataLinkage {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let (directive, span) = stream.expect_directive()?;
         match directive.as_str() {
-            "visible" => Ok(CodeOrDataLinkage::Visible),
-            "extern" => Ok(CodeOrDataLinkage::Extern),
-            "weak" => Ok(CodeOrDataLinkage::Weak),
-            "common" => Ok(CodeOrDataLinkage::Common),
+            "visible" => Ok(CodeOrDataLinkage::Visible { span }),
+            "extern" => Ok(CodeOrDataLinkage::Extern { span }),
+            "weak" => Ok(CodeOrDataLinkage::Weak { span }),
+            "common" => Ok(CodeOrDataLinkage::Common { span }),
             other => Err(unexpected_value(
                 span,
                 &[".visible", ".extern", ".weak", ".common"],
@@ -187,9 +187,9 @@ impl PtxParser for TexType {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let (directive, span) = stream.expect_directive()?;
         match directive.as_str() {
-            "texref" => Ok(TexType::TexRef),
-            "samplerref" => Ok(TexType::SamplerRef),
-            "surfref" => Ok(TexType::SurfRef),
+            "texref" => Ok(TexType::TexRef { span }),
+            "samplerref" => Ok(TexType::SamplerRef { span }),
+            "surfref" => Ok(TexType::SurfRef { span }),
             other => Err(unexpected_value(
                 span,
                 &[".texref", ".samplerref", ".surfref"],
@@ -203,12 +203,12 @@ impl PtxParser for AddressSpace {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let (directive, span) = stream.expect_directive()?;
         match directive.as_str() {
-            "global" => Ok(AddressSpace::Global),
-            "const" => Ok(AddressSpace::Const),
-            "shared" => Ok(AddressSpace::Shared),
-            "local" => Ok(AddressSpace::Local),
-            "param" => Ok(AddressSpace::Param),
-            "reg" => Ok(AddressSpace::Reg),
+            "global" => Ok(AddressSpace::Global { span }),
+            "const" => Ok(AddressSpace::Const { span }),
+            "shared" => Ok(AddressSpace::Shared { span }),
+            "local" => Ok(AddressSpace::Local { span }),
+            "param" => Ok(AddressSpace::Param { span }),
+            "reg" => Ok(AddressSpace::Reg { span }),
             other => Err(unexpected_value(
                 span,
                 &[".global", ".const", ".shared", ".local", ".param", ".reg"],
@@ -228,9 +228,9 @@ impl PtxParser for AttributeDirective {
                 stream.expect(&PtxToken::Comma)?;
                 let (uuid2, _) = parse_u64_literal(stream)?;
                 stream.expect(&PtxToken::RParen)?;
-                Ok(AttributeDirective::Unified(uuid1, uuid2))
+                Ok(AttributeDirective::Unified { uuid1, uuid2, span })
             }
-            "managed" => Ok(AttributeDirective::Managed),
+            "managed" => Ok(AttributeDirective::Managed { span }),
             other => Err(unexpected_value(
                 span,
                 &[".unified", ".managed"],
@@ -244,24 +244,24 @@ impl PtxParser for DataType {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let (directive, span) = stream.expect_directive()?;
         match directive.as_str() {
-            "u8" => Ok(DataType::U8),
-            "u16" => Ok(DataType::U16),
-            "u32" => Ok(DataType::U32),
-            "u64" => Ok(DataType::U64),
-            "s8" => Ok(DataType::S8),
-            "s16" => Ok(DataType::S16),
-            "s32" => Ok(DataType::S32),
-            "s64" => Ok(DataType::S64),
-            "f16" => Ok(DataType::F16),
-            "f16x2" => Ok(DataType::F16x2),
-            "f32" => Ok(DataType::F32),
-            "f64" => Ok(DataType::F64),
-            "b8" => Ok(DataType::B8),
-            "b16" => Ok(DataType::B16),
-            "b32" => Ok(DataType::B32),
-            "b64" => Ok(DataType::B64),
-            "b128" => Ok(DataType::B128),
-            "pred" => Ok(DataType::Pred),
+            "u8" => Ok(DataType::U8 { span }),
+            "u16" => Ok(DataType::U16 { span }),
+            "u32" => Ok(DataType::U32 { span }),
+            "u64" => Ok(DataType::U64 { span }),
+            "s8" => Ok(DataType::S8 { span }),
+            "s16" => Ok(DataType::S16 { span }),
+            "s32" => Ok(DataType::S32 { span }),
+            "s64" => Ok(DataType::S64 { span }),
+            "f16" => Ok(DataType::F16 { span }),
+            "f16x2" => Ok(DataType::F16x2 { span }),
+            "f32" => Ok(DataType::F32 { span }),
+            "f64" => Ok(DataType::F64 { span }),
+            "b8" => Ok(DataType::B8 { span }),
+            "b16" => Ok(DataType::B16 { span }),
+            "b32" => Ok(DataType::B32 { span }),
+            "b64" => Ok(DataType::B64 { span }),
+            "b128" => Ok(DataType::B128 { span }),
+            "pred" => Ok(DataType::Pred { span }),
             other => Err(unexpected_value(
                 span,
                 &[
@@ -276,17 +276,15 @@ impl PtxParser for DataType {
 
 impl PtxParser for Sign {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        if stream
+        if let Some((_, span)) = stream
             .consume_if(|token| matches!(token, PtxToken::Plus))
-            .is_some()
         {
-            return Ok(Sign::Positive);
+            return Ok(Sign::Positive { span: span.clone() });
         }
-        if stream
+        if let Some((_, span)) = stream
             .consume_if(|token| matches!(token, PtxToken::Minus))
-            .is_some()
         {
-            return Ok(Sign::Negative);
+            return Ok(Sign::Negative { span: span.clone() });
         }
 
         let (token, span) = stream.peek()?;
@@ -301,25 +299,30 @@ impl PtxParser for Sign {
 impl PtxParser for Immediate {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         // Check for optional minus sign
-        let has_minus = stream
+        let minus_span = stream
             .consume_if(|token| matches!(token, PtxToken::Minus))
-            .is_some();
+            .map(|(_, span)| span.clone());
 
         let (token, span) = stream.peek()?;
         let value = numeric_literal(token).cloned();
         match value {
             Some(value) => {
-                let literal = if has_minus {
+                let literal = if minus_span.is_some() {
                     format!("-{}", value)
                 } else {
                     value.clone()
                 };
-                stream.consume()?;
-                Ok(Immediate(literal))
+                let (_, value_span) = stream.consume()?;
+                let full_span = if let Some(ref ms) = minus_span {
+                    Span { start: ms.start, end: value_span.end }
+                } else {
+                    value_span.clone()
+                };
+                Ok(Immediate { value: literal, span: full_span })
             }
             None => {
                 // If we consumed a minus, we need to restore position by going back one token
-                if has_minus {
+                if minus_span.is_some() {
                     let mut current_pos = stream.position();
                     if current_pos.index > 0 {
                         current_pos.index -= 1;
@@ -347,8 +350,8 @@ impl PtxParser for RegisterOperand {
                 format!("{token:?}"),
             ));
         }
-        let (name, _) = parse_register_name(stream)?;
-        Ok(RegisterOperand(name))
+        let (name, span) = parse_register_name(stream)?;
+        Ok(RegisterOperand { name, span })
     }
 }
 
@@ -356,7 +359,7 @@ impl PtxParser for PredicateRegister {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let (name, span) = parse_register_name(stream)?;
         if name.starts_with("%p") {
-            Ok(PredicateRegister(name))
+            Ok(PredicateRegister { name, span })
         } else {
             Err(invalid_literal(
                 span,
@@ -368,8 +371,8 @@ impl PtxParser for PredicateRegister {
 
 impl PtxParser for Label {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (name, _) = stream.expect_identifier()?;
-        Ok(Label(name))
+        let (name, span) = stream.expect_identifier()?;
+        Ok(Label { name, span })
     }
 }
 
@@ -382,148 +385,148 @@ impl PtxParser for SpecialRegister {
         let name_str = name.as_str();
         if let Some(rest) = name_str.strip_prefix("%cluster_ctaid") {
             if rest.is_empty() {
-                return Ok(SpecialRegister::ClusterCtaid(Axis::None));
+                return Ok(SpecialRegister::ClusterCtaid { axis: Axis::None { span: span.clone() }, span });
             } else if rest == ".x" {
-                return Ok(SpecialRegister::ClusterCtaid(Axis::X));
+                return Ok(SpecialRegister::ClusterCtaid { axis: Axis::X { span: span.clone() }, span });
             } else if rest == ".y" {
-                return Ok(SpecialRegister::ClusterCtaid(Axis::Y));
+                return Ok(SpecialRegister::ClusterCtaid { axis: Axis::Y { span: span.clone() }, span });
             } else if rest == ".z" {
-                return Ok(SpecialRegister::ClusterCtaid(Axis::Z));
+                return Ok(SpecialRegister::ClusterCtaid { axis: Axis::Z { span: span.clone() }, span });
             }
         }
         if let Some(rest) = name_str.strip_prefix("%cluster_ctarank") {
             if rest.is_empty() {
-                return Ok(SpecialRegister::ClusterCtarank(Axis::None));
+                return Ok(SpecialRegister::ClusterCtarank { axis: Axis::None { span: span.clone() }, span });
             } else if rest == ".x" {
-                return Ok(SpecialRegister::ClusterCtarank(Axis::X));
+                return Ok(SpecialRegister::ClusterCtarank { axis: Axis::X { span: span.clone() }, span });
             } else if rest == ".y" {
-                return Ok(SpecialRegister::ClusterCtarank(Axis::Y));
+                return Ok(SpecialRegister::ClusterCtarank { axis: Axis::Y { span: span.clone() }, span });
             } else if rest == ".z" {
-                return Ok(SpecialRegister::ClusterCtarank(Axis::Z));
+                return Ok(SpecialRegister::ClusterCtarank { axis: Axis::Z { span: span.clone() }, span });
             }
         }
         if let Some(rest) = name_str.strip_prefix("%nctaid") {
             if rest.is_empty() {
-                return Ok(SpecialRegister::Nctaid(Axis::None));
+                return Ok(SpecialRegister::Nctaid { axis: Axis::None { span: span.clone() }, span });
             } else if rest == ".x" {
-                return Ok(SpecialRegister::Nctaid(Axis::X));
+                return Ok(SpecialRegister::Nctaid { axis: Axis::X { span: span.clone() }, span });
             } else if rest == ".y" {
-                return Ok(SpecialRegister::Nctaid(Axis::Y));
+                return Ok(SpecialRegister::Nctaid { axis: Axis::Y { span: span.clone() }, span });
             } else if rest == ".z" {
-                return Ok(SpecialRegister::Nctaid(Axis::Z));
+                return Ok(SpecialRegister::Nctaid { axis: Axis::Z { span: span.clone() }, span });
             }
         }
         if let Some(rest) = name_str.strip_prefix("%tid") {
             if rest.is_empty() {
-                return Ok(SpecialRegister::Tid(Axis::None));
+                return Ok(SpecialRegister::Tid { axis: Axis::None { span: span.clone() }, span });
             } else if rest == ".x" {
-                return Ok(SpecialRegister::Tid(Axis::X));
+                return Ok(SpecialRegister::Tid { axis: Axis::X { span: span.clone() }, span });
             } else if rest == ".y" {
-                return Ok(SpecialRegister::Tid(Axis::Y));
+                return Ok(SpecialRegister::Tid { axis: Axis::Y { span: span.clone() }, span });
             } else if rest == ".z" {
-                return Ok(SpecialRegister::Tid(Axis::Z));
+                return Ok(SpecialRegister::Tid { axis: Axis::Z { span: span.clone() }, span });
             }
         }
         if let Some(rest) = name_str.strip_prefix("%cluster_nctaid") {
             if rest.is_empty() {
-                return Ok(SpecialRegister::ClusterNctaid(Axis::None));
+                return Ok(SpecialRegister::ClusterNctaid { axis: Axis::None { span: span.clone() }, span });
             } else if rest == ".x" {
-                return Ok(SpecialRegister::ClusterNctaid(Axis::X));
+                return Ok(SpecialRegister::ClusterNctaid { axis: Axis::X { span: span.clone() }, span });
             } else if rest == ".y" {
-                return Ok(SpecialRegister::ClusterNctaid(Axis::Y));
+                return Ok(SpecialRegister::ClusterNctaid { axis: Axis::Y { span: span.clone() }, span });
             } else if rest == ".z" {
-                return Ok(SpecialRegister::ClusterNctaid(Axis::Z));
+                return Ok(SpecialRegister::ClusterNctaid { axis: Axis::Z { span: span.clone() }, span });
             }
         }
         if let Some(rest) = name_str.strip_prefix("%cluster_nctarank") {
             if rest.is_empty() {
-                return Ok(SpecialRegister::ClusterNctarank(Axis::None));
+                return Ok(SpecialRegister::ClusterNctarank { axis: Axis::None { span: span.clone() }, span });
             } else if rest == ".x" {
-                return Ok(SpecialRegister::ClusterNctarank(Axis::X));
+                return Ok(SpecialRegister::ClusterNctarank { axis: Axis::X { span: span.clone() }, span });
             } else if rest == ".y" {
-                return Ok(SpecialRegister::ClusterNctarank(Axis::Y));
+                return Ok(SpecialRegister::ClusterNctarank { axis: Axis::Y { span: span.clone() }, span });
             } else if rest == ".z" {
-                return Ok(SpecialRegister::ClusterNctarank(Axis::Z));
+                return Ok(SpecialRegister::ClusterNctarank { axis: Axis::Z { span: span.clone() }, span });
             }
         }
         if let Some(rest) = name_str.strip_prefix("%ntid") {
             if rest.is_empty() {
-                return Ok(SpecialRegister::Ntid(Axis::None));
+                return Ok(SpecialRegister::Ntid { axis: Axis::None { span: span.clone() }, span });
             } else if rest == ".x" {
-                return Ok(SpecialRegister::Ntid(Axis::X));
+                return Ok(SpecialRegister::Ntid { axis: Axis::X { span: span.clone() }, span });
             } else if rest == ".y" {
-                return Ok(SpecialRegister::Ntid(Axis::Y));
+                return Ok(SpecialRegister::Ntid { axis: Axis::Y { span: span.clone() }, span });
             } else if rest == ".z" {
-                return Ok(SpecialRegister::Ntid(Axis::Z));
+                return Ok(SpecialRegister::Ntid { axis: Axis::Z { span: span.clone() }, span });
             }
         }
         if let Some(rest) = name_str.strip_prefix("%ctaid") {
             if rest.is_empty() {
-                return Ok(SpecialRegister::Ctaid(Axis::None));
+                return Ok(SpecialRegister::Ctaid { axis: Axis::None { span: span.clone() }, span });
             } else if rest == ".x" {
-                return Ok(SpecialRegister::Ctaid(Axis::X));
+                return Ok(SpecialRegister::Ctaid { axis: Axis::X { span: span.clone() }, span });
             } else if rest == ".y" {
-                return Ok(SpecialRegister::Ctaid(Axis::Y));
+                return Ok(SpecialRegister::Ctaid { axis: Axis::Y { span: span.clone() }, span });
             } else if rest == ".z" {
-                return Ok(SpecialRegister::Ctaid(Axis::Z));
+                return Ok(SpecialRegister::Ctaid { axis: Axis::Z { span: span.clone() }, span });
             }
         }
 
         match name.as_str() {
-            "%aggr_smem_size" => Ok(SpecialRegister::AggrSmemSize),
-            "%dynamic_smem_size" => Ok(SpecialRegister::DynamicSmemSize),
-            "%lanemask_gt" => Ok(SpecialRegister::LanemaskGt),
-            "%reserved_smem_offset_begin" => Ok(SpecialRegister::ReservedSmemOffsetBegin),
-            "%clock" => Ok(SpecialRegister::Clock),
-            "%lanemask_le" => Ok(SpecialRegister::LanemaskLe),
-            "%reserved_smem_offset_cap" => Ok(SpecialRegister::ReservedSmemOffsetCap),
-            "%clock64" => Ok(SpecialRegister::Clock64),
-            "%globaltimer" => Ok(SpecialRegister::Globaltimer),
-            "%lanemask_lt" => Ok(SpecialRegister::LanemaskLt),
-            "%reserved_smem_offset_end" => Ok(SpecialRegister::ReservedSmemOffsetEnd),
+            "%aggr_smem_size" => Ok(SpecialRegister::AggrSmemSize { span }),
+            "%dynamic_smem_size" => Ok(SpecialRegister::DynamicSmemSize { span }),
+            "%lanemask_gt" => Ok(SpecialRegister::LanemaskGt { span }),
+            "%reserved_smem_offset_begin" => Ok(SpecialRegister::ReservedSmemOffsetBegin { span }),
+            "%clock" => Ok(SpecialRegister::Clock { span }),
+            "%lanemask_le" => Ok(SpecialRegister::LanemaskLe { span }),
+            "%reserved_smem_offset_cap" => Ok(SpecialRegister::ReservedSmemOffsetCap { span }),
+            "%clock64" => Ok(SpecialRegister::Clock64 { span }),
+            "%globaltimer" => Ok(SpecialRegister::Globaltimer { span }),
+            "%lanemask_lt" => Ok(SpecialRegister::LanemaskLt { span }),
+            "%reserved_smem_offset_end" => Ok(SpecialRegister::ReservedSmemOffsetEnd { span }),
             "%cluster_ctaid" | "%cluster_ctaid.x" | "%cluster_ctaid.y" | "%cluster_ctaid.z" => {
-                Ok(SpecialRegister::ClusterCtaid(Axis::None))
+                Ok(SpecialRegister::ClusterCtaid { axis: Axis::None { span: span.clone() }, span })
             }
-            "%globaltimer_hi" => Ok(SpecialRegister::GlobaltimerHi),
-            "%nclusterid" => Ok(SpecialRegister::Nclusterid),
-            "%smid" => Ok(SpecialRegister::Smid),
+            "%globaltimer_hi" => Ok(SpecialRegister::GlobaltimerHi { span }),
+            "%nclusterid" => Ok(SpecialRegister::Nclusterid { span }),
+            "%smid" => Ok(SpecialRegister::Smid { span }),
             "%cluster_ctarank" | "%cluster_ctarank.x" | "%cluster_ctarank.y"
-            | "%cluster_ctarank.z" => Ok(SpecialRegister::ClusterCtarank(Axis::None)),
-            "%globaltimer_lo" => Ok(SpecialRegister::GlobaltimerLo),
+            | "%cluster_ctarank.z" => Ok(SpecialRegister::ClusterCtarank { axis: Axis::None { span: span.clone() }, span }),
+            "%globaltimer_lo" => Ok(SpecialRegister::GlobaltimerLo { span }),
             "%nctaid" | "%nctaid.x" | "%nctaid.y" | "%nctaid.z" => {
-                Ok(SpecialRegister::Nctaid(Axis::None))
+                Ok(SpecialRegister::Nctaid { axis: Axis::None { span: span.clone() }, span })
             }
-            "%tid" | "%tid.x" | "%tid.y" | "%tid.z" => Ok(SpecialRegister::Tid(Axis::None)),
+            "%tid" | "%tid.x" | "%tid.y" | "%tid.z" => Ok(SpecialRegister::Tid { axis: Axis::None { span: span.clone() }, span }),
             "%cluster_nctaid" | "%cluster_nctaid.x" | "%cluster_nctaid.y" | "%cluster_nctaid.z" => {
-                Ok(SpecialRegister::ClusterNctaid(Axis::None))
+                Ok(SpecialRegister::ClusterNctaid { axis: Axis::None { span: span.clone() }, span })
             }
-            "%gridid" => Ok(SpecialRegister::Gridid),
-            "%nsmid" => Ok(SpecialRegister::Nsmid),
-            "%total_smem_size" => Ok(SpecialRegister::TotalSmemSize),
+            "%gridid" => Ok(SpecialRegister::Gridid { span }),
+            "%nsmid" => Ok(SpecialRegister::Nsmid { span }),
+            "%total_smem_size" => Ok(SpecialRegister::TotalSmemSize { span }),
             "%cluster_nctarank"
             | "%cluster_nctarank.x"
             | "%cluster_nctarank.y"
-            | "%cluster_nctarank.z" => Ok(SpecialRegister::ClusterNctarank(Axis::None)),
-            "%is_explicit_cluster" => Ok(SpecialRegister::IsExplicitCluster),
-            "%ntid" | "%ntid.x" | "%ntid.y" | "%ntid.z" => Ok(SpecialRegister::Ntid(Axis::None)),
-            "%warpid" => Ok(SpecialRegister::Warpid),
-            "%clusterid" => Ok(SpecialRegister::Clusterid),
-            "%laneid" => Ok(SpecialRegister::Laneid),
-            "%nwarpid" => Ok(SpecialRegister::Nwarpid),
-            "%WARPSZ" => Ok(SpecialRegister::WARPSZ),
+            | "%cluster_nctarank.z" => Ok(SpecialRegister::ClusterNctarank { axis: Axis::None { span: span.clone() }, span }),
+            "%is_explicit_cluster" => Ok(SpecialRegister::IsExplicitCluster { span }),
+            "%ntid" | "%ntid.x" | "%ntid.y" | "%ntid.z" => Ok(SpecialRegister::Ntid { axis: Axis::None { span: span.clone() }, span }),
+            "%warpid" => Ok(SpecialRegister::Warpid { span }),
+            "%clusterid" => Ok(SpecialRegister::Clusterid { span }),
+            "%laneid" => Ok(SpecialRegister::Laneid { span }),
+            "%nwarpid" => Ok(SpecialRegister::Nwarpid { span }),
+            "%WARPSZ" => Ok(SpecialRegister::WARPSZ { span }),
             "%ctaid" | "%ctaid.x" | "%ctaid.y" | "%ctaid.z" => {
-                Ok(SpecialRegister::Ctaid(Axis::None))
+                Ok(SpecialRegister::Ctaid { axis: Axis::None { span: span.clone() }, span })
             }
-            "%lanemask_eq" => Ok(SpecialRegister::LanemaskEq),
-            "%current_graph_exec" => Ok(SpecialRegister::CurrentGraphExec),
-            "%lanemask_ge" => Ok(SpecialRegister::LanemaskGe),
+            "%lanemask_eq" => Ok(SpecialRegister::LanemaskEq { span }),
+            "%current_graph_exec" => Ok(SpecialRegister::CurrentGraphExec { span }),
+            "%lanemask_ge" => Ok(SpecialRegister::LanemaskGe { span }),
             other => {
                 if let Some(num) = other.strip_prefix("%envreg") {
                     let value = num
                         .parse::<u8>()
                         .map_err(|_| invalid_literal(span.clone(), name.clone()))?;
                     if value <= 31 {
-                        return Ok(SpecialRegister::Envreg(value));
+                        return Ok(SpecialRegister::Envreg { index: value, span });
                     }
                     return Err(invalid_literal(
                         span,
@@ -537,7 +540,7 @@ impl PtxParser for SpecialRegister {
                             .parse::<u8>()
                             .map_err(|_| invalid_literal(span.clone(), name.clone()))?;
                         if value <= 7 {
-                            return Ok(SpecialRegister::Pm64(value));
+                            return Ok(SpecialRegister::Pm64 { index: value, span });
                         }
                         return Err(invalid_literal(
                             span,
@@ -549,7 +552,7 @@ impl PtxParser for SpecialRegister {
                         .parse::<u8>()
                         .map_err(|_| invalid_literal(span.clone(), name.clone()))?;
                     if value <= 7 {
-                        return Ok(SpecialRegister::Pm(value));
+                        return Ok(SpecialRegister::Pm { index: value, span });
                     }
                     return Err(invalid_literal(
                         span,
@@ -562,7 +565,7 @@ impl PtxParser for SpecialRegister {
                         .parse::<u8>()
                         .map_err(|_| invalid_literal(span.clone(), name.clone()))?;
                     if value <= 1 {
-                        return Ok(SpecialRegister::ReservedSmemOffset(value));
+                        return Ok(SpecialRegister::ReservedSmemOffset { index: value, span });
                     }
                     return Err(invalid_literal(
                         span,
@@ -583,28 +586,32 @@ impl PtxParser for Operand {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         let saved_pos = stream.position();
         if let Ok(immediate) = Immediate::parse(stream) {
-            return Ok(Operand::Immediate(immediate));
+            let span = immediate.span.clone();
+            return Ok(Operand::Immediate { operand: immediate, span });
         }
         stream.set_position(saved_pos);
 
         if stream.check(|token| matches!(token, PtxToken::Register(_))) {
-            return Ok(Operand::Register(RegisterOperand::parse(stream)?));
+            let register = RegisterOperand::parse(stream)?;
+            let span = register.span.clone();
+            return Ok(Operand::Register { operand: register, span });
         }
 
         if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
-            let (identifier, _) = stream.expect_identifier()?;
+            let (identifier, ident_span) = stream.expect_identifier()?;
 
             // Check for arithmetic expression: identifier + immediate
             let saved_pos_after_ident = stream.position();
             if stream.expect(&PtxToken::Plus).is_ok() {
                 if let Ok(offset) = Immediate::parse(stream) {
-                    return Ok(Operand::SymbolOffset(identifier, offset));
+                    let span = Span { start: ident_span.start, end: offset.span.end };
+                    return Ok(Operand::SymbolOffset { symbol: identifier, offset, span });
                 }
                 // If parsing offset failed, backtrack
                 stream.set_position(saved_pos_after_ident);
             }
 
-            return Ok(Operand::Symbol(identifier));
+            return Ok(Operand::Symbol { name: identifier, span: ident_span });
         }
 
         let (token, span) = stream.peek()?;
@@ -632,35 +639,36 @@ impl PtxParser for VectorOperand {
             break;
         }
 
-        stream.expect(&PtxToken::RBrace)?;
+        let (_, end_span) = stream.expect(&PtxToken::RBrace)?;
+        let span = Span { start: brace_span.start, end: end_span.end };
 
         match operands.len() {
-            1 => Ok(VectorOperand::Vector1(operands.remove(0))),
-            2 => Ok(VectorOperand::Vector2([
+            1 => Ok(VectorOperand::Vector1 { operand: operands.remove(0), span }),
+            2 => Ok(VectorOperand::Vector2 { operands: [
                 operands.remove(0),
                 operands.remove(0),
-            ])),
-            3 => Ok(VectorOperand::Vector3([
-                operands.remove(0),
-                operands.remove(0),
-                operands.remove(0),
-            ])),
-            4 => Ok(VectorOperand::Vector4([
+            ], span }),
+            3 => Ok(VectorOperand::Vector3 { operands: [
                 operands.remove(0),
                 operands.remove(0),
                 operands.remove(0),
-                operands.remove(0),
-            ])),
-            8 => Ok(VectorOperand::Vector8([
-                operands.remove(0),
+            ], span }),
+            4 => Ok(VectorOperand::Vector4 { operands: [
                 operands.remove(0),
                 operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+            ], span }),
+            8 => Ok(VectorOperand::Vector8 { operands: [
                 operands.remove(0),
                 operands.remove(0),
                 operands.remove(0),
                 operands.remove(0),
                 operands.remove(0),
-            ])),
+                operands.remove(0),
+                operands.remove(0),
+                operands.remove(0),
+            ], span }),
             other => Err(invalid_literal(
                 brace_span.clone(),
                 format!("expected operand vector of length 1..=4 or 8, found {other}"),
@@ -672,45 +680,52 @@ impl PtxParser for VectorOperand {
 impl PtxParser for GeneralOperand {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         if stream.check(|token| matches!(token, PtxToken::LBrace)) {
-            Ok(GeneralOperand::Vec(VectorOperand::parse(stream)?))
+            let vec_operand = VectorOperand::parse(stream)?;
+            let span = vec_operand.span();
+            Ok(GeneralOperand::Vec { operand: vec_operand, span })
         } else {
-            Ok(GeneralOperand::Single(Operand::parse(stream)?))
+            let operand = Operand::parse(stream)?;
+            let span = operand.span();
+            Ok(GeneralOperand::Single { operand, span })
         }
     }
 }
 
 impl PtxParser for TexHandler2 {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        stream.expect(&PtxToken::LBracket)?;
+        let (_, start_span) = stream.expect(&PtxToken::LBracket)?;
         let first = GeneralOperand::parse(stream)?;
         stream.expect(&PtxToken::Comma)?;
         let second = GeneralOperand::parse(stream)?;
-        stream.expect(&PtxToken::RBracket)?;
-        Ok(TexHandler2([first, second]))
+        let (_, end_span) = stream.expect(&PtxToken::RBracket)?;
+        let span = Span { start: start_span.start, end: end_span.end };
+        Ok(TexHandler2 { operands: [first, second], span })
     }
 }
 
 impl PtxParser for TexHandler3 {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        stream.expect(&PtxToken::LBracket)?;
+        let (_, start_span) = stream.expect(&PtxToken::LBracket)?;
         let handle = GeneralOperand::parse(stream)?;
         stream.expect(&PtxToken::Comma)?;
         let sampler = GeneralOperand::parse(stream)?;
         stream.expect(&PtxToken::Comma)?;
         let coords = GeneralOperand::parse(stream)?;
-        stream.expect(&PtxToken::RBracket)?;
+        let (_, end_span) = stream.expect(&PtxToken::RBracket)?;
+        let span = Span { start: start_span.start, end: end_span.end };
 
         Ok(TexHandler3 {
             handle,
             sampler,
             coords,
+            span,
         })
     }
 }
 
 impl PtxParser for TexHandler3Optional {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        stream.expect(&PtxToken::LBracket)?;
+        let (_, start_span) = stream.expect(&PtxToken::LBracket)?;
         let handle = GeneralOperand::parse(stream)?;
         stream.expect(&PtxToken::Comma)?;
         let second = GeneralOperand::parse(stream)?;
@@ -725,12 +740,14 @@ impl PtxParser for TexHandler3Optional {
             (None, second)
         };
 
-        stream.expect(&PtxToken::RBracket)?;
+        let (_, end_span) = stream.expect(&PtxToken::RBracket)?;
+        let span = Span { start: start_span.start, end: end_span.end };
 
         Ok(TexHandler3Optional {
             handle,
             sampler,
             coords,
+            span,
         })
     }
 }
@@ -738,9 +755,13 @@ impl PtxParser for TexHandler3Optional {
 impl PtxParser for AddressBase {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         if stream.check(|token| matches!(token, PtxToken::Register(_))) {
-            Ok(AddressBase::Register(RegisterOperand::parse(stream)?))
+            let register = RegisterOperand::parse(stream)?;
+            let span = register.span.clone();
+            Ok(AddressBase::Register { operand: register, span })
         } else if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
-            Ok(AddressBase::Variable(VariableSymbol::parse(stream)?))
+            let variable = VariableSymbol::parse(stream)?;
+            let span = variable.span.clone();
+            Ok(AddressBase::Variable { symbol: variable, span })
         } else {
             let (token, span) = stream.peek()?;
             Err(unexpected_value(
@@ -754,26 +775,26 @@ impl PtxParser for AddressBase {
 
 impl PtxParser for AddressOffset {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        if stream
+        if let Some((_, plus_span)) = stream
             .consume_if(|token| matches!(token, PtxToken::Plus))
-            .is_some()
         {
             if stream.check(|token| matches!(token, PtxToken::Register(_))) {
-                Ok(AddressOffset::Register(RegisterOperand::parse(stream)?))
+                let register = RegisterOperand::parse(stream)?;
+                let span = Span { start: plus_span.start, end: register.span.end };
+                Ok(AddressOffset::Register { operand: register, span })
             } else {
-                Ok(AddressOffset::Immediate(
-                    Sign::Positive,
-                    Immediate::parse(stream)?,
-                ))
+                let sign = Sign::Positive { span: plus_span.clone() };
+                let value = Immediate::parse(stream)?;
+                let span = Span { start: plus_span.start, end: value.span.end };
+                Ok(AddressOffset::Immediate { sign, value, span })
             }
-        } else if stream
+        } else if let Some((_, minus_span)) = stream
             .consume_if(|token| matches!(token, PtxToken::Minus))
-            .is_some()
         {
-            Ok(AddressOffset::Immediate(
-                Sign::Negative,
-                Immediate::parse(stream)?,
-            ))
+            let sign = Sign::Negative { span: minus_span.clone() };
+            let value = Immediate::parse(stream)?;
+            let span = Span { start: minus_span.start, end: value.span.end };
+            Ok(AddressOffset::Immediate { sign, value, span })
         } else {
             let (token, span) = stream.peek()?;
             Err(unexpected_value(
@@ -789,29 +810,31 @@ impl PtxParser for AddressOperand {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
         if stream.check(|token| matches!(token, PtxToken::Identifier(_))) {
             let saved = stream.position();
-            let (identifier, _) = stream.expect_identifier()?;
+            let (identifier, ident_span) = stream.expect_identifier()?;
             if stream
                 .consume_if(|token| matches!(token, PtxToken::LBracket))
                 .is_some()
             {
                 let immediate = Immediate::parse(stream)?;
-                stream.expect(&PtxToken::RBracket)?;
-                return Ok(AddressOperand::Array(VariableSymbol(identifier), immediate));
+                let (_, end_span) = stream.expect(&PtxToken::RBracket)?;
+                let span = Span { start: ident_span.start, end: end_span.end };
+                return Ok(AddressOperand::Array { base: VariableSymbol { name: identifier, span: ident_span }, index: immediate, span });
             } else {
                 stream.set_position(saved);
             }
         }
 
-        stream.expect(&PtxToken::LBracket)?;
+        let (_, start_span) = stream.expect(&PtxToken::LBracket)?;
 
         if stream.check(|token| matches!(token, PtxToken::Minus)) {
             let pos = stream.position();
             stream.consume()?;
             if stream.check(|token| is_numeric_token(token)) {
                 let mut immediate = Immediate::parse(stream)?;
-                immediate.0.insert(0, '-');
-                stream.expect(&PtxToken::RBracket)?;
-                return Ok(AddressOperand::ImmediateAddress(immediate));
+                immediate.value.insert(0, '-');
+                let (_, end_span) = stream.expect(&PtxToken::RBracket)?;
+                let span = Span { start: start_span.start, end: end_span.end };
+                return Ok(AddressOperand::ImmediateAddress { addr: immediate, span });
             } else {
                 stream.set_position(pos);
             }
@@ -819,8 +842,9 @@ impl PtxParser for AddressOperand {
 
         if stream.check(|token| is_numeric_token(token)) {
             let immediate = Immediate::parse(stream)?;
-            stream.expect(&PtxToken::RBracket)?;
-            return Ok(AddressOperand::ImmediateAddress(immediate));
+            let (_, end_span) = stream.expect(&PtxToken::RBracket)?;
+            let span = Span { start: start_span.start, end: end_span.end };
+            return Ok(AddressOperand::ImmediateAddress { addr: immediate, span });
         }
 
         let base = AddressBase::parse(stream)?;
@@ -829,23 +853,24 @@ impl PtxParser for AddressOperand {
         } else {
             None
         };
-        stream.expect(&PtxToken::RBracket)?;
+        let (_, end_span) = stream.expect(&PtxToken::RBracket)?;
+        let span = Span { start: start_span.start, end: end_span.end };
 
-        Ok(AddressOperand::Offset(base, offset))
+        Ok(AddressOperand::Offset { base, offset, span })
     }
 }
 
 impl PtxParser for FunctionSymbol {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (name, _) = stream.expect_identifier()?;
-        Ok(FunctionSymbol(name))
+        let (name, span) = stream.expect_identifier()?;
+        Ok(FunctionSymbol { name, span })
     }
 }
 
 impl PtxParser for VariableSymbol {
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-        let (name, _) = stream.expect_identifier()?;
-        Ok(VariableSymbol(name))
+        let (name, span) = stream.expect_identifier()?;
+        Ok(VariableSymbol { name, span })
     }
 }
 
@@ -875,9 +900,11 @@ pub(crate) fn try_parse_label(
 impl PtxParser for Instruction {
     /// Parse a PTX instruction with optional predicate
     fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
+        let start_pos = stream.position();
+
         // Optional predicate: @{!}pred or @!pred
         let predicate = if stream.check(|t| matches!(t, PtxToken::At)) {
-            stream.consume()?; // consume @
+            let (_, at_span) = stream.consume()?; // consume @
 
             // Optional negation
             let negated = stream
@@ -886,8 +913,9 @@ impl PtxParser for Instruction {
 
             // Predicate operand (can be register %p1 or identifier p)
             let operand = Operand::parse(stream)?;
+            let pred_span = Span { start: at_span.start, end: operand.span().end };
 
-            Some(Predicate { negated, operand })
+            Some(Predicate { negated, operand, span: pred_span })
         } else {
             None
         };
@@ -895,7 +923,15 @@ impl PtxParser for Instruction {
         // Parse the actual instruction using the module-level dispatcher
         let inst = crate::parser::instruction::parse_instruction_inner(stream)?;
 
-        Ok(Instruction { predicate, inst })
+        // Calculate span from the start to the end of the instruction
+        let end_pos = stream.position();
+        let span = if let Some(ref pred) = predicate {
+            Span { start: pred.span.start, end: end_pos.char_offset as usize }
+        } else {
+            Span { start: start_pos.char_offset as usize, end: end_pos.char_offset as usize }
+        };
+
+        Ok(Instruction { predicate, inst, span })
     }
 }
 

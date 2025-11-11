@@ -13,7 +13,7 @@ use crate::{
 
 fn push_numeric_literal(tokens: &mut Vec<PtxToken>, literal: &NumericLiteral) {
     match literal {
-        NumericLiteral::Signed(value) => {
+        NumericLiteral::Signed { value, .. } => {
             if *value < 0 {
                 tokens.push(PtxToken::Minus);
                 let magnitude = (*value as i128).abs();
@@ -22,14 +22,14 @@ fn push_numeric_literal(tokens: &mut Vec<PtxToken>, literal: &NumericLiteral) {
                 push_decimal(tokens, value.to_string());
             }
         }
-        NumericLiteral::Unsigned(value) => {
+        NumericLiteral::Unsigned { value, .. } => {
             push_decimal(tokens, value.to_string());
         }
-        NumericLiteral::Float64(bits) => {
+        NumericLiteral::Float64 { value: bits, .. } => {
             let text = format!("0d{:016x}", bits);
             tokens.push(PtxToken::HexFloat(text));
         }
-        NumericLiteral::Float32(bits) => {
+        NumericLiteral::Float32 { value: bits, .. } => {
             let text = format!("0f{:08x}", bits);
             tokens.push(PtxToken::HexFloat(text));
         }
@@ -45,9 +45,9 @@ impl PtxUnparser for NumericLiteral {
 impl PtxUnparser for InitializerValue {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            InitializerValue::Numeric(literal) => literal.unparse_tokens(tokens),
-            InitializerValue::Symbol(symbol) => push_identifier(tokens, symbol),
-            InitializerValue::StringLiteral(value) => {
+            InitializerValue::Numeric { value: literal, .. } => literal.unparse_tokens(tokens),
+            InitializerValue::Symbol { name: symbol, .. } => push_identifier(tokens, symbol),
+            InitializerValue::StringLiteral { value, .. } => {
                 tokens.push(PtxToken::StringLiteral(value.clone()));
             }
         }
@@ -57,8 +57,8 @@ impl PtxUnparser for InitializerValue {
 impl PtxUnparser for GlobalInitializer {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            GlobalInitializer::Scalar(value) => value.unparse_tokens(tokens),
-            GlobalInitializer::Aggregate(elements) => {
+            GlobalInitializer::Scalar { value, .. } => value.unparse_tokens(tokens),
+            GlobalInitializer::Aggregate { values: elements, .. } => {
                 tokens.push(PtxToken::LBrace);
                 for (index, element) in elements.iter().enumerate() {
                     if index > 0 {
@@ -75,15 +75,15 @@ impl PtxUnparser for GlobalInitializer {
 impl PtxUnparser for VariableModifier {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            VariableModifier::Vector(width) => {
+            VariableModifier::Vector { value: width, .. } => {
                 push_directive(tokens, &format!("v{width}"));
             }
-            VariableModifier::Alignment(value) => {
+            VariableModifier::Alignment { value, .. } => {
                 push_directive(tokens, "align");
                 push_decimal(tokens, value.to_string());
             }
-            VariableModifier::Linkage(linkage) => linkage.unparse_tokens(tokens),
-            VariableModifier::Ptr => push_directive(tokens, "ptr"),
+            VariableModifier::Linkage { linkage, .. } => linkage.unparse_tokens(tokens),
+            VariableModifier::Ptr { .. } => push_directive(tokens, "ptr"),
         }
     }
 }
@@ -133,7 +133,7 @@ fn split_modifiers(
     let mut other = Vec::new();
     for modifier in modifiers {
         match modifier {
-            VariableModifier::Linkage(_) => linkage.push(modifier.clone()),
+            VariableModifier::Linkage { .. } => linkage.push(modifier.clone()),
             _ => other.push(modifier.clone()),
         }
     }
@@ -165,13 +165,13 @@ impl PtxUnparser for VariableDirective {
 impl PtxUnparser for ModuleVariableDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            ModuleVariableDirective::Tex(directive) => {
+            ModuleVariableDirective::Tex { directive, .. } => {
                 push_directive(tokens, "tex");
                 directive.unparse_tokens(tokens);
             }
-            ModuleVariableDirective::Shared(directive)
-            | ModuleVariableDirective::Global(directive)
-            | ModuleVariableDirective::Const(directive) => directive.unparse_tokens(tokens),
+            ModuleVariableDirective::Shared { directive, .. }
+            | ModuleVariableDirective::Global { directive, .. }
+            | ModuleVariableDirective::Const { directive, .. } => directive.unparse_tokens(tokens),
         }
     }
 }

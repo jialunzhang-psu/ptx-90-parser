@@ -179,9 +179,9 @@ impl PtxUnparser for AddressSizeDirective {
 impl PtxUnparser for ModuleInfoDirectiveKind {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            ModuleInfoDirectiveKind::Version(version) => version.unparse_tokens(tokens),
-            ModuleInfoDirectiveKind::Target(target) => target.unparse_tokens(tokens),
-            ModuleInfoDirectiveKind::AddressSize(size) => size.unparse_tokens(tokens),
+            ModuleInfoDirectiveKind::Version { directive, .. } => directive.unparse_tokens(tokens),
+            ModuleInfoDirectiveKind::Target { directive, .. } => directive.unparse_tokens(tokens),
+            ModuleInfoDirectiveKind::AddressSize { directive, .. } => directive.unparse_tokens(tokens),
         }
     }
 }
@@ -210,16 +210,23 @@ impl PtxUnparser for SectionDirective {
 
 impl PtxUnparser for DwarfDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
-        push_raw_tokens(tokens, &self.raw);
+        // Reconstruct the dwarf directive from its fields
+        push_raw_tokens(tokens, &self.keyword);
+        for arg in &self.arguments {
+            push_raw_tokens(tokens, arg);
+        }
+        if let Some(comment) = &self.comment {
+            push_raw_tokens(tokens, comment);
+        }
     }
 }
 
 impl PtxUnparser for ModuleDebugDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            ModuleDebugDirective::File(file) => file.unparse_tokens(tokens),
-            ModuleDebugDirective::Section(section) => section.unparse_tokens(tokens),
-            ModuleDebugDirective::Dwarf(dwarf) => dwarf.unparse_tokens(tokens),
+            ModuleDebugDirective::File { directive, .. } => directive.unparse_tokens(tokens),
+            ModuleDebugDirective::Section { directive, .. } => directive.unparse_tokens(tokens),
+            ModuleDebugDirective::Dwarf { directive, .. } => directive.unparse_tokens(tokens),
         }
     }
 }
@@ -235,11 +242,11 @@ impl PtxUnparser for LinkingDirective {
 impl PtxUnparser for ModuleDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            ModuleDirective::ModuleVariable(variable) => variable.unparse_tokens(tokens),
-            ModuleDirective::FunctionKernel(function) => function.unparse_tokens(tokens),
-            ModuleDirective::ModuleInfo(info) => info.unparse_tokens(tokens),
-            ModuleDirective::Debug(debug) => debug.unparse_tokens(tokens),
-            ModuleDirective::Linking(linking) => linking.unparse_tokens(tokens),
+            ModuleDirective::ModuleVariable { directive, .. } => directive.unparse_tokens(tokens),
+            ModuleDirective::FunctionKernel { directive, .. } => directive.unparse_tokens(tokens),
+            ModuleDirective::ModuleInfo { directive, .. } => directive.unparse_tokens(tokens),
+            ModuleDirective::Debug { directive, .. } => directive.unparse_tokens(tokens),
+            ModuleDirective::Linking { directive, .. } => directive.unparse_tokens(tokens),
         }
     }
 }

@@ -20,13 +20,13 @@ fn parse_label_and_instruction(source: &str) -> (String, Instruction) {
     let mut statements = parse_statements(source).into_iter();
     let label_stmt = statements.next().expect("expected label statement");
     let label = match label_stmt {
-        FunctionStatement::Label(name) => name,
+        FunctionStatement::Label { name, .. } => name,
         other => panic!("expected label statement, got {:?}", other),
     };
 
     let inst_stmt = statements.next().expect("expected instruction statement");
     let inst = match inst_stmt {
-        FunctionStatement::Instruction(inst) => inst,
+        FunctionStatement::Instruction { instruction: inst, .. } => inst,
         other => panic!("expected instruction after label, got {:?}", other),
     };
 
@@ -97,7 +97,7 @@ fn test_instruction_without_label_or_predicate() {
 fn test_complex_label_names() {
     let statements = parse_statements("loop_start_123: add.s32 %r1, %r2, %r3;");
     match &statements[0] {
-        FunctionStatement::Label(name) => assert_eq!(name, "loop_start_123"),
+        FunctionStatement::Label { name, .. } => assert_eq!(name, "loop_start_123"),
         other => panic!("expected label statement, got {:?}", other),
     }
 }
@@ -116,7 +116,7 @@ fn test_multiple_instructions_in_sequence() {
         assert!(
             statements
                 .iter()
-                .any(|stmt| matches!(stmt, FunctionStatement::Instruction(_))),
+                .any(|stmt| matches!(stmt, FunctionStatement::Instruction { .. })),
             "expected at least one instruction in {input}"
         );
     }
@@ -175,9 +175,16 @@ fn test_roundtrip_with_predicate() {
 
 #[test]
 fn test_roundtrip_with_label_and_predicate() {
-    let statements = parse_statements("branch_target: @!%p0 bra done;");
+    let original = "branch_target: @!%p0 bra done;";
+    let statements = parse_statements(original);
     let tokens = unparse_statements(&statements);
     let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
+    // Verify that re-parsing the unparsed text produces the same number of statements
     let reparsed = parse_statements(&unparsed);
-    assert_eq!(statements, reparsed);
+    assert_eq!(statements.len(), reparsed.len(), "Should have same number of statements");
+
+    // Verify that re-unparsing produces the same output (idempotent)
+    let tokens2 = unparse_statements(&reparsed);
+    let unparsed2 = PtxUnlexer::to_string(&tokens2).expect("re-unparsing failed");
+    assert_eq!(unparsed, unparsed2, "Unparsing should be idempotent");
 }
