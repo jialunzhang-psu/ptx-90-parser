@@ -1,7 +1,7 @@
 mod util;
 
 use ptx_parser::{PtxUnparser, r#type::Instruction};
-use util::{parse_result, tokenize_only};
+use util::{parse_result, run_with_large_stack, tokenize_only};
 
 const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "abs.s32  r0,a;",
@@ -21,8 +21,8 @@ const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "atom.global.cas.b16  hd, [ha], hb, hc;",
     "atom.add.noftz.bf16   hd, [a], hb;",
     "atom.add.noftz.bf16x2 bd, [b], bb;",
-    "createpolicy.fractional.L2::evict_last.b64 cache-policy, 0.25;",
-    "atom.global.add.L2::cache_hint.s32  d, [a], 1, cache-policy;",
+    "createpolicy.fractional.L2::evict_last.b64 cache_policy, 0.25;",
+    "atom.global.add.L2::cache_hint.s32  d, [a], 1, cache_policy;",
     "bfi.b32  d,a,b,start,len;",
     "bfind.u32  d, a;",
     "bmsk.clamp.b32  rd, ra, rb;",
@@ -60,14 +60,14 @@ const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "cp.async.cg.shared.global.L2::64B   [%r2],      [%r3],     16;",
     "cp.async.cg.shared.global.L2::128B  [%r0 + 16], [%r1],     16;",
     "cp.async.cg.shared.global.L2::256B  [%r2 + 32], [%r3],     16;",
-    "createpolicy.fractional.L2::evict_last.L2::evict_unchanged.b64 cache-policy, 0.25;",
-    "cp.async.ca.shared.global.L2::cache_hint [%r2], [%r1], 4, cache-policy;",
+    "createpolicy.fractional.L2::evict_last.L2::evict_unchanged.b64 cache_policy, 0.25;",
+    "cp.async.ca.shared.global.L2::cache_hint [%r2], [%r1], 4, cache_policy;",
     "cp.async.ca.shared.global                   [shrd], [gbl], 4, p;",
-    "cp.async.cg.shared.global.L2::cache_hint   [%r0], [%r2], 16, q, cache-policy;",
+    "cp.async.cg.shared.global.L2::cache_hint   [%r0], [%r2], 16, q, cache_policy;",
     "createpolicy.fractional.L2::evict_last.b64                      policy, 1.0;",
     "createpolicy.fractional.L2::evict_last.L2::evict_unchanged.b64  policy, 0.5;",
     "createpolicy.range.L2::evict_last.L2::evict_first.b64 policy, [ptr], 0x100000, 0x200000;",
-    "createpolicy.cvt.L2.b64 policy, access-prop;",
+    "createpolicy.cvt.L2.b64 policy, access_prop;",
     "cvt.f32.s32 f,i;",
     "cvta.const.u32   ptr,cvar;",
     "cvta.local.u32   ptr,lptr;",
@@ -126,8 +126,8 @@ const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "ld.global.f32    d,[ugbl].unified;",
     "ld.b32           %r0, [%r1].unified;",
     "ld.global.L1::evict_last.u32  d, [p];",
-    "createpolicy.fractional.L2::evict_last.L2::evict_unchanged.b64 cache-policy, 1;",
-    "ld.global.L2::cache_hint.b64  x, [p], cache-policy;",
+    "createpolicy.fractional.L2::evict_last.L2::evict_unchanged.b64 cache_policy, 1;",
+    "ld.global.L2::cache_hint.b64  x, [p], cache_policy;",
     "ld.param::entry.b32 %rp1, [kparam1];",
     "ldmatrix.sync.aligned.m8n8.x2.trans.shared.b16 {d0, d1}, [addr];",
     "ldmatrix.sync.aligned.m8n8.x4.b16 {d0, d1, d2, d3}, [addr];",
@@ -232,7 +232,7 @@ const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "st.local.b32     [q+4],a;",
     "st.global.v4.s32 [p],Q;",
     "st.global.L1::no_allocate.f32 [p], a;",
-    "st.global.L2::cache_hint.b32  [a], b, cache-policy;",
+    "st.global.L2::cache_hint.b32  [a], b, cache_policy;",
     "stacksave.u32 ra;",
     "stackrestore.u32 ra;",
     "stacksave.u32 rd;",
@@ -325,6 +325,10 @@ const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
 
 #[test]
 fn docs_examples_roundtrip() {
+    run_with_large_stack(|| inner_docs_examples_roundtrip());
+}
+
+fn inner_docs_examples_roundtrip() {
     let mut parse_failures = Vec::new();
     let mut mismatches = Vec::new();
     let mut matched = 0usize;

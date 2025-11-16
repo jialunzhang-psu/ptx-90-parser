@@ -62,25 +62,30 @@ pub enum PtxToken {
     Tilde,
     #[token("@")]
     At,
-    #[regex(r"0[fFdD][0-9a-fA-F]{8}", |lex| lex.slice().to_string())]
-    #[regex(r"0[fFdD][0-9a-fA-F]{16}", |lex| lex.slice().to_string())]
-    HexFloat(String),
-    #[regex(r"0[xX][0-9a-fA-F]+", |lex| lex.slice().to_string())]
+    // Single-precision hex float: 0f12345678
+    #[regex(r"0[fF][0-9a-fA-F]{8}", |lex| lex.slice().to_string())]
+    HexFloatSingle(String),
+    // Double-precision hex float: 0d1234567890abcdef
+    #[regex(r"0[dD][0-9a-fA-F]{16}", |lex| lex.slice().to_string())]
+    HexFloatDouble(String),
+    #[regex(r"0[xX][0-9a-fA-F]+U?", |lex| lex.slice().to_string())]
     HexInteger(String),
-    #[regex(r"0[bB][01]+", |lex| lex.slice().to_string())]
+    #[regex(r"0[bB][01]+U?", |lex| lex.slice().to_string())]
     BinaryInteger(String),
-    #[regex(r"0[0-7]+", |lex| lex.slice().to_string())]
+    #[regex(r"0[0-7]+U?", |lex| lex.slice().to_string())]
     OctalInteger(String),
     #[regex(r"[0-9]+\.[0-9]+[eE][+-]?[0-9]+", |lex| lex.slice().to_string())]
     #[regex(r"[0-9]+[eE][+-]?[0-9]+", |lex| lex.slice().to_string())]
     FloatExponent(String),
     #[regex(r"[0-9]+\.[0-9]+", |lex| lex.slice().to_string())]
     Float(String),
-    #[regex(r"[0-9]+", |lex| lex.slice().to_string())]
+    #[regex(r"[1-9][0-9]*U?", priority = 2, callback = |lex| lex.slice().to_string())]
+    #[regex(r"0U?", |lex| lex.slice().to_string())]
     DecimalInteger(String),
-    #[regex(r"%[a-zA-Z_][a-zA-Z0-9_]*", |lex| lex.slice().to_string())]
+    #[regex(r"%[a-zA-Z_][a-zA-Z0-9_]*", priority = 2, callback = |lex| lex.slice().to_string())]
     Register(String),
-    #[regex(r"[a-zA-Z_$][a-zA-Z0-9_$-]*", |lex| lex.slice().to_string())]
+    #[regex(r"[a-zA-Z][a-zA-Z0-9_$]*", |lex| lex.slice().to_string())]
+    #[regex(r"[_$%][a-zA-Z0-9_$]*", priority = 1, callback = |lex| lex.slice().to_string())]
     Identifier(String),
     #[regex(r#""([^"\\]|\\.)*""#, |lex| {
         let slice = lex.slice();
@@ -100,7 +105,8 @@ impl PtxToken {
             | PtxToken::OctalInteger(s)
             | PtxToken::Float(s)
             | PtxToken::FloatExponent(s)
-            | PtxToken::HexFloat(s)
+            | PtxToken::HexFloatSingle(s)
+            | PtxToken::HexFloatDouble(s)
             | PtxToken::Register(s)
             | PtxToken::StringLiteral(s) => s.as_str(),
             _ => "",

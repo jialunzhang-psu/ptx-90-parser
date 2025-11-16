@@ -1,12 +1,16 @@
-use super::PtxUnparser;
 use crate::{
     lexer::{PtxToken, tokenize},
-    r#type::common::{
-        AddressBase, AddressOffset, AddressOperand, AddressSpace, AttributeDirective, Axis,
-        CodeLinkage, CodeOrDataLinkage, DataLinkage, DataType, FunctionSymbol, GeneralOperand,
-        Immediate, Label, Operand, PredicateRegister, RegisterOperand, Sign, SpecialRegister,
-        TexHandler2, TexHandler3, TexHandler3Optional, TexType, VariableSymbol, VectorOperand,
+    r#type::{
+        common::{
+            AddressBase, AddressOffset, AddressOperand, AttributeDirective, Axis, CodeLinkage,
+            DataLinkage, DataType, FunctionSymbol, GeneralOperand, Immediate, Label, Operand,
+            PredicateRegister, RegisterOperand, Sign, SpecialRegister, TexHandler2, TexHandler3,
+            TexHandler3Optional, VariableSymbol, VectorOperand,
+        },
+        function::{DwarfDirective, DwarfDirectiveKind},
+        variable::ParamStateSpace,
     },
+    unparser::PtxUnparser,
 };
 
 fn push_tokenized(tokens: &mut Vec<PtxToken>, text: &str) {
@@ -43,6 +47,10 @@ pub(crate) fn push_decimal<T: ToString>(tokens: &mut Vec<PtxToken>, value: T) {
     tokens.push(PtxToken::DecimalInteger(value.to_string()));
 }
 
+fn push_hex_literal(tokens: &mut Vec<PtxToken>, value: u64) {
+    tokens.push(PtxToken::HexInteger(format!("0x{:x}", value)));
+}
+
 pub(crate) fn push_opcode(tokens: &mut Vec<PtxToken>, opcode: &str) {
     push_identifier(tokens, opcode);
 }
@@ -58,12 +66,10 @@ fn push_register_with_axis(tokens: &mut Vec<PtxToken>, base: &str, axis: &Axis) 
 }
 
 fn numeric_token(literal: &str) -> PtxToken {
-    if literal.starts_with("0f")
-        || literal.starts_with("0F")
-        || literal.starts_with("0d")
-        || literal.starts_with("0D")
-    {
-        PtxToken::HexFloat(literal.to_string())
+    if literal.starts_with("0f") || literal.starts_with("0F") {
+        PtxToken::HexFloatSingle(literal.to_string())
+    } else if literal.starts_with("0d") || literal.starts_with("0D") {
+        PtxToken::HexFloatDouble(literal.to_string())
     } else if literal.starts_with("0x") || literal.starts_with("0X") {
         PtxToken::HexInteger(literal.to_string())
     } else if literal.starts_with("0b") || literal.starts_with("0B") {
@@ -84,6 +90,47 @@ fn numeric_token(literal: &str) -> PtxToken {
 
 fn push_numeric(tokens: &mut Vec<PtxToken>, literal: &str) {
     tokens.push(numeric_token(literal));
+}
+
+fn push_dwarf_values<I>(tokens: &mut Vec<PtxToken>, iter: I)
+where
+    I: IntoIterator<Item = u64>,
+{
+    for (idx, value) in iter.into_iter().enumerate() {
+        if idx > 0 {
+            tokens.push(PtxToken::Comma);
+        }
+        push_hex_literal(tokens, value);
+    }
+}
+
+impl PtxUnparser for DwarfDirective {
+    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        push_directive(tokens, "dwarf");
+        match &self.kind {
+            DwarfDirectiveKind::ByteValues(values) => {
+                push_directive(tokens, "byte");
+                push_dwarf_values(tokens, values.iter().map(|v| u64::from(*v)));
+            }
+            DwarfDirectiveKind::FourByteValues(values) => {
+                push_directive(tokens, "4byte");
+                push_dwarf_values(tokens, values.iter().map(|v| u64::from(*v)));
+            }
+            DwarfDirectiveKind::QuadValues(values) => {
+                push_directive(tokens, "quad");
+                push_dwarf_values(tokens, values.iter().copied());
+            }
+            DwarfDirectiveKind::FourByteLabel(label) => {
+                push_directive(tokens, "4byte");
+                push_identifier(tokens, &label.val);
+            }
+            DwarfDirectiveKind::QuadLabel(label) => {
+                push_directive(tokens, "quad");
+                push_identifier(tokens, &label.val);
+            }
+        }
+        tokens.push(PtxToken::Semicolon);
+    }
 }
 
 impl PtxUnparser for CodeLinkage {
@@ -107,36 +154,13 @@ impl PtxUnparser for DataLinkage {
     }
 }
 
-impl PtxUnparser for CodeOrDataLinkage {
+impl PtxUnparser for ParamStateSpace {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            CodeOrDataLinkage::Visible { .. } => push_directive(tokens, "visible"),
-            CodeOrDataLinkage::Extern { .. } => push_directive(tokens, "extern"),
-            CodeOrDataLinkage::Weak { .. } => push_directive(tokens, "weak"),
-            CodeOrDataLinkage::Common { .. } => push_directive(tokens, "common"),
-        }
-    }
-}
-
-impl PtxUnparser for TexType {
-    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
-        match self {
-            TexType::TexRef { .. } => push_directive(tokens, "texref"),
-            TexType::SamplerRef { .. } => push_directive(tokens, "samplerref"),
-            TexType::SurfRef { .. } => push_directive(tokens, "surfref"),
-        }
-    }
-}
-
-impl PtxUnparser for AddressSpace {
-    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
-        match self {
-            AddressSpace::Global { .. } => push_directive(tokens, "global"),
-            AddressSpace::Const { .. } => push_directive(tokens, "const"),
-            AddressSpace::Shared { .. } => push_directive(tokens, "shared"),
-            AddressSpace::Local { .. } => push_directive(tokens, "local"),
-            AddressSpace::Param { .. } => push_directive(tokens, "param"),
-            AddressSpace::Reg { .. } => push_directive(tokens, "reg"),
+            ParamStateSpace::Const { .. } => push_directive(tokens, "const"),
+            ParamStateSpace::Global { .. } => push_directive(tokens, "global"),
+            ParamStateSpace::Local { .. } => push_directive(tokens, "local"),
+            ParamStateSpace::Shared { .. } => push_directive(tokens, "shared"),
         }
     }
 }
@@ -180,6 +204,10 @@ impl PtxUnparser for DataType {
             DataType::B64 { .. } => "b64",
             DataType::B128 { .. } => "b128",
             DataType::Pred { .. } => "pred",
+            // Texture types (merged from TexType)
+            DataType::TexRef { .. } => "texref",
+            DataType::SamplerRef { .. } => "samplerref",
+            DataType::SurfRef { .. } => "surfref",
         };
         push_directive(tokens, directive);
     }
@@ -223,7 +251,7 @@ impl PtxUnparser for PredicateRegister {
 
 impl PtxUnparser for Label {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
-        push_identifier(tokens, &self.name);
+        push_identifier(tokens, &self.val);
     }
 }
 
@@ -233,15 +261,21 @@ impl PtxUnparser for SpecialRegister {
             SpecialRegister::AggrSmemSize { .. } => "%aggr_smem_size".to_string(),
             SpecialRegister::DynamicSmemSize { .. } => "%dynamic_smem_size".to_string(),
             SpecialRegister::LanemaskGt { .. } => "%lanemask_gt".to_string(),
-            SpecialRegister::ReservedSmemOffsetBegin { .. } => "%reserved_smem_offset_begin".to_string(),
+            SpecialRegister::ReservedSmemOffsetBegin { .. } => {
+                "%reserved_smem_offset_begin".to_string()
+            }
             SpecialRegister::Clock { .. } => "%clock".to_string(),
             SpecialRegister::Envreg { index, .. } => format!("%envreg{}", index),
             SpecialRegister::LanemaskLe { .. } => "%lanemask_le".to_string(),
-            SpecialRegister::ReservedSmemOffsetCap { .. } => "%reserved_smem_offset_cap".to_string(),
+            SpecialRegister::ReservedSmemOffsetCap { .. } => {
+                "%reserved_smem_offset_cap".to_string()
+            }
             SpecialRegister::Clock64 { .. } => "%clock64".to_string(),
             SpecialRegister::Globaltimer { .. } => "%globaltimer".to_string(),
             SpecialRegister::LanemaskLt { .. } => "%lanemask_lt".to_string(),
-            SpecialRegister::ReservedSmemOffsetEnd { .. } => "%reserved_smem_offset_end".to_string(),
+            SpecialRegister::ReservedSmemOffsetEnd { .. } => {
+                "%reserved_smem_offset_end".to_string()
+            }
             SpecialRegister::ClusterCtaid { axis, .. } => {
                 push_register_with_axis(tokens, "%cluster_ctaid", axis);
                 return;
@@ -303,8 +337,12 @@ impl PtxUnparser for SpecialRegister {
 impl PtxUnparser for Operand {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            Operand::Register { operand: register, .. } => register.unparse_tokens(tokens),
-            Operand::Immediate { operand: immediate, .. } => immediate.unparse_tokens(tokens),
+            Operand::Register {
+                operand: register, ..
+            } => register.unparse_tokens(tokens),
+            Operand::Immediate {
+                operand: immediate, ..
+            } => immediate.unparse_tokens(tokens),
             Operand::Symbol { name: symbol, .. } => push_identifier(tokens, symbol),
             Operand::SymbolOffset { symbol, offset, .. } => {
                 push_identifier(tokens, symbol);
@@ -320,7 +358,9 @@ impl PtxUnparser for VectorOperand {
         tokens.push(PtxToken::LBrace);
         match self {
             VectorOperand::Vector1 { operand: item, .. } => item.unparse_tokens(tokens),
-            VectorOperand::Vector2 { operands: items, .. } => {
+            VectorOperand::Vector2 {
+                operands: items, ..
+            } => {
                 for (idx, item) in items.iter().enumerate() {
                     if idx > 0 {
                         tokens.push(PtxToken::Comma);
@@ -328,7 +368,9 @@ impl PtxUnparser for VectorOperand {
                     item.unparse_tokens(tokens);
                 }
             }
-            VectorOperand::Vector3 { operands: items, .. } => {
+            VectorOperand::Vector3 {
+                operands: items, ..
+            } => {
                 for (idx, item) in items.iter().enumerate() {
                     if idx > 0 {
                         tokens.push(PtxToken::Comma);
@@ -336,7 +378,9 @@ impl PtxUnparser for VectorOperand {
                     item.unparse_tokens(tokens);
                 }
             }
-            VectorOperand::Vector4 { operands: items, .. } => {
+            VectorOperand::Vector4 {
+                operands: items, ..
+            } => {
                 for (idx, item) in items.iter().enumerate() {
                     if idx > 0 {
                         tokens.push(PtxToken::Comma);
@@ -344,7 +388,9 @@ impl PtxUnparser for VectorOperand {
                     item.unparse_tokens(tokens);
                 }
             }
-            VectorOperand::Vector8 { operands: items, .. } => {
+            VectorOperand::Vector8 {
+                operands: items, ..
+            } => {
                 for (idx, item) in items.iter().enumerate() {
                     if idx > 0 {
                         tokens.push(PtxToken::Comma);
@@ -360,7 +406,9 @@ impl PtxUnparser for VectorOperand {
 impl PtxUnparser for GeneralOperand {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            GeneralOperand::Vec { operand: vector, .. } => vector.unparse_tokens(tokens),
+            GeneralOperand::Vec {
+                operand: vector, ..
+            } => vector.unparse_tokens(tokens),
             GeneralOperand::Single { operand, .. } => operand.unparse_tokens(tokens),
         }
     }
@@ -408,7 +456,9 @@ impl PtxUnparser for TexHandler3Optional {
 impl PtxUnparser for AddressBase {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            AddressBase::Register { operand: register, .. } => register.unparse_tokens(tokens),
+            AddressBase::Register {
+                operand: register, ..
+            } => register.unparse_tokens(tokens),
             AddressBase::Variable { symbol, .. } => symbol.unparse_tokens(tokens),
         }
     }
@@ -417,11 +467,17 @@ impl PtxUnparser for AddressBase {
 impl PtxUnparser for AddressOffset {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            AddressOffset::Register { operand: register, .. } => {
+            AddressOffset::Register {
+                operand: register, ..
+            } => {
                 tokens.push(PtxToken::Plus);
                 register.unparse_tokens(tokens);
             }
-            AddressOffset::Immediate { sign, value: immediate, .. } => {
+            AddressOffset::Immediate {
+                sign,
+                value: immediate,
+                ..
+            } => {
                 sign.unparse_tokens(tokens);
                 immediate.unparse_tokens(tokens);
             }
@@ -457,13 +513,13 @@ impl PtxUnparser for AddressOperand {
 
 impl PtxUnparser for FunctionSymbol {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
-        push_identifier(tokens, &self.name);
+        push_identifier(tokens, &self.val);
     }
 }
 
 impl PtxUnparser for VariableSymbol {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
-        push_identifier(tokens, &self.name);
+        push_identifier(tokens, &self.val);
     }
 }
 

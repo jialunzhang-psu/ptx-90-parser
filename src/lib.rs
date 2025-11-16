@@ -36,8 +36,8 @@
 //!     Instruction,         // Instruction with label/predicate
 //!     Predicate,           // Predicate guard
 //!     Operand,             // Operand types
-//!     FunctionKernelDirective,
-//!     EntryFunction,
+//!     EntryFunctionDirective,
+//!     FuncFunctionDirective,
 //!     // ... all other types
 //! };
 //! ```
@@ -51,11 +51,15 @@
 // Internal modules - not part of public API
 mod lexer;
 mod parser;
+pub mod span;
 mod unlexer;
 mod unparser;
 
 // Type definitions - AST nodes (public)
 pub mod r#type;
+
+// Re-export derive macro for the `Spanned` trait so downstream crates can use it.
+pub use span_derive::Spanned;
 
 // Re-export commonly used items for convenience
 

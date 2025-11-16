@@ -4,7 +4,6 @@
 
 .file   1 "mini_step64.cu"
 
-.visible symbol_linkage;
 .visible .global .align 8 .u64 g_data[2] = {1, 2};
 .visible .const .align 4 .b32 const_values[2] = {3, 4};
 
@@ -28,7 +27,7 @@
     mov.u32 %r1, %tid.x;
     mov.u32 %r2, %ntid.x;
     add.s32 %r1, %r1, %r2;
-    .pragma nounroll;
+    .pragma "nounroll";
 $L_loop:
     .loc 1 42 3
     setp.eq.s32 %p1, %r1, 0;
@@ -40,5 +39,8 @@ $L_loop:
     add.s32 %r1, %r1, -1;
     bra $L_loop;
 $L_exit:
+    entry_br: .branchtargets $L_exit;
+    entry_call: .calltargets helper;
+    entry_proto: .callprototype _ (.param .u32 param_placeholder) .abi_preserve 4 .abi_preserve_control 2;
     ret;
 }

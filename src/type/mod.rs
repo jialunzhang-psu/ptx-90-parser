@@ -22,28 +22,29 @@ pub mod instruction;
 
 // Re-export all common types at the top level (explicit list)
 pub use common::{
-    AddressBase, AddressOffset, AddressOperand, AddressSpace, AttributeDirective, Axis,
-    CodeLinkage, CodeOrDataLinkage, DataLinkage, DataType, FunctionSymbol, GeneralOperand,
-    Immediate, Instruction, Label, Operand, Predicate, PredicateRegister, RegisterOperand, Sign,
-    SpecialRegister, TexHandler2, TexHandler3, TexHandler3Optional, TexType, VariableSymbol,
-    VectorOperand,
+    AddressBase, AddressOffset, AddressOperand, AttributeDirective, Axis, CodeLinkage, DataLinkage,
+    DataType, FunctionSymbol, GeneralOperand, Immediate, Instruction, Label, Operand, Predicate,
+    PredicateRegister, RegisterOperand, Sign, SpecialRegister, TexHandler2, TexHandler3,
+    TexHandler3Optional, VariableSymbol, VectorOperand,
 };
 
 // Re-export module types
 pub use module::{
-    AddressSizeDirective, FileDirective, LinkingDirective, Module, ModuleDebugDirective,
-    ModuleDirective, ModuleInfoDirectiveKind, SectionDirective, TargetDirective, VersionDirective,
+    AddressSize, AddressSizeDirective, FileDirective, Module, ModuleDebugDirective,
+    ModuleDirective, ModuleInfoDirectiveKind, TargetDirective, TargetString, VersionDirective,
 };
 
 // Re-export function types
 pub use function::{
-    DwarfDirective, EntryFunction, FuncFunction, FunctionAlias, FunctionBody, FunctionDim3,
-    FunctionHeaderDirective, FunctionKernelDirective, FunctionStatement, LocationDirective,
-    PragmaDirective, RegisterDirective, StatementDirective, StatementSectionDirective,
+    AliasFunctionDirective, BranchTargetsDirective, CallPrototypeDirective, CallTargetsDirective,
+    DwarfDirective, DwarfDirectiveKind, EntryFunctionDirective, FuncFunctionDirective,
+    FuncFunctionHeaderDirective, FunctionBody, FunctionDim, FunctionStatement, LocationDirective,
+    LocationInlinedAt, PragmaDirective, PragmaDirectiveKind, RegisterDirective, SectionDirective,
+    SectionEntry, StatementDirective, StatementSectionDirectiveLine,
 };
 
 // Re-export variable types
 pub use variable::{
-    GlobalInitializer, InitializerValue, ModuleVariableDirective, NumericLiteral,
-    VariableDirective, VariableModifier,
+    GlobalInitializer, InitializerValue, ModuleVariableDirective, ParamStateSpace,
+    ParameterDirective, VariableDirective, VariableModifier,
 };

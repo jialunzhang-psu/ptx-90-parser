@@ -2,9 +2,10 @@
 /* -------------------- Basic Directives ------------- */
 /* --------------------------------------------------- */
 
+use crate::Spanned;
 use crate::parser::Span;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum CodeLinkage {
     /// `.visible`
     Visible { span: Span },
@@ -14,17 +15,7 @@ pub enum CodeLinkage {
     Weak { span: Span },
 }
 
-impl CodeLinkage {
-    pub fn span(&self) -> Span {
-        match self {
-            CodeLinkage::Visible { span } => span.clone(),
-            CodeLinkage::Extern { span } => span.clone(),
-            CodeLinkage::Weak { span } => span.clone(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum DataLinkage {
     /// `.visible`
     Visible { span: Span },
@@ -36,85 +27,7 @@ pub enum DataLinkage {
     Common { span: Span },
 }
 
-impl DataLinkage {
-    pub fn span(&self) -> Span {
-        match self {
-            DataLinkage::Visible { span } => span.clone(),
-            DataLinkage::Extern { span } => span.clone(),
-            DataLinkage::Weak { span } => span.clone(),
-            DataLinkage::Common { span } => span.clone(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum CodeOrDataLinkage {
-    /// `.visible`
-    Visible { span: Span },
-    /// `.extern`
-    Extern { span: Span },
-    /// `.weak`
-    Weak { span: Span },
-    /// `.common`
-    Common { span: Span },
-}
-
-impl CodeOrDataLinkage {
-    pub fn span(&self) -> Span {
-        match self {
-            CodeOrDataLinkage::Visible { span } => span.clone(),
-            CodeOrDataLinkage::Extern { span } => span.clone(),
-            CodeOrDataLinkage::Weak { span } => span.clone(),
-            CodeOrDataLinkage::Common { span } => span.clone(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum TexType {
-    /// `.texref`
-    TexRef { span: Span },
-    /// `.samplerref`
-    SamplerRef { span: Span },
-    /// `.surfref`
-    SurfRef { span: Span },
-}
-
-impl TexType {
-    pub fn span(&self) -> Span {
-        match self {
-            TexType::TexRef { span } => span.clone(),
-            TexType::SamplerRef { span } => span.clone(),
-            TexType::SurfRef { span } => span.clone(),
-        }
-    }
-}
-
-/// Memory spaces
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum AddressSpace {
-    Global { span: Span },
-    Const { span: Span },
-    Shared { span: Span },
-    Local { span: Span },
-    Param { span: Span },
-    Reg { span: Span },
-}
-
-impl AddressSpace {
-    pub fn span(&self) -> Span {
-        match self {
-            AddressSpace::Global { span } => span.clone(),
-            AddressSpace::Const { span } => span.clone(),
-            AddressSpace::Shared { span } => span.clone(),
-            AddressSpace::Local { span } => span.clone(),
-            AddressSpace::Param { span } => span.clone(),
-            AddressSpace::Reg { span } => span.clone(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum AttributeDirective {
     /// `.unified(uuid1, uuid2)`
     Unified { uuid1: u64, uuid2: u64, span: Span },
@@ -122,16 +35,7 @@ pub enum AttributeDirective {
     Managed { span: Span },
 }
 
-impl AttributeDirective {
-    pub fn span(&self) -> Span {
-        match self {
-            AttributeDirective::Unified { span, .. } => span.clone(),
-            AttributeDirective::Managed { span } => span.clone(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum DataType {
     /// `.u8`
     U8 { span: Span },
@@ -169,96 +73,47 @@ pub enum DataType {
     B128 { span: Span },
     /// `.pred`
     Pred { span: Span },
-}
-
-impl DataType {
-    pub fn span(&self) -> Span {
-        match self {
-            DataType::U8 { span } => span.clone(),
-            DataType::U16 { span } => span.clone(),
-            DataType::U32 { span } => span.clone(),
-            DataType::U64 { span } => span.clone(),
-            DataType::S8 { span } => span.clone(),
-            DataType::S16 { span } => span.clone(),
-            DataType::S32 { span } => span.clone(),
-            DataType::S64 { span } => span.clone(),
-            DataType::F16 { span } => span.clone(),
-            DataType::F16x2 { span } => span.clone(),
-            DataType::F32 { span } => span.clone(),
-            DataType::F64 { span } => span.clone(),
-            DataType::B8 { span } => span.clone(),
-            DataType::B16 { span } => span.clone(),
-            DataType::B32 { span } => span.clone(),
-            DataType::B64 { span } => span.clone(),
-            DataType::B128 { span } => span.clone(),
-            DataType::Pred { span } => span.clone(),
-        }
-    }
+    /// `.texref`
+    TexRef { span: Span },
+    /// `.samplerref`
+    SamplerRef { span: Span },
+    /// `.surfref`
+    SurfRef { span: Span },
 }
 
 /* -------------------------------------------------- */
 /* -------------------- Math Basics ----------------- */
 /* -------------------------------------------------- */
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum Sign {
     Negative { span: Span },
     Positive { span: Span },
 }
 
-impl Sign {
-    pub fn span(&self) -> Span {
-        match self {
-            Sign::Negative { span } => span.clone(),
-            Sign::Positive { span } => span.clone(),
-        }
-    }
-}
-
 /// Axis component for 3-component special registers (x/y/z)
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum Axis {
     /// No axis component present
-    None { span: Span },
-    X { span: Span },
-    Y { span: Span },
-    Z { span: Span },
-}
-
-impl Axis {
-    pub fn span(&self) -> Span {
-        match self {
-            Axis::None { span } => span.clone(),
-            Axis::X { span } => span.clone(),
-            Axis::Y { span } => span.clone(),
-            Axis::Z { span } => span.clone(),
-        }
-    }
-}
-
-/* --------------------------------------------------- */
-/* -------------------- Label ------------------------ */
-/* --------------------------------------------------- */
-
-/// Label name (e.g., `L__label_1`).
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Label {
-    pub name: String,
-    pub span: Span,
-}
-
-impl Label {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
+    None {
+        span: Span,
+    },
+    X {
+        span: Span,
+    },
+    Y {
+        span: Span,
+    },
+    Z {
+        span: Span,
+    },
 }
 
 /* --------------------------------------------------- */
 /* -------------------- Special Registers ------------ */
 /* --------------------------------------------------- */
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum SpecialRegister {
     /// `%aggr_smem_size`
     AggrSmemSize { span: Span },
@@ -340,72 +195,19 @@ pub enum SpecialRegister {
     ReservedSmemOffset { index: u8, span: Span },
 }
 
-impl SpecialRegister {
-    pub fn span(&self) -> Span {
-        match self {
-            SpecialRegister::AggrSmemSize { span } => span.clone(),
-            SpecialRegister::DynamicSmemSize { span } => span.clone(),
-            SpecialRegister::LanemaskGt { span } => span.clone(),
-            SpecialRegister::ReservedSmemOffsetBegin { span } => span.clone(),
-            SpecialRegister::Clock { span } => span.clone(),
-            SpecialRegister::Envreg { span, .. } => span.clone(),
-            SpecialRegister::LanemaskLe { span } => span.clone(),
-            SpecialRegister::ReservedSmemOffsetCap { span } => span.clone(),
-            SpecialRegister::Clock64 { span } => span.clone(),
-            SpecialRegister::Globaltimer { span } => span.clone(),
-            SpecialRegister::LanemaskLt { span } => span.clone(),
-            SpecialRegister::ReservedSmemOffsetEnd { span } => span.clone(),
-            SpecialRegister::ClusterCtaid { span, .. } => span.clone(),
-            SpecialRegister::GlobaltimerHi { span } => span.clone(),
-            SpecialRegister::Nclusterid { span } => span.clone(),
-            SpecialRegister::Smid { span } => span.clone(),
-            SpecialRegister::ClusterCtarank { span, .. } => span.clone(),
-            SpecialRegister::GlobaltimerLo { span } => span.clone(),
-            SpecialRegister::Nctaid { span, .. } => span.clone(),
-            SpecialRegister::Tid { span, .. } => span.clone(),
-            SpecialRegister::ClusterNctaid { span, .. } => span.clone(),
-            SpecialRegister::Gridid { span } => span.clone(),
-            SpecialRegister::Nsmid { span } => span.clone(),
-            SpecialRegister::TotalSmemSize { span } => span.clone(),
-            SpecialRegister::ClusterNctarank { span, .. } => span.clone(),
-            SpecialRegister::IsExplicitCluster { span } => span.clone(),
-            SpecialRegister::Ntid { span, .. } => span.clone(),
-            SpecialRegister::Warpid { span } => span.clone(),
-            SpecialRegister::Clusterid { span } => span.clone(),
-            SpecialRegister::Laneid { span } => span.clone(),
-            SpecialRegister::Nwarpid { span } => span.clone(),
-            SpecialRegister::WARPSZ { span } => span.clone(),
-            SpecialRegister::Ctaid { span, .. } => span.clone(),
-            SpecialRegister::LanemaskEq { span } => span.clone(),
-            SpecialRegister::Pm { span, .. } => span.clone(),
-            SpecialRegister::Pm64 { span, .. } => span.clone(),
-            SpecialRegister::CurrentGraphExec { span } => span.clone(),
-            SpecialRegister::LanemaskGe { span } => span.clone(),
-            SpecialRegister::ReservedSmemOffset { span, .. } => span.clone(),
-        }
-    }
-}
-
 /* --------------------------------------------------- */
 /* ------------------- Operands ---------------------- */
 /* --------------------------------------------------- */
 
 /// Texture handler with 2 operands, e.g. [%r1, %r2]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub struct TexHandler2 {
     pub operands: [GeneralOperand; 2],
     pub span: Span,
 }
 
-impl TexHandler2 {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
-}
-
 /// Texture handler with optional sampler operand, e.g. `[tex, coords]` or `[tex, sampler, coords]`
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub struct TexHandler3Optional {
     pub handle: GeneralOperand,
     pub sampler: Option<GeneralOperand>,
@@ -413,15 +215,8 @@ pub struct TexHandler3Optional {
     pub span: Span,
 }
 
-impl TexHandler3Optional {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
-}
-
 /// Texture handler with optional sampler operand, e.g. `[tex, coords]` or `[tex, sampler, coords]`
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub struct TexHandler3 {
     pub handle: GeneralOperand,
     pub sampler: GeneralOperand,
@@ -429,29 +224,13 @@ pub struct TexHandler3 {
     pub span: Span,
 }
 
-impl TexHandler3 {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum GeneralOperand {
     Vec { operand: VectorOperand, span: Span },
     Single { operand: Operand, span: Span },
 }
 
-impl GeneralOperand {
-    pub fn span(&self) -> Span {
-        match self {
-            GeneralOperand::Vec { span, .. } => span.clone(),
-            GeneralOperand::Single { span, .. } => span.clone(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum VectorOperand {
     /// {%r1}
     Vector1 { operand: Operand, span: Span },
@@ -465,139 +244,109 @@ pub enum VectorOperand {
     Vector8 { operands: [Operand; 8], span: Span },
 }
 
-impl VectorOperand {
-    pub fn span(&self) -> Span {
-        match self {
-            VectorOperand::Vector1 { span, .. } => span.clone(),
-            VectorOperand::Vector2 { span, .. } => span.clone(),
-            VectorOperand::Vector3 { span, .. } => span.clone(),
-            VectorOperand::Vector4 { span, .. } => span.clone(),
-            VectorOperand::Vector8 { span, .. } => span.clone(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum Operand {
     /// %r1
-    Register { operand: RegisterOperand, span: Span },
+    Register {
+        operand: RegisterOperand,
+        span: Span,
+    },
     /// 0xffff
     Immediate { operand: Immediate, span: Span },
     /// foo
     Symbol { name: String, span: Span },
     /// foo + 4 (symbol + immediate offset)
-    SymbolOffset { symbol: String, offset: Immediate, span: Span },
-}
-
-impl Operand {
-    pub fn span(&self) -> Span {
-        match self {
-            Operand::Register { span, .. } => span.clone(),
-            Operand::Immediate { span, .. } => span.clone(),
-            Operand::Symbol { span, .. } => span.clone(),
-            Operand::SymbolOffset { span, .. } => span.clone(),
-        }
-    }
+    SymbolOffset {
+        symbol: String,
+        offset: Immediate,
+        span: Span,
+    },
 }
 
 /// Register operand starting with % (e.g., `%r1`).
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub struct RegisterOperand {
     pub name: String,
     pub span: Span,
 }
 
-impl RegisterOperand {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
-}
-
 /// Predicate register names (e.g., `%p0`).
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub struct PredicateRegister {
     pub name: String,
     pub span: Span,
 }
 
-impl PredicateRegister {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
-}
-
 /// Representation of an address operand.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum AddressOperand {
     /// base[immIndex]
-    Array { base: VariableSymbol, index: Immediate, span: Span },
+    Array {
+        base: VariableSymbol,
+        index: Immediate,
+        span: Span,
+    },
     /// Immediate address value, e.g., [0xffff], unsigned, 32-bit
     ImmediateAddress { addr: Immediate, span: Span },
     /// Offset address with optional displacement, e.g., [base + offset] and [base]
-    Offset { base: AddressBase, offset: Option<AddressOffset>, span: Span },
-}
-
-impl AddressOperand {
-    pub fn span(&self) -> Span {
-        match self {
-            AddressOperand::Array { span, .. } => span.clone(),
-            AddressOperand::ImmediateAddress { span, .. } => span.clone(),
-            AddressOperand::Offset { span, .. } => span.clone(),
-        }
-    }
+    Offset {
+        base: AddressBase,
+        offset: Option<AddressOffset>,
+        span: Span,
+    },
 }
 
 /// Base location referenced by an address expression.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum AddressBase {
-    Register { operand: RegisterOperand, span: Span },
-    Variable { symbol: VariableSymbol, span: Span },
-}
-
-impl AddressBase {
-    pub fn span(&self) -> Span {
-        match self {
-            AddressBase::Register { span, .. } => span.clone(),
-            AddressBase::Variable { span, .. } => span.clone(),
-        }
-    }
+    Register {
+        operand: RegisterOperand,
+        span: Span,
+    },
+    Variable {
+        symbol: VariableSymbol,
+        span: Span,
+    },
 }
 
 /// Specific adjustment applied within a displacement term.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum AddressOffset {
-    Register { operand: RegisterOperand, span: Span },
-    Immediate { sign: Sign, value: Immediate, span: Span },
-}
-
-impl AddressOffset {
-    pub fn span(&self) -> Span {
-        match self {
-            AddressOffset::Register { span, .. } => span.clone(),
-            AddressOffset::Immediate { span, .. } => span.clone(),
-        }
-    }
+    Register {
+        operand: RegisterOperand,
+        span: Span,
+    },
+    Immediate {
+        sign: Sign,
+        value: Immediate,
+        span: Span,
+    },
 }
 
 /* --------------------------------------------------- */
 /* -------------------- Immediate -------------------- */
 /* --------------------------------------------------- */
 
-/// Immediate value represented as a string.
-/// TODO: Replace with appropriate numeric type later.
-#[derive(Debug, Clone, PartialEq, Eq)]
+/// Immediate value representing a constant literal in PTX assembly.
+///
+/// Supports all PTX constant formats:
+///
+/// **Integer literals** (with optional `U` suffix for unsigned):
+/// - Hexadecimal: `0x1234`, `0x1234U`, `0XABCD`
+/// - Octal: `0777`, `0777U`, `0123`
+/// - Binary: `0b1010`, `0b1010U`, `0B0011`
+/// - Decimal: `42`, `42U`, `0`, `0U`, `123`
+///
+/// **Floating-point literals**:
+/// - Decimal float: `3.14`, `2.5`
+/// - Scientific notation: `1.5e10`, `3.2E-5`, `1e3`
+/// - Hex float (single-precision, 32-bit): `0f3f800000` (8 hex digits after `0f`)
+/// - Hex float (double-precision, 64-bit): `0d3ff0000000000000` (16 hex digits after `0d`)
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub struct Immediate {
+    /// The literal value as a string (includes prefix, digits, and optional 'U' suffix)
     pub value: String,
     pub span: Span,
-}
-
-impl Immediate {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
 }
 
 /* --------------------------------------------------- */
@@ -605,31 +354,24 @@ impl Immediate {
 /* --------------------------------------------------- */
 
 /// Function symbol
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub struct FunctionSymbol {
-    pub name: String,
+    pub val: String,
     pub span: Span,
-}
-
-impl FunctionSymbol {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
 }
 
 /// Variable symbol
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub struct VariableSymbol {
-    pub name: String,
+    pub val: String,
     pub span: Span,
 }
 
-impl VariableSymbol {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
+/// Label name (e.g., `L__label_1`).
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+pub struct Label {
+    pub val: String,
+    pub span: Span,
 }
 
 /* --------------------------------------------------- */
@@ -637,18 +379,11 @@ impl VariableSymbol {
 /* --------------------------------------------------- */
 
 /// Predicate guard for conditional instruction execution
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Spanned)]
 pub struct Predicate {
     pub negated: bool,
     pub operand: Operand,
     pub span: Span,
-}
-
-impl Predicate {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
 }
 
 /* --------------------------------------------------- */
@@ -657,16 +392,9 @@ impl Predicate {
 
 /// Represents a complete instruction with optional label and predicate guard
 /// Format: [label:] [@{!}pred] instruction
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Spanned)]
 pub struct Instruction {
     pub predicate: Option<Predicate>,
     pub inst: crate::r#type::instruction::Inst,
     pub span: Span,
-}
-
-impl Instruction {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
 }

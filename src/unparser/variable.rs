@@ -2,51 +2,24 @@ use super::PtxUnparser;
 use crate::{
     lexer::PtxToken,
     r#type::{
-        common::{AddressSpace, AttributeDirective},
+        common::AttributeDirective,
         variable::{
-            GlobalInitializer, InitializerValue, ModuleVariableDirective, NumericLiteral,
-            VariableDirective, VariableModifier,
+            GlobalInitializer, InitializerValue, ModuleVariableDirective, VariableDirective,
+            VariableModifier,
         },
     },
     unparser::{push_decimal, push_directive, push_identifier},
 };
 
-fn push_numeric_literal(tokens: &mut Vec<PtxToken>, literal: &NumericLiteral) {
-    match literal {
-        NumericLiteral::Signed { value, .. } => {
-            if *value < 0 {
-                tokens.push(PtxToken::Minus);
-                let magnitude = (*value as i128).abs();
-                push_decimal(tokens, magnitude.to_string());
-            } else {
-                push_decimal(tokens, value.to_string());
-            }
-        }
-        NumericLiteral::Unsigned { value, .. } => {
-            push_decimal(tokens, value.to_string());
-        }
-        NumericLiteral::Float64 { value: bits, .. } => {
-            let text = format!("0d{:016x}", bits);
-            tokens.push(PtxToken::HexFloat(text));
-        }
-        NumericLiteral::Float32 { value: bits, .. } => {
-            let text = format!("0f{:08x}", bits);
-            tokens.push(PtxToken::HexFloat(text));
-        }
-    }
-}
-
-impl PtxUnparser for NumericLiteral {
-    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
-        push_numeric_literal(tokens, self);
-    }
-}
-
 impl PtxUnparser for InitializerValue {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
-            InitializerValue::Numeric { value: literal, .. } => literal.unparse_tokens(tokens),
-            InitializerValue::Symbol { name: symbol, .. } => push_identifier(tokens, symbol),
+            InitializerValue::NumericLiteral {
+                value: immediate, ..
+            } => immediate.unparse_tokens(tokens),
+            InitializerValue::FunctionSymbol { name: symbol, .. } => {
+                push_identifier(tokens, &symbol.val)
+            }
             InitializerValue::StringLiteral { value, .. } => {
                 tokens.push(PtxToken::StringLiteral(value.clone()));
             }
@@ -58,7 +31,9 @@ impl PtxUnparser for GlobalInitializer {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         match self {
             GlobalInitializer::Scalar { value, .. } => value.unparse_tokens(tokens),
-            GlobalInitializer::Aggregate { values: elements, .. } => {
+            GlobalInitializer::Aggregate {
+                values: elements, ..
+            } => {
                 tokens.push(PtxToken::LBrace);
                 for (index, element) in elements.iter().enumerate() {
                     if index > 0 {
@@ -82,7 +57,6 @@ impl PtxUnparser for VariableModifier {
                 push_directive(tokens, "align");
                 push_decimal(tokens, value.to_string());
             }
-            VariableModifier::Linkage { linkage, .. } => linkage.unparse_tokens(tokens),
             VariableModifier::Ptr { .. } => push_directive(tokens, "ptr"),
         }
     }
@@ -110,16 +84,12 @@ fn unparse_prefix(
     linkage_modifiers: &[VariableModifier],
     other_modifiers: &[VariableModifier],
     attributes: &[AttributeDirective],
-    address_space: &Option<AddressSpace>,
 ) {
     for attribute in attributes {
         attribute.unparse_tokens(tokens);
     }
     for modifier in linkage_modifiers {
         modifier.unparse_tokens(tokens);
-    }
-    if let Some(space) = address_space {
-        space.unparse_tokens(tokens);
     }
     for modifier in other_modifiers {
         modifier.unparse_tokens(tokens);
@@ -129,15 +99,9 @@ fn unparse_prefix(
 fn split_modifiers(
     modifiers: &[VariableModifier],
 ) -> (Vec<VariableModifier>, Vec<VariableModifier>) {
-    let mut linkage = Vec::new();
-    let mut other = Vec::new();
-    for modifier in modifiers {
-        match modifier {
-            VariableModifier::Linkage { .. } => linkage.push(modifier.clone()),
-            _ => other.push(modifier.clone()),
-        }
-    }
-    (linkage, other)
+    // Linkage is now handled at module level, not in modifiers
+    // All modifiers go to "other" category
+    (Vec::new(), modifiers.to_vec())
 }
 
 impl PtxUnparser for VariableDirective {
@@ -148,15 +112,12 @@ impl PtxUnparser for VariableDirective {
             &linkage_modifiers,
             &other_modifiers,
             &self.attributes,
-            &self.address_space,
         );
 
-        if let Some(ty) = &self.ty {
-            ty.unparse_tokens(tokens);
-        }
+        self.ty.unparse_tokens(tokens);
 
-        push_identifier(tokens, &self.name);
-        unparse_array_dimensions(tokens, &self.array);
+        push_identifier(tokens, &self.name.val);
+        unparse_array_dimensions(tokens, &self.array_dims);
         unparse_initializer(tokens, &self.initializer);
         tokens.push(PtxToken::Semicolon);
     }
@@ -169,9 +130,18 @@ impl PtxUnparser for ModuleVariableDirective {
                 push_directive(tokens, "tex");
                 directive.unparse_tokens(tokens);
             }
-            ModuleVariableDirective::Shared { directive, .. }
-            | ModuleVariableDirective::Global { directive, .. }
-            | ModuleVariableDirective::Const { directive, .. } => directive.unparse_tokens(tokens),
+            ModuleVariableDirective::Shared { directive, .. } => {
+                push_directive(tokens, "shared");
+                directive.unparse_tokens(tokens);
+            }
+            ModuleVariableDirective::Global { directive, .. } => {
+                push_directive(tokens, "global");
+                directive.unparse_tokens(tokens);
+            }
+            ModuleVariableDirective::Const { directive, .. } => {
+                push_directive(tokens, "const");
+                directive.unparse_tokens(tokens);
+            }
         }
     }
 }

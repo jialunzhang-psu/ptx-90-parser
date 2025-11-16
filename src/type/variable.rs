@@ -1,116 +1,113 @@
-use crate::r#type::common::{AddressSpace, AttributeDirective, DataLinkage, DataType};
+use crate::Spanned;
 use crate::parser::Span;
+use crate::r#type::common::{AttributeDirective, DataType};
+use crate::r#type::{FunctionSymbol, Immediate, VariableSymbol};
 
 /// Module-level declarations that reserve storage in a specific address space.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum ModuleVariableDirective {
-    Tex { directive: VariableDirective, span: Span },
-    Shared { directive: VariableDirective, span: Span },
-    Global { directive: VariableDirective, span: Span },
-    Const { directive: VariableDirective, span: Span },
-}
-
-impl ModuleVariableDirective {
-    pub fn span(&self) -> Span {
-        match self {
-            ModuleVariableDirective::Tex { span, .. } => span.clone(),
-            ModuleVariableDirective::Shared { span, .. } => span.clone(),
-            ModuleVariableDirective::Global { span, .. } => span.clone(),
-            ModuleVariableDirective::Const { span, .. } => span.clone(),
-        }
-    }
+    /// Deprecated `.tex` variable declaration.
+    ///
+    /// Example:
+    /// .tex .u32 tex_a; // is equivalent to .global .texref tex_a;
+    Tex {
+        directive: VariableDirective,
+        span: Span,
+    },
+    Shared {
+        directive: VariableDirective,
+        span: Span,
+    },
+    Global {
+        directive: VariableDirective,
+        span: Span,
+    },
+    Const {
+        directive: VariableDirective,
+        span: Span,
+    },
 }
 
 /// Module-scoped variable declaration shared by `.tex`, `.shared`, `.global`, and `.const`.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub struct VariableDirective {
-    pub address_space: Option<AddressSpace>,
+    /// Example:
+    /// .global .attribute(.managed) .s32 g;
+    /// .global .attribute(.managed) .u64 x;
+    /// .global .attribute(.unified(19,95)) .f32 f;
     pub attributes: Vec<AttributeDirective>,
-    pub ty: Option<DataType>,
+    /// The data type of the variable (e.g., `.s32`, `.f64`).
+    pub ty: DataType,
+    /// Modifiers applied to the variable (e.g., `.v4`, `.align 16`, `.ptr`).
     pub modifiers: Vec<VariableModifier>,
-    pub name: String,
-    pub array: Vec<Option<u64>>,
+    /// The variable name.
+    pub name: VariableSymbol,
+    /// The array dimensions, if any.
+    /// Example:
+    /// .global .s32 offset[][2] = { {-1, 0}, {0, -1}, {1, 0}, {0, 1} };
+    pub array_dims: Vec<Option<u64>>,
+    /// Optional global initializer for the variable.
     pub initializer: Option<GlobalInitializer>,
     pub span: Span,
 }
 
-impl VariableDirective {
-    pub fn with_span(mut self, span: Span) -> Self {
-        self.span = span;
-        self
-    }
-}
-
 /// Qualifiers left on module variable declarations (e.g. `.v4`).
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum VariableModifier {
     Vector { value: u32, span: Span },
     Alignment { value: u32, span: Span },
-    Linkage { linkage: DataLinkage, span: Span },
     Ptr { span: Span },
 }
 
-impl VariableModifier {
-    pub fn span(&self) -> Span {
-        match self {
-            VariableModifier::Vector { span, .. } => span.clone(),
-            VariableModifier::Alignment { span, .. } => span.clone(),
-            VariableModifier::Linkage { span, .. } => span.clone(),
-            VariableModifier::Ptr { span } => span.clone(),
-        }
-    }
+/// Parameters, used in function declarations and calls, e.g., `.param .b32 p`.
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+pub enum ParameterDirective {
+    Register {
+        ty: DataType,
+        name: VariableSymbol,
+        span: Span,
+    },
+    Parameter {
+        align: Option<u32>,
+        ty: DataType,
+        ptr: bool,
+        space: Option<ParamStateSpace>,
+        name: VariableSymbol,
+        array: Vec<Option<u64>>,
+        span: Span,
+    },
 }
 
-//// Numeric literal kinds allowed inside initialisers.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum NumericLiteral {
-    Signed { value: i64, span: Span },
-    Unsigned { value: u64, span: Span },
-    Float64 { value: u64, span: Span },
-    Float32 { value: u32, span: Span },
-}
-
-impl NumericLiteral {
-    pub fn span(&self) -> Span {
-        match self {
-            NumericLiteral::Signed { span, .. } => span.clone(),
-            NumericLiteral::Unsigned { span, .. } => span.clone(),
-            NumericLiteral::Float64 { span, .. } => span.clone(),
-            NumericLiteral::Float32 { span, .. } => span.clone(),
-        }
-    }
+/// Address space qualifiers for parameters.
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+pub enum ParamStateSpace {
+    /// .const
+    Const { span: Span },
+    /// .global
+    Global { span: Span },
+    /// .local
+    Local { span: Span },
+    /// .shared
+    Shared { span: Span },
 }
 
 // Values that can appear in global initialiser lists.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum InitializerValue {
-    Numeric { value: NumericLiteral, span: Span },
-    Symbol { name: String, span: Span },
+    NumericLiteral { value: Immediate, span: Span },
+    FunctionSymbol { name: FunctionSymbol, span: Span },
     StringLiteral { value: String, span: Span },
 }
 
-impl InitializerValue {
-    pub fn span(&self) -> Span {
-        match self {
-            InitializerValue::Numeric { span, .. } => span.clone(),
-            InitializerValue::Symbol { span, .. } => span.clone(),
-            InitializerValue::StringLiteral { span, .. } => span.clone(),
-        }
-    }
-}
-
 /// Structured representation of a global variable initialiser.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub enum GlobalInitializer {
-    Scalar { value: InitializerValue, span: Span },
-    Aggregate { values: Vec<GlobalInitializer>, span: Span },
-}
-
-impl GlobalInitializer {
-    pub fn span(&self) -> Span {
-        match self {
-            GlobalInitializer::Scalar { span, .. } => span.clone(),
-            GlobalInitializer::Aggregate { span, .. } => span.clone(),
-        }
-    }
+    Scalar {
+        value: InitializerValue,
+        span: Span,
+    },
+    Aggregate {
+        values: Vec<GlobalInitializer>,
+        span: Span,
+    },
 }

@@ -76,10 +76,13 @@ fn test_floats() {
     assert_eq!(tokens[0].0, PtxToken::Float("3.14".to_string()));
     assert_eq!(tokens[1].0, PtxToken::FloatExponent("2.5e10".to_string()));
     assert_eq!(tokens[2].0, PtxToken::FloatExponent("1e-5".to_string()));
-    assert_eq!(tokens[3].0, PtxToken::HexFloat("0F40490000".to_string()));
+    assert_eq!(
+        tokens[3].0,
+        PtxToken::HexFloatSingle("0F40490000".to_string())
+    );
     assert_eq!(
         tokens[4].0,
-        PtxToken::HexFloat("0D4009000000000000".to_string())
+        PtxToken::HexFloatDouble("0D4009000000000000".to_string())
     );
 }
 
@@ -475,7 +478,7 @@ fn test_all_number_formats() {
     assert!(
         tokens
             .iter()
-            .any(|(t, _)| matches!(t, PtxToken::HexFloat(s) if s == "0F40490000"))
+            .any(|(t, _)| matches!(t, PtxToken::HexFloatSingle(s) if s == "0F40490000"))
     );
 }
 

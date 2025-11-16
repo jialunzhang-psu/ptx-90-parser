@@ -72,21 +72,65 @@ fn print_ast(path: &Path, compact: bool) -> Result<(), Box<dyn std::error::Error
 fn print_compact_module(module: &ptx_parser::r#type::Module) {
     for directive in &module.directives {
         match directive {
-            ptx_parser::r#type::ModuleDirective::ModuleInfo { directive: info, .. } => match info {
-                ptx_parser::r#type::ModuleInfoDirectiveKind::Version { directive: version, .. } => {
+            ptx_parser::r#type::ModuleDirective::ModuleInfo {
+                directive: info, ..
+            } => match info {
+                ptx_parser::r#type::ModuleInfoDirectiveKind::Version {
+                    directive: version, ..
+                } => {
                     println!(".version {}.{}", version.major, version.minor);
                 }
-                ptx_parser::r#type::ModuleInfoDirectiveKind::Target { directive: target, .. } => {
-                    println!(".target {}", target.entries.join(", "));
+                ptx_parser::r#type::ModuleInfoDirectiveKind::Target {
+                    directive: target, ..
+                } => {
+                    let values: Vec<&'static str> =
+                        target.entries.iter().map(target_string_name).collect();
+                    println!(".target {}", values.join(", "));
                 }
-                ptx_parser::r#type::ModuleInfoDirectiveKind::AddressSize { directive: addr, .. } => {
-                    println!(".address_size {}", addr.size);
+                ptx_parser::r#type::ModuleInfoDirectiveKind::AddressSize {
+                    directive: addr,
+                    ..
+                } => {
+                    let value = match addr.size {
+                        ptx_parser::r#type::AddressSize::Size32 { .. } => 32,
+                        ptx_parser::r#type::AddressSize::Size64 { .. } => 64,
+                    };
+                    println!(".address_size {}", value);
                 }
             },
-            ptx_parser::r#type::ModuleDirective::FunctionKernel { directive: function, .. } => {
-                print_function_directive(function);
+            ptx_parser::r#type::ModuleDirective::EntryFunction {
+                linkage,
+                directive: function,
+                ..
+            } => {
+                if let Some(link) = linkage {
+                    println!("{:?}", link);
+                }
+                println!(".entry {}", function.name.val);
             }
-            ptx_parser::r#type::ModuleDirective::ModuleVariable { directive: var, .. } => {
+            ptx_parser::r#type::ModuleDirective::FuncFunction {
+                linkage,
+                directive: function,
+                ..
+            } => {
+                if let Some(link) = linkage {
+                    println!("{:?}", link);
+                }
+                println!(".func {}", function.name.val);
+            }
+            ptx_parser::r#type::ModuleDirective::AliasFunction {
+                directive: alias, ..
+            } => {
+                println!(".alias {} {}", alias.alias.val, alias.target.val);
+            }
+            ptx_parser::r#type::ModuleDirective::ModuleVariable {
+                linkage,
+                directive: var,
+                ..
+            } => {
+                if let Some(link) = linkage {
+                    println!("{:?}", link);
+                }
                 print_module_variable(var);
             }
             other => println!("{:?}", other),
@@ -97,58 +141,107 @@ fn print_compact_module(module: &ptx_parser::r#type::Module) {
 fn print_module_variable(var: &ptx_parser::r#type::ModuleVariableDirective) {
     use ptx_parser::r#type::ModuleVariableDirective::*;
     match var {
-        Global { directive: decl, .. } => println!(".global {}", describe_variable_decl(decl)),
-        Shared { directive: decl, .. } => println!(".shared {}", describe_variable_decl(decl)),
-        Const { directive: decl, .. } => println!(".const {}", describe_variable_decl(decl)),
-        Tex { directive: decl, .. } => println!(".tex {}", describe_variable_decl(decl)),
+        Global {
+            directive: decl, ..
+        } => println!(".global {}", describe_variable_decl(decl)),
+        Shared {
+            directive: decl, ..
+        } => println!(".shared {}", describe_variable_decl(decl)),
+        Const {
+            directive: decl, ..
+        } => println!(".const {}", describe_variable_decl(decl)),
+        Tex {
+            directive: decl, ..
+        } => println!(".tex {}", describe_variable_decl(decl)),
     }
 }
 
 fn describe_variable_decl(decl: &ptx_parser::r#type::VariableDirective) -> String {
-    let ty = decl
-        .ty
-        .as_ref()
-        .map(|t| format!("{:?}", t))
-        .unwrap_or_else(|| "<?>".to_string());
-    format!("{} {}", ty, decl.name)
+    let ty = format!("{:?}", decl.ty);
+    format!("{} {}", ty, decl.name.val)
 }
 
-fn print_function_directive(function: &ptx_parser::r#type::FunctionKernelDirective) {
-    use ptx_parser::r#type::FunctionKernelDirective::*;
-    match function {
-        Entry { function: entry, .. } => {
-            println!(".entry {} (params: {})", entry.name, entry.params.len());
-            print_function_body(&entry.body, 2);
-        }
-        Func { function: func, .. } => {
-            println!(".func {} (params: {})", func.name, func.params.len());
-            print_function_body(&func.body, 2);
-        }
-        Alias { alias, .. } => {
-            println!(".alias {} -> {}", alias.alias, alias.target);
-        }
+fn target_string_name(entry: &ptx_parser::r#type::TargetString) -> &'static str {
+    use ptx_parser::r#type::TargetString::*;
+    match entry {
+        Sm120a { .. } => "sm_120a",
+        Sm120f { .. } => "sm_120f",
+        Sm120 { .. } => "sm_120",
+        Sm121a { .. } => "sm_121a",
+        Sm121f { .. } => "sm_121f",
+        Sm121 { .. } => "sm_121",
+        Sm110a { .. } => "sm_110a",
+        Sm110f { .. } => "sm_110f",
+        Sm110 { .. } => "sm_110",
+        Sm100a { .. } => "sm_100a",
+        Sm100f { .. } => "sm_100f",
+        Sm100 { .. } => "sm_100",
+        Sm101a { .. } => "sm_101a",
+        Sm101f { .. } => "sm_101f",
+        Sm101 { .. } => "sm_101",
+        Sm103a { .. } => "sm_103a",
+        Sm103f { .. } => "sm_103f",
+        Sm103 { .. } => "sm_103",
+        Sm90a { .. } => "sm_90a",
+        Sm90 { .. } => "sm_90",
+        Sm80 { .. } => "sm_80",
+        Sm86 { .. } => "sm_86",
+        Sm87 { .. } => "sm_87",
+        Sm88 { .. } => "sm_88",
+        Sm89 { .. } => "sm_89",
+        Sm70 { .. } => "sm_70",
+        Sm72 { .. } => "sm_72",
+        Sm75 { .. } => "sm_75",
+        Sm60 { .. } => "sm_60",
+        Sm61 { .. } => "sm_61",
+        Sm62 { .. } => "sm_62",
+        Sm50 { .. } => "sm_50",
+        Sm52 { .. } => "sm_52",
+        Sm53 { .. } => "sm_53",
+        Sm30 { .. } => "sm_30",
+        Sm32 { .. } => "sm_32",
+        Sm35 { .. } => "sm_35",
+        Sm37 { .. } => "sm_37",
+        Sm20 { .. } => "sm_20",
+        Sm10 { .. } => "sm_10",
+        Sm11 { .. } => "sm_11",
+        Sm12 { .. } => "sm_12",
+        Sm13 { .. } => "sm_13",
+        TexmodeUnified { .. } => "texmode_unified",
+        TexmodeIndependent { .. } => "texmode_independent",
+        Debug { .. } => "debug",
+        MapF64ToF32 { .. } => "map_f64_to_f32",
     }
 }
 
-fn print_function_body(body: &ptx_parser::r#type::FunctionBody, indent: usize) {
-    for statement in &body.statements {
-        print_function_statement(statement, indent);
+fn print_function_body(body: &Option<ptx_parser::r#type::FunctionBody>, indent: usize) {
+    match body {
+        Some(body) => {
+            for statement in &body.statements {
+                print_function_statement(statement, indent);
+            }
+        }
+        None => println!("{:indent$};", "", indent = indent),
     }
 }
 
 fn print_function_statement(statement: &ptx_parser::r#type::FunctionStatement, indent: usize) {
     let indent_str = " ".repeat(indent);
     match statement {
-        ptx_parser::r#type::FunctionStatement::Label { name, .. } => {
-            println!("{indent_str}{name}:");
+        ptx_parser::r#type::FunctionStatement::Label { label, .. } => {
+            println!("{indent_str}{}:", label.val);
         }
-        ptx_parser::r#type::FunctionStatement::Instruction { instruction: inst, .. } => {
+        ptx_parser::r#type::FunctionStatement::Instruction {
+            instruction: inst, ..
+        } => {
             println!("{indent_str}{:?}", inst);
         }
         ptx_parser::r#type::FunctionStatement::Directive { directive: dir, .. } => {
             println!("{indent_str}{:?}", dir);
         }
-        ptx_parser::r#type::FunctionStatement::Block { statements: block, .. } => {
+        ptx_parser::r#type::FunctionStatement::Block {
+            statements: block, ..
+        } => {
             println!("{indent_str}{{");
             for stmt in block {
                 print_function_statement(stmt, indent + 2);

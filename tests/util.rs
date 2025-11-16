@@ -1,10 +1,11 @@
 #![allow(dead_code)]
 use ptx_parser::{PtxParseError, PtxParser, PtxToken, PtxTokenStream, PtxUnparser, tokenize};
+use std::thread;
 
 pub fn parse_result<T: PtxParser>(source: &str) -> Result<T, PtxParseError> {
     let tokens = tokenize(source).expect("tokenization should succeed");
     let mut stream = PtxTokenStream::new(&tokens);
-    T::parse(&mut stream)
+    T::parse()(&mut stream).map(|(value, _span)| value)
 }
 
 pub fn parse<T: PtxParser>(source: &str) -> T {
@@ -106,4 +107,18 @@ where
         unparsed_tokens,
         original_tokens
     );
+}
+
+/// Execute `f` on a dedicated thread with a larger stack so recursive parsers don't overflow.
+pub fn run_with_large_stack<F, R>(f: F) -> R
+where
+    F: FnOnce() -> R + Send + 'static,
+    R: Send + 'static,
+{
+    thread::Builder::new()
+        .stack_size(64 * 1024 * 1024)
+        .spawn(f)
+        .expect("failed to spawn large stack thread")
+        .join()
+        .expect("large stack thread panicked")
 }

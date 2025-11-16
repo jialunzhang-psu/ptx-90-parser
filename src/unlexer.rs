@@ -41,7 +41,8 @@ fn write_token<W: Write>(writer: &mut W, token: &PtxToken) -> fmt::Result {
         | PtxToken::OctalInteger(name)
         | PtxToken::Float(name)
         | PtxToken::FloatExponent(name)
-        | PtxToken::HexFloat(name)
+        | PtxToken::HexFloatSingle(name)
+        | PtxToken::HexFloatDouble(name)
         | PtxToken::Register(name) => writer.write_str(name),
         PtxToken::StringLiteral(name) => {
             writer.write_char('"')?;
