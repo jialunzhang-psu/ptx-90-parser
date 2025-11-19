@@ -8,6 +8,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -16,7 +18,7 @@ pub mod section_0 {
         B64, // .b64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MatchAnySyncType {
         pub any: (),                    // .any
         pub sync: (),                   // .sync
@@ -24,9 +26,10 @@ pub mod section_0 {
         pub d: GeneralOperand,          // d
         pub a: GeneralOperand,          // a
         pub membermask: GeneralOperand, // membermask
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MatchAllSyncType {
         pub all: (),                    // .all
         pub sync: (),                   // .sync
@@ -35,6 +38,7 @@ pub mod section_0 {
         pub p: Option<GeneralOperand>,  // optional second operand of d{|p}
         pub a: GeneralOperand,          // a
         pub membermask: GeneralOperand, // membermask
+        pub span: Span,
     }
 }
 

@@ -7,6 +7,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -14,12 +16,13 @@ pub mod section_0 {
         L2EvictNormal, // .L2::evict_normal
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct ApplypriorityGlobalLevelEvictionPriority {
         pub global: bool,                                   // {.global}
         pub level_eviction_priority: LevelEvictionPriority, // .level::eviction_priority
         pub a: AddressOperand,                              // [a]
         pub size: GeneralOperand,                           // size
+        pub span: Span,
     }
 }
 

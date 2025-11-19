@@ -15,6 +15,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -82,7 +84,7 @@ pub mod section_0 {
         H33, // .h33
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vadd2DtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -95,9 +97,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vsub2DtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -110,9 +113,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vavrg2DtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -125,9 +129,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vabsdiff2DtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -140,9 +145,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vmin2DtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -155,9 +161,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vmax2DtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -170,9 +177,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vadd2DtypeAtypeBtypeAdd {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -185,9 +193,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vsub2DtypeAtypeBtypeAdd {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -200,9 +209,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vavrg2DtypeAtypeBtypeAdd {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -215,9 +225,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vabsdiff2DtypeAtypeBtypeAdd {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -230,9 +241,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vmin2DtypeAtypeBtypeAdd {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -245,9 +257,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vmax2DtypeAtypeBtypeAdd {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -260,6 +273,7 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 }
 

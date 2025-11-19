@@ -7,6 +7,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -15,12 +17,13 @@ pub mod section_0 {
         CtaGroup2, // .cta_group::2
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05ShiftCtaGroupDown {
         pub shift: (),             // .shift
         pub cta_group: CtaGroup,   // .cta_group
         pub down: (),              // .down
         pub taddr: AddressOperand, // [taddr]
+        pub span: Span,
     }
 }
 

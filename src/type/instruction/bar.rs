@@ -14,6 +14,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -22,25 +24,27 @@ pub mod section_0 {
         Or,  // .or
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BarrierCtaSyncAligned {
         pub cta: bool,                 // {.cta}
         pub sync: (),                  // .sync
         pub aligned: bool,             // {.aligned}
         pub a: GeneralOperand,         // a
         pub b: Option<GeneralOperand>, // {, b}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BarrierCtaArriveAligned {
         pub cta: bool,         // {.cta}
         pub arrive: (),        // .arrive
         pub aligned: bool,     // {.aligned}
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BarrierCtaRedPopcAlignedU32 {
         pub cta: bool,                 // {.cta}
         pub red: (),                   // .red
@@ -52,9 +56,10 @@ pub mod section_0 {
         pub b: Option<GeneralOperand>, // {, b}
         pub c_op: bool,                // {!} operator
         pub c: GeneralOperand,         // {!}c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BarrierCtaRedOpAlignedPred {
         pub cta: bool,                 // {.cta}
         pub red: (),                   // .red
@@ -66,25 +71,28 @@ pub mod section_0 {
         pub b: Option<GeneralOperand>, // {, b}
         pub c_op: bool,                // {!} operator
         pub c: GeneralOperand,         // {!}c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BarCtaSync {
         pub cta: bool,                 // {.cta}
         pub sync: (),                  // .sync
         pub a: GeneralOperand,         // a
         pub b: Option<GeneralOperand>, // {, b}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BarCtaArrive {
         pub cta: bool,         // {.cta}
         pub arrive: (),        // .arrive
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BarCtaRedPopcU32 {
         pub cta: bool,                 // {.cta}
         pub red: (),                   // .red
@@ -95,9 +103,10 @@ pub mod section_0 {
         pub b: Option<GeneralOperand>, // {, b}
         pub c_op: bool,                // {!} operator
         pub c: GeneralOperand,         // {!}c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BarCtaRedOpPred {
         pub cta: bool,                 // {.cta}
         pub red: (),                   // .red
@@ -108,6 +117,7 @@ pub mod section_0 {
         pub b: Option<GeneralOperand>, // {, b}
         pub c_op: bool,                // {!} operator
         pub c: GeneralOperand,         // {!}c
+        pub span: Span,
     }
 }
 

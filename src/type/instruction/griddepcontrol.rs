@@ -7,6 +7,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -15,9 +17,10 @@ pub mod section_0 {
         Wait,             // .wait
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct GriddepcontrolAction {
         pub action: Action, // .action
+        pub span: Span,
     }
 }
 

@@ -5,15 +5,14 @@ use std::path::{Path, PathBuf};
 
 use ptx_parser::tokenize;
 use ptx_parser::r#type::{
-    AddressSize, AliasFunctionDirective, EntryFunctionDirective, FuncFunctionDirective,
-    FunctionStatement, Instruction, Module, ModuleDirective, ModuleInfoDirectiveKind,
+    AddressSize, FunctionStatement, Instruction, Module, ModuleDirective, ModuleInfoDirectiveKind,
     instruction::Inst,
 };
 use ptx_parser::{PtxParser, PtxTokenStream};
 
 #[test]
 fn parse_sample_ptx_files() {
-    util::run_with_large_stack(|| {
+    ptx_parser::run_with_large_stack(|| {
         let samples_dir = Path::new("tests/sample");
         let mut entries: Vec<PathBuf> = fs::read_dir(samples_dir)
             .expect("samples directory missing")
@@ -70,7 +69,7 @@ fn parse_sample_file(path: &Path) -> bool {
             if !stream.is_at_end() {
                 eprintln!(
                     "  Warning: {} tokens remaining after parsing",
-                    tokens.len() - stream.position().index
+                    tokens.len() - stream.position().0
                 );
             }
 
@@ -252,7 +251,7 @@ fn first_instruction_in_statements(statements: &[FunctionStatement]) -> Option<&
 
 #[test]
 fn test_parse_labels_and_predicates() {
-    util::run_with_large_stack(|| {
+    ptx_parser::run_with_large_stack(|| {
         let source = r#"
         .version 8.5
         .target sm_90

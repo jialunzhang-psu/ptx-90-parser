@@ -4,40 +4,46 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
     use crate::r#type::instruction::fns::section_0::*;
 
     impl PtxParser for FnsB32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("fns")?;
-            stream.expect_string(".b32")?;
-            let b32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let mask = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let base = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let offset = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(FnsB32 {
-                b32,
-                d,
-                mask,
-                base,
-                offset,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("fns"),
+                    string_p(".b32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, b32, d, _, mask, _, base, _, offset, _), span| {
+                    ok!(FnsB32 {
+                        b32 = b32,
+                        d = d,
+                        mask = mask,
+                        base = base,
+                        offset = offset,
+
+                    })
+                },
+            )
         }
     }
 }

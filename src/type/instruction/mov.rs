@@ -21,6 +21,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -39,43 +41,50 @@ pub mod section_0 {
         F64,  // .f64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MovType {
         pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MovU32 {
         pub u32: (),               // .u32
         pub d: GeneralOperand,     // d
         pub fname: GeneralOperand, // fname
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MovU64 {
         pub u64: (),               // .u64
         pub d: GeneralOperand,     // d
         pub fname: GeneralOperand, // fname
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MovU321 {
         pub u32: (),                // .u32
         pub d: GeneralOperand,      // d
         pub kernel: GeneralOperand, // kernel
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MovU641 {
         pub u64: (),                // .u64
         pub d: GeneralOperand,      // d
         pub kernel: GeneralOperand, // kernel
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -86,11 +95,12 @@ pub mod section_1 {
         B64,  // .b64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MovType1 {
         pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 }
 

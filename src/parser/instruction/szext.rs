@@ -6,9 +6,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -19,95 +25,48 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Mode {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Clamp
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".clamp").is_ok() {
-                    return Ok(Mode::Clamp);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Wrap
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".wrap").is_ok() {
-                    return Ok(Mode::Wrap);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".clamp", ".wrap"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".clamp"), |_, _span| Mode::Clamp),
+                map(string_p(".wrap"), |_, _span| Mode::Wrap)
+            )
         }
     }
 
     impl PtxParser for Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Type::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Type::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".u32"), |_, _span| Type::U32),
+                map(string_p(".s32"), |_, _span| Type::S32)
+            )
         }
     }
 
     impl PtxParser for SzextModeType {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("szext")?;
-            let mode = Mode::parse(stream)?;
-            stream.expect_complete()?;
-            let type_ = Type::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(SzextModeType {
-                mode,
-                type_,
-                d,
-                a,
-                b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("szext"),
+                    Mode::parse(),
+                    Type::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, mode, type_, d, _, a, _, b, _), span| {
+                    ok!(SzextModeType {
+                        mode = mode,
+                        type_ = type_,
+                        d = d,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 }

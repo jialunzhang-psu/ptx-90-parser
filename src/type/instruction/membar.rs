@@ -28,6 +28,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -72,48 +74,54 @@ pub mod section_0 {
         Gl,  // .gl
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FenceSemScope {
         pub sem: Option<Sem>, // {.sem}
         pub scope: Scope,     // .scope
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FenceAcquireSyncRestrictSharedClusterCluster {
         pub acquire: (),                      // .acquire
         pub sync_restrict_shared_cluster: (), // .sync_restrict::shared::cluster
         pub cluster: (),                      // .cluster
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FenceReleaseSyncRestrictSharedCtaCluster {
         pub release: (),                  // .release
         pub sync_restrict_shared_cta: (), // .sync_restrict::shared::cta
         pub cluster: (),                  // .cluster
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FenceOpRestrictReleaseCluster {
         pub op_restrict: OpRestrict, // .op_restrict
         pub release: (),             // .release
         pub cluster: (),             // .cluster
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FenceProxyProxykind {
         pub proxy: (),            // .proxy
         pub proxykind: Proxykind, // .proxykind
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FenceProxyToProxykindFromProxykindReleaseScope {
         pub proxy: (),                                             // .proxy
         pub to_proxykind_from_proxykind: ToProxykindFromProxykind, // .to_proxykind::from_proxykind
         pub release: (),                                           // .release
         pub scope: Scope,                                          // .scope
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FenceProxyToProxykindFromProxykindAcquireScope {
         pub proxy: (),                                             // .proxy
         pub to_proxykind_from_proxykind: ToProxykindFromProxykind, // .to_proxykind::from_proxykind
@@ -121,35 +129,40 @@ pub mod section_0 {
         pub scope: Scope,                                          // .scope
         pub addr: AddressOperand,                                  // [addr]
         pub size: GeneralOperand,                                  // size
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FenceProxyAsyncGenericAcquireSyncRestrictSharedClusterCluster {
         pub proxy: (),                        // .proxy
         pub async_generic: (),                // .async::generic
         pub acquire: (),                      // .acquire
         pub sync_restrict_shared_cluster: (), // .sync_restrict::shared::cluster
         pub cluster: (),                      // .cluster
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FenceProxyAsyncGenericReleaseSyncRestrictSharedCtaCluster {
         pub proxy: (),                    // .proxy
         pub async_generic: (),            // .async::generic
         pub release: (),                  // .release
         pub sync_restrict_shared_cta: (), // .sync_restrict::shared::cta
         pub cluster: (),                  // .cluster
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MembarLevel {
         pub level: Level, // .level
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MembarProxyProxykind {
         pub proxy: (),            // .proxy
         pub proxykind: Proxykind, // .proxykind
+        pub span: Span,
     }
 }
 

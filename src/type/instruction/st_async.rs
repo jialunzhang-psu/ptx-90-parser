@@ -24,6 +24,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -64,7 +66,7 @@ pub mod section_0 {
         F64, // .f64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct StAsyncSemScopeSsCompletionMechanismVecType {
         pub async_: (),                                        // .async
         pub sem: Option<Sem>,                                  // {.sem}
@@ -76,10 +78,13 @@ pub mod section_0 {
         pub a: AddressOperand,                                 // [a]
         pub b: GeneralOperand,                                 // b
         pub mbar: AddressOperand,                              // [mbar]
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -116,7 +121,7 @@ pub mod section_1 {
         S8,  // .s8
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct StAsyncMmioSemScopeSsType {
         pub async_: (),        // .async
         pub mmio: bool,        // {.mmio}
@@ -126,6 +131,7 @@ pub mod section_1 {
         pub type_: Type,       // .type
         pub a: AddressOperand, // [a]
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 

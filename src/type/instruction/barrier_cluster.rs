@@ -8,6 +8,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -16,20 +18,22 @@ pub mod section_0 {
         Relaxed, // .relaxed
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BarrierClusterArriveSemAligned {
         pub cluster: (),      // .cluster
         pub arrive: (),       // .arrive
         pub sem: Option<Sem>, // {.sem}
         pub aligned: bool,    // {.aligned}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BarrierClusterWaitAcquireAligned {
         pub cluster: (),   // .cluster
         pub wait: (),      // .wait
         pub acquire: bool, // {.acquire}
         pub aligned: bool, // {.aligned}
+        pub span: Span,
     }
 }
 

@@ -10,9 +10,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -23,434 +29,176 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Asel {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B0
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b0").is_ok() {
-                    return Ok(Asel::B0);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b1").is_ok() {
-                    return Ok(Asel::B1);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b2").is_ok() {
-                    return Ok(Asel::B2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b3").is_ok() {
-                    return Ok(Asel::B3);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H0
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h0").is_ok() {
-                    return Ok(Asel::H0);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h1").is_ok() {
-                    return Ok(Asel::H1);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b0", ".b1", ".b2", ".b3", ".h0", ".h1"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".b0"), |_, _span| Asel::B0),
+                map(string_p(".b1"), |_, _span| Asel::B1),
+                map(string_p(".b2"), |_, _span| Asel::B2),
+                map(string_p(".b3"), |_, _span| Asel::B3),
+                map(string_p(".h0"), |_, _span| Asel::H0),
+                map(string_p(".h1"), |_, _span| Asel::H1)
+            )
         }
     }
 
     impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Atype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Atype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".u32"), |_, _span| Atype::U32),
+                map(string_p(".s32"), |_, _span| Atype::S32)
+            )
         }
     }
 
     impl PtxParser for Bsel {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B0
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b0").is_ok() {
-                    return Ok(Bsel::B0);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b1").is_ok() {
-                    return Ok(Bsel::B1);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b2").is_ok() {
-                    return Ok(Bsel::B2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b3").is_ok() {
-                    return Ok(Bsel::B3);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H0
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h0").is_ok() {
-                    return Ok(Bsel::H0);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try H1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".h1").is_ok() {
-                    return Ok(Bsel::H1);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b0", ".b1", ".b2", ".b3", ".h0", ".h1"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".b0"), |_, _span| Bsel::B0),
+                map(string_p(".b1"), |_, _span| Bsel::B1),
+                map(string_p(".b2"), |_, _span| Bsel::B2),
+                map(string_p(".b3"), |_, _span| Bsel::B3),
+                map(string_p(".h0"), |_, _span| Bsel::H0),
+                map(string_p(".h1"), |_, _span| Bsel::H1)
+            )
         }
     }
 
     impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Btype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Btype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".u32"), |_, _span| Btype::U32),
+                map(string_p(".s32"), |_, _span| Btype::S32)
+            )
         }
     }
 
     impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Dtype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Dtype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".u32"), |_, _span| Dtype::U32),
+                map(string_p(".s32"), |_, _span| Dtype::S32)
+            )
         }
     }
 
     impl PtxParser for Scale {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Shr15
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shr15").is_ok() {
-                    return Ok(Scale::Shr15);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Shr7
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shr7").is_ok() {
-                    return Ok(Scale::Shr7);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shr15", ".shr7"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shr15"), |_, _span| Scale::Shr15),
+                map(string_p(".shr7"), |_, _span| Scale::Shr7)
+            )
         }
     }
 
     impl PtxParser for VmadDtypeAtypeBtypeSatScale {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("vmad")?;
-            let dtype = Dtype::parse(stream)?;
-            stream.expect_complete()?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sat = stream.expect_string(".sat").is_ok();
-            if !sat {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scale = match Scale::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a_op = stream
-                .consume_if(|t| matches!(t, PtxToken::Minus))
-                .is_some();
-            let a = GeneralOperand::parse(stream)?;
-            let saved_pos = stream.position();
-            let asel = match Asel::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b_op = stream
-                .consume_if(|t| matches!(t, PtxToken::Minus))
-                .is_some();
-            let b = GeneralOperand::parse(stream)?;
-            let saved_pos = stream.position();
-            let bsel = match Bsel::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c_op = stream
-                .consume_if(|t| matches!(t, PtxToken::Minus))
-                .is_some();
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(VmadDtypeAtypeBtypeSatScale {
-                dtype,
-                atype,
-                btype,
-                sat,
-                scale,
-                d,
-                a_op,
-                a,
-                asel,
-                b_op,
-                b,
-                bsel,
-                c_op,
-                c,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("vmad"),
+                    Dtype::parse(),
+                    Atype::parse(),
+                    Btype::parse(),
+                    map(optional(string_p(".sat")), |value, _| value.is_some()),
+                    optional(Scale::parse()),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    map(optional(minus_p()), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    optional(Asel::parse()),
+                    comma_p(),
+                    map(optional(minus_p()), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    optional(Bsel::parse()),
+                    comma_p(),
+                    map(optional(minus_p()), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    dtype,
+                    atype,
+                    btype,
+                    sat,
+                    scale,
+                    d,
+                    _,
+                    a_op,
+                    a,
+                    asel,
+                    _,
+                    b_op,
+                    b,
+                    bsel,
+                    _,
+                    c_op,
+                    c,
+                    _,
+                ),
+                 span| {
+                    ok!(VmadDtypeAtypeBtypeSatScale {
+                        dtype = dtype,
+                        atype = atype,
+                        btype = btype,
+                        sat = sat,
+                        scale = scale,
+                        d = d,
+                        a_op = a_op,
+                        a = a,
+                        asel = asel,
+                        b_op = b_op,
+                        b = b,
+                        bsel = bsel,
+                        c_op = c_op,
+                        c = c,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for VmadDtypeAtypeBtypePoSatScale {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("vmad")?;
-            let dtype = Dtype::parse(stream)?;
-            stream.expect_complete()?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".po")?;
-            let po = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sat = stream.expect_string(".sat").is_ok();
-            if !sat {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scale = match Scale::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            let saved_pos = stream.position();
-            let asel = match Asel::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            let saved_pos = stream.position();
-            let bsel = match Bsel::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(VmadDtypeAtypeBtypePoSatScale {
-                dtype,
-                atype,
-                btype,
-                po,
-                sat,
-                scale,
-                d,
-                a,
-                asel,
-                b,
-                bsel,
-                c,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("vmad"),
+                    Dtype::parse(),
+                    Atype::parse(),
+                    Btype::parse(),
+                    string_p(".po"),
+                    map(optional(string_p(".sat")), |value, _| value.is_some()),
+                    optional(Scale::parse()),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    optional(Asel::parse()),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    optional(Bsel::parse()),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, dtype, atype, btype, po, sat, scale, d, _, a, asel, _, b, bsel, _, c, _),
+                 span| {
+                    ok!(VmadDtypeAtypeBtypePoSatScale {
+                        dtype = dtype,
+                        atype = atype,
+                        btype = btype,
+                        po = po,
+                        sat = sat,
+                        scale = scale,
+                        d = d,
+                        a = a,
+                        asel = asel,
+                        b = b,
+                        bsel = bsel,
+                        c = c,
+
+                    })
+                },
+            )
         }
     }
 }

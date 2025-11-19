@@ -53,9 +53,11 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaMmaSyncAlignedAlayoutBlayoutShapeDtypeCtype {
         pub mma: (),           // .mma
         pub sync: (),          // .sync
@@ -69,10 +71,13 @@ pub mod section_0 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -106,7 +111,7 @@ pub mod section_1 {
         U8, // .u8
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaMmaSyncAlignedAlayoutBlayoutShapeS32AtypeBtypeS32Satfinite {
         pub mma: (),           // .mma
         pub sync: (),          // .sync
@@ -123,10 +128,13 @@ pub mod section_1 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -158,7 +166,7 @@ pub mod section_2 {
         Bf16, // .bf16
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaMmaSyncAlignedAlayoutBlayoutShapeF32AtypeBtypeF32 {
         pub mma: (),           // .mma
         pub sync: (),          // .sync
@@ -174,10 +182,13 @@ pub mod section_2 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 
 pub mod section_3 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -207,7 +218,7 @@ pub mod section_3 {
         Tf32, // .tf32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaMmaSyncAlignedAlayoutBlayoutShapeF32AtypeBtypeF321 {
         pub mma: (),           // .mma
         pub sync: (),          // .sync
@@ -223,10 +234,13 @@ pub mod section_3 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 
 pub mod section_4 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -254,7 +268,7 @@ pub mod section_4 {
         Rp, // .rp
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaMmaSyncAlignedAlayoutBlayoutShapeRndF64F64F64F64 {
         pub mma: (),           // .mma
         pub sync: (),          // .sync
@@ -271,10 +285,13 @@ pub mod section_4 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 
 pub mod section_5 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -294,7 +311,7 @@ pub mod section_5 {
         U4, // .u4
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaMmaSyncAlignedRowColShapeS32AtypeBtypeS32Satfinite {
         pub mma: (),           // .mma
         pub sync: (),          // .sync
@@ -311,10 +328,13 @@ pub mod section_5 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 
 pub mod section_6 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -338,7 +358,7 @@ pub mod section_6 {
         B1, // .b1
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaMmaOpPopcSyncAlignedRowColShapeS32AtypeBtypeS32 {
         pub mma: (),           // .mma
         pub op: Op,            // .op
@@ -356,6 +376,7 @@ pub mod section_6 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 

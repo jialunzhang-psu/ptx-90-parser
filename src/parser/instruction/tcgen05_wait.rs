@@ -5,9 +5,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -18,56 +24,33 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for WaitOperation {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try WaitLd
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".wait::ld").is_ok() {
-                    return Ok(WaitOperation::WaitLd);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try WaitSt
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".wait::st").is_ok() {
-                    return Ok(WaitOperation::WaitSt);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".wait::ld", ".wait::st"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".wait::ld"), |_, _span| WaitOperation::WaitLd),
+                map(string_p(".wait::st"), |_, _span| WaitOperation::WaitSt)
+            )
         }
     }
 
     impl PtxParser for Tcgen05WaitOperationSyncAligned {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("tcgen05")?;
-            let wait_operation = WaitOperation::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(Tcgen05WaitOperationSyncAligned {
-                wait_operation,
-                sync,
-                aligned,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("tcgen05"),
+                    WaitOperation::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    semicolon_p()
+                ),
+                |(_, wait_operation, sync, aligned, _), span| {
+                    ok!(Tcgen05WaitOperationSyncAligned {
+                        wait_operation = wait_operation,
+                        sync = sync,
+                        aligned = aligned,
+
+                    })
+                },
+            )
         }
     }
 }

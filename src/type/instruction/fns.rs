@@ -6,15 +6,18 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FnsB32 {
         pub b32: (),                // .b32
         pub d: GeneralOperand,      // d
         pub mask: GeneralOperand,   // mask
         pub base: GeneralOperand,   // base
         pub offset: GeneralOperand, // offset
+        pub span: Span,
     }
 }
 

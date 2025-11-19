@@ -61,9 +61,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -74,241 +80,187 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Ctype::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Ctype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".f32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".f16"), |_, _span| Ctype::F16),
+                map(string_p(".f32"), |_, _span| Ctype::F32)
+            )
         }
     }
 
     impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Dtype::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Dtype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".f32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".f16"), |_, _span| Dtype::F16),
+                map(string_p(".f32"), |_, _span| Dtype::F32)
+            )
         }
     }
 
     impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Sp
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp").is_ok() {
-                    return Ok(Spvariant::Sp);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp::ordered_metadata", ".sp"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".sp::ordered_metadata"), |_, _span| {
+                    Spvariant::SpOrderedMetadata
+                }),
+                map(string_p(".sp"), |_, _span| Spvariant::Sp)
+            )
         }
     }
 
     impl PtxParser for MmaSpvariantSyncAlignedM16n8k16RowColDtypeF16F16Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k16")?;
-            let m16n8k16 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            let dtype = Dtype::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".f16")?;
-            let f16 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f16")?;
-            let f162 = ();
-            stream.expect_complete()?;
-            let ctype = Ctype::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MmaSpvariantSyncAlignedM16n8k16RowColDtypeF16F16Ctype {
-                spvariant,
-                sync,
-                aligned,
-                m16n8k16,
-                row,
-                col,
-                dtype,
-                f16,
-                f162,
-                ctype,
-                d,
-                a,
-                b,
-                c,
-                e,
-                f,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k16"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    Dtype::parse(),
+                    string_p(".f16"),
+                    string_p(".f16"),
+                    Ctype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    spvariant,
+                    sync,
+                    aligned,
+                    m16n8k16,
+                    row,
+                    col,
+                    dtype,
+                    f16,
+                    f162,
+                    ctype,
+                    d,
+                    _,
+                    a,
+                    _,
+                    b,
+                    _,
+                    c,
+                    _,
+                    e,
+                    _,
+                    f,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedM16n8k16RowColDtypeF16F16Ctype {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k16 = m16n8k16,
+                        row = row,
+                        col = col,
+                        dtype = dtype,
+                        f16 = f16,
+                        f162 = f162,
+                        ctype = ctype,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MmaSpvariantSyncAlignedM16n8k32RowColDtypeF16F16Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k32")?;
-            let m16n8k32 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            let dtype = Dtype::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".f16")?;
-            let f16 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f16")?;
-            let f162 = ();
-            stream.expect_complete()?;
-            let ctype = Ctype::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MmaSpvariantSyncAlignedM16n8k32RowColDtypeF16F16Ctype {
-                spvariant,
-                sync,
-                aligned,
-                m16n8k32,
-                row,
-                col,
-                dtype,
-                f16,
-                f162,
-                ctype,
-                d,
-                a,
-                b,
-                c,
-                e,
-                f,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k32"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    Dtype::parse(),
+                    string_p(".f16"),
+                    string_p(".f16"),
+                    Ctype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    spvariant,
+                    sync,
+                    aligned,
+                    m16n8k32,
+                    row,
+                    col,
+                    dtype,
+                    f16,
+                    f162,
+                    ctype,
+                    d,
+                    _,
+                    a,
+                    _,
+                    b,
+                    _,
+                    c,
+                    _,
+                    e,
+                    _,
+                    f,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedM16n8k32RowColDtypeF16F16Ctype {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k32 = m16n8k32,
+                        row = row,
+                        col = col,
+                        dtype = dtype,
+                        f16 = f16,
+                        f162 = f162,
+                        ctype = ctype,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -322,633 +274,482 @@ pub mod section_1 {
     // ============================================================================
 
     impl PtxParser for Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Ctype::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Ctype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".f32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".f16"), |_, _span| Ctype::F16),
+                map(string_p(".f32"), |_, _span| Ctype::F32)
+            )
         }
     }
 
     impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Dtype::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Dtype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".f32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".f16"), |_, _span| Dtype::F16),
+                map(string_p(".f32"), |_, _span| Dtype::F32)
+            )
         }
     }
 
     impl PtxParser for F8f6f4type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E4m3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3").is_ok() {
-                    return Ok(F8f6f4type::E4m3);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try E5m2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2").is_ok() {
-                    return Ok(F8f6f4type::E5m2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E3m2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e3m2").is_ok() {
-                    return Ok(F8f6f4type::E3m2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E2m3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e2m3").is_ok() {
-                    return Ok(F8f6f4type::E2m3);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E2m1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e2m1").is_ok() {
-                    return Ok(F8f6f4type::E2m1);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e4m3", ".e5m2", ".e3m2", ".e2m3", ".e2m1"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".e4m3"), |_, _span| F8f6f4type::E4m3),
+                map(string_p(".e5m2"), |_, _span| F8f6f4type::E5m2),
+                map(string_p(".e3m2"), |_, _span| F8f6f4type::E3m2),
+                map(string_p(".e2m3"), |_, _span| F8f6f4type::E2m3),
+                map(string_p(".e2m1"), |_, _span| F8f6f4type::E2m1)
+            )
         }
     }
 
     impl PtxParser for F8type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E4m3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3").is_ok() {
-                    return Ok(F8type::E4m3);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try E5m2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2").is_ok() {
-                    return Ok(F8type::E5m2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e4m3", ".e5m2"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".e4m3"), |_, _span| F8type::E4m3),
+                map(string_p(".e5m2"), |_, _span| F8type::E5m2)
+            )
         }
     }
 
     impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindF8f6f4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::f8f6f4").is_ok() {
-                    return Ok(Kind::KindF8f6f4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::f8f6f4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".kind::f8f6f4"), |_, _span| Kind::KindF8f6f4))
         }
     }
 
     impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Sp
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp").is_ok() {
-                    return Ok(Spvariant::Sp);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp::ordered_metadata", ".sp"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".sp::ordered_metadata"), |_, _span| {
+                    Spvariant::SpOrderedMetadata
+                }),
+                map(string_p(".sp"), |_, _span| Spvariant::Sp)
+            )
         }
     }
 
     impl PtxParser for MmaSpvariantSyncAlignedM16n8k16RowColF32Bf16Bf16F32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k16")?;
-            let m16n8k16 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".bf16")?;
-            let bf16 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".bf16")?;
-            let bf162 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f322 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MmaSpvariantSyncAlignedM16n8k16RowColF32Bf16Bf16F32 {
-                spvariant,
-                sync,
-                aligned,
-                m16n8k16,
-                row,
-                col,
-                f32,
-                bf16,
-                bf162,
-                f322,
-                d,
-                a,
-                b,
-                c,
-                e,
-                f,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k16"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    string_p(".f32"),
+                    string_p(".bf16"),
+                    string_p(".bf16"),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    spvariant,
+                    sync,
+                    aligned,
+                    m16n8k16,
+                    row,
+                    col,
+                    f32,
+                    bf16,
+                    bf162,
+                    f322,
+                    d,
+                    _,
+                    a,
+                    _,
+                    b,
+                    _,
+                    c,
+                    _,
+                    e,
+                    _,
+                    f,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedM16n8k16RowColF32Bf16Bf16F32 {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k16 = m16n8k16,
+                        row = row,
+                        col = col,
+                        f32 = f32,
+                        bf16 = bf16,
+                        bf162 = bf162,
+                        f322 = f322,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MmaSpvariantSyncAlignedM16n8k32RowColF32Bf16Bf16F32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k32")?;
-            let m16n8k32 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".bf16")?;
-            let bf16 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".bf16")?;
-            let bf162 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f322 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MmaSpvariantSyncAlignedM16n8k32RowColF32Bf16Bf16F32 {
-                spvariant,
-                sync,
-                aligned,
-                m16n8k32,
-                row,
-                col,
-                f32,
-                bf16,
-                bf162,
-                f322,
-                d,
-                a,
-                b,
-                c,
-                e,
-                f,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k32"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    string_p(".f32"),
+                    string_p(".bf16"),
+                    string_p(".bf16"),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    spvariant,
+                    sync,
+                    aligned,
+                    m16n8k32,
+                    row,
+                    col,
+                    f32,
+                    bf16,
+                    bf162,
+                    f322,
+                    d,
+                    _,
+                    a,
+                    _,
+                    b,
+                    _,
+                    c,
+                    _,
+                    e,
+                    _,
+                    f,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedM16n8k32RowColF32Bf16Bf16F32 {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k32 = m16n8k32,
+                        row = row,
+                        col = col,
+                        f32 = f32,
+                        bf16 = bf16,
+                        bf162 = bf162,
+                        f322 = f322,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MmaSpvariantSyncAlignedM16n8k8RowColF32Tf32Tf32F32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k8")?;
-            let m16n8k8 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".tf32")?;
-            let tf32 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".tf32")?;
-            let tf322 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f322 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MmaSpvariantSyncAlignedM16n8k8RowColF32Tf32Tf32F32 {
-                spvariant,
-                sync,
-                aligned,
-                m16n8k8,
-                row,
-                col,
-                f32,
-                tf32,
-                tf322,
-                f322,
-                d,
-                a,
-                b,
-                c,
-                e,
-                f,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k8"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    string_p(".f32"),
+                    string_p(".tf32"),
+                    string_p(".tf32"),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    spvariant,
+                    sync,
+                    aligned,
+                    m16n8k8,
+                    row,
+                    col,
+                    f32,
+                    tf32,
+                    tf322,
+                    f322,
+                    d,
+                    _,
+                    a,
+                    _,
+                    b,
+                    _,
+                    c,
+                    _,
+                    e,
+                    _,
+                    f,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedM16n8k8RowColF32Tf32Tf32F32 {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k8 = m16n8k8,
+                        row = row,
+                        col = col,
+                        f32 = f32,
+                        tf32 = tf32,
+                        tf322 = tf322,
+                        f322 = f322,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MmaSpvariantSyncAlignedM16n8k16RowColF32Tf32Tf32F32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k16")?;
-            let m16n8k16 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".tf32")?;
-            let tf32 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".tf32")?;
-            let tf322 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f322 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MmaSpvariantSyncAlignedM16n8k16RowColF32Tf32Tf32F32 {
-                spvariant,
-                sync,
-                aligned,
-                m16n8k16,
-                row,
-                col,
-                f32,
-                tf32,
-                tf322,
-                f322,
-                d,
-                a,
-                b,
-                c,
-                e,
-                f,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k16"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    string_p(".f32"),
+                    string_p(".tf32"),
+                    string_p(".tf32"),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    spvariant,
+                    sync,
+                    aligned,
+                    m16n8k16,
+                    row,
+                    col,
+                    f32,
+                    tf32,
+                    tf322,
+                    f322,
+                    d,
+                    _,
+                    a,
+                    _,
+                    b,
+                    _,
+                    c,
+                    _,
+                    e,
+                    _,
+                    f,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedM16n8k16RowColF32Tf32Tf32F32 {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k16 = m16n8k16,
+                        row = row,
+                        col = col,
+                        f32 = f32,
+                        tf32 = tf32,
+                        tf322 = tf322,
+                        f322 = f322,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MmaSpvariantSyncAlignedM16n8k64RowColF32F8typeF8typeF32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k64")?;
-            let m16n8k64 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            let f8type = F8type::parse(stream)?;
-            stream.expect_complete()?;
-            let f8type1 = F8type::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f322 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MmaSpvariantSyncAlignedM16n8k64RowColF32F8typeF8typeF32 {
-                spvariant,
-                sync,
-                aligned,
-                m16n8k64,
-                row,
-                col,
-                f32,
-                f8type,
-                f8type1,
-                f322,
-                d,
-                a,
-                b,
-                c,
-                e,
-                f,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k64"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    string_p(".f32"),
+                    F8type::parse(),
+                    F8type::parse(),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    spvariant,
+                    sync,
+                    aligned,
+                    m16n8k64,
+                    row,
+                    col,
+                    f32,
+                    f8type,
+                    f8type1,
+                    f322,
+                    d,
+                    _,
+                    a,
+                    _,
+                    b,
+                    _,
+                    c,
+                    _,
+                    e,
+                    _,
+                    f,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedM16n8k64RowColF32F8typeF8typeF32 {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k64 = m16n8k64,
+                        row = row,
+                        col = col,
+                        f32 = f32,
+                        f8type = f8type,
+                        f8type1 = f8type1,
+                        f322 = f322,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MmaSpOrderedMetadataSyncAlignedM16n8k64RowColKindDtypeF8f6f4typeF8f6f4typeCtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            stream.expect_string(".sp::ordered_metadata")?;
-            let sp_ordered_metadata = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k64")?;
-            let m16n8k64 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            let kind = Kind::parse(stream)?;
-            stream.expect_complete()?;
-            let dtype = Dtype::parse(stream)?;
-            stream.expect_complete()?;
-            let f8f6f4type = F8f6f4type::parse(stream)?;
-            stream.expect_complete()?;
-            let f8f6f4type1 = F8f6f4type::parse(stream)?;
-            stream.expect_complete()?;
-            let ctype = Ctype::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(
-                MmaSpOrderedMetadataSyncAlignedM16n8k64RowColKindDtypeF8f6f4typeF8f6f4typeCtype {
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    string_p(".sp::ordered_metadata"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k64"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    Kind::parse(),
+                    Dtype::parse(),
+                    F8f6f4type::parse(),
+                    F8f6f4type::parse(),
+                    Ctype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
                     sp_ordered_metadata,
                     sync,
                     aligned,
@@ -961,11 +762,39 @@ pub mod section_1 {
                     f8f6f4type1,
                     ctype,
                     d,
+                    _,
                     a,
+                    _,
                     b,
+                    _,
                     c,
+                    _,
                     e,
+                    _,
                     f,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpOrderedMetadataSyncAlignedM16n8k64RowColKindDtypeF8f6f4typeF8f6f4typeCtype {
+                        sp_ordered_metadata = sp_ordered_metadata,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k64 = m16n8k64,
+                        row = row,
+                        col = col,
+                        kind = kind,
+                        dtype = dtype,
+                        f8f6f4type = f8f6f4type,
+                        f8f6f4type1 = f8f6f4type1,
+                        ctype = ctype,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+
+                    })
                 },
             )
         }
@@ -981,204 +810,142 @@ pub mod section_2 {
     // ============================================================================
 
     impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindMxf4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf4").is_ok() {
-                    return Ok(Kind::KindMxf4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::mxf4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".kind::mxf4"), |_, _span| Kind::KindMxf4))
         }
     }
 
     impl PtxParser for ScaleVecSize {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try ScaleVec2x
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".scale_vec::2X").is_ok() {
-                    return Ok(ScaleVecSize::ScaleVec2x);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".scale_vec::2X"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".scale_vec::2X"), |_, _span| {
+                ScaleVecSize::ScaleVec2x
+            }))
         }
     }
 
     impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp::ordered_metadata"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".sp::ordered_metadata"), |_, _span| {
+                Spvariant::SpOrderedMetadata
+            }))
         }
     }
 
     impl PtxParser for Stype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Ue8m0
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".ue8m0").is_ok() {
-                    return Ok(Stype::Ue8m0);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".ue8m0"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".ue8m0"), |_, _span| Stype::Ue8m0))
         }
     }
 
     impl PtxParser
         for MmaSpvariantSyncAlignedM16n8k128RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype
     {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k128")?;
-            let m16n8k128 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            let kind = Kind::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".block_scale")?;
-            let block_scale = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scale_vec_size = match ScaleVecSize::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".e2m1")?;
-            let e2m1 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".e2m1")?;
-            let e2m12 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f322 = ();
-            stream.expect_complete()?;
-            let stype = Stype::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let scale_a_data = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let byte_id_a = VectorOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let scale_b_data = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let byte_id_b = VectorOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MmaSpvariantSyncAlignedM16n8k128RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype {
-                spvariant,
-                sync,
-                aligned,
-                m16n8k128,
-                row,
-                col,
-                kind,
-                block_scale,
-                scale_vec_size,
-                f32,
-                e2m1,
-                e2m12,
-                f322,
-                stype,
-                d,
-                a,
-                b,
-                c,
-                e,
-                f,
-                scale_a_data,
-                byte_id_a,
-                scale_b_data,
-                byte_id_b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k128"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    Kind::parse(),
+                    string_p(".block_scale"),
+                    optional(ScaleVecSize::parse()),
+                    string_p(".f32"),
+                    string_p(".e2m1"),
+                    string_p(".e2m1"),
+                    string_p(".f32"),
+                    Stype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    VectorOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    VectorOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    spvariant,
+                    sync,
+                    aligned,
+                    m16n8k128,
+                    row,
+                    col,
+                    kind,
+                    block_scale,
+                    scale_vec_size,
+                    f32,
+                    e2m1,
+                    e2m12,
+                    f322,
+                    stype,
+                    d,
+                    _,
+                    a,
+                    _,
+                    b,
+                    _,
+                    c,
+                    _,
+                    e,
+                    _,
+                    f,
+                    _,
+                    scale_a_data,
+                    _,
+                    byte_id_a,
+                    _,
+                    scale_b_data,
+                    _,
+                    byte_id_b,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedM16n8k128RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k128 = m16n8k128,
+                        row = row,
+                        col = col,
+                        kind = kind,
+                        block_scale = block_scale,
+                        scale_vec_size = scale_vec_size,
+                        f32 = f32,
+                        e2m1 = e2m1,
+                        e2m12 = e2m12,
+                        f322 = f322,
+                        stype = stype,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+                        scale_a_data = scale_a_data,
+                        byte_id_a = byte_id_a,
+                        scale_b_data = scale_b_data,
+                        byte_id_b = byte_id_b,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -1192,217 +959,152 @@ pub mod section_3 {
     // ============================================================================
 
     impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindMxf4nvf4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf4nvf4").is_ok() {
-                    return Ok(Kind::KindMxf4nvf4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::mxf4nvf4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".kind::mxf4nvf4"), |_, _span| {
+                Kind::KindMxf4nvf4
+            }))
         }
     }
 
     impl PtxParser for ScaleVecSize {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try ScaleVec2x
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".scale_vec::2X").is_ok() {
-                    return Ok(ScaleVecSize::ScaleVec2x);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try ScaleVec4x
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".scale_vec::4X").is_ok() {
-                    return Ok(ScaleVecSize::ScaleVec4x);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".scale_vec::2X", ".scale_vec::4X"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".scale_vec::2X"), |_, _span| {
+                    ScaleVecSize::ScaleVec2x
+                }),
+                map(string_p(".scale_vec::4X"), |_, _span| {
+                    ScaleVecSize::ScaleVec4x
+                })
+            )
         }
     }
 
     impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp::ordered_metadata"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".sp::ordered_metadata"), |_, _span| {
+                Spvariant::SpOrderedMetadata
+            }))
         }
     }
 
     impl PtxParser for Stype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Ue8m0
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".ue8m0").is_ok() {
-                    return Ok(Stype::Ue8m0);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Ue4m3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".ue4m3").is_ok() {
-                    return Ok(Stype::Ue4m3);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".ue8m0", ".ue4m3"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".ue8m0"), |_, _span| Stype::Ue8m0),
+                map(string_p(".ue4m3"), |_, _span| Stype::Ue4m3)
+            )
         }
     }
 
     impl PtxParser
         for MmaSpvariantSyncAlignedM16n8k128RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype1
     {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k128")?;
-            let m16n8k128 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            let kind = Kind::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".block_scale")?;
-            let block_scale = ();
-            stream.expect_complete()?;
-            let scale_vec_size = ScaleVecSize::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".e2m1")?;
-            let e2m1 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".e2m1")?;
-            let e2m12 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f322 = ();
-            stream.expect_complete()?;
-            let stype = Stype::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let scale_a_data = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let byte_id_a = VectorOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let scale_b_data = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let byte_id_b = VectorOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MmaSpvariantSyncAlignedM16n8k128RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype1 {
-                spvariant,
-                sync,
-                aligned,
-                m16n8k128,
-                row,
-                col,
-                kind,
-                block_scale,
-                scale_vec_size,
-                f32,
-                e2m1,
-                e2m12,
-                f322,
-                stype,
-                d,
-                a,
-                b,
-                c,
-                e,
-                f,
-                scale_a_data,
-                byte_id_a,
-                scale_b_data,
-                byte_id_b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k128"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    Kind::parse(),
+                    string_p(".block_scale"),
+                    ScaleVecSize::parse(),
+                    string_p(".f32"),
+                    string_p(".e2m1"),
+                    string_p(".e2m1"),
+                    string_p(".f32"),
+                    Stype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    VectorOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    VectorOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    spvariant,
+                    sync,
+                    aligned,
+                    m16n8k128,
+                    row,
+                    col,
+                    kind,
+                    block_scale,
+                    scale_vec_size,
+                    f32,
+                    e2m1,
+                    e2m12,
+                    f322,
+                    stype,
+                    d,
+                    _,
+                    a,
+                    _,
+                    b,
+                    _,
+                    c,
+                    _,
+                    e,
+                    _,
+                    f,
+                    _,
+                    scale_a_data,
+                    _,
+                    byte_id_a,
+                    _,
+                    scale_b_data,
+                    _,
+                    byte_id_b,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedM16n8k128RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype1 {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k128 = m16n8k128,
+                        row = row,
+                        col = col,
+                        kind = kind,
+                        block_scale = block_scale,
+                        scale_vec_size = scale_vec_size,
+                        f32 = f32,
+                        e2m1 = e2m1,
+                        e2m12 = e2m12,
+                        f322 = f322,
+                        stype = stype,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+                        scale_a_data = scale_a_data,
+                        byte_id_a = byte_id_a,
+                        scale_b_data = scale_b_data,
+                        byte_id_b = byte_id_b,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -1416,263 +1118,117 @@ pub mod section_4 {
     // ============================================================================
 
     impl PtxParser for F8f6f4type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try E4m3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e4m3").is_ok() {
-                    return Ok(F8f6f4type::E4m3);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try E5m2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e5m2").is_ok() {
-                    return Ok(F8f6f4type::E5m2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E3m2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e3m2").is_ok() {
-                    return Ok(F8f6f4type::E3m2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E2m3
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e2m3").is_ok() {
-                    return Ok(F8f6f4type::E2m3);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try E2m1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".e2m1").is_ok() {
-                    return Ok(F8f6f4type::E2m1);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".e4m3", ".e5m2", ".e3m2", ".e2m3", ".e2m1"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".e4m3"), |_, _span| F8f6f4type::E4m3),
+                map(string_p(".e5m2"), |_, _span| F8f6f4type::E5m2),
+                map(string_p(".e3m2"), |_, _span| F8f6f4type::E3m2),
+                map(string_p(".e2m3"), |_, _span| F8f6f4type::E2m3),
+                map(string_p(".e2m1"), |_, _span| F8f6f4type::E2m1)
+            )
         }
     }
 
     impl PtxParser for Kind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try KindMxf8f6f4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".kind::mxf8f6f4").is_ok() {
-                    return Ok(Kind::KindMxf8f6f4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".kind::mxf8f6f4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".kind::mxf8f6f4"), |_, _span| {
+                Kind::KindMxf8f6f4
+            }))
         }
     }
 
     impl PtxParser for ScaleVecSize {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try ScaleVec1x
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".scale_vec::1X").is_ok() {
-                    return Ok(ScaleVecSize::ScaleVec1x);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".scale_vec::1X"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".scale_vec::1X"), |_, _span| {
+                ScaleVecSize::ScaleVec1x
+            }))
         }
     }
 
     impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp::ordered_metadata"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".sp::ordered_metadata"), |_, _span| {
+                Spvariant::SpOrderedMetadata
+            }))
         }
     }
 
     impl PtxParser for Stype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Ue8m0
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".ue8m0").is_ok() {
-                    return Ok(Stype::Ue8m0);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".ue8m0"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".ue8m0"), |_, _span| Stype::Ue8m0))
         }
     }
 
     impl PtxParser for MmaSpvariantSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32F8f6f4typeF8f6f4typeF32Stype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".m16n8k64")?;
-            let m16n8k64 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            let kind = Kind::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".block_scale")?;
-            let block_scale = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scale_vec_size = match ScaleVecSize::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            let f8f6f4type = F8f6f4type::parse(stream)?;
-            stream.expect_complete()?;
-            let f8f6f4type1 = F8f6f4type::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f322 = ();
-            stream.expect_complete()?;
-            let stype = Stype::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let scale_a_data = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let byte_id_a = VectorOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let scale_b_data = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let byte_id_b = VectorOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MmaSpvariantSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32F8f6f4typeF8f6f4typeF32Stype {
-                spvariant,
-                sync,
-                aligned,
-                m16n8k64,
-                row,
-                col,
-                kind,
-                block_scale,
-                scale_vec_size,
-                f32,
-                f8f6f4type,
-                f8f6f4type1,
-                f322,
-                stype,
-                d,
-                a,
-                b,
-                c,
-                e,
-                f,
-                scale_a_data,
-                byte_id_a,
-                scale_b_data,
-                byte_id_b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".m16n8k64"),
+                    string_p(".row"),
+                    string_p(".col"),
+                    Kind::parse(),
+                    string_p(".block_scale"),
+                    optional(ScaleVecSize::parse()),
+                    string_p(".f32"),
+                    F8f6f4type::parse(),
+                    F8f6f4type::parse(),
+                    string_p(".f32"),
+                    Stype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    VectorOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    VectorOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, spvariant, sync, aligned, m16n8k64, row, col, kind, block_scale, scale_vec_size, f32, f8f6f4type, f8f6f4type1, f322, stype, d, _, a, _, b, _, c, _, e, _, f, _, scale_a_data, _, byte_id_a, _, scale_b_data, _, byte_id_b, _), span| {
+                    ok!(MmaSpvariantSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32F8f6f4typeF8f6f4typeF32Stype {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        m16n8k64 = m16n8k64,
+                        row = row,
+                        col = col,
+                        kind = kind,
+                        block_scale = block_scale,
+                        scale_vec_size = scale_vec_size,
+                        f32 = f32,
+                        f8f6f4type = f8f6f4type,
+                        f8f6f4type1 = f8f6f4type1,
+                        f322 = f322,
+                        stype = stype,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+                        scale_a_data = scale_a_data,
+                        byte_id_a = byte_id_a,
+                        scale_b_data = scale_b_data,
+                        byte_id_b = byte_id_b,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -1686,193 +1242,74 @@ pub mod section_5 {
     // ============================================================================
 
     impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u8").is_ok() {
-                    return Ok(Atype::U8);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s8").is_ok() {
-                    return Ok(Atype::S8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u8", ".s8"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".u8"), |_, _span| Atype::U8),
+                map(string_p(".s8"), |_, _span| Atype::S8)
+            )
         }
     }
 
     impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u8").is_ok() {
-                    return Ok(Btype::U8);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s8").is_ok() {
-                    return Ok(Btype::S8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u8", ".s8"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".u8"), |_, _span| Btype::U8),
+                map(string_p(".s8"), |_, _span| Btype::S8)
+            )
         }
     }
 
     impl PtxParser for Shape {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M16n8k32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m16n8k32").is_ok() {
-                    return Ok(Shape::M16n8k32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try M16n8k64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m16n8k64").is_ok() {
-                    return Ok(Shape::M16n8k64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m16n8k32", ".m16n8k64"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".m16n8k32"), |_, _span| Shape::M16n8k32),
+                map(string_p(".m16n8k64"), |_, _span| Shape::M16n8k64)
+            )
         }
     }
 
     impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Sp
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp").is_ok() {
-                    return Ok(Spvariant::Sp);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp::ordered_metadata", ".sp"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".sp::ordered_metadata"), |_, _span| {
+                    Spvariant::SpOrderedMetadata
+                }),
+                map(string_p(".sp"), |_, _span| Spvariant::Sp)
+            )
         }
     }
 
     impl PtxParser for MmaSpvariantSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let satfinite = stream.expect_string(".satfinite").is_ok();
-            if !satfinite {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".s32")?;
-            let s32 = ();
-            stream.expect_complete()?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".s32")?;
-            let s322 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(
-                MmaSpvariantSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS32 {
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Shape::parse(),
+                    string_p(".row"),
+                    string_p(".col"),
+                    map(optional(string_p(".satfinite")), |value, _| value.is_some()),
+                    string_p(".s32"),
+                    Atype::parse(),
+                    Btype::parse(),
+                    string_p(".s32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
                     spvariant,
                     sync,
                     aligned,
@@ -1885,11 +1322,39 @@ pub mod section_5 {
                     btype,
                     s322,
                     d,
+                    _,
                     a,
+                    _,
                     b,
+                    _,
                     c,
+                    _,
                     e,
+                    _,
                     f,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS32 {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        shape = shape,
+                        row = row,
+                        col = col,
+                        satfinite = satfinite,
+                        s32 = s32,
+                        atype = atype,
+                        btype = btype,
+                        s322 = s322,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+
+                    })
                 },
             )
         }
@@ -1905,193 +1370,74 @@ pub mod section_6 {
     // ============================================================================
 
     impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u4").is_ok() {
-                    return Ok(Atype::U4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s4").is_ok() {
-                    return Ok(Atype::S4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u4", ".s4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".u4"), |_, _span| Atype::U4),
+                map(string_p(".s4"), |_, _span| Atype::S4)
+            )
         }
     }
 
     impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u4").is_ok() {
-                    return Ok(Btype::U4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s4").is_ok() {
-                    return Ok(Btype::S4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u4", ".s4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".u4"), |_, _span| Btype::U4),
+                map(string_p(".s4"), |_, _span| Btype::S4)
+            )
         }
     }
 
     impl PtxParser for Shape {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M16n8k128
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m16n8k128").is_ok() {
-                    return Ok(Shape::M16n8k128);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try M16n8k64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m16n8k64").is_ok() {
-                    return Ok(Shape::M16n8k64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m16n8k128", ".m16n8k64"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".m16n8k128"), |_, _span| Shape::M16n8k128),
+                map(string_p(".m16n8k64"), |_, _span| Shape::M16n8k64)
+            )
         }
     }
 
     impl PtxParser for Spvariant {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SpOrderedMetadata
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp::ordered_metadata").is_ok() {
-                    return Ok(Spvariant::SpOrderedMetadata);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Sp
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sp").is_ok() {
-                    return Ok(Spvariant::Sp);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".sp::ordered_metadata", ".sp"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".sp::ordered_metadata"), |_, _span| {
+                    Spvariant::SpOrderedMetadata
+                }),
+                map(string_p(".sp"), |_, _span| Spvariant::Sp)
+            )
         }
     }
 
     impl PtxParser for MmaSpvariantSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS321 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mma")?;
-            let spvariant = Spvariant::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let satfinite = stream.expect_string(".satfinite").is_ok();
-            if !satfinite {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".s32")?;
-            let s32 = ();
-            stream.expect_complete()?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".s32")?;
-            let s322 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let e = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let f = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(
-                MmaSpvariantSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS321 {
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mma"),
+                    Spvariant::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Shape::parse(),
+                    string_p(".row"),
+                    string_p(".col"),
+                    map(optional(string_p(".satfinite")), |value, _| value.is_some()),
+                    string_p(".s32"),
+                    Atype::parse(),
+                    Btype::parse(),
+                    string_p(".s32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
                     spvariant,
                     sync,
                     aligned,
@@ -2104,11 +1450,39 @@ pub mod section_6 {
                     btype,
                     s322,
                     d,
+                    _,
                     a,
+                    _,
                     b,
+                    _,
                     c,
+                    _,
                     e,
+                    _,
                     f,
+                    _,
+                ),
+                 span| {
+                    ok!(MmaSpvariantSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS321 {
+                        spvariant = spvariant,
+                        sync = sync,
+                        aligned = aligned,
+                        shape = shape,
+                        row = row,
+                        col = col,
+                        satfinite = satfinite,
+                        s32 = s32,
+                        atype = atype,
+                        btype = btype,
+                        s322 = s322,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+                        e = e,
+                        f = f,
+
+                    })
                 },
             )
         }

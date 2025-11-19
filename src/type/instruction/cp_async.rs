@@ -13,6 +13,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -40,7 +42,7 @@ pub mod section_0 {
         _8,  // 8
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncCaStateGlobalLevelCacheHintLevelPrefetchSize {
         pub async_: (),                                     // .async
         pub ca: (),                                         // .ca
@@ -53,9 +55,10 @@ pub mod section_0 {
         pub cp_size: CpSize,                                // cp-size
         pub src_size: Option<GeneralOperand>,               // {, src-size}
         pub cache_policy: Option<GeneralOperand>,           // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncCgStateGlobalLevelCacheHintLevelPrefetchSize {
         pub async_: (),                                     // .async
         pub cg: (),                                         // .cg
@@ -68,9 +71,10 @@ pub mod section_0 {
         pub imm_16: (),                                     // 16
         pub src_size: Option<GeneralOperand>,               // {, src-size}
         pub cache_policy: Option<GeneralOperand>,           // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncCaStateGlobalLevelCacheHintLevelPrefetchSize1 {
         pub async_: (),                                     // .async
         pub ca: (),                                         // .ca
@@ -83,9 +87,10 @@ pub mod section_0 {
         pub cp_size: CpSize,                                // cp-size
         pub ignore_src: Option<GeneralOperand>,             // {, ignore-src}
         pub cache_policy: Option<GeneralOperand>,           // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncCgStateGlobalLevelCacheHintLevelPrefetchSize1 {
         pub async_: (),                                     // .async
         pub cg: (),                                         // .cg
@@ -98,6 +103,7 @@ pub mod section_0 {
         pub imm_16: (),                                     // 16
         pub ignore_src: Option<GeneralOperand>,             // {, ignore-src}
         pub cache_policy: Option<GeneralOperand>,           // {, cache-policy}
+        pub span: Span,
     }
 }
 

@@ -14,6 +14,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -34,15 +36,16 @@ pub mod section_0 {
         Rp, // .rp
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct DivType {
         pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct DivApproxFtzF32 {
         pub approx: (),        // .approx
         pub ftz: bool,         // {.ftz}
@@ -50,9 +53,10 @@ pub mod section_0 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct DivFullFtzF32 {
         pub full: (),          // .full
         pub ftz: bool,         // {.ftz}
@@ -60,9 +64,10 @@ pub mod section_0 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct DivRndFtzF32 {
         pub rnd: Rnd,          // .rnd
         pub ftz: bool,         // {.ftz}
@@ -70,15 +75,17 @@ pub mod section_0 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct DivRndF64 {
         pub rnd: Rnd,          // .rnd
         pub f64: (),           // .f64
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 

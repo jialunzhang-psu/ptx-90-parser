@@ -6,9 +6,11 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct StBulkWeakSharedCta {
         pub bulk: (),                // .bulk
         pub weak: bool,              // {.weak}
@@ -16,6 +18,7 @@ pub mod section_0 {
         pub a: AddressOperand,       // [a]
         pub size: GeneralOperand,    // size
         pub initval: GeneralOperand, // initval
+        pub span: Span,
     }
 }
 

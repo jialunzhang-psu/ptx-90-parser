@@ -34,6 +34,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -91,7 +93,7 @@ pub mod section_0 {
         F64, // .f64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeSpaceOpLevelCacheHintType {
         pub sem: Option<Sem>,                         // {.sem}
         pub scope: Option<Scope>,                     // {.scope}
@@ -103,9 +105,10 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeSpaceOpType {
         pub sem: Option<Sem>,     // {.sem}
         pub scope: Option<Scope>, // {.scope}
@@ -116,9 +119,10 @@ pub mod section_0 {
         pub a: AddressOperand,    // [a]
         pub b: GeneralOperand,    // b
         pub c: GeneralOperand,    // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeSpaceCasB16 {
         pub sem: Option<Sem>,     // {.sem}
         pub scope: Option<Scope>, // {.scope}
@@ -129,9 +133,10 @@ pub mod section_0 {
         pub a: AddressOperand,    // [a]
         pub b: GeneralOperand,    // b
         pub c: GeneralOperand,    // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeSpaceCasB128 {
         pub sem: Option<Sem>,     // {.sem}
         pub scope: Option<Scope>, // {.scope}
@@ -142,9 +147,10 @@ pub mod section_0 {
         pub a: AddressOperand,    // [a]
         pub b: GeneralOperand,    // b
         pub c: GeneralOperand,    // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeSpaceExchLevelCacheHintB128 {
         pub sem: Option<Sem>,                         // {.sem}
         pub scope: Option<Scope>,                     // {.scope}
@@ -156,9 +162,10 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeSpaceAddNoftzLevelCacheHintF16 {
         pub sem: Option<Sem>,                         // {.sem}
         pub scope: Option<Scope>,                     // {.scope}
@@ -171,9 +178,10 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeSpaceAddNoftzLevelCacheHintF16x2 {
         pub sem: Option<Sem>,                         // {.sem}
         pub scope: Option<Scope>,                     // {.scope}
@@ -186,9 +194,10 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeSpaceAddNoftzLevelCacheHintBf16 {
         pub sem: Option<Sem>,                         // {.sem}
         pub scope: Option<Scope>,                     // {.scope}
@@ -201,9 +210,10 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeSpaceAddNoftzLevelCacheHintBf16x2 {
         pub sem: Option<Sem>,                         // {.sem}
         pub scope: Option<Scope>,                     // {.scope}
@@ -216,10 +226,13 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -275,7 +288,7 @@ pub mod section_1 {
         F16x2,  // .f16x2
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeGlobalAddLevelCacheHintVec32BitF32 {
         pub sem: Option<Sem>,                         // {.sem}
         pub scope: Option<Scope>,                     // {.scope}
@@ -288,9 +301,10 @@ pub mod section_1 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeGlobalOpNoftzLevelCacheHintVec16BitHalfWordType {
         pub sem: Option<Sem>,                         // {.sem}
         pub scope: Option<Scope>,                     // {.scope}
@@ -304,9 +318,10 @@ pub mod section_1 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AtomSemScopeGlobalOpNoftzLevelCacheHintVec32BitPackedType {
         pub sem: Option<Sem>,                         // {.sem}
         pub scope: Option<Scope>,                     // {.scope}
@@ -320,6 +335,7 @@ pub mod section_1 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 }
 

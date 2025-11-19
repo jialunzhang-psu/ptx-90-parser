@@ -5,9 +5,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -18,70 +24,38 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for State {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(State::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(State::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cta", ".shared"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cta"), |_, _span| State::SharedCta),
+                map(string_p(".shared"), |_, _span| State::Shared)
+            )
         }
     }
 
     impl PtxParser for MbarrierInitStateB64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mbarrier")?;
-            stream.expect_string(".init")?;
-            let init = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let state = match State::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b64")?;
-            let b64 = ();
-            stream.expect_complete()?;
-            let addr = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let count = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MbarrierInitStateB64 {
-                init,
-                state,
-                b64,
-                addr,
-                count,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mbarrier"),
+                    string_p(".init"),
+                    optional(State::parse()),
+                    string_p(".b64"),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, init, state, b64, addr, _, count, _), span| {
+                    ok!(MbarrierInitStateB64 {
+                        init = init,
+                        state = state,
+                        b64 = b64,
+                        addr = addr,
+                        count = count,
+
+                    })
+                },
+            )
         }
     }
 }

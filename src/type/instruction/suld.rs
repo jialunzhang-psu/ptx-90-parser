@@ -12,6 +12,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -53,7 +55,7 @@ pub mod section_0 {
         Zero,  // .zero
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SuldBGeomCopVecDtypeMode {
         pub b: (),              // .b
         pub geom: Geom,         // .geom
@@ -63,6 +65,7 @@ pub mod section_0 {
         pub mode: Option<Mode>, // {.mode}
         pub d: GeneralOperand,  // d
         pub a: TexHandler2,     // [a, b]
+        pub span: Span,
     }
 }
 

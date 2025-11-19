@@ -14,9 +14,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -27,228 +33,155 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for LevelPrimaryPriority {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2EvictUnchanged
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_unchanged").is_ok() {
-                    return Ok(LevelPrimaryPriority::L2EvictUnchanged);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try L2EvictNormal
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_normal").is_ok() {
-                    return Ok(LevelPrimaryPriority::L2EvictNormal);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try L2EvictFirst
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_first").is_ok() {
-                    return Ok(LevelPrimaryPriority::L2EvictFirst);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try L2EvictLast
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_last").is_ok() {
-                    return Ok(LevelPrimaryPriority::L2EvictLast);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".L2::evict_unchanged",
-                ".L2::evict_normal",
-                ".L2::evict_first",
-                ".L2::evict_last",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".L2::evict_unchanged"), |_, _span| {
+                    LevelPrimaryPriority::L2EvictUnchanged
+                }),
+                map(string_p(".L2::evict_normal"), |_, _span| {
+                    LevelPrimaryPriority::L2EvictNormal
+                }),
+                map(string_p(".L2::evict_first"), |_, _span| {
+                    LevelPrimaryPriority::L2EvictFirst
+                }),
+                map(string_p(".L2::evict_last"), |_, _span| {
+                    LevelPrimaryPriority::L2EvictLast
+                })
+            )
         }
     }
 
     impl PtxParser for LevelSecondaryPriority {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2EvictUnchanged
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_unchanged").is_ok() {
-                    return Ok(LevelSecondaryPriority::L2EvictUnchanged);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try L2EvictFirst
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::evict_first").is_ok() {
-                    return Ok(LevelSecondaryPriority::L2EvictFirst);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::evict_unchanged", ".L2::evict_first"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".L2::evict_unchanged"), |_, _span| {
+                    LevelSecondaryPriority::L2EvictUnchanged
+                }),
+                map(string_p(".L2::evict_first"), |_, _span| {
+                    LevelSecondaryPriority::L2EvictFirst
+                })
+            )
         }
     }
 
     impl PtxParser for CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("createpolicy")?;
-            stream.expect_string(".range")?;
-            let range = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let global = stream.expect_string(".global").is_ok();
-            if !global {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let level_primary_priority = LevelPrimaryPriority::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_secondary_priority = match LevelSecondaryPriority::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b64")?;
-            let b64 = ();
-            stream.expect_complete()?;
-            let cache_policy = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let primary_size = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let total_size = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(
-                CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("createpolicy"),
+                    string_p(".range"),
+                    map(optional(string_p(".global")), |value, _| value.is_some()),
+                    LevelPrimaryPriority::parse(),
+                    optional(LevelSecondaryPriority::parse()),
+                    string_p(".b64"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
                     range,
                     global,
                     level_primary_priority,
                     level_secondary_priority,
                     b64,
                     cache_policy,
+                    _,
                     a,
+                    _,
                     primary_size,
+                    _,
                     total_size,
+                    _,
+                ),
+                 span| {
+                    ok!(CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
+                        range = range,
+                        global = global,
+                        level_primary_priority = level_primary_priority,
+                        level_secondary_priority = level_secondary_priority,
+                        b64 = b64,
+                        cache_policy = cache_policy,
+                        a = a,
+                        primary_size = primary_size,
+                        total_size = total_size,
+
+                    })
                 },
             )
         }
     }
 
     impl PtxParser for CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("createpolicy")?;
-            stream.expect_string(".fractional")?;
-            let fractional = ();
-            stream.expect_complete()?;
-            let level_primary_priority = LevelPrimaryPriority::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_secondary_priority = match LevelSecondaryPriority::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b64")?;
-            let b64 = ();
-            stream.expect_complete()?;
-            let cache_policy = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let fraction = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(
-                CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("createpolicy"),
+                    string_p(".fractional"),
+                    LevelPrimaryPriority::parse(),
+                    optional(LevelSecondaryPriority::parse()),
+                    string_p(".b64"),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
                     fractional,
                     level_primary_priority,
                     level_secondary_priority,
                     b64,
                     cache_policy,
                     fraction,
+                    _,
+                ),
+                 span| {
+                    ok!(CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
+                        fractional = fractional,
+                        level_primary_priority = level_primary_priority,
+                        level_secondary_priority = level_secondary_priority,
+                        b64 = b64,
+                        cache_policy = cache_policy,
+                        fraction = fraction,
+
+                    })
                 },
             )
         }
     }
 
     impl PtxParser for CreatepolicyCvtL2B64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("createpolicy")?;
-            stream.expect_string(".cvt")?;
-            let cvt = ();
-            stream.expect_complete()?;
-            stream.expect_string(".L2")?;
-            let l2 = ();
-            stream.expect_complete()?;
-            stream.expect_string(".b64")?;
-            let b64 = ();
-            stream.expect_complete()?;
-            let cache_policy = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let access_property = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(CreatepolicyCvtL2B64 {
-                cvt,
-                l2,
-                b64,
-                cache_policy,
-                access_property,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("createpolicy"),
+                    string_p(".cvt"),
+                    string_p(".L2"),
+                    string_p(".b64"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, cvt, l2, b64, cache_policy, _, access_property, _), span| {
+                    ok!(CreatepolicyCvtL2B64 {
+                        cvt = cvt,
+                        l2 = l2,
+                        b64 = b64,
+                        cache_policy = cache_policy,
+                        access_property = access_property,
+
+                    })
+                },
+            )
         }
     }
 }

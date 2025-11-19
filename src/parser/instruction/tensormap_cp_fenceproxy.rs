@@ -8,9 +8,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -21,177 +27,94 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for CpQualifiers {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try GlobalSharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global.shared::cta").is_ok() {
-                    return Ok(CpQualifiers::GlobalSharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".global.shared::cta"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".global.shared::cta"), |_, _span| {
+                CpQualifiers::GlobalSharedCta
+            }))
         }
     }
 
     impl PtxParser for FenceQualifiers {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try ToProxyFromProxyReleaseScope
-            {
-                let saved_seq_pos = stream.position();
-                match (|| -> Result<_, PtxParseError> {
-                    let to_proxy_from_proxy = ToProxyFromProxy::parse(stream)?;
-                    stream.expect_string(".release")?;
-                    let release = ();
-                    let scope = Scope::parse(stream)?;
-                    Ok((to_proxy_from_proxy, release, scope))
-                })() {
-                    Ok((to_proxy_from_proxy, release, scope)) => {
-                        return Ok(FenceQualifiers::ToProxyFromProxyReleaseScope(
-                            to_proxy_from_proxy,
-                            release,
-                            scope,
-                        ));
-                    }
-                    Err(_) => {
-                        stream.set_position(saved_seq_pos);
-                    }
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(
+                seq_n!(
+                    ToProxyFromProxy::parse(),
+                    string_p(".release"),
+                    Scope::parse()
+                ),
+                |(to_proxy_from_proxy, release, scope), _span| {
+                    FenceQualifiers::ToProxyFromProxyReleaseScope(
+                        to_proxy_from_proxy,
+                        release,
+                        scope,
+                    )
                 }
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["<complex>"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+            ))
         }
     }
 
     impl PtxParser for Scope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cluster").is_ok() {
-                    return Ok(Scope::Cluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Cta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Scope::Cta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Gpu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".gpu").is_ok() {
-                    return Ok(Scope::Gpu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Sys
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sys").is_ok() {
-                    return Ok(Scope::Sys);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cluster", ".cta", ".gpu", ".sys"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".cluster"), |_, _span| Scope::Cluster),
+                map(string_p(".cta"), |_, _span| Scope::Cta),
+                map(string_p(".gpu"), |_, _span| Scope::Gpu),
+                map(string_p(".sys"), |_, _span| Scope::Sys)
+            )
         }
     }
 
     impl PtxParser for ToProxyFromProxy {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try TensormapGeneric
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".tensormap::generic").is_ok() {
-                    return Ok(ToProxyFromProxy::TensormapGeneric);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".tensormap::generic"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".tensormap::generic"), |_, _span| {
+                ToProxyFromProxy::TensormapGeneric
+            }))
         }
     }
 
     impl PtxParser for TensormapCpFenceproxyCpQualifiersFenceQualifiersSyncAligned {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("tensormap")?;
-            stream.expect_string(".cp_fenceproxy")?;
-            let cp_fenceproxy = ();
-            stream.expect_complete()?;
-            let cp_qualifiers = CpQualifiers::parse(stream)?;
-            stream.expect_complete()?;
-            let fence_qualifiers = FenceQualifiers::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let dst = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let src = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let size = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(
-                TensormapCpFenceproxyCpQualifiersFenceQualifiersSyncAligned {
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("tensormap"),
+                    string_p(".cp_fenceproxy"),
+                    CpQualifiers::parse(),
+                    FenceQualifiers::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
                     cp_fenceproxy,
                     cp_qualifiers,
                     fence_qualifiers,
                     sync,
                     aligned,
                     dst,
+                    _,
                     src,
+                    _,
                     size,
+                    _,
+                ),
+                 span| {
+                    ok!(TensormapCpFenceproxyCpQualifiersFenceQualifiersSyncAligned {
+                        cp_fenceproxy = cp_fenceproxy,
+                        cp_qualifiers = cp_qualifiers,
+                        fence_qualifiers = fence_qualifiers,
+                        sync = sync,
+                        aligned = aligned,
+                        dst = dst,
+                        src = src,
+                        size = size,
+
+                    })
                 },
             )
         }

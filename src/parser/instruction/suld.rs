@@ -10,9 +10,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -23,307 +29,89 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Cop {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Ca
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".ca").is_ok() {
-                    return Ok(Cop::Ca);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Cg
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cg").is_ok() {
-                    return Ok(Cop::Cg);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Cs
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cs").is_ok() {
-                    return Ok(Cop::Cs);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Cv
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cv").is_ok() {
-                    return Ok(Cop::Cv);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".ca", ".cg", ".cs", ".cv"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".ca"), |_, _span| Cop::Ca),
+                map(string_p(".cg"), |_, _span| Cop::Cg),
+                map(string_p(".cs"), |_, _span| Cop::Cs),
+                map(string_p(".cv"), |_, _span| Cop::Cv)
+            )
         }
     }
 
     impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b16").is_ok() {
-                    return Ok(Dtype::B16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b32").is_ok() {
-                    return Ok(Dtype::B32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b64").is_ok() {
-                    return Ok(Dtype::B64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b8").is_ok() {
-                    return Ok(Dtype::B8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b16", ".b32", ".b64", ".b8"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".b16"), |_, _span| Dtype::B16),
+                map(string_p(".b32"), |_, _span| Dtype::B32),
+                map(string_p(".b64"), |_, _span| Dtype::B64),
+                map(string_p(".b8"), |_, _span| Dtype::B8)
+            )
         }
     }
 
     impl PtxParser for Geom {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try A1d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".a1d").is_ok() {
-                    return Ok(Geom::A1d);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try A2d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".a2d").is_ok() {
-                    return Ok(Geom::A2d);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try _1d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".1d").is_ok() {
-                    return Ok(Geom::_1d);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try _2d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".2d").is_ok() {
-                    return Ok(Geom::_2d);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try _3d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".3d").is_ok() {
-                    return Ok(Geom::_3d);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".a1d", ".a2d", ".1d", ".2d", ".3d"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".a1d"), |_, _span| Geom::A1d),
+                map(string_p(".a2d"), |_, _span| Geom::A2d),
+                map(string_p(".1d"), |_, _span| Geom::_1d),
+                map(string_p(".2d"), |_, _span| Geom::_2d),
+                map(string_p(".3d"), |_, _span| Geom::_3d)
+            )
         }
     }
 
     impl PtxParser for Mode {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Clamp
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".clamp").is_ok() {
-                    return Ok(Mode::Clamp);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Trap
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".trap").is_ok() {
-                    return Ok(Mode::Trap);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Zero
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".zero").is_ok() {
-                    return Ok(Mode::Zero);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".clamp", ".trap", ".zero"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".clamp"), |_, _span| Mode::Clamp),
+                map(string_p(".trap"), |_, _span| Mode::Trap),
+                map(string_p(".zero"), |_, _span| Mode::Zero)
+            )
         }
     }
 
     impl PtxParser for Vec {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try None
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string("none").is_ok() {
-                    return Ok(Vec::None);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try V2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v2").is_ok() {
-                    return Ok(Vec::V2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try V4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v4").is_ok() {
-                    return Ok(Vec::V4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &["none", ".v2", ".v4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p("none"), |_, _span| Vec::None),
+                map(string_p(".v2"), |_, _span| Vec::V2),
+                map(string_p(".v4"), |_, _span| Vec::V4)
+            )
         }
     }
 
     impl PtxParser for SuldBGeomCopVecDtypeMode {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("suld")?;
-            stream.expect_string(".b")?;
-            let b = ();
-            stream.expect_complete()?;
-            let geom = Geom::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let cop = match Cop::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let vec = Vec::parse(stream)?;
-            stream.expect_complete()?;
-            let dtype = Dtype::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let mode = match Mode::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = TexHandler2::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(SuldBGeomCopVecDtypeMode {
-                b,
-                geom,
-                cop,
-                vec,
-                dtype,
-                mode,
-                d,
-                a,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("suld"),
+                    string_p(".b"),
+                    Geom::parse(),
+                    optional(Cop::parse()),
+                    Vec::parse(),
+                    Dtype::parse(),
+                    optional(Mode::parse()),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    TexHandler2::parse(),
+                    semicolon_p()
+                ),
+                |(_, b, geom, cop, vec, dtype, mode, d, _, a, _), span| {
+                    ok!(SuldBGeomCopVecDtypeMode {
+                        b = b,
+                        geom = geom,
+                        cop = cop,
+                        vec = vec,
+                        dtype = dtype,
+                        mode = mode,
+                        d = d,
+                        a = a,
+
+                    })
+                },
+            )
         }
     }
 }

@@ -14,6 +14,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -59,7 +61,7 @@ pub mod section_0 {
         A2d, // .a2d
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SustBDimCopVecCtypeMode {
         pub b: (),              // .b
         pub dim: Dim,           // .dim
@@ -69,9 +71,10 @@ pub mod section_0 {
         pub mode: Option<Mode>, // {.mode}
         pub a: TexHandler2,     // [a, b]
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SustPDimVecB32Mode {
         pub p: (),              // .p
         pub dim: Dim,           // .dim
@@ -80,9 +83,10 @@ pub mod section_0 {
         pub mode: Option<Mode>, // {.mode}
         pub a: TexHandler2,     // [a, b]
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SustBAdimCopVecCtypeMode {
         pub b: (),              // .b
         pub adim: Adim,         // .adim
@@ -92,6 +96,7 @@ pub mod section_0 {
         pub mode: Option<Mode>, // {.mode}
         pub a: TexHandler2,     // [a, b]
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 }
 

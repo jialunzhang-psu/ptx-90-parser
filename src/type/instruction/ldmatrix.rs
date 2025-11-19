@@ -14,6 +14,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -52,7 +54,7 @@ pub mod section_0 {
         B4x16P64, // .b4x16_p64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdmatrixSyncAlignedShapeNumTransSsType {
         pub sync: (),          // .sync
         pub aligned: (),       // .aligned
@@ -63,9 +65,10 @@ pub mod section_0 {
         pub type_: Type,       // .type
         pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdmatrixSyncAlignedM8n16NumSsDstFmtSrcFmt {
         pub sync: (),          // .sync
         pub aligned: (),       // .aligned
@@ -76,9 +79,10 @@ pub mod section_0 {
         pub src_fmt: SrcFmt,   // .src_fmt
         pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdmatrixSyncAlignedM16n16NumTransSsDstFmtSrcFmt {
         pub sync: (),          // .sync
         pub aligned: (),       // .aligned
@@ -90,6 +94,7 @@ pub mod section_0 {
         pub src_fmt: SrcFmt,   // .src_fmt
         pub r: GeneralOperand, // r
         pub p: AddressOperand, // [p]
+        pub span: Span,
     }
 }
 

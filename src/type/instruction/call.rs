@@ -17,75 +17,86 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CallUni {
         pub uni: bool,                       // {.uni}
         pub ret_param: GeneralOperand,       // (ret-param)
         pub func: GeneralOperand,            // func
         pub param_list: Vec<GeneralOperand>, // (param-list)
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CallUni1 {
         pub uni: bool,                       // {.uni}
         pub func: GeneralOperand,            // func
         pub param_list: Vec<GeneralOperand>, // (param-list)
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CallUni2 {
         pub uni: bool,            // {.uni}
         pub func: GeneralOperand, // func
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CallUni3 {
         pub uni: bool,                       // {.uni}
         pub ret_param: GeneralOperand,       // (ret-param)
         pub fptr: GeneralOperand,            // fptr
         pub param_list: Vec<GeneralOperand>, // (param-list)
         pub flist: GeneralOperand,           // flist
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CallUni4 {
         pub uni: bool,                       // {.uni}
         pub fptr: GeneralOperand,            // fptr
         pub param_list: Vec<GeneralOperand>, // (param-list)
         pub flist: GeneralOperand,           // flist
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CallUni5 {
         pub uni: bool,             // {.uni}
         pub fptr: GeneralOperand,  // fptr
         pub flist: GeneralOperand, // flist
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CallUni6 {
         pub uni: bool,                       // {.uni}
         pub ret_param: GeneralOperand,       // (ret-param)
         pub fptr: GeneralOperand,            // fptr
         pub param_list: Vec<GeneralOperand>, // (param-list)
         pub fproto: GeneralOperand,          // fproto
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CallUni7 {
         pub uni: bool,                       // {.uni}
         pub fptr: GeneralOperand,            // fptr
         pub param_list: Vec<GeneralOperand>, // (param-list)
         pub fproto: GeneralOperand,          // fproto
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CallUni8 {
         pub uni: bool,              // {.uni}
         pub fptr: GeneralOperand,   // fptr
         pub fproto: GeneralOperand, // fproto
+        pub span: Span,
     }
 }
 

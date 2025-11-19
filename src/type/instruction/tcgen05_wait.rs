@@ -7,6 +7,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -15,11 +17,12 @@ pub mod section_0 {
         WaitSt, // .wait::st
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05WaitOperationSyncAligned {
         pub wait_operation: WaitOperation, // .wait_operation
         pub sync: (),                      // .sync
         pub aligned: (),                   // .aligned
+        pub span: Span,
     }
 }
 

@@ -51,6 +51,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -66,7 +68,7 @@ pub mod section_0 {
         KindF16,    // .kind::f16
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKind {
         pub mma: (),                                     // .mma
         pub sp: (),                                      // .sp
@@ -80,9 +82,10 @@ pub mod section_0 {
         pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
         pub enable_input_d: GeneralOperand,              // enable-input-d
         pub scale_input_d: Option<GeneralOperand>,       // {, scale-input-d}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKind1 {
         pub mma: (),                                     // .mma
         pub sp: (),                                      // .sp
@@ -96,10 +99,13 @@ pub mod section_0 {
         pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
         pub enable_input_d: GeneralOperand,              // enable-input-d
         pub scale_input_d: Option<GeneralOperand>,       // {, scale-input-d}
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -124,7 +130,7 @@ pub mod section_1 {
         Block32,    // .block32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindBlockScaleScaleVectorsize {
         pub mma: (),                                   // .mma
         pub sp: (),                                    // .sp
@@ -140,9 +146,10 @@ pub mod section_1 {
         pub scale_a_tmem: AddressOperand,              // [scale-A-tmem]
         pub scale_b_tmem: AddressOperand,              // [scale-B-tmem]
         pub enable_input_d: GeneralOperand,            // enable-input-d
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindBlockScaleScaleVectorsize1 {
         pub mma: (),                                   // .mma
         pub sp: (),                                    // .sp
@@ -158,10 +165,13 @@ pub mod section_1 {
         pub scale_a_tmem: AddressOperand,              // [scale-A-tmem]
         pub scale_b_tmem: AddressOperand,              // [scale-B-tmem]
         pub enable_input_d: GeneralOperand,            // enable-input-d
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -195,7 +205,7 @@ pub mod section_2 {
         CollectorBufferOp((), Buffer, Op), // .collector::buffer::op
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindCollectorUsage {
         pub mma: (),                                     // .mma
         pub sp: (),                                      // .sp
@@ -210,9 +220,10 @@ pub mod section_2 {
         pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
         pub enable_input_d: GeneralOperand,              // enable-input-d
         pub scale_input_d: Option<GeneralOperand>,       // {, scale-input-d}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindAshiftCollectorUsage {
         pub mma: (),                                     // .mma
         pub sp: (),                                      // .sp
@@ -228,9 +239,10 @@ pub mod section_2 {
         pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
         pub enable_input_d: GeneralOperand,              // enable-input-d
         pub scale_input_d: Option<GeneralOperand>,       // {, scale-input-d}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindAshiftCollectorUsage1 {
         pub mma: (),                                     // .mma
         pub sp: (),                                      // .sp
@@ -246,10 +258,13 @@ pub mod section_2 {
         pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
         pub enable_input_d: GeneralOperand,              // enable-input-d
         pub scale_input_d: Option<GeneralOperand>,       // {, scale-input-d}
+        pub span: Span,
     }
 }
 
 pub mod section_3 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -292,7 +307,7 @@ pub mod section_3 {
         CollectorBufferOp((), Buffer, Op), // .collector::buffer::op
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindBlockScaleScaleVectorsizeCollectorUsage {
         pub mma: (),                                   // .mma
         pub sp: (),                                    // .sp
@@ -309,9 +324,10 @@ pub mod section_3 {
         pub scale_a_tmem: AddressOperand,              // [scale-A-tmem]
         pub scale_b_tmem: AddressOperand,              // [scale-B-tmem]
         pub enable_input_d: GeneralOperand,            // enable-input-d
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindBlockScaleScaleVectorsizeCollectorUsage1 {
         pub mma: (),                                   // .mma
         pub sp: (),                                    // .sp
@@ -328,10 +344,13 @@ pub mod section_3 {
         pub scale_a_tmem: AddressOperand,              // [scale-A-tmem]
         pub scale_b_tmem: AddressOperand,              // [scale-B-tmem]
         pub enable_input_d: GeneralOperand,            // enable-input-d
+        pub span: Span,
     }
 }
 
 pub mod section_4 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -340,7 +359,7 @@ pub mod section_4 {
         CtaGroup2, // .cta_group::2
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindI8 {
         pub mma: (),                                     // .mma
         pub sp: (),                                      // .sp
@@ -353,9 +372,10 @@ pub mod section_4 {
         pub idesc: GeneralOperand,                       // idesc
         pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
         pub enable_input_d: GeneralOperand,              // enable-input-d
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindI81 {
         pub mma: (),                                     // .mma
         pub sp: (),                                      // .sp
@@ -368,10 +388,13 @@ pub mod section_4 {
         pub idesc: GeneralOperand,                       // idesc
         pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
         pub enable_input_d: GeneralOperand,              // enable-input-d
+        pub span: Span,
     }
 }
 
 pub mod section_5 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -398,7 +421,7 @@ pub mod section_5 {
         CollectorBufferOp((), Buffer, Op), // .collector::buffer::op
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindI8CollectorUsage {
         pub mma: (),                                     // .mma
         pub sp: (),                                      // .sp
@@ -412,9 +435,10 @@ pub mod section_5 {
         pub idesc: GeneralOperand,                       // idesc
         pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
         pub enable_input_d: GeneralOperand,              // enable-input-d
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindI8AshiftCollectorUsage {
         pub mma: (),                                     // .mma
         pub sp: (),                                      // .sp
@@ -429,9 +453,10 @@ pub mod section_5 {
         pub idesc: GeneralOperand,                       // idesc
         pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
         pub enable_input_d: GeneralOperand,              // enable-input-d
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaSpCtaGroupKindI8AshiftCollectorUsage1 {
         pub mma: (),                                     // .mma
         pub sp: (),                                      // .sp
@@ -446,6 +471,7 @@ pub mod section_5 {
         pub idesc: GeneralOperand,                       // idesc
         pub disable_output_lane: Option<GeneralOperand>, // {, disable-output-lane}
         pub enable_input_d: GeneralOperand,              // enable-input-d
+        pub span: Span,
     }
 }
 

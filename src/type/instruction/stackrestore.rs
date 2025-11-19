@@ -7,6 +7,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -15,10 +17,11 @@ pub mod section_0 {
         U64, // .u64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct StackrestoreType {
         pub type_: Type,       // .type
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 }
 

@@ -19,9 +19,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -32,222 +38,136 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Pred
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".pred").is_ok() {
-                    return Ok(Type::Pred);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b16").is_ok() {
-                    return Ok(Type::B16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b32").is_ok() {
-                    return Ok(Type::B32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b64").is_ok() {
-                    return Ok(Type::B64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u16").is_ok() {
-                    return Ok(Type::U16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Type::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u64").is_ok() {
-                    return Ok(Type::U64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s16").is_ok() {
-                    return Ok(Type::S16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Type::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s64").is_ok() {
-                    return Ok(Type::S64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Type::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try F64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f64").is_ok() {
-                    return Ok(Type::F64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".pred", ".b16", ".b32", ".b64", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64",
-                ".f32", ".f64",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".pred"), |_, _span| Type::Pred),
+                map(string_p(".b16"), |_, _span| Type::B16),
+                map(string_p(".b32"), |_, _span| Type::B32),
+                map(string_p(".b64"), |_, _span| Type::B64),
+                map(string_p(".u16"), |_, _span| Type::U16),
+                map(string_p(".u32"), |_, _span| Type::U32),
+                map(string_p(".u64"), |_, _span| Type::U64),
+                map(string_p(".s16"), |_, _span| Type::S16),
+                map(string_p(".s32"), |_, _span| Type::S32),
+                map(string_p(".s64"), |_, _span| Type::S64),
+                map(string_p(".f32"), |_, _span| Type::F32),
+                map(string_p(".f64"), |_, _span| Type::F64)
+            )
         }
     }
 
     impl PtxParser for MovType {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mov")?;
-            let type_ = Type::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovType { type_, d, a })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mov"),
+                    Type::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, type_, d, _, a, _), span| {
+                    ok!(MovType {
+                        type_ = type_,
+                        d = d,
+                        a = a,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MovU32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mov")?;
-            stream.expect_string(".u32")?;
-            let u32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let fname = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovU32 { u32, d, fname })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mov"),
+                    string_p(".u32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, u32, d, _, fname, _), span| {
+                    ok!(MovU32 {
+                        u32 = u32,
+                        d = d,
+                        fname = fname,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MovU64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mov")?;
-            stream.expect_string(".u64")?;
-            let u64 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let fname = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovU64 { u64, d, fname })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mov"),
+                    string_p(".u64"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, u64, d, _, fname, _), span| {
+                    ok!(MovU64 {
+                        u64 = u64,
+                        d = d,
+                        fname = fname,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MovU321 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mov")?;
-            stream.expect_string(".u32")?;
-            let u32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let kernel = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovU321 { u32, d, kernel })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mov"),
+                    string_p(".u32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, u32, d, _, kernel, _), span| {
+                    ok!(MovU321 {
+                        u32 = u32,
+                        d = d,
+                        kernel = kernel,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MovU641 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mov")?;
-            stream.expect_string(".u64")?;
-            let u64 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let kernel = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovU641 { u64, d, kernel })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mov"),
+                    string_p(".u64"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, u64, d, _, kernel, _), span| {
+                    ok!(MovU641 {
+                        u64 = u64,
+                        d = d,
+                        kernel = kernel,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -261,71 +181,36 @@ pub mod section_1 {
     // ============================================================================
 
     impl PtxParser for Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B128
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b128").is_ok() {
-                    return Ok(Type::B128);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b16").is_ok() {
-                    return Ok(Type::B16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b32").is_ok() {
-                    return Ok(Type::B32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b64").is_ok() {
-                    return Ok(Type::B64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b128", ".b16", ".b32", ".b64"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".b128"), |_, _span| Type::B128),
+                map(string_p(".b16"), |_, _span| Type::B16),
+                map(string_p(".b32"), |_, _span| Type::B32),
+                map(string_p(".b64"), |_, _span| Type::B64)
+            )
         }
     }
 
     impl PtxParser for MovType1 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mov")?;
-            let type_ = Type::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MovType1 { type_, d, a })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mov"),
+                    Type::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, type_, d, _, a, _), span| {
+                    ok!(MovType1 {
+                        type_ = type_,
+                        d = d,
+                        a = a,
+
+                    })
+                },
+            )
         }
     }
 }

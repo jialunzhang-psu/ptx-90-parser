@@ -12,9 +12,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -25,421 +31,279 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Op {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try And
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".and").is_ok() {
-                    return Ok(Op::And);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Or
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".or").is_ok() {
-                    return Ok(Op::Or);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".and", ".or"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".and"), |_, _span| Op::And),
+                map(string_p(".or"), |_, _span| Op::Or)
+            )
         }
     }
 
     impl PtxParser for BarrierCtaSyncAligned {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("barrier")?;
-            let saved_pos = stream.position();
-            let cta = stream.expect_string(".cta").is_ok();
-            if !cta {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let aligned = stream.expect_string(".aligned").is_ok();
-            if !aligned {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let b = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarrierCtaSyncAligned {
-                cta,
-                sync,
-                aligned,
-                a,
-                b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("barrier"),
+                    map(optional(string_p(".cta")), |value, _| value.is_some()),
+                    string_p(".sync"),
+                    map(optional(string_p(".aligned")), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, cta, sync, aligned, a, b, _), span| {
+                    ok!(BarrierCtaSyncAligned {
+                        cta = cta,
+                        sync = sync,
+                        aligned = aligned,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for BarrierCtaArriveAligned {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("barrier")?;
-            let saved_pos = stream.position();
-            let cta = stream.expect_string(".cta").is_ok();
-            if !cta {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".arrive")?;
-            let arrive = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let aligned = stream.expect_string(".aligned").is_ok();
-            if !aligned {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarrierCtaArriveAligned {
-                cta,
-                arrive,
-                aligned,
-                a,
-                b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("barrier"),
+                    map(optional(string_p(".cta")), |value, _| value.is_some()),
+                    string_p(".arrive"),
+                    map(optional(string_p(".aligned")), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, cta, arrive, aligned, a, _, b, _), span| {
+                    ok!(BarrierCtaArriveAligned {
+                        cta = cta,
+                        arrive = arrive,
+                        aligned = aligned,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for BarrierCtaRedPopcAlignedU32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("barrier")?;
-            let saved_pos = stream.position();
-            let cta = stream.expect_string(".cta").is_ok();
-            if !cta {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".red")?;
-            let red = ();
-            stream.expect_complete()?;
-            stream.expect_string(".popc")?;
-            let popc = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let aligned = stream.expect_string(".aligned").is_ok();
-            if !aligned {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".u32")?;
-            let u32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let b = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c_op = stream
-                .consume_if(|t| matches!(t, PtxToken::Exclaim))
-                .is_some();
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarrierCtaRedPopcAlignedU32 {
-                cta,
-                red,
-                popc,
-                aligned,
-                u32,
-                d,
-                a,
-                b,
-                c_op,
-                c,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("barrier"),
+                    map(optional(string_p(".cta")), |value, _| value.is_some()),
+                    string_p(".red"),
+                    string_p(".popc"),
+                    map(optional(string_p(".aligned")), |value, _| value.is_some()),
+                    string_p(".u32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    comma_p(),
+                    map(optional(exclamation_p()), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, cta, red, popc, aligned, u32, d, _, a, b, _, c_op, c, _), span| {
+                    ok!(BarrierCtaRedPopcAlignedU32 {
+                        cta = cta,
+                        red = red,
+                        popc = popc,
+                        aligned = aligned,
+                        u32 = u32,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c_op = c_op,
+                        c = c,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for BarrierCtaRedOpAlignedPred {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("barrier")?;
-            let saved_pos = stream.position();
-            let cta = stream.expect_string(".cta").is_ok();
-            if !cta {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".red")?;
-            let red = ();
-            stream.expect_complete()?;
-            let op = Op::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let aligned = stream.expect_string(".aligned").is_ok();
-            if !aligned {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".pred")?;
-            let pred = ();
-            stream.expect_complete()?;
-            let p = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let b = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c_op = stream
-                .consume_if(|t| matches!(t, PtxToken::Exclaim))
-                .is_some();
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarrierCtaRedOpAlignedPred {
-                cta,
-                red,
-                op,
-                aligned,
-                pred,
-                p,
-                a,
-                b,
-                c_op,
-                c,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("barrier"),
+                    map(optional(string_p(".cta")), |value, _| value.is_some()),
+                    string_p(".red"),
+                    Op::parse(),
+                    map(optional(string_p(".aligned")), |value, _| value.is_some()),
+                    string_p(".pred"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    comma_p(),
+                    map(optional(exclamation_p()), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, cta, red, op, aligned, pred, p, _, a, b, _, c_op, c, _), span| {
+                    ok!(BarrierCtaRedOpAlignedPred {
+                        cta = cta,
+                        red = red,
+                        op = op,
+                        aligned = aligned,
+                        pred = pred,
+                        p = p,
+                        a = a,
+                        b = b,
+                        c_op = c_op,
+                        c = c,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for BarCtaSync {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("bar")?;
-            let saved_pos = stream.position();
-            let cta = stream.expect_string(".cta").is_ok();
-            if !cta {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let b = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarCtaSync { cta, sync, a, b })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("bar"),
+                    map(optional(string_p(".cta")), |value, _| value.is_some()),
+                    string_p(".sync"),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, cta, sync, a, b, _), span| {
+                    ok!(BarCtaSync {
+                        cta = cta,
+                        sync = sync,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for BarCtaArrive {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("bar")?;
-            let saved_pos = stream.position();
-            let cta = stream.expect_string(".cta").is_ok();
-            if !cta {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".arrive")?;
-            let arrive = ();
-            stream.expect_complete()?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarCtaArrive { cta, arrive, a, b })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("bar"),
+                    map(optional(string_p(".cta")), |value, _| value.is_some()),
+                    string_p(".arrive"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, cta, arrive, a, _, b, _), span| {
+                    ok!(BarCtaArrive {
+                        cta = cta,
+                        arrive = arrive,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for BarCtaRedPopcU32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("bar")?;
-            let saved_pos = stream.position();
-            let cta = stream.expect_string(".cta").is_ok();
-            if !cta {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".red")?;
-            let red = ();
-            stream.expect_complete()?;
-            stream.expect_string(".popc")?;
-            let popc = ();
-            stream.expect_complete()?;
-            stream.expect_string(".u32")?;
-            let u32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let b = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c_op = stream
-                .consume_if(|t| matches!(t, PtxToken::Exclaim))
-                .is_some();
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarCtaRedPopcU32 {
-                cta,
-                red,
-                popc,
-                u32,
-                d,
-                a,
-                b,
-                c_op,
-                c,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("bar"),
+                    map(optional(string_p(".cta")), |value, _| value.is_some()),
+                    string_p(".red"),
+                    string_p(".popc"),
+                    string_p(".u32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    comma_p(),
+                    map(optional(exclamation_p()), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, cta, red, popc, u32, d, _, a, b, _, c_op, c, _), span| {
+                    ok!(BarCtaRedPopcU32 {
+                        cta = cta,
+                        red = red,
+                        popc = popc,
+                        u32 = u32,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c_op = c_op,
+                        c = c,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for BarCtaRedOpPred {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("bar")?;
-            let saved_pos = stream.position();
-            let cta = stream.expect_string(".cta").is_ok();
-            if !cta {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".red")?;
-            let red = ();
-            stream.expect_complete()?;
-            let op = Op::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".pred")?;
-            let pred = ();
-            stream.expect_complete()?;
-            let p = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let b = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c_op = stream
-                .consume_if(|t| matches!(t, PtxToken::Exclaim))
-                .is_some();
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarCtaRedOpPred {
-                cta,
-                red,
-                op,
-                pred,
-                p,
-                a,
-                b,
-                c_op,
-                c,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("bar"),
+                    map(optional(string_p(".cta")), |value, _| value.is_some()),
+                    string_p(".red"),
+                    Op::parse(),
+                    string_p(".pred"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    comma_p(),
+                    map(optional(exclamation_p()), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, cta, red, op, pred, p, _, a, b, _, c_op, c, _), span| {
+                    ok!(BarCtaRedOpPred {
+                        cta = cta,
+                        red = red,
+                        op = op,
+                        pred = pred,
+                        p = p,
+                        a = a,
+                        b = b,
+                        c_op = c_op,
+                        c = c,
+
+                    })
+                },
+            )
         }
     }
 }

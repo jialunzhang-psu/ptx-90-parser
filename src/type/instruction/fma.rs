@@ -22,6 +22,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -32,7 +34,7 @@ pub mod section_0 {
         Rp, // .rp
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndFtzSatF32 {
         pub rnd: Rnd,          // .rnd
         pub ftz: bool,         // {.ftz}
@@ -42,9 +44,10 @@ pub mod section_0 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndFtzF32x2 {
         pub rnd: Rnd,          // .rnd
         pub ftz: bool,         // {.ftz}
@@ -53,9 +56,10 @@ pub mod section_0 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndF64 {
         pub rnd: Rnd,          // .rnd
         pub f64: (),           // .f64
@@ -63,10 +67,13 @@ pub mod section_0 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -74,7 +81,7 @@ pub mod section_1 {
         Rn, // .rn
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndFtzSatF16 {
         pub rnd: Rnd,          // .rnd
         pub ftz: bool,         // {.ftz}
@@ -84,9 +91,10 @@ pub mod section_1 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndFtzSatF16x2 {
         pub rnd: Rnd,          // .rnd
         pub ftz: bool,         // {.ftz}
@@ -96,9 +104,10 @@ pub mod section_1 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndFtzReluF16 {
         pub rnd: Rnd,          // .rnd
         pub ftz: bool,         // {.ftz}
@@ -108,9 +117,10 @@ pub mod section_1 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndFtzReluF16x2 {
         pub rnd: Rnd,          // .rnd
         pub ftz: bool,         // {.ftz}
@@ -120,9 +130,10 @@ pub mod section_1 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndReluBf16 {
         pub rnd: Rnd,          // .rnd
         pub relu: bool,        // {.relu}
@@ -131,9 +142,10 @@ pub mod section_1 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndReluBf16x2 {
         pub rnd: Rnd,          // .rnd
         pub relu: bool,        // {.relu}
@@ -142,9 +154,10 @@ pub mod section_1 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndOobReluType {
         pub rnd: Rnd,          // .rnd
         pub oob: (),           // .oob
@@ -154,10 +167,13 @@ pub mod section_1 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -174,7 +190,7 @@ pub mod section_2 {
         F16,  // .f16
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct FmaRndSatF32Abtype {
         pub rnd: Rnd,          // .rnd
         pub sat: bool,         // {.sat}
@@ -184,6 +200,7 @@ pub mod section_2 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 

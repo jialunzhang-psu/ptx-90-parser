@@ -6,13 +6,16 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaCommitGroupSyncAligned {
         pub commit_group: (), // .commit_group
         pub sync: (),         // .sync
         pub aligned: (),      // .aligned
+        pub span: Span,
     }
 }
 

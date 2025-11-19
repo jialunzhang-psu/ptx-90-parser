@@ -8,9 +8,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -21,296 +27,126 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Comp {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try R
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".r").is_ok() {
-                    return Ok(Comp::R);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try G
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".g").is_ok() {
-                    return Ok(Comp::G);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b").is_ok() {
-                    return Ok(Comp::B);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try A
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".a").is_ok() {
-                    return Ok(Comp::A);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".r", ".g", ".b", ".a"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".r"), |_, _span| Comp::R),
+                map(string_p(".g"), |_, _span| Comp::G),
+                map(string_p(".b"), |_, _span| Comp::B),
+                map(string_p(".a"), |_, _span| Comp::A)
+            )
         }
     }
 
     impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Dtype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Dtype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Dtype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u32", ".s32", ".f32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".u32"), |_, _span| Dtype::U32),
+                map(string_p(".s32"), |_, _span| Dtype::S32),
+                map(string_p(".f32"), |_, _span| Dtype::F32)
+            )
         }
     }
 
     impl PtxParser for Geom {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Acube
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".acube").is_ok() {
-                    return Ok(Geom::Acube);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Cube
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cube").is_ok() {
-                    return Ok(Geom::Cube);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try A2d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".a2d").is_ok() {
-                    return Ok(Geom::A2d);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try _2d
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".2d").is_ok() {
-                    return Ok(Geom::_2d);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".acube", ".cube", ".a2d", ".2d"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".acube"), |_, _span| Geom::Acube),
+                map(string_p(".cube"), |_, _span| Geom::Cube),
+                map(string_p(".a2d"), |_, _span| Geom::A2d),
+                map(string_p(".2d"), |_, _span| Geom::_2d)
+            )
         }
     }
 
     impl PtxParser for Tld4Comp2dV4DtypeF32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("tld4")?;
-            let comp = Comp::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".2d")?;
-            let _2d = ();
-            stream.expect_complete()?;
-            stream.expect_string(".v4")?;
-            let v4 = ();
-            stream.expect_complete()?;
-            let dtype = Dtype::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            let saved_pos = stream.position();
-            let p = if stream.consume_if(|t| matches!(t, PtxToken::Pipe)).is_some() {
-                Some(GeneralOperand::parse(stream)?)
-            } else {
-                stream.set_position(saved_pos);
-                None
-            };
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = TexHandler2::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let e = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let f = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(Tld4Comp2dV4DtypeF32 {
-                comp,
-                _2d,
-                v4,
-                dtype,
-                f32,
-                d,
-                p,
-                a,
-                e,
-                f,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("tld4"),
+                    Comp::parse(),
+                    string_p(".2d"),
+                    string_p(".v4"),
+                    Dtype::parse(),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(pipe_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    comma_p(),
+                    TexHandler2::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, comp, _2d, v4, dtype, f32, d, p, _, a, e, f, _), span| {
+                    ok!(Tld4Comp2dV4DtypeF32 {
+                        comp = comp,
+                        _2d = _2d,
+                        v4 = v4,
+                        dtype = dtype,
+                        f32 = f32,
+                        d = d,
+                        p = p,
+                        a = a,
+                        e = e,
+                        f = f,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for Tld4CompGeomV4DtypeF32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("tld4")?;
-            let comp = Comp::parse(stream)?;
-            stream.expect_complete()?;
-            let geom = Geom::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".v4")?;
-            let v4 = ();
-            stream.expect_complete()?;
-            let dtype = Dtype::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            let saved_pos = stream.position();
-            let p = if stream.consume_if(|t| matches!(t, PtxToken::Pipe)).is_some() {
-                Some(GeneralOperand::parse(stream)?)
-            } else {
-                stream.set_position(saved_pos);
-                None
-            };
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = TexHandler3::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let e = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let f = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(Tld4CompGeomV4DtypeF32 {
-                comp,
-                geom,
-                v4,
-                dtype,
-                f32,
-                d,
-                p,
-                a,
-                e,
-                f,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("tld4"),
+                    Comp::parse(),
+                    Geom::parse(),
+                    string_p(".v4"),
+                    Dtype::parse(),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(pipe_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    comma_p(),
+                    TexHandler3::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, comp, geom, v4, dtype, f32, d, p, _, a, e, f, _), span| {
+                    ok!(Tld4CompGeomV4DtypeF32 {
+                        comp = comp,
+                        geom = geom,
+                        v4 = v4,
+                        dtype = dtype,
+                        f32 = f32,
+                        d = d,
+                        p = p,
+                        a = a,
+                        e = e,
+                        f = f,
+
+                    })
+                },
+            )
         }
     }
 }

@@ -19,6 +19,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -82,7 +84,7 @@ pub mod section_0 {
         L2EvictLast,   // .L2::evict_last
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdGlobalCopNcLevelCacheHintLevelPrefetchSizeType {
         pub global: (),                                     // .global
         pub cop: Option<Cop>,                               // {.cop}
@@ -93,9 +95,10 @@ pub mod section_0 {
         pub d: GeneralOperand,                              // d
         pub a: AddressOperand,                              // [a]
         pub cache_policy: Option<GeneralOperand>,           // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdGlobalCopNcLevelCacheHintLevelPrefetchSizeVecType {
         pub global: (),                                     // .global
         pub cop: Option<Cop>,                               // {.cop}
@@ -107,9 +110,10 @@ pub mod section_0 {
         pub d: GeneralOperand,                              // d
         pub a: AddressOperand,                              // [a]
         pub cache_policy: Option<GeneralOperand>,           // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdGlobalNcLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeType
     {
         pub global: (),                                               // .global
@@ -122,9 +126,10 @@ pub mod section_0 {
         pub d: GeneralOperand,                                        // d
         pub a: AddressOperand,                                        // [a]
         pub cache_policy: Option<GeneralOperand>,                     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdGlobalNcLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType
     {
         pub global: (),                                               // .global
@@ -138,6 +143,7 @@ pub mod section_0 {
         pub d: GeneralOperand,                                        // d
         pub a: AddressOperand,                                        // [a]
         pub cache_policy: Option<GeneralOperand>,                     // {, cache-policy}
+        pub span: Span,
     }
 }
 

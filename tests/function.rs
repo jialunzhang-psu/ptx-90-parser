@@ -6,7 +6,7 @@ use ptx_parser::r#type::{
     ParameterDirective, PragmaDirectiveKind, SectionEntry, StatementDirective,
     StatementSectionDirectiveLine, VariableSymbol,
 };
-use ptx_parser::{PtxParser, PtxTokenStream, PtxUnlexer, PtxUnparser, tokenize};
+use ptx_parser::{PtxParser, PtxTokenStream, PtxUnlexer, PtxUnparser, span, tokenize};
 use util::{assert_roundtrip, parse, tokenize_only, tokens_equivalent};
 
 #[test]
@@ -84,8 +84,8 @@ fn parses_callprototype_directive() {
         callproto_stmt(
             None,
             vec![
-                make_param(DataType::U32 { span: 0..0 }, "_", None, false, None),
-                make_param(DataType::U32 { span: 0..0 }, "_", None, false, None),
+                make_param(DataType::U32 { span: span!(0..0) }, "_", None, false, None),
+                make_param(DataType::U32 { span: span!(0..0) }, "_", None, false, None),
             ],
             false,
             None,
@@ -101,7 +101,7 @@ fn parses_callprototype_directive() {
         &return_only,
         callproto_stmt(
             Some(make_param(
-                DataType::U64 { span: 0..0 },
+                DataType::U64 { span: span!(0..0) },
                 "retval",
                 None,
                 false,
@@ -122,14 +122,14 @@ fn parses_callprototype_directive() {
         &return_with_param,
         callproto_stmt(
             Some(make_param(
-                DataType::U64 { span: 0..0 },
+                DataType::U64 { span: span!(0..0) },
                 "retval",
                 None,
                 false,
                 None,
             )),
             vec![make_param(
-                DataType::U32 { span: 0..0 },
+                DataType::U32 { span: span!(0..0) },
                 "arg0",
                 None,
                 false,
@@ -149,15 +149,27 @@ fn parses_callprototype_directive() {
         &multi_param,
         callproto_stmt(
             Some(make_param(
-                DataType::U64 { span: 0..0 },
+                DataType::U64 { span: span!(0..0) },
                 "retval",
                 None,
                 false,
                 None,
             )),
             vec![
-                make_param(DataType::U32 { span: 0..0 }, "arg0", None, false, None),
-                make_param(DataType::B64 { span: 0..0 }, "arg1", None, false, None),
+                make_param(
+                    DataType::U32 { span: span!(0..0) },
+                    "arg0",
+                    None,
+                    false,
+                    None,
+                ),
+                make_param(
+                    DataType::B64 { span: span!(0..0) },
+                    "arg1",
+                    None,
+                    false,
+                    None,
+                ),
             ],
             false,
             None,
@@ -174,11 +186,11 @@ fn parses_callprototype_directive() {
         callproto_stmt(
             None,
             vec![make_param(
-                DataType::B64 { span: 0..0 },
+                DataType::B64 { span: span!(0..0) },
                 "arg_ptr",
                 Some(16),
                 true,
-                Some(ParamStateSpace::Global { span: 0..0 }),
+                Some(ParamStateSpace::Global { span: span!(0..0) }),
             )],
             true,
             Some(8),
@@ -388,12 +400,12 @@ fn branchtargets_stmt(labels: &[&str]) -> StatementDirective {
                 .iter()
                 .map(|value| Label {
                     val: (*value).into(),
-                    span: 0..0,
+                    span: span!(0..0),
                 })
                 .collect(),
-            span: 0..0,
+            span: span!(0..0),
         },
-        span: 0..0,
+        span: span!(0..0),
     }
 }
 
@@ -404,12 +416,12 @@ fn calltargets_stmt(targets: &[&str]) -> StatementDirective {
                 .iter()
                 .map(|value| FunctionSymbol {
                     val: (*value).into(),
-                    span: 0..0,
+                    span: span!(0..0),
                 })
                 .collect(),
-            span: 0..0,
+            span: span!(0..0),
         },
-        span: 0..0,
+        span: span!(0..0),
     }
 }
 
@@ -427,9 +439,9 @@ fn callproto_stmt(
             noreturn,
             abi_preserve,
             abi_preserve_control,
-            span: 0..0,
+            span: span!(0..0),
         },
-        span: 0..0,
+        span: span!(0..0),
     }
 }
 
@@ -494,9 +506,9 @@ fn make_param(
         space,
         name: VariableSymbol {
             val: name.into(),
-            span: 0..0,
+            span: span!(0..0),
         },
         array: Vec::new(),
-        span: 0..0,
+        span: span!(0..0),
     }
 }

@@ -79,6 +79,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -123,7 +125,7 @@ pub mod section_0 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeF16F16 {
         pub mma_async: (),               // .mma_async
         pub sync: (),                    // .sync
@@ -140,9 +142,10 @@ pub mod section_0 {
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_a: GeneralOperand, // imm-trans-a
         pub imm_trans_b: GeneralOperand, // imm-trans-b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeF16F161 {
         pub mma_async: (),               // .mma_async
         pub sync: (),                    // .sync
@@ -158,10 +161,13 @@ pub mod section_0 {
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_b: GeneralOperand, // imm-trans-b
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -205,7 +211,7 @@ pub mod section_1 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeBf16Bf16 {
         pub mma_async: (),               // .mma_async
         pub sync: (),                    // .sync
@@ -222,9 +228,10 @@ pub mod section_1 {
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_a: GeneralOperand, // imm-trans-a
         pub imm_trans_b: GeneralOperand, // imm-trans-b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeBf16Bf161 {
         pub mma_async: (),               // .mma_async
         pub sync: (),                    // .sync
@@ -240,10 +247,13 @@ pub mod section_1 {
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_b: GeneralOperand, // imm-trans-b
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -287,7 +297,7 @@ pub mod section_2 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeTf32Tf32 {
         pub mma_async: (),               // .mma_async
         pub sync: (),                    // .sync
@@ -302,9 +312,10 @@ pub mod section_2 {
         pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeTf32Tf321 {
         pub mma_async: (),               // .mma_async
         pub sync: (),                    // .sync
@@ -319,10 +330,13 @@ pub mod section_2 {
         pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub span: Span,
     }
 }
 
 pub mod section_3 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -379,7 +393,7 @@ pub mod section_3 {
         E5m2, // .e5m2
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeAtypeBtype {
         pub mma_async: (),               // .mma_async
         pub sync: (),                    // .sync
@@ -394,9 +408,10 @@ pub mod section_3 {
         pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeDtypeAtypeBtype1 {
         pub mma_async: (),               // .mma_async
         pub sync: (),                    // .sync
@@ -411,10 +426,13 @@ pub mod section_3 {
         pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub span: Span,
     }
 }
 
 pub mod section_4 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -449,7 +467,7 @@ pub mod section_4 {
         U8, // .u8
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeSatfiniteS32AtypeBtype {
         pub mma_async: (),           // .mma_async
         pub sync: (),                // .sync
@@ -463,9 +481,10 @@ pub mod section_4 {
         pub a_desc: GeneralOperand,  // a-desc
         pub b_desc: GeneralOperand,  // b-desc
         pub scale_d: GeneralOperand, // scale-d
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeSatfiniteS32AtypeBtype1 {
         pub mma_async: (),           // .mma_async
         pub sync: (),                // .sync
@@ -479,10 +498,13 @@ pub mod section_4 {
         pub a: GeneralOperand,       // a
         pub b_desc: GeneralOperand,  // b-desc
         pub scale_d: GeneralOperand, // scale-d
+        pub span: Span,
     }
 }
 
 pub mod section_5 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -512,7 +534,7 @@ pub mod section_5 {
         And, // .and
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeS32B1B1OpPopc {
         pub mma_async: (),           // .mma_async
         pub sync: (),                // .sync
@@ -527,9 +549,10 @@ pub mod section_5 {
         pub a_desc: GeneralOperand,  // a-desc
         pub b_desc: GeneralOperand,  // b-desc
         pub scale_d: GeneralOperand, // scale-d
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSyncAlignedShapeS32B1B1OpPopc1 {
         pub mma_async: (),           // .mma_async
         pub sync: (),                // .sync
@@ -544,6 +567,7 @@ pub mod section_5 {
         pub a: GeneralOperand,       // a
         pub b_desc: GeneralOperand,  // b-desc
         pub scale_d: GeneralOperand, // scale-d
+        pub span: Span,
     }
 }
 

@@ -8,9 +8,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -21,132 +27,51 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for CompletionMechanism {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try MbarrierArriveOne
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".mbarrier::arrive::one").is_ok() {
-                    return Ok(CompletionMechanism::MbarrierArriveOne);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".mbarrier::arrive::one"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".mbarrier::arrive::one"), |_, _span| {
+                CompletionMechanism::MbarrierArriveOne
+            }))
         }
     }
 
     impl PtxParser for CtaGroup {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try CtaGroup1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::1").is_ok() {
-                    return Ok(CtaGroup::CtaGroup1);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try CtaGroup2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::2").is_ok() {
-                    return Ok(CtaGroup::CtaGroup2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta_group::1", ".cta_group::2"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".cta_group::1"), |_, _span| CtaGroup::CtaGroup1),
+                map(string_p(".cta_group::2"), |_, _span| CtaGroup::CtaGroup2)
+            )
         }
     }
 
     impl PtxParser for Multicast {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try MulticastCluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".multicast::cluster").is_ok() {
-                    return Ok(Multicast::MulticastCluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".multicast::cluster"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".multicast::cluster"), |_, _span| {
+                Multicast::MulticastCluster
+            }))
         }
     }
 
     impl PtxParser for Tcgen05CommitCtaGroupCompletionMechanismSharedClusterMulticastB64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("tcgen05")?;
-            stream.expect_string(".commit")?;
-            let commit = ();
-            stream.expect_complete()?;
-            let cta_group = CtaGroup::parse(stream)?;
-            stream.expect_complete()?;
-            let completion_mechanism = CompletionMechanism::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let shared_cluster = stream.expect_string(".shared::cluster").is_ok();
-            if !shared_cluster {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let multicast = match Multicast::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b64")?;
-            let b64 = ();
-            stream.expect_complete()?;
-            let mbar = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let ctamask = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(
-                Tcgen05CommitCtaGroupCompletionMechanismSharedClusterMulticastB64 {
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("tcgen05"),
+                    string_p(".commit"),
+                    CtaGroup::parse(),
+                    CompletionMechanism::parse(),
+                    map(optional(string_p(".shared::cluster")), |value, _| value
+                        .is_some()),
+                    optional(Multicast::parse()),
+                    string_p(".b64"),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
                     commit,
                     cta_group,
                     completion_mechanism,
@@ -155,6 +80,20 @@ pub mod section_0 {
                     b64,
                     mbar,
                     ctamask,
+                    _,
+                ),
+                 span| {
+                    ok!(Tcgen05CommitCtaGroupCompletionMechanismSharedClusterMulticastB64 {
+                        commit = commit,
+                        cta_group = cta_group,
+                        completion_mechanism = completion_mechanism,
+                        shared_cluster = shared_cluster,
+                        multicast = multicast,
+                        b64 = b64,
+                        mbar = mbar,
+                        ctamask = ctamask,
+
+                    })
                 },
             )
         }

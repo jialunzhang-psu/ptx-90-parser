@@ -7,9 +7,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -20,112 +26,43 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Query {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try ChannelDataType
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".channel_data_type").is_ok() {
-                    return Ok(Query::ChannelDataType);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try ChannelOrder
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".channel_order").is_ok() {
-                    return Ok(Query::ChannelOrder);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try MemoryLayout
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".memory_layout").is_ok() {
-                    return Ok(Query::MemoryLayout);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try ArraySize
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".array_size").is_ok() {
-                    return Ok(Query::ArraySize);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Height
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".height").is_ok() {
-                    return Ok(Query::Height);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Width
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".width").is_ok() {
-                    return Ok(Query::Width);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Depth
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".depth").is_ok() {
-                    return Ok(Query::Depth);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".channel_data_type",
-                ".channel_order",
-                ".memory_layout",
-                ".array_size",
-                ".height",
-                ".width",
-                ".depth",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".channel_data_type"), |_, _span| {
+                    Query::ChannelDataType
+                }),
+                map(string_p(".channel_order"), |_, _span| Query::ChannelOrder),
+                map(string_p(".memory_layout"), |_, _span| Query::MemoryLayout),
+                map(string_p(".array_size"), |_, _span| Query::ArraySize),
+                map(string_p(".height"), |_, _span| Query::Height),
+                map(string_p(".width"), |_, _span| Query::Width),
+                map(string_p(".depth"), |_, _span| Query::Depth)
+            )
         }
     }
 
     impl PtxParser for SuqQueryB32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("suq")?;
-            let query = Query::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".b32")?;
-            let b32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(SuqQueryB32 { query, b32, d, a })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("suq"),
+                    Query::parse(),
+                    string_p(".b32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, query, b32, d, _, a, _), span| {
+                    ok!(SuqQueryB32 {
+                        query = query,
+                        b32 = b32,
+                        d = d,
+                        a = a,
+
+                    })
+                },
+            )
         }
     }
 }

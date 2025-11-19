@@ -1,7 +1,8 @@
 mod util;
 
 use ptx_parser::{PtxUnparser, r#type::Instruction};
-use util::{parse_result, run_with_large_stack, tokenize_only};
+use ptx_parser::run_with_large_stack;
+use util::{parse_result, tokenize_only};
 
 const DOC_EXAMPLE_INSTRUCTIONS: &[&str] = &[
     "abs.s32  r0,a;",

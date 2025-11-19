@@ -26,6 +26,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -64,7 +66,7 @@ pub mod section_0 {
         U64, // .u64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpReduceAsyncBulkDstSrcCompletionMechanismRedopType {
         pub reduce: (),                                // .reduce
         pub async_: (),                                // .async
@@ -78,10 +80,13 @@ pub mod section_0 {
         pub srcmem: AddressOperand,                    // [srcMem]
         pub size: GeneralOperand,                      // size
         pub mbar: AddressOperand,                      // [mbar]
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -120,7 +125,7 @@ pub mod section_1 {
         U64, // .u64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpReduceAsyncBulkDstSrcCompletionMechanismLevelCacheHintRedopType {
         pub reduce: (),                                // .reduce
         pub async_: (),                                // .async
@@ -135,10 +140,13 @@ pub mod section_1 {
         pub srcmem: AddressOperand,                    // [srcMem]
         pub size: GeneralOperand,                      // size
         pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -167,7 +175,7 @@ pub mod section_2 {
         F16,  // .f16
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpReduceAsyncBulkDstSrcCompletionMechanismLevelCacheHintAddNoftzType {
         pub reduce: (),                                // .reduce
         pub async_: (),                                // .async
@@ -183,6 +191,7 @@ pub mod section_2 {
         pub srcmem: AddressOperand,                    // [srcMem]
         pub size: GeneralOperand,                      // size
         pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
+        pub span: Span,
     }
 }
 

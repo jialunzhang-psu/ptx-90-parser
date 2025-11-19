@@ -13,6 +13,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -39,31 +41,35 @@ pub mod section_0 {
         Param, // .param
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct PrefetchSpaceLevel {
         pub space: Option<Space>, // {.space}
         pub level: Level,         // .level
         pub a: AddressOperand,    // [a]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct PrefetchGlobalLevelEvictionPriority {
         pub global: (),                                     // .global
         pub level_eviction_priority: LevelEvictionPriority, // .level::eviction_priority
         pub a: AddressOperand,                              // [a]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct PrefetchuL1 {
         pub l1: (),            // .L1
         pub a: AddressOperand, // [a]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct PrefetchTensormapSpaceTensormap {
         pub tensormap_space: Option<TensormapSpace>, // {.tensormap_space}
         pub tensormap: (),                           // .tensormap
         pub a: AddressOperand,                       // [a]
+        pub span: Span,
     }
 }
 

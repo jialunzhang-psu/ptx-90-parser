@@ -24,6 +24,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -100,7 +102,7 @@ pub mod section_0 {
         Sys,     // .sys
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct StWeakSsCopLevelCacheHintVecType {
         pub weak: bool,                               // {.weak}
         pub ss: Option<Ss>,                           // {.ss}
@@ -111,9 +113,10 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct StWeakSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
         pub weak: bool,                                               // {.weak}
         pub ss: Option<Ss>,                                           // {.ss}
@@ -125,9 +128,10 @@ pub mod section_0 {
         pub a: AddressOperand,                                        // [a]
         pub b: GeneralOperand,                                        // b
         pub cache_policy: Option<GeneralOperand>,                     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct StVolatileSsVecType {
         pub volatile: (),      // .volatile
         pub ss: Option<Ss>,    // {.ss}
@@ -135,9 +139,10 @@ pub mod section_0 {
         pub type_: Type,       // .type
         pub a: AddressOperand, // [a]
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct StRelaxedScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
         pub relaxed: (),                                              // .relaxed
         pub scope: Scope,                                             // .scope
@@ -150,9 +155,10 @@ pub mod section_0 {
         pub a: AddressOperand,                                        // [a]
         pub b: GeneralOperand,                                        // b
         pub cache_policy: Option<GeneralOperand>,                     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct StReleaseScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintVecType {
         pub release: (),                                              // .release
         pub scope: Scope,                                             // .scope
@@ -165,9 +171,10 @@ pub mod section_0 {
         pub a: AddressOperand,                                        // [a]
         pub b: GeneralOperand,                                        // b
         pub cache_policy: Option<GeneralOperand>,                     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct StMmioRelaxedSysGlobalType {
         pub mmio: (),          // .mmio
         pub relaxed: (),       // .relaxed
@@ -176,6 +183,7 @@ pub mod section_0 {
         pub type_: Type,       // .type
         pub a: AddressOperand, // [a]
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 

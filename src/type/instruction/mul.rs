@@ -20,6 +20,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -39,17 +41,20 @@ pub mod section_0 {
         S64, // .s64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MulModeType {
         pub mode: Mode,        // .mode
         pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -60,7 +65,7 @@ pub mod section_1 {
         Rp, // .rp
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MulRndFtzSatF32 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub ftz: bool,         // {.ftz}
@@ -69,9 +74,10 @@ pub mod section_1 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MulRndFtzF32x2 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub ftz: bool,         // {.ftz}
@@ -79,19 +85,23 @@ pub mod section_1 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MulRndF64 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub f64: (),           // .f64
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -99,7 +109,7 @@ pub mod section_2 {
         Rn, // .rn
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MulRndFtzSatF16 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub ftz: bool,         // {.ftz}
@@ -108,9 +118,10 @@ pub mod section_2 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MulRndFtzSatF16x2 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub ftz: bool,         // {.ftz}
@@ -119,24 +130,27 @@ pub mod section_2 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MulRndBf16 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub bf16: (),          // .bf16
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MulRndBf16x2 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub bf16x2: (),        // .bf16x2
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 

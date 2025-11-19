@@ -6,12 +6,15 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct NanosleepU32 {
         pub u32: (),           // .u32
         pub t: GeneralOperand, // t
+        pub span: Span,
     }
 }
 

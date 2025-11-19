@@ -1,6 +1,5 @@
+use crate::parser::Span;
 use logos::Logos;
-
-pub use logos::Span;
 
 /// PTX specification token types for lexical analysis.
 ///
@@ -109,7 +108,72 @@ impl PtxToken {
             | PtxToken::HexFloatDouble(s)
             | PtxToken::Register(s)
             | PtxToken::StringLiteral(s) => s.as_str(),
-            _ => "",
+            PtxToken::DoubleColon => "::",
+            PtxToken::Dot => ".",
+            PtxToken::Comma => ",",
+            PtxToken::Semicolon => ";",
+            PtxToken::Colon => ":",
+            PtxToken::LParen => "(",
+            PtxToken::RParen => ")",
+            PtxToken::LBracket => "[",
+            PtxToken::RBracket => "]",
+            PtxToken::LBrace => "{",
+            PtxToken::RBrace => "}",
+            PtxToken::Plus => "+",
+            PtxToken::Minus => "-",
+            PtxToken::Star => "*",
+            PtxToken::Slash => "/",
+            PtxToken::LAngle => "<",
+            PtxToken::RAngle => ">",
+            PtxToken::Equals => "=",
+            PtxToken::Percent => "%",
+            PtxToken::Exclaim => "!",
+            PtxToken::Pipe => "|",
+            PtxToken::Ampersand => "&",
+            PtxToken::Caret => "^",
+            PtxToken::Tilde => "~",
+            PtxToken::At => "@",
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        match self {
+            PtxToken::Identifier(s)
+            | PtxToken::DecimalInteger(s)
+            | PtxToken::HexInteger(s)
+            | PtxToken::BinaryInteger(s)
+            | PtxToken::OctalInteger(s)
+            | PtxToken::Float(s)
+            | PtxToken::FloatExponent(s)
+            | PtxToken::HexFloatSingle(s)
+            | PtxToken::HexFloatDouble(s)
+            | PtxToken::Register(s)
+            | PtxToken::StringLiteral(s) => s.len(),
+            PtxToken::DoubleColon => 2,
+            PtxToken::Dot
+            | PtxToken::Comma
+            | PtxToken::Semicolon
+            | PtxToken::Colon
+            | PtxToken::LParen
+            | PtxToken::RParen
+            | PtxToken::LBracket
+            | PtxToken::RBracket
+            | PtxToken::LBrace
+            | PtxToken::RBrace
+            | PtxToken::Plus
+            | PtxToken::Minus
+            | PtxToken::Star
+            | PtxToken::Slash
+            | PtxToken::LAngle
+            | PtxToken::RAngle
+            | PtxToken::Equals
+            | PtxToken::Percent
+            | PtxToken::Exclaim
+            | PtxToken::Pipe
+            | PtxToken::Ampersand
+            | PtxToken::Caret
+            | PtxToken::Tilde
+            | PtxToken::At => 1,
         }
     }
 }
@@ -155,8 +219,12 @@ pub fn tokenize(source: &str) -> Result<Vec<(PtxToken, Span)>, LexError> {
 
     while let Some(item) = lexer.next() {
         match item {
-            Ok(token) => tokens.push((token, lexer.span())),
-            Err(_) => return Err(LexError { span: lexer.span() }),
+            Ok(token) => tokens.push((token, Span::from(lexer.span()))),
+            Err(_) => {
+                return Err(LexError {
+                    span: Span::from(lexer.span()),
+                });
+            }
         }
     }
 

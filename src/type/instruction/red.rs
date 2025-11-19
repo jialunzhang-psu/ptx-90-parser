@@ -30,6 +30,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -83,7 +85,7 @@ pub mod section_0 {
         F64, // .f64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedOpSpaceSemScopeLevelCacheHintType {
         pub op: Op,                                   // .op
         pub space: Option<Space>,                     // {.space}
@@ -94,9 +96,10 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedAddSpaceSemScopeNoftzLevelCacheHintF16 {
         pub add: (),                                  // .add
         pub space: Option<Space>,                     // {.space}
@@ -108,9 +111,10 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedAddSpaceSemScopeNoftzLevelCacheHintF16x2 {
         pub add: (),                                  // .add
         pub space: Option<Space>,                     // {.space}
@@ -122,9 +126,10 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedAddSpaceSemScopeNoftzLevelCacheHintBf16 {
         pub add: (),                                  // .add
         pub space: Option<Space>,                     // {.space}
@@ -136,9 +141,10 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedAddSpaceSemScopeNoftzLevelCacheHintBf16x2 {
         pub add: (),                                  // .add
         pub space: Option<Space>,                     // {.space}
@@ -150,10 +156,13 @@ pub mod section_0 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -215,7 +224,7 @@ pub mod section_1 {
         F16x2,  // .f16x2
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedAddSpaceSemScopeLevelCacheHintVec32BitF32 {
         pub add: (),                                  // .add
         pub space: Option<Space>,                     // {.space}
@@ -227,9 +236,10 @@ pub mod section_1 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedOpSpaceSemScopeNoftzLevelCacheHintVec16BitHalfWordType {
         pub op: Op,                                   // .op
         pub space: Option<Space>,                     // {.space}
@@ -242,9 +252,10 @@ pub mod section_1 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedOpSpaceSemScopeNoftzLevelCacheHintVec32BitPackedType {
         pub op: Op,                                   // .op
         pub space: Option<Space>,                     // {.space}
@@ -257,6 +268,7 @@ pub mod section_1 {
         pub a: AddressOperand,                        // [a]
         pub b: GeneralOperand,                        // b
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 }
 

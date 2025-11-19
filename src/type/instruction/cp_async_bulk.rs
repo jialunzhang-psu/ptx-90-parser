@@ -32,6 +32,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -54,7 +56,7 @@ pub mod section_0 {
         L2CacheHint, // .L2::cache_hint
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncBulkDstSrcCompletionMechanismLevelCacheHint {
         pub async_: (),                                // .async
         pub bulk: (),                                  // .bulk
@@ -67,10 +69,13 @@ pub mod section_0 {
         pub size: GeneralOperand,                      // size
         pub mbar: AddressOperand,                      // [mbar]
         pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -98,7 +103,7 @@ pub mod section_1 {
         L2CacheHint, // .L2::cache_hint
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncBulkDstSrcCompletionMechanismMulticastLevelCacheHint {
         pub async_: (),                                // .async
         pub bulk: (),                                  // .bulk
@@ -113,10 +118,13 @@ pub mod section_1 {
         pub mbar: AddressOperand,                      // [mbar]
         pub ctamask: Option<GeneralOperand>,           // {, ctaMask}
         pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -134,7 +142,7 @@ pub mod section_2 {
         MbarrierCompleteTxBytes, // .mbarrier::complete_tx::bytes
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncBulkDstSrcCompletionMechanism {
         pub async_: (),                                // .async
         pub bulk: (),                                  // .bulk
@@ -145,10 +153,13 @@ pub mod section_2 {
         pub srcmem: AddressOperand,                    // [srcMem]
         pub size: GeneralOperand,                      // size
         pub mbar: AddressOperand,                      // [mbar]
+        pub span: Span,
     }
 }
 
 pub mod section_3 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -171,7 +182,7 @@ pub mod section_3 {
         L2CacheHint, // .L2::cache_hint
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncBulkDstSrcCompletionMechanismLevelCacheHintCpMask {
         pub async_: (),                                // .async
         pub bulk: (),                                  // .bulk
@@ -185,6 +196,7 @@ pub mod section_3 {
         pub size: GeneralOperand,                      // size
         pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
         pub bytemask: Option<GeneralOperand>,          // {, byteMask}
+        pub span: Span,
     }
 }
 

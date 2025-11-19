@@ -12,6 +12,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -32,7 +34,7 @@ pub mod section_0 {
         Shared,    // .shared
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MbarrierTestWaitSemScopeStateB64 {
         pub test_wait: (),                // .test_wait
         pub sem: Option<Sem>,             // {.sem}
@@ -42,9 +44,10 @@ pub mod section_0 {
         pub waitcomplete: GeneralOperand, // waitComplete
         pub addr: AddressOperand,         // [addr]
         pub state2: GeneralOperand,       // state
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MbarrierTestWaitParitySemScopeStateB64 {
         pub test_wait: (),                // .test_wait
         pub parity: (),                   // .parity
@@ -55,9 +58,10 @@ pub mod section_0 {
         pub waitcomplete: GeneralOperand, // waitComplete
         pub addr: AddressOperand,         // [addr]
         pub phaseparity: GeneralOperand,  // phaseParity
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MbarrierTryWaitSemScopeStateB64 {
         pub try_wait: (),                            // .try_wait
         pub sem: Option<Sem>,                        // {.sem}
@@ -68,9 +72,10 @@ pub mod section_0 {
         pub addr: AddressOperand,                    // [addr]
         pub state2: GeneralOperand,                  // state
         pub suspendtimehint: Option<GeneralOperand>, // {, suspendTimeHint}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MbarrierTryWaitParitySemScopeStateB64 {
         pub try_wait: (),                            // .try_wait
         pub parity: (),                              // .parity
@@ -82,6 +87,7 @@ pub mod section_0 {
         pub addr: AddressOperand,                    // [addr]
         pub phaseparity: GeneralOperand,             // phaseParity
         pub suspendtimehint: Option<GeneralOperand>, // {, suspendTimeHint}
+        pub span: Span,
     }
 }
 

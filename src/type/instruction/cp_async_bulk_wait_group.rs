@@ -6,15 +6,18 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncBulkWaitGroupRead {
         pub async_: (),        // .async
         pub bulk: (),          // .bulk
         pub wait_group: (),    // .wait_group
         pub read: bool,        // {.read}
         pub n: GeneralOperand, // N
+        pub span: Span,
     }
 }
 

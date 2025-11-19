@@ -10,6 +10,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -35,7 +37,7 @@ pub mod section_0 {
         ToProxyFromProxyReleaseScope(ToProxyFromProxy, (), Scope), // .to_proxy::from_proxy.release.scope
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TensormapCpFenceproxyCpQualifiersFenceQualifiersSyncAligned {
         pub cp_fenceproxy: (),                 // .cp_fenceproxy
         pub cp_qualifiers: CpQualifiers,       // .cp_qualifiers
@@ -45,6 +47,7 @@ pub mod section_0 {
         pub dst: AddressOperand,               // [dst]
         pub src: AddressOperand,               // [src]
         pub size: GeneralOperand,              // size
+        pub span: Span,
     }
 }
 

@@ -9,9 +9,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -22,199 +28,84 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Dtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b16").is_ok() {
-                    return Ok(Dtype::B16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b32").is_ok() {
-                    return Ok(Dtype::B32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b64").is_ok() {
-                    return Ok(Dtype::B64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u16").is_ok() {
-                    return Ok(Dtype::U16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Dtype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u64").is_ok() {
-                    return Ok(Dtype::U64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s16").is_ok() {
-                    return Ok(Dtype::S16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Dtype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s64").is_ok() {
-                    return Ok(Dtype::S64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Dtype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try F64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f64").is_ok() {
-                    return Ok(Dtype::F64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".b16", ".b32", ".b64", ".u16", ".u32", ".u64", ".s16", ".s32", ".s64", ".f32",
-                ".f64",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".b16"), |_, _span| Dtype::B16),
+                map(string_p(".b32"), |_, _span| Dtype::B32),
+                map(string_p(".b64"), |_, _span| Dtype::B64),
+                map(string_p(".u16"), |_, _span| Dtype::U16),
+                map(string_p(".u32"), |_, _span| Dtype::U32),
+                map(string_p(".u64"), |_, _span| Dtype::U64),
+                map(string_p(".s16"), |_, _span| Dtype::S16),
+                map(string_p(".s32"), |_, _span| Dtype::S32),
+                map(string_p(".s64"), |_, _span| Dtype::S64),
+                map(string_p(".f32"), |_, _span| Dtype::F32),
+                map(string_p(".f64"), |_, _span| Dtype::F64)
+            )
         }
     }
 
     impl PtxParser for SlctDtypeS32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("slct")?;
-            let dtype = Dtype::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".s32")?;
-            let s32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(SlctDtypeS32 {
-                dtype,
-                s32,
-                d,
-                a,
-                b,
-                c,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("slct"),
+                    Dtype::parse(),
+                    string_p(".s32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, dtype, s32, d, _, a, _, b, _, c, _), span| {
+                    ok!(SlctDtypeS32 {
+                        dtype = dtype,
+                        s32 = s32,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for SlctFtzDtypeF32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("slct")?;
-            let saved_pos = stream.position();
-            let ftz = stream.expect_string(".ftz").is_ok();
-            if !ftz {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let dtype = Dtype::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(SlctFtzDtypeF32 {
-                ftz,
-                dtype,
-                f32,
-                d,
-                a,
-                b,
-                c,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("slct"),
+                    map(optional(string_p(".ftz")), |value, _| value.is_some()),
+                    Dtype::parse(),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, ftz, dtype, f32, d, _, a, _, b, _, c, _), span| {
+                    ok!(SlctFtzDtypeF32 {
+                        ftz = ftz,
+                        dtype = dtype,
+                        f32 = f32,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+
+                    })
+                },
+            )
         }
     }
 }

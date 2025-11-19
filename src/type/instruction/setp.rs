@@ -21,6 +21,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -67,7 +69,7 @@ pub mod section_0 {
         Or,  // .or
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetpCmpopFtzType {
         pub cmpop: Cmpop,              // .CmpOp
         pub ftz: bool,                 // {.ftz}
@@ -76,9 +78,10 @@ pub mod section_0 {
         pub q: Option<GeneralOperand>, // optional second operand of p{|q}
         pub a: GeneralOperand,         // a
         pub b: GeneralOperand,         // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetpCmpopBoolopFtzType {
         pub cmpop: Cmpop,              // .CmpOp
         pub boolop: Boolop,            // .BoolOp
@@ -90,10 +93,13 @@ pub mod section_0 {
         pub b: GeneralOperand,         // b
         pub c_op: bool,                // {!} operator
         pub c: GeneralOperand,         // {!}c
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -121,7 +127,7 @@ pub mod section_1 {
         Or,  // .or
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetpCmpopFtzF16 {
         pub cmpop: Cmpop,      // .CmpOp
         pub ftz: bool,         // {.ftz}
@@ -129,9 +135,10 @@ pub mod section_1 {
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetpCmpopBoolopFtzF16 {
         pub cmpop: Cmpop,      // .CmpOp
         pub boolop: Boolop,    // .BoolOp
@@ -142,9 +149,10 @@ pub mod section_1 {
         pub b: GeneralOperand, // b
         pub c_op: bool,        // {!} operator
         pub c: GeneralOperand, // {!}c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetpCmpopFtzF16x2 {
         pub cmpop: Cmpop,      // .CmpOp
         pub ftz: bool,         // {.ftz}
@@ -153,9 +161,10 @@ pub mod section_1 {
         pub q: GeneralOperand, // second operand of p|q
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetpCmpopBoolopFtzF16x2 {
         pub cmpop: Cmpop,      // .CmpOp
         pub boolop: Boolop,    // .BoolOp
@@ -167,18 +176,20 @@ pub mod section_1 {
         pub b: GeneralOperand, // b
         pub c_op: bool,        // {!} operator
         pub c: GeneralOperand, // {!}c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetpCmpopBf16 {
         pub cmpop: Cmpop,      // .CmpOp
         pub bf16: (),          // .bf16
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetpCmpopBoolopBf16 {
         pub cmpop: Cmpop,      // .CmpOp
         pub boolop: Boolop,    // .BoolOp
@@ -188,9 +199,10 @@ pub mod section_1 {
         pub b: GeneralOperand, // b
         pub c_op: bool,        // {!} operator
         pub c: GeneralOperand, // {!}c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetpCmpopBf16x2 {
         pub cmpop: Cmpop,      // .CmpOp
         pub bf16x2: (),        // .bf16x2
@@ -198,9 +210,10 @@ pub mod section_1 {
         pub q: GeneralOperand, // second operand of p|q
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetpCmpopBoolopBf16x2 {
         pub cmpop: Cmpop,      // .CmpOp
         pub boolop: Boolop,    // .BoolOp
@@ -211,6 +224,7 @@ pub mod section_1 {
         pub b: GeneralOperand, // b
         pub c_op: bool,        // {!} operator
         pub c: GeneralOperand, // {!}c
+        pub span: Span,
     }
 }
 

@@ -20,6 +20,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -29,7 +31,7 @@ pub mod section_0 {
         KindF16,    // .kind::f16
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaWsCtaGroup1KindCollectorUsage {
         pub mma: (),                                       // .mma
         pub ws: (),                                        // .ws
@@ -42,9 +44,10 @@ pub mod section_0 {
         pub idesc: GeneralOperand,                         // idesc
         pub enable_input_d: GeneralOperand,                // enable-input-d
         pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaWsCtaGroup1KindCollectorUsage1 {
         pub mma: (),                                       // .mma
         pub ws: (),                                        // .ws
@@ -57,10 +60,13 @@ pub mod section_0 {
         pub idesc: GeneralOperand,                         // idesc
         pub enable_input_d: GeneralOperand,                // enable-input-d
         pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -84,7 +90,7 @@ pub mod section_1 {
         CollectorBufferOp((), Buffer, Op), // .collector::buffer::op
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaWsCtaGroup1KindI8CollectorUsage {
         pub mma: (),                                       // .mma
         pub ws: (),                                        // .ws
@@ -97,9 +103,10 @@ pub mod section_1 {
         pub idesc: GeneralOperand,                         // idesc
         pub enable_input_d: GeneralOperand,                // enable-input-d
         pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05MmaWsCtaGroup1KindI8CollectorUsage1 {
         pub mma: (),                                       // .mma
         pub ws: (),                                        // .ws
@@ -112,6 +119,7 @@ pub mod section_1 {
         pub idesc: GeneralOperand,                         // idesc
         pub enable_input_d: GeneralOperand,                // enable-input-d
         pub zero_column_mask_desc: Option<GeneralOperand>, // {, zero-column-mask-desc}
+        pub span: Span,
     }
 }
 

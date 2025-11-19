@@ -68,9 +68,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -81,451 +87,190 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Atype::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s8").is_ok() {
-                    return Ok(Atype::S8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u8").is_ok() {
-                    return Ok(Atype::U8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".s8", ".u8"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".f16"), |_, _span| Atype::F16),
+                map(string_p(".s8"), |_, _span| Atype::S8),
+                map(string_p(".u8"), |_, _span| Atype::U8)
+            )
         }
     }
 
     impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Btype::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s8").is_ok() {
-                    return Ok(Btype::S8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u8").is_ok() {
-                    return Ok(Btype::U8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".s8", ".u8"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".f16"), |_, _span| Btype::F16),
+                map(string_p(".s8"), |_, _span| Btype::S8),
+                map(string_p(".u8"), |_, _span| Btype::U8)
+            )
         }
     }
 
     impl PtxParser for Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(Ctype::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Ctype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Ctype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f16", ".f32", ".s32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".f16"), |_, _span| Ctype::F16),
+                map(string_p(".f32"), |_, _span| Ctype::F32),
+                map(string_p(".s32"), |_, _span| Ctype::S32)
+            )
         }
     }
 
     impl PtxParser for Layout {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Row
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".row").is_ok() {
-                    return Ok(Layout::Row);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Col
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".col").is_ok() {
-                    return Ok(Layout::Col);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".row", ".col"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".row"), |_, _span| Layout::Row),
+                map(string_p(".col"), |_, _span| Layout::Col)
+            )
         }
     }
 
     impl PtxParser for Shape {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M16n16k16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m16n16k16").is_ok() {
-                    return Ok(Shape::M16n16k16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try M8n32k16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m8n32k16").is_ok() {
-                    return Ok(Shape::M8n32k16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try M32n8k16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m32n8k16").is_ok() {
-                    return Ok(Shape::M32n8k16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m16n16k16", ".m8n32k16", ".m32n8k16"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".m16n16k16"), |_, _span| Shape::M16n16k16),
+                map(string_p(".m8n32k16"), |_, _span| Shape::M8n32k16),
+                map(string_p(".m32n8k16"), |_, _span| Shape::M32n8k16)
+            )
         }
     }
 
     impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Ss::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Ss::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cta", ".global", ".shared"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cta"), |_, _span| Ss::SharedCta),
+                map(string_p(".global"), |_, _span| Ss::Global),
+                map(string_p(".shared"), |_, _span| Ss::Shared)
+            )
         }
     }
 
     impl PtxParser for WmmaLoadASyncAlignedLayoutShapeSsAtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".a")?;
-            let a = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadASyncAlignedLayoutShapeSsAtype {
-                load,
-                a,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                atype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".a"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Atype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, a, sync, aligned, layout, shape, ss, atype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadASyncAlignedLayoutShapeSsAtype {
+                        load = load,
+                        a = a,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        atype = atype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadBSyncAlignedLayoutShapeSsBtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".b")?;
-            let b = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadBSyncAlignedLayoutShapeSsBtype {
-                load,
-                b,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                btype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".b"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Btype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, b, sync, aligned, layout, shape, ss, btype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadBSyncAlignedLayoutShapeSsBtype {
+                        load = load,
+                        b = b,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        btype = btype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadCSyncAlignedLayoutShapeSsCtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".c")?;
-            let c = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let ctype = Ctype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadCSyncAlignedLayoutShapeSsCtype {
-                load,
-                c,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                ctype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".c"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Ctype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, c, sync, aligned, layout, shape, ss, ctype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadCSyncAlignedLayoutShapeSsCtype {
+                        load = load,
+                        c = c,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        ctype = ctype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -539,391 +284,178 @@ pub mod section_1 {
     // ============================================================================
 
     impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Bf16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".bf16").is_ok() {
-                    return Ok(Atype::Bf16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".bf16"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".bf16"), |_, _span| Atype::Bf16))
         }
     }
 
     impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Bf16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".bf16").is_ok() {
-                    return Ok(Btype::Bf16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".bf16"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".bf16"), |_, _span| Btype::Bf16))
         }
     }
 
     impl PtxParser for Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Ctype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".f32"), |_, _span| Ctype::F32))
         }
     }
 
     impl PtxParser for Layout {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Row
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".row").is_ok() {
-                    return Ok(Layout::Row);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Col
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".col").is_ok() {
-                    return Ok(Layout::Col);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".row", ".col"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".row"), |_, _span| Layout::Row),
+                map(string_p(".col"), |_, _span| Layout::Col)
+            )
         }
     }
 
     impl PtxParser for Shape {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M16n16k16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m16n16k16").is_ok() {
-                    return Ok(Shape::M16n16k16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try M8n32k16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m8n32k16").is_ok() {
-                    return Ok(Shape::M8n32k16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try M32n8k16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m32n8k16").is_ok() {
-                    return Ok(Shape::M32n8k16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m16n16k16", ".m8n32k16", ".m32n8k16"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".m16n16k16"), |_, _span| Shape::M16n16k16),
+                map(string_p(".m8n32k16"), |_, _span| Shape::M8n32k16),
+                map(string_p(".m32n8k16"), |_, _span| Shape::M32n8k16)
+            )
         }
     }
 
     impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Ss::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Ss::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cta", ".global", ".shared"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cta"), |_, _span| Ss::SharedCta),
+                map(string_p(".global"), |_, _span| Ss::Global),
+                map(string_p(".shared"), |_, _span| Ss::Shared)
+            )
         }
     }
 
     impl PtxParser for WmmaLoadASyncAlignedLayoutShapeSsAtype1 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".a")?;
-            let a = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadASyncAlignedLayoutShapeSsAtype1 {
-                load,
-                a,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                atype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".a"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Atype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, a, sync, aligned, layout, shape, ss, atype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadASyncAlignedLayoutShapeSsAtype1 {
+                        load = load,
+                        a = a,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        atype = atype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadBSyncAlignedLayoutShapeSsBtype1 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".b")?;
-            let b = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadBSyncAlignedLayoutShapeSsBtype1 {
-                load,
-                b,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                btype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".b"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Btype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, b, sync, aligned, layout, shape, ss, btype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadBSyncAlignedLayoutShapeSsBtype1 {
+                        load = load,
+                        b = b,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        btype = btype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadCSyncAlignedLayoutShapeSsCtype1 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".c")?;
-            let c = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let ctype = Ctype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadCSyncAlignedLayoutShapeSsCtype1 {
-                load,
-                c,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                ctype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".c"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Ctype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, c, sync, aligned, layout, shape, ss, ctype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadCSyncAlignedLayoutShapeSsCtype1 {
+                        load = load,
+                        c = c,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        ctype = ctype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -937,371 +469,174 @@ pub mod section_2 {
     // ============================================================================
 
     impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Tf32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".tf32").is_ok() {
-                    return Ok(Atype::Tf32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".tf32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".tf32"), |_, _span| Atype::Tf32))
         }
     }
 
     impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Tf32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".tf32").is_ok() {
-                    return Ok(Btype::Tf32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".tf32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".tf32"), |_, _span| Btype::Tf32))
         }
     }
 
     impl PtxParser for Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Ctype::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".f32"), |_, _span| Ctype::F32))
         }
     }
 
     impl PtxParser for Layout {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Row
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".row").is_ok() {
-                    return Ok(Layout::Row);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Col
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".col").is_ok() {
-                    return Ok(Layout::Col);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".row", ".col"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".row"), |_, _span| Layout::Row),
+                map(string_p(".col"), |_, _span| Layout::Col)
+            )
         }
     }
 
     impl PtxParser for Shape {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M16n16k8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m16n16k8").is_ok() {
-                    return Ok(Shape::M16n16k8);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m16n16k8"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".m16n16k8"), |_, _span| Shape::M16n16k8))
         }
     }
 
     impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Ss::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Ss::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cta", ".global", ".shared"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cta"), |_, _span| Ss::SharedCta),
+                map(string_p(".global"), |_, _span| Ss::Global),
+                map(string_p(".shared"), |_, _span| Ss::Shared)
+            )
         }
     }
 
     impl PtxParser for WmmaLoadASyncAlignedLayoutShapeSsAtype2 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".a")?;
-            let a = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadASyncAlignedLayoutShapeSsAtype2 {
-                load,
-                a,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                atype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".a"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Atype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, a, sync, aligned, layout, shape, ss, atype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadASyncAlignedLayoutShapeSsAtype2 {
+                        load = load,
+                        a = a,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        atype = atype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadBSyncAlignedLayoutShapeSsBtype2 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".b")?;
-            let b = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadBSyncAlignedLayoutShapeSsBtype2 {
-                load,
-                b,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                btype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".b"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Btype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, b, sync, aligned, layout, shape, ss, btype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadBSyncAlignedLayoutShapeSsBtype2 {
+                        load = load,
+                        b = b,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        btype = btype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadCSyncAlignedLayoutShapeSsCtype2 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".c")?;
-            let c = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let ctype = Ctype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadCSyncAlignedLayoutShapeSsCtype2 {
-                load,
-                c,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                ctype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".c"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Ctype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, c, sync, aligned, layout, shape, ss, ctype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadCSyncAlignedLayoutShapeSsCtype2 {
+                        load = load,
+                        c = c,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        ctype = ctype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -1315,371 +650,174 @@ pub mod section_3 {
     // ============================================================================
 
     impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f64").is_ok() {
-                    return Ok(Atype::F64);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f64"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".f64"), |_, _span| Atype::F64))
         }
     }
 
     impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f64").is_ok() {
-                    return Ok(Btype::F64);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f64"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".f64"), |_, _span| Btype::F64))
         }
     }
 
     impl PtxParser for Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f64").is_ok() {
-                    return Ok(Ctype::F64);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f64"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".f64"), |_, _span| Ctype::F64))
         }
     }
 
     impl PtxParser for Layout {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Row
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".row").is_ok() {
-                    return Ok(Layout::Row);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Col
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".col").is_ok() {
-                    return Ok(Layout::Col);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".row", ".col"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".row"), |_, _span| Layout::Row),
+                map(string_p(".col"), |_, _span| Layout::Col)
+            )
         }
     }
 
     impl PtxParser for Shape {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M8n8k4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m8n8k4").is_ok() {
-                    return Ok(Shape::M8n8k4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m8n8k4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".m8n8k4"), |_, _span| Shape::M8n8k4))
         }
     }
 
     impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Ss::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Ss::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cta", ".global", ".shared"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cta"), |_, _span| Ss::SharedCta),
+                map(string_p(".global"), |_, _span| Ss::Global),
+                map(string_p(".shared"), |_, _span| Ss::Shared)
+            )
         }
     }
 
     impl PtxParser for WmmaLoadASyncAlignedLayoutShapeSsAtype3 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".a")?;
-            let a = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadASyncAlignedLayoutShapeSsAtype3 {
-                load,
-                a,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                atype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".a"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Atype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, a, sync, aligned, layout, shape, ss, atype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadASyncAlignedLayoutShapeSsAtype3 {
+                        load = load,
+                        a = a,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        atype = atype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadBSyncAlignedLayoutShapeSsBtype3 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".b")?;
-            let b = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadBSyncAlignedLayoutShapeSsBtype3 {
-                load,
-                b,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                btype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".b"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Btype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, b, sync, aligned, layout, shape, ss, btype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadBSyncAlignedLayoutShapeSsBtype3 {
+                        load = load,
+                        b = b,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        btype = btype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadCSyncAlignedLayoutShapeSsCtype3 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".c")?;
-            let c = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let ctype = Ctype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadCSyncAlignedLayoutShapeSsCtype3 {
-                load,
-                c,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                ctype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".c"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Ctype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, c, sync, aligned, layout, shape, ss, ctype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadCSyncAlignedLayoutShapeSsCtype3 {
+                        load = load,
+                        c = c,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        ctype = ctype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -1693,393 +831,178 @@ pub mod section_4 {
     // ============================================================================
 
     impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try S4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s4").is_ok() {
-                    return Ok(Atype::S4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try U4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u4").is_ok() {
-                    return Ok(Atype::U4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".s4", ".u4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".s4"), |_, _span| Atype::S4),
+                map(string_p(".u4"), |_, _span| Atype::U4)
+            )
         }
     }
 
     impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try S4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s4").is_ok() {
-                    return Ok(Btype::S4);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try U4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u4").is_ok() {
-                    return Ok(Btype::U4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".s4", ".u4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".s4"), |_, _span| Btype::S4),
+                map(string_p(".u4"), |_, _span| Btype::U4)
+            )
         }
     }
 
     impl PtxParser for Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Ctype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".s32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".s32"), |_, _span| Ctype::S32))
         }
     }
 
     impl PtxParser for Layout {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Row
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".row").is_ok() {
-                    return Ok(Layout::Row);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Col
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".col").is_ok() {
-                    return Ok(Layout::Col);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".row", ".col"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".row"), |_, _span| Layout::Row),
+                map(string_p(".col"), |_, _span| Layout::Col)
+            )
         }
     }
 
     impl PtxParser for Shape {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M8n8k32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m8n8k32").is_ok() {
-                    return Ok(Shape::M8n8k32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m8n8k32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".m8n8k32"), |_, _span| Shape::M8n8k32))
         }
     }
 
     impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Ss::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Ss::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cta", ".global", ".shared"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cta"), |_, _span| Ss::SharedCta),
+                map(string_p(".global"), |_, _span| Ss::Global),
+                map(string_p(".shared"), |_, _span| Ss::Shared)
+            )
         }
     }
 
     impl PtxParser for WmmaLoadASyncAlignedRowShapeSsAtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".a")?;
-            let a = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadASyncAlignedRowShapeSsAtype {
-                load,
-                a,
-                sync,
-                aligned,
-                row,
-                shape,
-                ss,
-                atype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".a"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".row"),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Atype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, a, sync, aligned, row, shape, ss, atype, r, _, p, stride, _), span| {
+                    ok!(WmmaLoadASyncAlignedRowShapeSsAtype {
+                        load = load,
+                        a = a,
+                        sync = sync,
+                        aligned = aligned,
+                        row = row,
+                        shape = shape,
+                        ss = ss,
+                        atype = atype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadBSyncAlignedColShapeSsBtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".b")?;
-            let b = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadBSyncAlignedColShapeSsBtype {
-                load,
-                b,
-                sync,
-                aligned,
-                col,
-                shape,
-                ss,
-                btype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".b"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".col"),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Btype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, b, sync, aligned, col, shape, ss, btype, r, _, p, stride, _), span| {
+                    ok!(WmmaLoadBSyncAlignedColShapeSsBtype {
+                        load = load,
+                        b = b,
+                        sync = sync,
+                        aligned = aligned,
+                        col = col,
+                        shape = shape,
+                        ss = ss,
+                        btype = btype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadCSyncAlignedLayoutShapeSsCtype4 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".c")?;
-            let c = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let ctype = Ctype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadCSyncAlignedLayoutShapeSsCtype4 {
-                load,
-                c,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                ctype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".c"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Ctype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, c, sync, aligned, layout, shape, ss, ctype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadCSyncAlignedLayoutShapeSsCtype4 {
+                        load = load,
+                        c = c,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        ctype = ctype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -2093,373 +1016,172 @@ pub mod section_5 {
     // ============================================================================
 
     impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b1").is_ok() {
-                    return Ok(Atype::B1);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b1"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".b1"), |_, _span| Atype::B1))
         }
     }
 
     impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b1").is_ok() {
-                    return Ok(Btype::B1);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b1"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".b1"), |_, _span| Btype::B1))
         }
     }
 
     impl PtxParser for Ctype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Ctype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".s32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".s32"), |_, _span| Ctype::S32))
         }
     }
 
     impl PtxParser for Layout {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Row
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".row").is_ok() {
-                    return Ok(Layout::Row);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Col
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".col").is_ok() {
-                    return Ok(Layout::Col);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".row", ".col"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".row"), |_, _span| Layout::Row),
+                map(string_p(".col"), |_, _span| Layout::Col)
+            )
         }
     }
 
     impl PtxParser for Shape {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try M8n8k128
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".m8n8k128").is_ok() {
-                    return Ok(Shape::M8n8k128);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".m8n8k128"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".m8n8k128"), |_, _span| Shape::M8n8k128))
         }
     }
 
     impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Ss::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Ss::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cta", ".global", ".shared"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cta"), |_, _span| Ss::SharedCta),
+                map(string_p(".global"), |_, _span| Ss::Global),
+                map(string_p(".shared"), |_, _span| Ss::Shared)
+            )
         }
     }
 
     impl PtxParser for WmmaLoadASyncAlignedRowShapeSsAtype1 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".a")?;
-            let a = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".row")?;
-            let row = ();
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadASyncAlignedRowShapeSsAtype1 {
-                load,
-                a,
-                sync,
-                aligned,
-                row,
-                shape,
-                ss,
-                atype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".a"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".row"),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Atype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, a, sync, aligned, row, shape, ss, atype, r, _, p, stride, _), span| {
+                    ok!(WmmaLoadASyncAlignedRowShapeSsAtype1 {
+                        load = load,
+                        a = a,
+                        sync = sync,
+                        aligned = aligned,
+                        row = row,
+                        shape = shape,
+                        ss = ss,
+                        atype = atype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadBSyncAlignedColShapeSsBtype1 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".b")?;
-            let b = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".col")?;
-            let col = ();
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadBSyncAlignedColShapeSsBtype1 {
-                load,
-                b,
-                sync,
-                aligned,
-                col,
-                shape,
-                ss,
-                btype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".b"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".col"),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Btype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, b, sync, aligned, col, shape, ss, btype, r, _, p, stride, _), span| {
+                    ok!(WmmaLoadBSyncAlignedColShapeSsBtype1 {
+                        load = load,
+                        b = b,
+                        sync = sync,
+                        aligned = aligned,
+                        col = col,
+                        shape = shape,
+                        ss = ss,
+                        btype = btype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for WmmaLoadCSyncAlignedLayoutShapeSsCtype5 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("wmma")?;
-            stream.expect_string(".load")?;
-            let load = ();
-            stream.expect_complete()?;
-            stream.expect_string(".c")?;
-            let c = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            let layout = Layout::parse(stream)?;
-            stream.expect_complete()?;
-            let shape = Shape::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let ctype = Ctype::parse(stream)?;
-            stream.expect_complete()?;
-            let r = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let p = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let stride = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(WmmaLoadCSyncAlignedLayoutShapeSsCtype5 {
-                load,
-                c,
-                sync,
-                aligned,
-                layout,
-                shape,
-                ss,
-                ctype,
-                r,
-                p,
-                stride,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("wmma"),
+                    string_p(".load"),
+                    string_p(".c"),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    Layout::parse(),
+                    Shape::parse(),
+                    optional(Ss::parse()),
+                    Ctype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, load, c, sync, aligned, layout, shape, ss, ctype, r, _, p, stride, _),
+                 span| {
+                    ok!(WmmaLoadCSyncAlignedLayoutShapeSsCtype5 {
+                        load = load,
+                        c = c,
+                        sync = sync,
+                        aligned = aligned,
+                        layout = layout,
+                        shape = shape,
+                        ss = ss,
+                        ctype = ctype,
+                        r = r,
+                        p = p,
+                        stride = stride,
+
+                    })
+                },
+            )
         }
     }
 }

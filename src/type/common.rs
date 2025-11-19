@@ -267,6 +267,8 @@ pub enum Operand {
 #[derive(Debug, Clone, PartialEq, Eq, Spanned)]
 pub struct RegisterOperand {
     pub name: String,
+    /// Optional component suffix (e.g., `.x`, `.y`, `.z`, `.w`)
+    pub component: Option<String>,
     pub span: Span,
 }
 

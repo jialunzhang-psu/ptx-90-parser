@@ -7,23 +7,27 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RsqrtApproxFtzF32 {
         pub approx: (),        // .approx
         pub ftz: bool,         // {.ftz}
         pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RsqrtApproxF64 {
         pub approx: (),        // .approx
         pub f64: (),           // .f64
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 }
 

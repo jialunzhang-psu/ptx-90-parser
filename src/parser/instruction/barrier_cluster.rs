@@ -6,9 +6,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -19,102 +25,59 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Sem {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Release
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".release").is_ok() {
-                    return Ok(Sem::Release);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Relaxed
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".relaxed").is_ok() {
-                    return Ok(Sem::Relaxed);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".release", ".relaxed"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".release"), |_, _span| Sem::Release),
+                map(string_p(".relaxed"), |_, _span| Sem::Relaxed)
+            )
         }
     }
 
     impl PtxParser for BarrierClusterArriveSemAligned {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("barrier")?;
-            stream.expect_string(".cluster")?;
-            let cluster = ();
-            stream.expect_complete()?;
-            stream.expect_string(".arrive")?;
-            let arrive = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let aligned = stream.expect_string(".aligned").is_ok();
-            if !aligned {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarrierClusterArriveSemAligned {
-                cluster,
-                arrive,
-                sem,
-                aligned,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("barrier"),
+                    string_p(".cluster"),
+                    string_p(".arrive"),
+                    optional(Sem::parse()),
+                    map(optional(string_p(".aligned")), |value, _| value.is_some()),
+                    semicolon_p()
+                ),
+                |(_, cluster, arrive, sem, aligned, _), span| {
+                    ok!(BarrierClusterArriveSemAligned {
+                        cluster = cluster,
+                        arrive = arrive,
+                        sem = sem,
+                        aligned = aligned,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for BarrierClusterWaitAcquireAligned {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("barrier")?;
-            stream.expect_string(".cluster")?;
-            let cluster = ();
-            stream.expect_complete()?;
-            stream.expect_string(".wait")?;
-            let wait = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let acquire = stream.expect_string(".acquire").is_ok();
-            if !acquire {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let aligned = stream.expect_string(".aligned").is_ok();
-            if !aligned {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BarrierClusterWaitAcquireAligned {
-                cluster,
-                wait,
-                acquire,
-                aligned,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("barrier"),
+                    string_p(".cluster"),
+                    string_p(".wait"),
+                    map(optional(string_p(".acquire")), |value, _| value.is_some()),
+                    map(optional(string_p(".aligned")), |value, _| value.is_some()),
+                    semicolon_p()
+                ),
+                |(_, cluster, wait, acquire, aligned, _), span| {
+                    ok!(BarrierClusterWaitAcquireAligned {
+                        cluster = cluster,
+                        wait = wait,
+                        acquire = acquire,
+                        aligned = aligned,
+
+                    })
+                },
+            )
         }
     }
 }

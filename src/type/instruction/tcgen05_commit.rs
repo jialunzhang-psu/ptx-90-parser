@@ -10,6 +10,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -28,7 +30,7 @@ pub mod section_0 {
         MulticastCluster, // .multicast::cluster
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05CommitCtaGroupCompletionMechanismSharedClusterMulticastB64 {
         pub commit: (),                                // .commit
         pub cta_group: CtaGroup,                       // .cta_group
@@ -38,6 +40,7 @@ pub mod section_0 {
         pub b64: (),                                   // .b64
         pub mbar: AddressOperand,                      // [mbar]
         pub ctamask: Option<GeneralOperand>,           // {, ctaMask}
+        pub span: Span,
     }
 }
 

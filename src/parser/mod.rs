@@ -1,13 +1,114 @@
-use crate::lexer::{PtxToken, tokenize};
+use crate::{lexer::PtxToken, span, LexError};
 use thiserror::Error;
 
 pub(crate) mod common;
 pub(crate) mod function;
 pub(crate) mod instruction;
 pub(crate) mod module;
+pub(crate) mod util;
 pub(crate) mod variable;
 
-pub type Span = std::ops::Range<usize>;
+#[derive(Debug, Default, PartialEq, Eq, Copy, Clone)]
+pub struct Span {
+    pub start: usize,
+    pub end: usize,
+}
+
+impl Span {
+    pub const fn new(start: usize, end: usize) -> Self {
+        Self { start, end }
+    }
+}
+
+impl From<std::ops::Range<usize>> for Span {
+    fn from(range: std::ops::Range<usize>) -> Self {
+        Span::new(range.start, range.end)
+    }
+}
+
+impl From<Span> for std::ops::Range<usize> {
+    fn from(span: Span) -> Self {
+        span.start..span.end
+    }
+}
+
+/// Macro to create an UnexpectedToken error with expected and found values.
+///
+/// # Usage
+/// ```ignore
+/// unexpected_token!(span, ["expected1", "expected2"], "found_value")
+/// unexpected_token!(span, vec!["expected1".to_string()], format!("{:?}", token))
+/// ```
+#[macro_export]
+macro_rules! unexpected_token {
+    ($span:expr, $expected:expr, $found:expr) => {
+        $crate::parser::PtxParseError {
+            kind: $crate::parser::ParseErrorKind::UnexpectedToken {
+                expected: $expected.iter().map(|s| s.to_string()).collect(),
+                found: $found,
+            },
+            span: $span,
+        }
+    };
+}
+
+/// Macro to check if in partial mode and return error if so.
+/// Use this in token-based methods that should only work in complete mode.
+///
+/// # Usage
+/// ```ignore
+/// reject_partial_mode!(self);
+/// ```
+macro_rules! reject_partial_mode {
+    ($self:expr) => {
+        if $self.index.1.is_some() {
+            let span = $self
+                .tokens
+                .get($self.index.0)
+                .map_or(span!(0..0), |(_, s)| *s);
+            return Err($crate::parser::PtxParseError {
+                kind: $crate::parser::ParseErrorKind::InvalidModeForTokenMethod,
+                span,
+            });
+        }
+    };
+}
+
+/// Macro to create an UnexpectedToken error when no candidates match.
+///
+/// # Usage
+/// ```ignore
+/// no_candidate_match!(self, candidates)
+/// ```
+macro_rules! no_candidate_match {
+    ($self:expr, $candidates:expr) => {{
+        let span = $self
+            .tokens
+            .get($self.index.0)
+            .map_or(span!(0..0), |(_, s)| *s);
+        $crate::parser::PtxParseError {
+            kind: $crate::parser::ParseErrorKind::UnexpectedToken {
+                expected: $candidates.iter().map(|s| s.to_string()).collect(),
+                found: "no match".to_string(),
+            },
+            span,
+        }
+    }};
+}
+
+/// Macro to build a standard unexpected-value parse error.
+#[macro_export]
+macro_rules! unexpected_value {
+    ($span:expr, $expected:expr, $found:expr) => {
+        $crate::parser::PtxParseError {
+            kind: $crate::parser::ParseErrorKind::UnexpectedToken {
+                expected: $expected.iter().map(|s| s.to_string()).collect(),
+                found: $found.into(),
+            },
+            span: $span,
+        }
+    };
+}
 
 /// Kinds of parse errors that can occur during PTX parsing.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
@@ -21,6 +122,8 @@ pub enum ParseErrorKind {
     UnexpectedEof,
     #[error("invalid literal: {0}")]
     InvalidLiteral(String),
+    #[error("cannot use token-based methods in partial mode")]
+    InvalidModeForTokenMethod,
 }
 
 /// PTX parsing error with location information.
@@ -31,12 +134,18 @@ pub struct PtxParseError {
     pub span: Span,
 }
 
-/// Represents a position in the token stream, including both token index and character offset within a token
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct StreamPosition {
-    pub index: usize,
-    pub char_offset: usize,
+impl From<LexError> for PtxParseError {
+    fn from(err: LexError) -> Self {
+        PtxParseError {
+            kind: ParseErrorKind::InvalidLiteral("lexing failed".into()),
+            span: err.span,
+        }
+    }
 }
+
+/// Represents a position in the token stream,
+/// index of the token and optional char offset within the token.
+pub type StreamPosition = (usize, Option<usize>);
 
 /// Token stream wrapper for parsing PTX tokens.
 ///
@@ -44,25 +153,52 @@ pub struct StreamPosition {
 pub struct PtxTokenStream<'a> {
     tokens: &'a [(PtxToken, Span)],
     /// Current position (index) in the tokens list
-    index: usize,
-    /// Position within the current token's string content (for parsing multi-char identifiers/numbers)
-    pub(crate) char_offset: usize,
+    index: StreamPosition,
 }
 
 impl<'a> PtxTokenStream<'a> {
     pub fn new(tokens: &'a [(PtxToken, Span)]) -> Self {
         Self {
             tokens,
-            index: 0,
-            char_offset: 0,
+            index: (0, None),
         }
     }
 
     /// Peek at the next token without consuming it.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Returns the token at the current stream position without advancing the position.
+    /// This is a simple array lookup at `index.0`.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Returns an error (InvalidModeForTokenMethod). This method only operates on whole tokens
+    /// and cannot be used during partial (character-by-character) matching mode.
+    ///
+    /// # Returns
+    ///
+    /// - `Ok(&(PtxToken, Span))` - The token and its span
+    /// - `Err(PtxParseError)` - If at end of stream (UnexpectedEof) or in partial mode (InvalidModeForTokenMethod)
     pub fn peek(&self) -> Result<&'a (PtxToken, Span), PtxParseError> {
-        self.tokens.get(self.index).ok_or_else(|| {
+        reject_partial_mode!(self);
+        self.tokens.get(self.index.0).ok_or_else(|| {
             // If the stream is empty, return an EOF error
-            let span = self.tokens.last().map_or(0..0, |(_, s)| s.clone());
+            let span = self.tokens.last().map_or(span!(0..0), |(_, s)| *s);
+            PtxParseError {
+                kind: ParseErrorKind::UnexpectedEof,
+                span,
+            }
+        })
+    }
+
+    /// Peek at the token `offset` positions ahead without consuming it.
+    ///
+    /// Behaves like `peek()` but allows inspecting future tokens in complete mode.
+    pub fn peek_n(&self, offset: usize) -> Result<&'a (PtxToken, Span), PtxParseError> {
+        reject_partial_mode!(self);
+        self.tokens.get(self.index.0 + offset).ok_or_else(|| {
+            let span = self.tokens.last().map_or(span!(0..0), |(_, s)| *s);
             PtxParseError {
                 kind: ParseErrorKind::UnexpectedEof,
                 span,
@@ -71,33 +207,103 @@ impl<'a> PtxTokenStream<'a> {
     }
 
     /// Consume and return the next token.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Advances the stream position by one token (increments `index.0`).
+    /// Returns the token that was at the current position before advancing.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Returns an error (InvalidModeForTokenMethod). This method only operates on whole tokens
+    /// and cannot be used during partial (character-by-character) matching mode.
+    ///
+    /// # Returns
+    ///
+    /// - `Ok(&(PtxToken, Span))` - The consumed token and its span
+    /// - `Err(PtxParseError)` - If at end of stream (UnexpectedEof) or in partial mode (InvalidModeForTokenMethod)
     pub fn consume(&mut self) -> Result<&'a (PtxToken, Span), PtxParseError> {
+        reject_partial_mode!(self);
         let token = self.peek()?;
-        self.index += 1;
+        self.index.0 += 1;
         Ok(token)
+    }
+
+    /// Conditionally consume the next token if it matches the predicate.
+    ///
+    /// # Returns
+    ///
+    /// - `Some(&(PtxToken, Span))` - If the predicate returns true, consumes and returns the token
+    /// - `None` - If the predicate returns false or if at end of stream
+    pub fn consume_if<F>(&mut self, predicate: F) -> Option<&'a (PtxToken, Span)>
+    where
+        F: FnOnce(&PtxToken) -> bool,
+    {
+        if self.index.1.is_some() {
+            return None; // In partial mode
+        }
+        if let Ok((token, _)) = self.peek() {
+            if predicate(token) {
+                self.index.0 += 1;
+                return self.tokens.get(self.index.0 - 1);
+            }
+        }
+        None
     }
 
     /// Check if the next token is the expected type, and if so, consume it.
     /// Otherwise, return an error and do NOT consume the token.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Peeks at the current token and checks if its discriminant (variant type) matches
+    /// the expected token discriminant. If it matches, advances the stream by one token
+    /// and returns the token. If it doesn't match, returns an UnexpectedToken error
+    /// without consuming anything.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Returns an error (InvalidModeForTokenMethod). This method only operates on whole tokens
+    /// and cannot be used during partial (character-by-character) matching mode.
+    ///
+    /// # Returns
+    ///
+    /// - `Ok(&(PtxToken, Span))` - The matched and consumed token
+    /// - `Err(PtxParseError)` - If token doesn't match (UnexpectedToken) or in partial mode (InvalidModeForTokenMethod)
     pub fn expect(&mut self, expected: &PtxToken) -> Result<&'a (PtxToken, Span), PtxParseError> {
+        reject_partial_mode!(self);
         let token_pair = self.peek()?;
         let (token, span) = token_pair;
         if std::mem::discriminant(token) == std::mem::discriminant(expected) {
-            self.index += 1;
+            self.index.0 += 1;
             Ok(token_pair)
         } else {
-            Err(PtxParseError {
-                kind: ParseErrorKind::UnexpectedToken {
-                    expected: vec![format!("{:?}", expected)],
-                    found: format!("{:?}", token),
-                },
-                span: span.clone(),
-            })
+            Err(unexpected_token!(
+                *span,
+                &[format!("{:?}", expected)],
+                format!("{:?}", token)
+            ))
         }
     }
 
     /// Generic helper to extract a String value from a token variant.
     /// Returns the extracted string and span if the pattern matches, otherwise returns an error.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Peeks at the current token and attempts to extract a string value using the provided
+    /// extractor function. If extraction succeeds, advances the stream by one token and returns
+    /// the extracted string with its span. If extraction fails, returns an UnexpectedToken error.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Returns an error (InvalidModeForTokenMethod). This method only operates on whole tokens
+    /// and cannot be used during partial (character-by-character) matching mode.
+    ///
+    /// # Returns
+    ///
+    /// - `Ok((String, Span))` - The extracted string value and its span
+    /// - `Err(PtxParseError)` - If extraction fails (UnexpectedToken) or in partial mode (InvalidModeForTokenMethod)
     fn expect_token_with_string<F>(
         &mut self,
         expected_name: &str,
@@ -106,23 +312,30 @@ impl<'a> PtxTokenStream<'a> {
     where
         F: FnOnce(&PtxToken) -> Option<String>,
     {
-        let (token, span) = self.peek()?;
+        reject_partial_mode!(self);
+        let (token, span_ref) = self.peek()?;
         if let Some(value) = extractor(token) {
-            let span = span.clone();
-            self.index += 1;
+            let span = *span_ref;
+            self.index.0 += 1;
             Ok((value, span))
         } else {
-            Err(PtxParseError {
-                kind: ParseErrorKind::UnexpectedToken {
-                    expected: vec![expected_name.to_string()],
-                    found: format!("{:?}", token),
-                },
-                span: span.clone(),
-            })
+            Err(unexpected_token!(
+                *span_ref,
+                &[expected_name.to_string()],
+                format!("{:?}", token)
+            ))
         }
     }
 
     /// Check if the next token is an identifier, and if so, consume it and return the String.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Expects the current token to be an Identifier, consumes it, and returns its string value.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Returns an error (InvalidModeForTokenMethod). This is a token-based method.
     pub fn expect_identifier(&mut self) -> Result<(String, Span), PtxParseError> {
         self.expect_token_with_string("Identifier", |token| {
             if let PtxToken::Identifier(name) = token {
@@ -134,6 +347,14 @@ impl<'a> PtxTokenStream<'a> {
     }
 
     /// Check if the next token is a register, and if so, consume it and return the String.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Expects the current token to be a Register, consumes it, and returns its string value.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Returns an error (InvalidModeForTokenMethod). This is a token-based method.
     pub fn expect_register(&mut self) -> Result<(String, Span), PtxParseError> {
         self.expect_token_with_string("Register", |token| {
             if let PtxToken::Register(name) = token {
@@ -145,24 +366,96 @@ impl<'a> PtxTokenStream<'a> {
     }
 
     /// Check if the next token is a directive (Dot + Identifier), and if so, consume them and return the String.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Expects a Dot token followed by an Identifier token, consumes both, and returns the
+    /// identifier string with a combined span covering both tokens.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Returns an error (InvalidModeForTokenMethod). This is a token-based method.
     pub fn expect_directive(&mut self) -> Result<(String, Span), PtxParseError> {
         let (_, dot_span) = self.expect(&PtxToken::Dot)?;
         let (name, id_span) = self.expect_identifier()?;
-        let span = dot_span.start..id_span.end;
+        let span = Span::new(dot_span.start, id_span.end);
         Ok((name, span))
     }
 
-    /// Check if the next token is a directive that represents a modifier (type, state space, etc.).
-    /// This is an alias for expect_directive for semantic clarity when parsing modifiers.
-    pub fn expect_modifier(&mut self) -> Result<(String, Span), PtxParseError> {
-        self.expect_directive()
-    }
+    /// Internal helper to match a string pattern against the token stream.
+    /// Returns true if the entire pattern matches and consumes the matched portion.
+    /// Returns false if matching fails (does not modify stream state on failure).
+    ///
+    /// Supports both complete mode (whole token matching) and partial mode (char-by-char).
+    fn match_string_internal(&mut self, pattern: &str) -> bool {
+        let start_pos = self.position();
+        let mut pattern_chars = pattern.chars().peekable();
 
-    /// Expect and consume a double colon (::) token sequence.
-    pub fn expect_double_colon(&mut self) -> Result<(), PtxParseError> {
-        self.expect(&PtxToken::Colon)?;
-        self.expect(&PtxToken::Colon)?;
-        Ok(())
+        loop {
+            // Check if we've consumed the entire pattern
+            if pattern_chars.peek().is_none() {
+                return true; // Successfully matched
+            }
+
+            // Check if we've run out of tokens
+            if self.index.0 >= self.tokens.len() {
+                self.set_position(start_pos);
+                return false;
+            }
+
+            let (token, _span) = &self.tokens[self.index.0];
+            let token_str = token.as_str();
+
+            if let Some(char_offset) = self.index.1 {
+                // Partial mode: match character-by-character
+                let token_chars: Vec<char> = token_str.chars().collect();
+
+                if char_offset >= token_chars.len() {
+                    // Consumed entire token, advance to next
+                    self.index.0 += 1;
+                    self.index.1 = Some(0);
+                    continue;
+                }
+
+                // Try to match remaining pattern chars against remaining token chars
+                let mut offset = char_offset;
+                while offset < token_chars.len() && pattern_chars.peek().is_some() {
+                    if Some(&token_chars[offset]) == pattern_chars.peek() {
+                        pattern_chars.next();
+                        offset += 1;
+                    } else {
+                        // Mismatch
+                        self.set_position(start_pos);
+                        return false;
+                    }
+                }
+                self.index.1 = Some(offset);
+            } else {
+                // Complete mode: match whole token string representation
+                let token_chars: Vec<char> = token_str.chars().collect();
+                let mut token_idx = 0;
+
+                while token_idx < token_chars.len() && pattern_chars.peek().is_some() {
+                    if Some(&token_chars[token_idx]) == pattern_chars.peek() {
+                        pattern_chars.next();
+                        token_idx += 1;
+                    } else {
+                        // Mismatch
+                        self.set_position(start_pos);
+                        return false;
+                    }
+                }
+
+                // Check if we consumed the entire token
+                if token_idx == token_chars.len() {
+                    self.index.0 += 1;
+                } else if pattern_chars.peek().is_none() {
+                    // Pattern matched but didn't consume entire token - this is an error in complete mode
+                    self.set_position(start_pos);
+                    return false;
+                }
+            }
+        }
     }
 
     /// Try to match and consume a sequence of tokens that matches one of the candidate strings.
@@ -170,6 +463,18 @@ impl<'a> PtxTokenStream<'a> {
     ///
     /// This is used for parsing modifiers that may contain :: sequences like ".to::cluster"
     /// The candidates should include the leading dot (e.g., [".to::cluster", ".to::cta"])
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Tries to match each candidate string against the token stream by consuming whole tokens.
+    /// Returns the index of the first candidate that matches. Uses backtracking (position/set_position)
+    /// to try each candidate without consuming tokens on failed attempts.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Supports character-by-character matching within tokens using the char offset.
+    /// This allows matching patterns that span across token boundaries or within tokens.
+    /// Uses backtracking to restore position when a candidate fails to match.
     pub fn expect_strings(&mut self, candidates: &[&str]) -> Result<usize, PtxParseError> {
         let start_pos = self.position();
 
@@ -177,260 +482,237 @@ impl<'a> PtxTokenStream<'a> {
             self.set_position(start_pos);
 
             // Try to match this candidate
-            if self.try_match_string(candidate) {
+            if self.match_string_internal(candidate) {
                 return Ok(idx);
             }
         }
 
-        // None matched, create error
-        let (token, span) = self.peek()?;
-        Err(PtxParseError {
-            kind: ParseErrorKind::UnexpectedToken {
-                expected: candidates.iter().map(|s| s.to_string()).collect(),
-                found: format!("{:?}", token),
-            },
-            span: span.clone(),
-        })
+        // None matched, restore position and create error
+        self.set_position(start_pos);
+        Err(no_candidate_match!(self, candidates))
     }
 
+    /// Expect that the next sequence of tokens matches the given string pattern.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Matches the pattern against the token stream by consuming whole tokens.
+    /// Each token's string representation must match consecutive characters in the pattern.
+    /// The match succeeds only if the entire pattern is consumed and tokens are fully consumed.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Matches the pattern character-by-character against the token stream using the
+    /// character offset for partial token matching. This allows matching patterns that
+    /// don't align with token boundaries. If all characters match, the stream advances.
+    /// If any character fails to match, the stream position is restored.
+    ///
+    /// # Returns
+    ///
+    /// - `Ok(())` if the entire pattern was successfully matched (consumed)
+    /// - `Err(PtxParseError)` if matching failed (UnexpectedToken)
     pub fn expect_string(&mut self, expected: &str) -> Result<(), PtxParseError> {
-        if self.try_match_string(expected) {
+        let start_pos = self.position();
+        if self.match_string_internal(expected) {
             Ok(())
         } else {
-            let (token, span) = self.peek()?;
-            Err(PtxParseError {
-                kind: ParseErrorKind::UnexpectedToken {
-                    expected: vec![expected.to_string()],
-                    found: format!("{:?}", token),
-                },
-                span: span.clone(),
-            })
+            self.set_position(start_pos);
+            Err(no_candidate_match!(self, &[expected]))
         }
     }
 
-    /// Try to match a string pattern by consuming characters from the stream.
+    /// Ensure we're in complete mode (not in partial token mode).
+    /// This is a no-op in complete mode, and succeeds as long as we're not mid-token.
+    /// Used by generated parsers to enforce token boundaries.
+    pub fn expect_complete(&mut self) -> Result<(), PtxParseError> {
+        if self.index.1.is_some() {
+            let span = self
+                .tokens
+                .get(self.index.0)
+                .map_or(span!(0..0), |(_, s)| *s);
+            return Err(PtxParseError {
+                kind: ParseErrorKind::InvalidModeForTokenMethod,
+                span,
+            });
+        }
+        Ok(())
+    }
+
+    /// Execute a function in partial token mode, enabling character-by-character matching.
     ///
     /// # Behavior
-    /// Matches the pattern character-by-character against the token stream.
-    /// Tokens are converted to their string representation and matched from char_offset.
-    /// If all characters match, the stream is advanced and returns true.
-    /// If any character fails to match, the stream is reset and returns false.
     ///
-    /// # Returns
-    /// - `true` if the entire pattern was successfully matched (chars consumed)
-    /// - `false` if matching failed at any point (stream position restored)
-    pub fn try_match_string(&mut self, pattern: &str) -> bool {
+    /// This method switches the stream from complete mode to partial mode by setting the
+    /// character offset to `Some(0)`. While in partial mode, string-based methods like
+    /// `expect_string()` can match patterns character-by-character within tokens.
+    ///
+    /// After the closure completes:
+    /// - If the char offset is non-zero, validates that the current token was fully consumed
+    /// - If not fully consumed, reverts to the starting position and returns an error
+    /// - Always resets the mode back to complete mode (sets `index.1` to `None`)
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if:
+    /// - The closure returns an error
+    /// - The token was partially consumed but not completely consumed (incomplete match)
+    ///
+    /// # Panics
+    ///
+    /// Panics if already in partial mode (char offset is already `Some`).
+    pub fn with_partial_token_mode<F, R>(&mut self, f: F) -> Result<R, PtxParseError>
+    where
+        F: FnOnce(&mut PtxTokenStream) -> Result<R, PtxParseError>,
+    {
+        let start_index = self.index;
+        assert!(self.index.1.is_none(), "Already in partial mode");
+        self.index.1 = Some(0);
+        let result = f(self);
+
+        // Check if char offset has consumed the entire token
+        if let Some(char_offset) = self.index.1 {
+            if char_offset != 0 {
+                // if consumed entire token, ok; else, reset position and error
+                if let Some((token, span)) = self.tokens.get(self.index.0) {
+                    if token.len() != char_offset {
+                        self.index = start_index;
+                        return Err(unexpected_token!(
+                            *span,
+                            &["fully consumed token".to_string()],
+                            format!("partially consumed {:?}", token)
+                        ));
+                    } else {
+                        // Token was fully consumed, advance to next token
+                        self.index.0 += 1;
+                    }
+                }
+            }
+        }
+        self.index.1 = None;
+        result
+    }
+
+    /// Execute a closure with automatic backtracking and span tracking.
+    ///
+    /// Saves the current stream position before running `f`. If `f` returns an
+    /// error, the stream position (including partial-mode offsets) is restored.
+    /// When `f` succeeds, this returns the closure result together with the span
+    /// covering the consumed source range.
+    pub fn try_with_span<F, R>(&mut self, f: F) -> Result<(R, Span), PtxParseError>
+    where
+        F: FnOnce(&mut PtxTokenStream) -> Result<R, PtxParseError>,
+    {
         let start_pos = self.position();
-
-        // Tokenize the pattern to get expected tokens
-        let expected_tokens = match tokenize(pattern) {
-            Ok(tokens) => tokens,
-            Err(_) => {
-                // If pattern can't be tokenized, it can't match
-                return false;
+        match f(self) {
+            Ok(value) => {
+                let end_pos = self.position();
+                let span_start = self.offset_from_start(start_pos);
+                let span_end = self.offset_from_end(start_pos, end_pos).max(span_start);
+                Ok((value, Span::new(span_start, span_end)))
             }
-        };
-
-        // Try to match each expected token
-        for (expected_token, _) in expected_tokens {
-            match self.peek() {
-                Ok((actual_token, _)) => {
-                    // Check if we can do a partial match for Identifier tokens
-                    // This handles cases like matching ".b3210" as ".b" + "3" + "2" + "1" + "0"
-                    if let (PtxToken::Identifier(actual_id), expected_str) =
-                        (actual_token, expected_token.as_str())
-                    {
-                        // Check if the expected string matches from the current char_offset
-                        let remaining = &actual_id[self.char_offset..];
-                        if remaining.starts_with(expected_str) {
-                            let new_offset = self.char_offset + expected_str.len();
-                            if new_offset == actual_id.len() {
-                                // Exactly consumed the entire identifier - advance to next token
-                                self.index += 1;
-                                self.char_offset = 0;
-                            } else {
-                                // Partial match! Advance char_offset but DON'T advance index
-                                self.char_offset = new_offset;
-                            }
-                            continue;
-                        }
-                    }
-
-                    // Normal exact match
-                    if actual_token != &expected_token {
-                        self.set_position(start_pos);
-                        return false;
-                    }
-                    // Token matches, consume it
-                    self.index += 1;
-                    self.char_offset = 0;
-                }
-                Err(_) => {
-                    // Unexpected EOF
-                    self.set_position(start_pos);
-                    return false;
-                }
+            Err(err) => {
+                self.set_position(start_pos);
+                Err(err)
             }
-        }
-
-        // Successfully matched all tokens
-        true
-    }
-
-    /// Check if the next token matches a specific pattern.
-    pub fn check<F>(&self, predicate: F) -> bool
-    where
-        F: FnOnce(&PtxToken) -> bool,
-    {
-        self.tokens
-            .get(self.index)
-            .map_or(false, |(token, _)| predicate(token))
-    }
-
-    /// Expect that we've consumed a complete token (not stopped in the middle).
-    /// This should be called at the end of each struct parser to verify that
-    /// character-level parsing has consumed all characters from the current token.
-    ///
-    /// # Returns
-    /// - `Ok(())` if `char_offset == 0` (no partial token consumption)
-    /// - `Err(PtxParseError)` if `char_offset > 0` (stopped in middle of token)
-    pub fn expect_complete(&self) -> Result<(), PtxParseError> {
-        if self.char_offset > 0 {
-            // We're in the middle of a token - this is an error
-            let span = self
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            Err(unexpected_value(
-                span,
-                &["complete token"],
-                format!("partial token at char offset {}", self.char_offset),
-            ))
-        } else {
-            Ok(())
-        }
-    }
-
-    /// Consume the next token if it matches the predicate.
-    pub fn consume_if<F>(&mut self, predicate: F) -> Option<&'a (PtxToken, Span)>
-    where
-        F: FnOnce(&PtxToken) -> bool,
-    {
-        if self.check(predicate) {
-            self.index += 1;
-            self.tokens.get(self.index - 1)
-        } else {
-            None
         }
     }
 
     /// Get the current position in the stream, for backtracking.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Returns a StreamPosition containing the token index (index.0).
+    /// The char offset (index.1) will be `None`.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Returns a StreamPosition containing both the token index (index.0) and
+    /// the character offset within that token (index.1 = Some(offset)).
+    ///
+    /// This position can be used with `set_position()` to restore the exact state,
+    /// including the parsing mode and character offset.
     pub fn position(&self) -> StreamPosition {
-        StreamPosition {
-            index: self.index,
-            char_offset: self.char_offset,
-        }
+        self.index
     }
 
-    /// Reset the stream to an old position, for backtracking.
+    /// Reset the stream to a previously saved position, for backtracking.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Restores the token index to the saved position. If the saved position
+    /// was in complete mode (char offset = None), stays in complete mode.
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Can restore to either complete or partial mode depending on the saved position.
+    /// If the saved position was in partial mode (char offset = Some(n)), switches
+    /// to partial mode at that exact character offset. This allows proper backtracking
+    /// during character-by-character matching attempts.
     pub fn set_position(&mut self, pos: StreamPosition) {
-        self.index = pos.index;
-        self.char_offset = pos.char_offset;
+        self.index = pos;
     }
 
     /// Check if we've reached the end of the token stream.
+    ///
+    /// # Behavior for complete mode
+    ///
+    /// Returns `true` if the token index is at or past the end of the tokens array
+    /// and we're in complete mode (char offset is `None`).
+    ///
+    /// # Behavior for partial mode
+    ///
+    /// Always returns `false` while in partial mode (char offset is `Some`), even if
+    /// positioned at the last token. This is because partial mode implies we're still
+    /// potentially consuming characters from the current token.
     pub fn is_at_end(&self) -> bool {
-        self.index >= self.tokens.len()
+        self.index.0 >= self.tokens.len() && self.index.1.is_none()
     }
 
-    /// Get the remaining tokens.
-    pub fn remaining(&self) -> &'a [(PtxToken, Span)] {
-        &self.tokens[self.index..]
+    /// Create a zero-length span at the current stream position.
+    pub fn current_span(&self) -> Span {
+        let offset = self.offset_from_start(self.index);
+        Span::new(offset, offset)
     }
 
-    /// Peek at the character at the current char_offset within the current token's string.
-    /// Returns None if we're at the end of the current token's string or if the token has no string content.
-    pub fn peek_char_in_token(&self) -> Option<char> {
-        if self.index >= self.tokens.len() {
-            return None;
+    /// Convert a `StreamPosition` into an absolute start offset in source bytes.
+    ///
+    /// Uses the lexer-supplied span of the token at `pos.0` and the character
+    /// offset stored in `pos.1` (if any) to compute the precise byte position,
+    /// preserving partial-mode progress within the token.
+    fn offset_from_start(&self, pos: StreamPosition) -> usize {
+        if let Some((_, span)) = self.tokens.get(pos.0) {
+            let token_offset = pos.1.unwrap_or(0);
+            return (span.start + token_offset).min(span.end);
+        }
+        self.tokens.last().map(|(_, span)| span.end).unwrap_or(0)
+    }
+
+    /// Convert a pair of positions into the absolute end offset of the parsed span.
+    ///
+    /// Handles both complete mode (token-level) and partial mode (character-level)
+    /// states and gracefully falls back to the closest known span when the stream
+    /// is at the very beginning or end.
+    fn offset_from_end(&self, start: StreamPosition, end: StreamPosition) -> usize {
+        if start == end {
+            return self.offset_from_start(start);
         }
 
-        let (token, _) = &self.tokens[self.index];
-        let string = match token {
-            PtxToken::Identifier(s)
-            | PtxToken::DecimalInteger(s)
-            | PtxToken::HexInteger(s)
-            | PtxToken::BinaryInteger(s)
-            | PtxToken::OctalInteger(s) => s,
-            _ => return None,
-        };
-
-        string.chars().nth(self.char_offset)
-    }
-
-    /// Consume one character from the current token by advancing char_offset.
-    /// If we reach the end of the token's string, advance to the next token and reset char_offset.
-    /// Returns the consumed character.
-    pub fn consume_char_in_token(&mut self) -> Option<char> {
-        let ch = self.peek_char_in_token()?;
-        self.char_offset += 1;
-
-        // Check if we've consumed the entire string of this token
-        if self.index < self.tokens.len() {
-            let (token, _) = &self.tokens[self.index];
-            let string = match token {
-                PtxToken::Identifier(s)
-                | PtxToken::DecimalInteger(s)
-                | PtxToken::HexInteger(s)
-                | PtxToken::BinaryInteger(s)
-                | PtxToken::OctalInteger(s) => s,
-                _ => "",
-            };
-
-            if self.char_offset >= string.len() {
-                // Move to next token and reset char_offset
-                self.index += 1;
-                self.char_offset = 0;
+        if let Some(char_offset) = end.1 {
+            if let Some((_, span)) = self.tokens.get(end.0) {
+                return (span.start + char_offset).min(span.end);
             }
+        } else if end.0 == 0 {
+            if let Some((_, span)) = self.tokens.get(0) {
+                return span.start;
+            }
+        } else if let Some((_, span)) = self.tokens.get(end.0 - 1) {
+            return span.end;
         }
 
-        Some(ch)
-    }
-
-    /// Match a specific character at the current position within the token.
-    /// Consumes the character if it matches.
-    pub fn expect_char_in_token(&mut self, expected: char) -> Result<char, PtxParseError> {
-        match self.peek_char_in_token() {
-            Some(ch) if ch == expected => {
-                self.consume_char_in_token();
-                Ok(ch)
-            }
-            Some(ch) => {
-                let span = if self.index < self.tokens.len() {
-                    self.tokens[self.index].1.clone()
-                } else {
-                    0..0
-                };
-                Err(PtxParseError {
-                    kind: ParseErrorKind::UnexpectedToken {
-                        expected: vec![format!("'{}'", expected)],
-                        found: format!("'{}'", ch),
-                    },
-                    span,
-                })
-            }
-            None => {
-                let span = if self.index < self.tokens.len() {
-                    self.tokens[self.index].1.clone()
-                } else {
-                    0..0
-                };
-                Err(PtxParseError {
-                    kind: ParseErrorKind::UnexpectedEof,
-                    span,
-                })
-            }
-        }
+        self.tokens
+            .last()
+            .map(|(_, span)| span.end)
+            .unwrap_or_else(|| self.offset_from_start(start))
     }
 }
 
@@ -438,105 +720,64 @@ impl<'a> PtxTokenStream<'a> {
 ///
 /// This trait is implemented for all PTX AST node types to enable
 /// recursive descent parsing.
+///
+/// Following the combinator architecture, parse() returns a parser function
+/// rather than directly taking a stream parameter.
 pub trait PtxParser
 where
     Self: Sized,
 {
-    /// Parse an instance of `Self` from the token stream.
-    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError>;
+    /// Returns a parser function that can parse an instance of `Self`.
+    fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError>;
 }
 
-/// Parse PTX source code into a structured Module representation.
-///
-/// This is the main entry point for parsing PTX code. It performs lexical
-/// analysis followed by syntactic parsing.
-///
-/// # Arguments
-///
-/// * `source` - The PTX source code as a string slice
-///
-/// # Returns
-///
-/// Returns a parsed `Module` AST node, or a `PtxParseError` if parsing fails.
-///
-/// # Example
-///
-/// ```no_run
-/// use ptx_parser::parse_ptx;
-///
-/// let source = r#"
-///     .version 8.5
-///     .target sm_90
-///     .address_size 64
-///     
-///     .entry kernel() {
-///         ret;
-///     }
-/// "#;
-///
-/// let module = parse_ptx(source).expect("Failed to parse PTX");
-/// println!("Parsed {} directives", module.directives.len());
-/// ```
+// Parse PTX source code into a structured Module representation.
+//
+// This is the main entry point for parsing PTX code. It performs lexical
+// analysis followed by syntactic parsing.
+//
+// # Arguments
+//
+// * `source` - The PTX source code as a string slice
+//
+// # Returns
+//
+// Returns a parsed `Module` AST node, or a `PtxParseError` if parsing fails.
+//
+// # Example
+//
+// ```no_run
+// use ptx_parser::parse_ptx;
+//
+// let source = r#"
+//     .version 8.5
+//     .target sm_90
+//     .address_size 64
+//
+//     .entry kernel() {
+//         ret;
+//     }
+// "#;
+//
+// let module = parse_ptx(source).expect("Failed to parse PTX");
+// println!("Parsed {} directives", module.directives.len());
+// ```
 pub fn parse_ptx(source: &str) -> Result<crate::r#type::module::Module, PtxParseError> {
-    let tokens = crate::lexer::tokenize(source).map_err(|err| PtxParseError {
-        kind: ParseErrorKind::InvalidLiteral("lexical error".into()),
-        span: err.span,
-    })?;
+    use crate::{tokenize, PtxTokenStream, r#type::Module};
+
+    let tokens = tokenize(source)?;
     let mut stream = PtxTokenStream::new(&tokens);
-    let module = crate::r#type::module::Module::parse(&mut stream)?;
+    let (module, _) = Module::parse()(&mut stream)?;
     if !stream.is_at_end() {
-        let (token, span) = stream.peek()?;
-        return Err(unexpected_value(
-            span.clone(),
-            &["end of input"],
-            format!("{token:?}"),
-        ));
+        let pos = stream.position();
+        let remaining = tokens.get(pos.0).map(|(tok, _)| format!("{:?}", tok)).unwrap_or_else(|| "EOF".into());
+        return Err(PtxParseError {
+            kind: ParseErrorKind::UnexpectedToken {
+                expected: vec!["end of file".into()],
+                found: remaining,
+            },
+            span: stream.current_span(),
+        });
     }
     Ok(module)
-}
-
-pub fn unexpected_value(span: Span, expected: &[&str], found: impl Into<String>) -> PtxParseError {
-    PtxParseError {
-        kind: ParseErrorKind::UnexpectedToken {
-            expected: expected.iter().map(|s| s.to_string()).collect(),
-            found: found.into(),
-        },
-        span,
-    }
-}
-
-pub(crate) fn invalid_literal(span: Span, message: impl Into<String>) -> PtxParseError {
-    PtxParseError {
-        kind: ParseErrorKind::InvalidLiteral(message.into()),
-        span,
-    }
-}
-
-pub(crate) fn expect_directive_value(
-    stream: &mut PtxTokenStream,
-    expected: &str,
-) -> Result<(), PtxParseError> {
-    let (value, span) = stream.expect_directive()?;
-    if value == expected {
-        Ok(())
-    } else {
-        Err(unexpected_value(
-            span,
-            &[&format!(".{expected}")],
-            format!(".{value}"),
-        ))
-    }
-}
-
-pub(crate) fn peek_directive(
-    stream: &mut PtxTokenStream,
-) -> Result<Option<(String, Span)>, PtxParseError> {
-    // Check if we have Dot followed by Identifier
-    if let Some((PtxToken::Dot, dot_span)) = stream.tokens.get(stream.index) {
-        if let Some((PtxToken::Identifier(value), id_span)) = stream.tokens.get(stream.index + 1) {
-            let span = dot_span.start..id_span.end;
-            return Ok(Some((value.clone(), span)));
-        }
-    }
-    Ok(None)
 }

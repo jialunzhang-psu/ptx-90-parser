@@ -16,9 +16,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -29,444 +35,300 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Atype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try U16x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u16x2").is_ok() {
-                    return Ok(Atype::U16x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try U16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u16").is_ok() {
-                    return Ok(Atype::U16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Atype::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u64").is_ok() {
-                    return Ok(Atype::U64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s16").is_ok() {
-                    return Ok(Atype::S16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s64").is_ok() {
-                    return Ok(Atype::S64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".u16x2", ".u16", ".u32", ".u64", ".s16", ".s64"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".u16x2"), |_, _span| Atype::U16x2),
+                map(string_p(".u16"), |_, _span| Atype::U16),
+                map(string_p(".u32"), |_, _span| Atype::U32),
+                map(string_p(".u64"), |_, _span| Atype::U64),
+                map(string_p(".s16"), |_, _span| Atype::S16),
+                map(string_p(".s64"), |_, _span| Atype::S64)
+            )
         }
     }
 
     impl PtxParser for Btype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try S16x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s16x2").is_ok() {
-                    return Ok(Btype::S16x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Btype::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".s16x2", ".s32"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".s16x2"), |_, _span| Btype::S16x2),
+                map(string_p(".s32"), |_, _span| Btype::S32)
+            )
         }
     }
 
     impl PtxParser for MinAtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("min")?;
-            let atype = Atype::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MinAtype { atype, d, a, b })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("min"),
+                    Atype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, atype, d, _, a, _, b, _), span| {
+                    ok!(MinAtype {
+                        atype = atype,
+                        d = d,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MinReluBtype {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("min")?;
-            let saved_pos = stream.position();
-            let relu = stream.expect_string(".relu").is_ok();
-            if !relu {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let btype = Btype::parse(stream)?;
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MinReluBtype {
-                relu,
-                btype,
-                d,
-                a,
-                b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("min"),
+                    map(optional(string_p(".relu")), |value, _| value.is_some()),
+                    Btype::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, relu, btype, d, _, a, _, b, _), span| {
+                    ok!(MinReluBtype {
+                        relu = relu,
+                        btype = btype,
+                        d = d,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MinFtzNanXorsignAbsF32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("min")?;
-            let saved_pos = stream.position();
-            let ftz = stream.expect_string(".ftz").is_ok();
-            if !ftz {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let nan = stream.expect_string(".NaN").is_ok();
-            if !nan {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
-            if !xorsign_abs {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MinFtzNanXorsignAbsF32 {
-                ftz,
-                nan,
-                xorsign_abs,
-                f32,
-                d,
-                a,
-                b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("min"),
+                    map(optional(string_p(".ftz")), |value, _| value.is_some()),
+                    map(optional(string_p(".NaN")), |value, _| value.is_some()),
+                    map(optional(string_p(".xorsign.abs")), |value, _| value
+                        .is_some()),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, ftz, nan, xorsign_abs, f32, d, _, a, _, b, _), span| {
+                    ok!(MinFtzNanXorsignAbsF32 {
+                        ftz = ftz,
+                        nan = nan,
+                        xorsign_abs = xorsign_abs,
+                        f32 = f32,
+                        d = d,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MinFtzNanAbsF32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("min")?;
-            let saved_pos = stream.position();
-            let ftz = stream.expect_string(".ftz").is_ok();
-            if !ftz {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let nan = stream.expect_string(".NaN").is_ok();
-            if !nan {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let abs = stream.expect_string(".abs").is_ok();
-            if !abs {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MinFtzNanAbsF32 {
-                ftz,
-                nan,
-                abs,
-                f32,
-                d,
-                a,
-                b,
-                c,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("min"),
+                    map(optional(string_p(".ftz")), |value, _| value.is_some()),
+                    map(optional(string_p(".NaN")), |value, _| value.is_some()),
+                    map(optional(string_p(".abs")), |value, _| value.is_some()),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, ftz, nan, abs, f32, d, _, a, _, b, _, c, _), span| {
+                    ok!(MinFtzNanAbsF32 {
+                        ftz = ftz,
+                        nan = nan,
+                        abs = abs,
+                        f32 = f32,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MinF64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("min")?;
-            stream.expect_string(".f64")?;
-            let f64 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MinF64 { f64, d, a, b })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("min"),
+                    string_p(".f64"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, f64, d, _, a, _, b, _), span| {
+                    ok!(MinF64 {
+                        f64 = f64,
+                        d = d,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MinFtzNanXorsignAbsF16 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("min")?;
-            let saved_pos = stream.position();
-            let ftz = stream.expect_string(".ftz").is_ok();
-            if !ftz {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let nan = stream.expect_string(".NaN").is_ok();
-            if !nan {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
-            if !xorsign_abs {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".f16")?;
-            let f16 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MinFtzNanXorsignAbsF16 {
-                ftz,
-                nan,
-                xorsign_abs,
-                f16,
-                d,
-                a,
-                b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("min"),
+                    map(optional(string_p(".ftz")), |value, _| value.is_some()),
+                    map(optional(string_p(".NaN")), |value, _| value.is_some()),
+                    map(optional(string_p(".xorsign.abs")), |value, _| value
+                        .is_some()),
+                    string_p(".f16"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, ftz, nan, xorsign_abs, f16, d, _, a, _, b, _), span| {
+                    ok!(MinFtzNanXorsignAbsF16 {
+                        ftz = ftz,
+                        nan = nan,
+                        xorsign_abs = xorsign_abs,
+                        f16 = f16,
+                        d = d,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MinFtzNanXorsignAbsF16x2 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("min")?;
-            let saved_pos = stream.position();
-            let ftz = stream.expect_string(".ftz").is_ok();
-            if !ftz {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let nan = stream.expect_string(".NaN").is_ok();
-            if !nan {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
-            if !xorsign_abs {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".f16x2")?;
-            let f16x2 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MinFtzNanXorsignAbsF16x2 {
-                ftz,
-                nan,
-                xorsign_abs,
-                f16x2,
-                d,
-                a,
-                b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("min"),
+                    map(optional(string_p(".ftz")), |value, _| value.is_some()),
+                    map(optional(string_p(".NaN")), |value, _| value.is_some()),
+                    map(optional(string_p(".xorsign.abs")), |value, _| value
+                        .is_some()),
+                    string_p(".f16x2"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, ftz, nan, xorsign_abs, f16x2, d, _, a, _, b, _), span| {
+                    ok!(MinFtzNanXorsignAbsF16x2 {
+                        ftz = ftz,
+                        nan = nan,
+                        xorsign_abs = xorsign_abs,
+                        f16x2 = f16x2,
+                        d = d,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MinNanXorsignAbsBf16 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("min")?;
-            let saved_pos = stream.position();
-            let nan = stream.expect_string(".NaN").is_ok();
-            if !nan {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
-            if !xorsign_abs {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".bf16")?;
-            let bf16 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MinNanXorsignAbsBf16 {
-                nan,
-                xorsign_abs,
-                bf16,
-                d,
-                a,
-                b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("min"),
+                    map(optional(string_p(".NaN")), |value, _| value.is_some()),
+                    map(optional(string_p(".xorsign.abs")), |value, _| value
+                        .is_some()),
+                    string_p(".bf16"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, nan, xorsign_abs, bf16, d, _, a, _, b, _), span| {
+                    ok!(MinNanXorsignAbsBf16 {
+                        nan = nan,
+                        xorsign_abs = xorsign_abs,
+                        bf16 = bf16,
+                        d = d,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MinNanXorsignAbsBf16x2 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("min")?;
-            let saved_pos = stream.position();
-            let nan = stream.expect_string(".NaN").is_ok();
-            if !nan {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let xorsign_abs = stream.expect_string(".xorsign.abs").is_ok();
-            if !xorsign_abs {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".bf16x2")?;
-            let bf16x2 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MinNanXorsignAbsBf16x2 {
-                nan,
-                xorsign_abs,
-                bf16x2,
-                d,
-                a,
-                b,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("min"),
+                    map(optional(string_p(".NaN")), |value, _| value.is_some()),
+                    map(optional(string_p(".xorsign.abs")), |value, _| value
+                        .is_some()),
+                    string_p(".bf16x2"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, nan, xorsign_abs, bf16x2, d, _, a, _, b, _), span| {
+                    ok!(MinNanXorsignAbsBf16x2 {
+                        nan = nan,
+                        xorsign_abs = xorsign_abs,
+                        bf16x2 = bf16x2,
+                        d = d,
+                        a = a,
+                        b = b,
+
+                    })
+                },
+            )
         }
     }
 }

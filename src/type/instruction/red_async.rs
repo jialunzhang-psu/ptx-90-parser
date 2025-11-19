@@ -46,6 +46,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -79,7 +81,7 @@ pub mod section_0 {
         U32, // .u32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedAsyncSemScopeSsCompletionMechanismOpType {
         pub async_: (),                                // .async
         pub sem: Sem,                                  // .sem
@@ -91,10 +93,13 @@ pub mod section_0 {
         pub a: AddressOperand,                         // [a]
         pub b: GeneralOperand,                         // b
         pub mbar: AddressOperand,                      // [mbar]
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -129,7 +134,7 @@ pub mod section_1 {
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedAsyncSemScopeSsCompletionMechanismOpType1 {
         pub async_: (),                                // .async
         pub sem: Sem,                                  // .sem
@@ -141,10 +146,13 @@ pub mod section_1 {
         pub a: AddressOperand,                         // [a]
         pub b: GeneralOperand,                         // b
         pub mbar: AddressOperand,                      // [mbar]
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -179,7 +187,7 @@ pub mod section_2 {
         B32, // .b32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedAsyncSemScopeSsCompletionMechanismOpType2 {
         pub async_: (),                                // .async
         pub sem: Sem,                                  // .sem
@@ -191,10 +199,13 @@ pub mod section_2 {
         pub a: AddressOperand,                         // [a]
         pub b: GeneralOperand,                         // b
         pub mbar: AddressOperand,                      // [mbar]
+        pub span: Span,
     }
 }
 
 pub mod section_3 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -224,7 +235,7 @@ pub mod section_3 {
         U64, // .u64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedAsyncSemScopeSsCompletionMechanismAddType {
         pub async_: (),                                // .async
         pub sem: Sem,                                  // .sem
@@ -236,10 +247,13 @@ pub mod section_3 {
         pub a: AddressOperand,                         // [a]
         pub b: GeneralOperand,                         // b
         pub mbar: AddressOperand,                      // [mbar]
+        pub span: Span,
     }
 }
 
 pub mod section_4 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -266,7 +280,7 @@ pub mod section_4 {
         S64, // .s64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct RedAsyncMmioSemScopeSsAddType {
         pub async_: (),        // .async
         pub mmio: bool,        // {.mmio}
@@ -277,6 +291,7 @@ pub mod section_4 {
         pub type_: Type,       // .type
         pub a: AddressOperand, // [a]
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 

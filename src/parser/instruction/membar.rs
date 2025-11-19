@@ -26,9 +26,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -39,507 +45,313 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Level {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Level::Cta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Sys
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sys").is_ok() {
-                    return Ok(Level::Sys);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Gl
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".gl").is_ok() {
-                    return Ok(Level::Gl);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta", ".sys", ".gl"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".cta"), |_, _span| Level::Cta),
+                map(string_p(".sys"), |_, _span| Level::Sys),
+                map(string_p(".gl"), |_, _span| Level::Gl)
+            )
         }
     }
 
     impl PtxParser for OpRestrict {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try MbarrierInit
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".mbarrier_init").is_ok() {
-                    return Ok(OpRestrict::MbarrierInit);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".mbarrier_init"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".mbarrier_init"), |_, _span| {
+                OpRestrict::MbarrierInit
+            }))
         }
     }
 
     impl PtxParser for Proxykind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try AsyncSharedCluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".async.shared::cluster").is_ok() {
-                    return Ok(Proxykind::AsyncSharedCluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try AsyncSharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".async.shared::cta").is_ok() {
-                    return Ok(Proxykind::AsyncSharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try AsyncGlobal
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".async.global").is_ok() {
-                    return Ok(Proxykind::AsyncGlobal);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Alias
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".alias").is_ok() {
-                    return Ok(Proxykind::Alias);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Async
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".async").is_ok() {
-                    return Ok(Proxykind::Async);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".async.shared::cluster",
-                ".async.shared::cta",
-                ".async.global",
-                ".alias",
-                ".async",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".async.shared::cluster"), |_, _span| {
+                    Proxykind::AsyncSharedCluster
+                }),
+                map(string_p(".async.shared::cta"), |_, _span| {
+                    Proxykind::AsyncSharedCta
+                }),
+                map(string_p(".async.global"), |_, _span| Proxykind::AsyncGlobal),
+                map(string_p(".alias"), |_, _span| Proxykind::Alias),
+                map(string_p(".async"), |_, _span| Proxykind::Async)
+            )
         }
     }
 
     impl PtxParser for Scope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cluster").is_ok() {
-                    return Ok(Scope::Cluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Cta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Scope::Cta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Gpu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".gpu").is_ok() {
-                    return Ok(Scope::Gpu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Sys
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sys").is_ok() {
-                    return Ok(Scope::Sys);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cluster", ".cta", ".gpu", ".sys"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".cluster"), |_, _span| Scope::Cluster),
+                map(string_p(".cta"), |_, _span| Scope::Cta),
+                map(string_p(".gpu"), |_, _span| Scope::Gpu),
+                map(string_p(".sys"), |_, _span| Scope::Sys)
+            )
         }
     }
 
     impl PtxParser for Sem {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try AcqRel
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".acq_rel").is_ok() {
-                    return Ok(Sem::AcqRel);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Acquire
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".acquire").is_ok() {
-                    return Ok(Sem::Acquire);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Release
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".release").is_ok() {
-                    return Ok(Sem::Release);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Sc
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sc").is_ok() {
-                    return Ok(Sem::Sc);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".acq_rel", ".acquire", ".release", ".sc"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".acq_rel"), |_, _span| Sem::AcqRel),
+                map(string_p(".acquire"), |_, _span| Sem::Acquire),
+                map(string_p(".release"), |_, _span| Sem::Release),
+                map(string_p(".sc"), |_, _span| Sem::Sc)
+            )
         }
     }
 
     impl PtxParser for ToProxykindFromProxykind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try TensormapGeneric
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".tensormap::generic").is_ok() {
-                    return Ok(ToProxykindFromProxykind::TensormapGeneric);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".tensormap::generic"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".tensormap::generic"), |_, _span| {
+                ToProxykindFromProxykind::TensormapGeneric
+            }))
         }
     }
 
     impl PtxParser for FenceSemScope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("fence")?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let scope = Scope::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(FenceSemScope { sem, scope })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("fence"),
+                    optional(Sem::parse()),
+                    Scope::parse(),
+                    semicolon_p()
+                ),
+                |(_, sem, scope, _), span| {
+                    ok!(FenceSemScope {
+                        sem = sem,
+                        scope = scope,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for FenceAcquireSyncRestrictSharedClusterCluster {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("fence")?;
-            stream.expect_string(".acquire")?;
-            let acquire = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync_restrict::shared::cluster")?;
-            let sync_restrict_shared_cluster = ();
-            stream.expect_complete()?;
-            stream.expect_string(".cluster")?;
-            let cluster = ();
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(FenceAcquireSyncRestrictSharedClusterCluster {
-                acquire,
-                sync_restrict_shared_cluster,
-                cluster,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("fence"),
+                    string_p(".acquire"),
+                    string_p(".sync_restrict::shared::cluster"),
+                    string_p(".cluster"),
+                    semicolon_p()
+                ),
+                |(_, acquire, sync_restrict_shared_cluster, cluster, _), span| {
+                    ok!(FenceAcquireSyncRestrictSharedClusterCluster {
+                        acquire = acquire,
+                        sync_restrict_shared_cluster = sync_restrict_shared_cluster,
+                        cluster = cluster,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for FenceReleaseSyncRestrictSharedCtaCluster {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("fence")?;
-            stream.expect_string(".release")?;
-            let release = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync_restrict::shared::cta")?;
-            let sync_restrict_shared_cta = ();
-            stream.expect_complete()?;
-            stream.expect_string(".cluster")?;
-            let cluster = ();
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(FenceReleaseSyncRestrictSharedCtaCluster {
-                release,
-                sync_restrict_shared_cta,
-                cluster,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("fence"),
+                    string_p(".release"),
+                    string_p(".sync_restrict::shared::cta"),
+                    string_p(".cluster"),
+                    semicolon_p()
+                ),
+                |(_, release, sync_restrict_shared_cta, cluster, _), span| {
+                    ok!(FenceReleaseSyncRestrictSharedCtaCluster {
+                        release = release,
+                        sync_restrict_shared_cta = sync_restrict_shared_cta,
+                        cluster = cluster,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for FenceOpRestrictReleaseCluster {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("fence")?;
-            let op_restrict = OpRestrict::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".release")?;
-            let release = ();
-            stream.expect_complete()?;
-            stream.expect_string(".cluster")?;
-            let cluster = ();
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(FenceOpRestrictReleaseCluster {
-                op_restrict,
-                release,
-                cluster,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("fence"),
+                    OpRestrict::parse(),
+                    string_p(".release"),
+                    string_p(".cluster"),
+                    semicolon_p()
+                ),
+                |(_, op_restrict, release, cluster, _), span| {
+                    ok!(FenceOpRestrictReleaseCluster {
+                        op_restrict = op_restrict,
+                        release = release,
+                        cluster = cluster,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for FenceProxyProxykind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("fence")?;
-            stream.expect_string(".proxy")?;
-            let proxy = ();
-            stream.expect_complete()?;
-            let proxykind = Proxykind::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(FenceProxyProxykind { proxy, proxykind })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("fence"),
+                    string_p(".proxy"),
+                    Proxykind::parse(),
+                    semicolon_p()
+                ),
+                |(_, proxy, proxykind, _), span| {
+                    ok!(FenceProxyProxykind {
+                        proxy = proxy,
+                        proxykind = proxykind,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for FenceProxyToProxykindFromProxykindReleaseScope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("fence")?;
-            stream.expect_string(".proxy")?;
-            let proxy = ();
-            stream.expect_complete()?;
-            let to_proxykind_from_proxykind = ToProxykindFromProxykind::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".release")?;
-            let release = ();
-            stream.expect_complete()?;
-            let scope = Scope::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(FenceProxyToProxykindFromProxykindReleaseScope {
-                proxy,
-                to_proxykind_from_proxykind,
-                release,
-                scope,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("fence"),
+                    string_p(".proxy"),
+                    ToProxykindFromProxykind::parse(),
+                    string_p(".release"),
+                    Scope::parse(),
+                    semicolon_p()
+                ),
+                |(_, proxy, to_proxykind_from_proxykind, release, scope, _), span| {
+                    ok!(FenceProxyToProxykindFromProxykindReleaseScope {
+                        proxy = proxy,
+                        to_proxykind_from_proxykind = to_proxykind_from_proxykind,
+                        release = release,
+                        scope = scope,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for FenceProxyToProxykindFromProxykindAcquireScope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("fence")?;
-            stream.expect_string(".proxy")?;
-            let proxy = ();
-            stream.expect_complete()?;
-            let to_proxykind_from_proxykind = ToProxykindFromProxykind::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".acquire")?;
-            let acquire = ();
-            stream.expect_complete()?;
-            let scope = Scope::parse(stream)?;
-            stream.expect_complete()?;
-            let addr = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let size = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(FenceProxyToProxykindFromProxykindAcquireScope {
-                proxy,
-                to_proxykind_from_proxykind,
-                acquire,
-                scope,
-                addr,
-                size,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("fence"),
+                    string_p(".proxy"),
+                    ToProxykindFromProxykind::parse(),
+                    string_p(".acquire"),
+                    Scope::parse(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, proxy, to_proxykind_from_proxykind, acquire, scope, addr, _, size, _),
+                 span| {
+                    ok!(FenceProxyToProxykindFromProxykindAcquireScope {
+                        proxy = proxy,
+                        to_proxykind_from_proxykind = to_proxykind_from_proxykind,
+                        acquire = acquire,
+                        scope = scope,
+                        addr = addr,
+                        size = size,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for FenceProxyAsyncGenericAcquireSyncRestrictSharedClusterCluster {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("fence")?;
-            stream.expect_string(".proxy")?;
-            let proxy = ();
-            stream.expect_complete()?;
-            stream.expect_string(".async::generic")?;
-            let async_generic = ();
-            stream.expect_complete()?;
-            stream.expect_string(".acquire")?;
-            let acquire = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync_restrict::shared::cluster")?;
-            let sync_restrict_shared_cluster = ();
-            stream.expect_complete()?;
-            stream.expect_string(".cluster")?;
-            let cluster = ();
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(
-                FenceProxyAsyncGenericAcquireSyncRestrictSharedClusterCluster {
-                    proxy,
-                    async_generic,
-                    acquire,
-                    sync_restrict_shared_cluster,
-                    cluster,
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("fence"),
+                    string_p(".proxy"),
+                    string_p(".async::generic"),
+                    string_p(".acquire"),
+                    string_p(".sync_restrict::shared::cluster"),
+                    string_p(".cluster"),
+                    semicolon_p()
+                ),
+                |(_, proxy, async_generic, acquire, sync_restrict_shared_cluster, cluster, _),
+                 span| {
+                    ok!(FenceProxyAsyncGenericAcquireSyncRestrictSharedClusterCluster {
+                        proxy = proxy,
+                        async_generic = async_generic,
+                        acquire = acquire,
+                        sync_restrict_shared_cluster = sync_restrict_shared_cluster,
+                        cluster = cluster,
+
+                    })
                 },
             )
         }
     }
 
     impl PtxParser for FenceProxyAsyncGenericReleaseSyncRestrictSharedCtaCluster {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("fence")?;
-            stream.expect_string(".proxy")?;
-            let proxy = ();
-            stream.expect_complete()?;
-            stream.expect_string(".async::generic")?;
-            let async_generic = ();
-            stream.expect_complete()?;
-            stream.expect_string(".release")?;
-            let release = ();
-            stream.expect_complete()?;
-            stream.expect_string(".sync_restrict::shared::cta")?;
-            let sync_restrict_shared_cta = ();
-            stream.expect_complete()?;
-            stream.expect_string(".cluster")?;
-            let cluster = ();
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(FenceProxyAsyncGenericReleaseSyncRestrictSharedCtaCluster {
-                proxy,
-                async_generic,
-                release,
-                sync_restrict_shared_cta,
-                cluster,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("fence"),
+                    string_p(".proxy"),
+                    string_p(".async::generic"),
+                    string_p(".release"),
+                    string_p(".sync_restrict::shared::cta"),
+                    string_p(".cluster"),
+                    semicolon_p()
+                ),
+                |(_, proxy, async_generic, release, sync_restrict_shared_cta, cluster, _), span| {
+                    ok!(FenceProxyAsyncGenericReleaseSyncRestrictSharedCtaCluster {
+                        proxy = proxy,
+                        async_generic = async_generic,
+                        release = release,
+                        sync_restrict_shared_cta = sync_restrict_shared_cta,
+                        cluster = cluster,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MembarLevel {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("membar")?;
-            let level = Level::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MembarLevel { level })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(string_p("membar"), Level::parse(), semicolon_p()),
+                |(_, level, _), span| {
+                    ok!(MembarLevel {
+                        level = level,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MembarProxyProxykind {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("membar")?;
-            stream.expect_string(".proxy")?;
-            let proxy = ();
-            stream.expect_complete()?;
-            let proxykind = Proxykind::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MembarProxyProxykind { proxy, proxykind })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("membar"),
+                    string_p(".proxy"),
+                    Proxykind::parse(),
+                    semicolon_p()
+                ),
+                |(_, proxy, proxykind, _), span| {
+                    ok!(MembarProxyProxykind {
+                        proxy = proxy,
+                        proxykind = proxykind,
+
+                    })
+                },
+            )
         }
     }
 }

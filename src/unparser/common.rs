@@ -239,7 +239,12 @@ impl PtxUnparser for Immediate {
 
 impl PtxUnparser for RegisterOperand {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
-        push_register(tokens, &self.name);
+        let mut repr = self.name.clone();
+        if let Some(component) = &self.component {
+            repr.push('.');
+            repr.push_str(component);
+        }
+        push_register(tokens, &repr);
     }
 }
 

@@ -6,9 +6,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -19,109 +25,68 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for LevelCacheHint {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2CacheHint
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::cache_hint").is_ok() {
-                    return Ok(LevelCacheHint::L2CacheHint);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::cache_hint"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".L2::cache_hint"), |_, _span| {
+                LevelCacheHint::L2CacheHint
+            }))
         }
     }
 
     impl PtxParser for Src {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Src::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".global"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".global"), |_, _span| Src::Global))
         }
     }
 
     impl PtxParser for CpAsyncBulkPrefetchL2SrcLevelCacheHint {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("cp")?;
-            stream.expect_string(".async")?;
-            let async_ = ();
-            stream.expect_complete()?;
-            stream.expect_string(".bulk")?;
-            let bulk = ();
-            stream.expect_complete()?;
-            stream.expect_string(".prefetch")?;
-            let prefetch = ();
-            stream.expect_complete()?;
-            stream.expect_string(".L2")?;
-            let l2 = ();
-            stream.expect_complete()?;
-            let src = Src::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_cache_hint = match LevelCacheHint::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let srcmem = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let size = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let cache_policy = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(CpAsyncBulkPrefetchL2SrcLevelCacheHint {
-                async_,
-                bulk,
-                prefetch,
-                l2,
-                src,
-                level_cache_hint,
-                srcmem,
-                size,
-                cache_policy,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("cp"),
+                    string_p(".async"),
+                    string_p(".bulk"),
+                    string_p(".prefetch"),
+                    string_p(".L2"),
+                    Src::parse(),
+                    optional(LevelCacheHint::parse()),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    async_,
+                    bulk,
+                    prefetch,
+                    l2,
+                    src,
+                    level_cache_hint,
+                    srcmem,
+                    _,
+                    size,
+                    cache_policy,
+                    _,
+                ),
+                 span| {
+                    ok!(CpAsyncBulkPrefetchL2SrcLevelCacheHint {
+                        async_ = async_,
+                        bulk = bulk,
+                        prefetch = prefetch,
+                        l2 = l2,
+                        src = src,
+                        level_cache_hint = level_cache_hint,
+                        srcmem = srcmem,
+                        size = size,
+                        cache_policy = cache_policy,
+
+                    })
+                },
+            )
         }
     }
 }

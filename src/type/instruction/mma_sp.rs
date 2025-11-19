@@ -63,6 +63,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -83,7 +85,7 @@ pub mod section_0 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedM16n8k16RowColDtypeF16F16Ctype {
         pub spvariant: Spvariant, // .spvariant
         pub sync: (),             // .sync
@@ -101,9 +103,10 @@ pub mod section_0 {
         pub c: GeneralOperand,    // c
         pub e: GeneralOperand,    // e
         pub f: GeneralOperand,    // f
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedM16n8k32RowColDtypeF16F16Ctype {
         pub spvariant: Spvariant, // .spvariant
         pub sync: (),             // .sync
@@ -121,10 +124,13 @@ pub mod section_0 {
         pub c: GeneralOperand,    // c
         pub e: GeneralOperand,    // e
         pub f: GeneralOperand,    // f
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -165,7 +171,7 @@ pub mod section_1 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedM16n8k16RowColF32Bf16Bf16F32 {
         pub spvariant: Spvariant, // .spvariant
         pub sync: (),             // .sync
@@ -183,9 +189,10 @@ pub mod section_1 {
         pub c: GeneralOperand,    // c
         pub e: GeneralOperand,    // e
         pub f: GeneralOperand,    // f
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedM16n8k32RowColF32Bf16Bf16F32 {
         pub spvariant: Spvariant, // .spvariant
         pub sync: (),             // .sync
@@ -203,9 +210,10 @@ pub mod section_1 {
         pub c: GeneralOperand,    // c
         pub e: GeneralOperand,    // e
         pub f: GeneralOperand,    // f
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedM16n8k8RowColF32Tf32Tf32F32 {
         pub spvariant: Spvariant, // .spvariant
         pub sync: (),             // .sync
@@ -223,9 +231,10 @@ pub mod section_1 {
         pub c: GeneralOperand,    // c
         pub e: GeneralOperand,    // e
         pub f: GeneralOperand,    // f
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedM16n8k16RowColF32Tf32Tf32F32 {
         pub spvariant: Spvariant, // .spvariant
         pub sync: (),             // .sync
@@ -243,9 +252,10 @@ pub mod section_1 {
         pub c: GeneralOperand,    // c
         pub e: GeneralOperand,    // e
         pub f: GeneralOperand,    // f
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedM16n8k64RowColF32F8typeF8typeF32 {
         pub spvariant: Spvariant, // .spvariant
         pub sync: (),             // .sync
@@ -263,9 +273,10 @@ pub mod section_1 {
         pub c: GeneralOperand,    // c
         pub e: GeneralOperand,    // e
         pub f: GeneralOperand,    // f
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpOrderedMetadataSyncAlignedM16n8k64RowColKindDtypeF8f6f4typeF8f6f4typeCtype {
         pub sp_ordered_metadata: (), // .sp::ordered_metadata
         pub sync: (),                // .sync
@@ -284,10 +295,13 @@ pub mod section_1 {
         pub c: GeneralOperand,       // c
         pub e: GeneralOperand,       // e
         pub f: GeneralOperand,       // f
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -310,7 +324,7 @@ pub mod section_2 {
         Ue8m0, // .ue8m0
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedM16n8k128RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype {
         pub spvariant: Spvariant,                 // .spvariant
         pub sync: (),                             // .sync
@@ -336,10 +350,13 @@ pub mod section_2 {
         pub byte_id_a: VectorOperand,             // {byte-id-a, thread-id-a}
         pub scale_b_data: GeneralOperand,         // scale-b-data
         pub byte_id_b: VectorOperand,             // {byte-id-b, thread-id-b}
+        pub span: Span,
     }
 }
 
 pub mod section_3 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -364,7 +381,7 @@ pub mod section_3 {
         Ue4m3, // .ue4m3
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedM16n8k128RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype1 {
         pub spvariant: Spvariant,         // .spvariant
         pub sync: (),                     // .sync
@@ -390,10 +407,13 @@ pub mod section_3 {
         pub byte_id_a: VectorOperand,     // {byte-id-a, thread-id-a}
         pub scale_b_data: GeneralOperand, // scale-b-data
         pub byte_id_b: VectorOperand,     // {byte-id-b, thread-id-b}
+        pub span: Span,
     }
 }
 
 pub mod section_4 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -425,7 +445,7 @@ pub mod section_4 {
         Ue8m0, // .ue8m0
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32F8f6f4typeF8f6f4typeF32Stype
     {
         pub spvariant: Spvariant,                 // .spvariant
@@ -452,10 +472,13 @@ pub mod section_4 {
         pub byte_id_a: VectorOperand,             // {byte-id-a, thread-id-a}
         pub scale_b_data: GeneralOperand,         // scale-b-data
         pub byte_id_b: VectorOperand,             // {byte-id-b, thread-id-b}
+        pub span: Span,
     }
 }
 
 pub mod section_5 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -482,7 +505,7 @@ pub mod section_5 {
         S8, // .s8
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS32 {
         pub spvariant: Spvariant, // .spvariant
         pub sync: (),             // .sync
@@ -501,10 +524,13 @@ pub mod section_5 {
         pub c: GeneralOperand,    // c
         pub e: GeneralOperand,    // e
         pub f: GeneralOperand,    // f
+        pub span: Span,
     }
 }
 
 pub mod section_6 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -531,7 +557,7 @@ pub mod section_6 {
         S4, // .s4
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MmaSpvariantSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS321 {
         pub spvariant: Spvariant, // .spvariant
         pub sync: (),             // .sync
@@ -550,6 +576,7 @@ pub mod section_6 {
         pub c: GeneralOperand,    // c
         pub e: GeneralOperand,    // e
         pub f: GeneralOperand,    // f
+        pub span: Span,
     }
 }
 

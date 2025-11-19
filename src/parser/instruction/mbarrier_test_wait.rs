@@ -10,9 +10,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -23,375 +29,226 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Scope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cluster").is_ok() {
-                    return Ok(Scope::Cluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Cta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Scope::Cta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cluster", ".cta"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".cluster"), |_, _span| Scope::Cluster),
+                map(string_p(".cta"), |_, _span| Scope::Cta)
+            )
         }
     }
 
     impl PtxParser for Sem {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Acquire
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".acquire").is_ok() {
-                    return Ok(Sem::Acquire);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Relaxed
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".relaxed").is_ok() {
-                    return Ok(Sem::Relaxed);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".acquire", ".relaxed"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".acquire"), |_, _span| Sem::Acquire),
+                map(string_p(".relaxed"), |_, _span| Sem::Relaxed)
+            )
         }
     }
 
     impl PtxParser for State {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(State::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(State::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cta", ".shared"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cta"), |_, _span| State::SharedCta),
+                map(string_p(".shared"), |_, _span| State::Shared)
+            )
         }
     }
 
     impl PtxParser for MbarrierTestWaitSemScopeStateB64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mbarrier")?;
-            stream.expect_string(".test_wait")?;
-            let test_wait = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let state = match State::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b64")?;
-            let b64 = ();
-            stream.expect_complete()?;
-            let waitcomplete = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let addr = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let state2 = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MbarrierTestWaitSemScopeStateB64 {
-                test_wait,
-                sem,
-                scope,
-                state,
-                b64,
-                waitcomplete,
-                addr,
-                state2,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mbarrier"),
+                    string_p(".test_wait"),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    optional(State::parse()),
+                    string_p(".b64"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, test_wait, sem, scope, state, b64, waitcomplete, _, addr, _, state2, _),
+                 span| {
+                    ok!(MbarrierTestWaitSemScopeStateB64 {
+                        test_wait = test_wait,
+                        sem = sem,
+                        scope = scope,
+                        state = state,
+                        b64 = b64,
+                        waitcomplete = waitcomplete,
+                        addr = addr,
+                        state2 = state2,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MbarrierTestWaitParitySemScopeStateB64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mbarrier")?;
-            stream.expect_string(".test_wait")?;
-            let test_wait = ();
-            stream.expect_complete()?;
-            stream.expect_string(".parity")?;
-            let parity = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let state = match State::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b64")?;
-            let b64 = ();
-            stream.expect_complete()?;
-            let waitcomplete = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let addr = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let phaseparity = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MbarrierTestWaitParitySemScopeStateB64 {
-                test_wait,
-                parity,
-                sem,
-                scope,
-                state,
-                b64,
-                waitcomplete,
-                addr,
-                phaseparity,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mbarrier"),
+                    string_p(".test_wait"),
+                    string_p(".parity"),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    optional(State::parse()),
+                    string_p(".b64"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    test_wait,
+                    parity,
+                    sem,
+                    scope,
+                    state,
+                    b64,
+                    waitcomplete,
+                    _,
+                    addr,
+                    _,
+                    phaseparity,
+                    _,
+                ),
+                 span| {
+                    ok!(MbarrierTestWaitParitySemScopeStateB64 {
+                        test_wait = test_wait,
+                        parity = parity,
+                        sem = sem,
+                        scope = scope,
+                        state = state,
+                        b64 = b64,
+                        waitcomplete = waitcomplete,
+                        addr = addr,
+                        phaseparity = phaseparity,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MbarrierTryWaitSemScopeStateB64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mbarrier")?;
-            stream.expect_string(".try_wait")?;
-            let try_wait = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let state = match State::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b64")?;
-            let b64 = ();
-            stream.expect_complete()?;
-            let waitcomplete = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let addr = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let state2 = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let suspendtimehint = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MbarrierTryWaitSemScopeStateB64 {
-                try_wait,
-                sem,
-                scope,
-                state,
-                b64,
-                waitcomplete,
-                addr,
-                state2,
-                suspendtimehint,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mbarrier"),
+                    string_p(".try_wait"),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    optional(State::parse()),
+                    string_p(".b64"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    try_wait,
+                    sem,
+                    scope,
+                    state,
+                    b64,
+                    waitcomplete,
+                    _,
+                    addr,
+                    _,
+                    state2,
+                    suspendtimehint,
+                    _,
+                ),
+                 span| {
+                    ok!(MbarrierTryWaitSemScopeStateB64 {
+                        try_wait = try_wait,
+                        sem = sem,
+                        scope = scope,
+                        state = state,
+                        b64 = b64,
+                        waitcomplete = waitcomplete,
+                        addr = addr,
+                        state2 = state2,
+                        suspendtimehint = suspendtimehint,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for MbarrierTryWaitParitySemScopeStateB64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("mbarrier")?;
-            stream.expect_string(".try_wait")?;
-            let try_wait = ();
-            stream.expect_complete()?;
-            stream.expect_string(".parity")?;
-            let parity = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let state = match State::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b64")?;
-            let b64 = ();
-            stream.expect_complete()?;
-            let waitcomplete = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let addr = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let phaseparity = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let suspendtimehint = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(MbarrierTryWaitParitySemScopeStateB64 {
-                try_wait,
-                parity,
-                sem,
-                scope,
-                state,
-                b64,
-                waitcomplete,
-                addr,
-                phaseparity,
-                suspendtimehint,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("mbarrier"),
+                    string_p(".try_wait"),
+                    string_p(".parity"),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    optional(State::parse()),
+                    string_p(".b64"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    try_wait,
+                    parity,
+                    sem,
+                    scope,
+                    state,
+                    b64,
+                    waitcomplete,
+                    _,
+                    addr,
+                    _,
+                    phaseparity,
+                    suspendtimehint,
+                    _,
+                ),
+                 span| {
+                    ok!(MbarrierTryWaitParitySemScopeStateB64 {
+                        try_wait = try_wait,
+                        parity = parity,
+                        sem = sem,
+                        scope = scope,
+                        state = state,
+                        b64 = b64,
+                        waitcomplete = waitcomplete,
+                        addr = addr,
+                        phaseparity = phaseparity,
+                        suspendtimehint = suspendtimehint,
+
+                    })
+                },
+            )
         }
     }
 }

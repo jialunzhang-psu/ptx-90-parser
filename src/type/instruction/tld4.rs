@@ -10,6 +10,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -35,7 +37,7 @@ pub mod section_0 {
         _2d,   // .2d
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tld4Comp2dV4DtypeF32 {
         pub comp: Comp,                // .comp
         pub _2d: (),                   // .2d
@@ -47,9 +49,10 @@ pub mod section_0 {
         pub a: TexHandler2,            // [a, c]
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tld4CompGeomV4DtypeF32 {
         pub comp: Comp,                // .comp
         pub geom: Geom,                // .geom
@@ -61,6 +64,7 @@ pub mod section_0 {
         pub a: TexHandler3,            // [a, b, c]
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 }
 

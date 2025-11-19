@@ -8,6 +8,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -16,7 +18,7 @@ pub mod section_0 {
         Or,  // .or
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Lop3B32 {
         pub b32: (),                // .b32
         pub d: GeneralOperand,      // d
@@ -24,9 +26,10 @@ pub mod section_0 {
         pub b: GeneralOperand,      // b
         pub c: GeneralOperand,      // c
         pub immlut: GeneralOperand, // immLut
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Lop3BoolopB32 {
         pub boolop: Boolop,         // .BoolOp
         pub b32: (),                // .b32
@@ -37,6 +40,7 @@ pub mod section_0 {
         pub c: GeneralOperand,      // c
         pub immlut: GeneralOperand, // immLut
         pub q: GeneralOperand,      // q
+        pub span: Span,
     }
 }
 

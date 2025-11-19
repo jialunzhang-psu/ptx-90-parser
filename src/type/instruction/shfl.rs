@@ -7,6 +7,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -17,7 +19,7 @@ pub mod section_0 {
         Up,   // .up
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct ShflModeB32 {
         pub mode: Mode,                // .mode
         pub b32: (),                   // .b32
@@ -26,6 +28,7 @@ pub mod section_0 {
         pub a: GeneralOperand,         // a
         pub b: GeneralOperand,         // b
         pub c: GeneralOperand,         // c
+        pub span: Span,
     }
 }
 

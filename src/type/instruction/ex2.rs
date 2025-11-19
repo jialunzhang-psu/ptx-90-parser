@@ -11,6 +11,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -25,30 +27,33 @@ pub mod section_0 {
         Bf16,   // .bf16
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Ex2ApproxFtzF32 {
         pub approx: (),        // .approx
         pub ftz: bool,         // {.ftz}
         pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Ex2ApproxAtype {
         pub approx: (),        // .approx
         pub atype: Atype,      // .atype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Ex2ApproxFtzBtype {
         pub approx: (),        // .approx
         pub ftz: (),           // .ftz
         pub btype: Btype,      // .btype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 }
 

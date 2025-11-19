@@ -16,6 +16,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -32,7 +34,7 @@ pub mod section_0 {
         L2EvictFirst,     // .L2::evict_first
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CreatepolicyRangeGlobalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
         pub range: (),                                                // .range
         pub global: bool,                                             // {.global}
@@ -43,9 +45,10 @@ pub mod section_0 {
         pub a: AddressOperand,                                        // [a]
         pub primary_size: GeneralOperand,                             // primary-size
         pub total_size: GeneralOperand,                               // total-size
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CreatepolicyFractionalLevelPrimaryPriorityLevelSecondaryPriorityB64 {
         pub fractional: (),                                           // .fractional
         pub level_primary_priority: LevelPrimaryPriority,             // .level::primary_priority
@@ -53,15 +56,17 @@ pub mod section_0 {
         pub b64: (),                                                  // .b64
         pub cache_policy: GeneralOperand,                             // cache-policy
         pub fraction: Option<GeneralOperand>,                         // {, fraction}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CreatepolicyCvtL2B64 {
         pub cvt: (),                         // .cvt
         pub l2: (),                          // .L2
         pub b64: (),                         // .b64
         pub cache_policy: GeneralOperand,    // cache-policy
         pub access_property: GeneralOperand, // access-property
+        pub span: Span,
     }
 }
 

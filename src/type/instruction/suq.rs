@@ -9,6 +9,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -22,12 +24,13 @@ pub mod section_0 {
         Depth,           // .depth
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SuqQueryB32 {
         pub query: Query,      // .query
         pub b32: (),           // .b32
         pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
+        pub span: Span,
     }
 }
 

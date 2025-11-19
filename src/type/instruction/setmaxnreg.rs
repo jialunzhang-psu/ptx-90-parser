@@ -7,6 +7,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -15,13 +17,14 @@ pub mod section_0 {
         Dec, // .dec
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SetmaxnregActionSyncAlignedU32 {
         pub action: Action,                // .action
         pub sync: (),                      // .sync
         pub aligned: (),                   // .aligned
         pub u32: (),                       // .u32
         pub imm_reg_count: GeneralOperand, // imm-reg-count
+        pub span: Span,
     }
 }
 

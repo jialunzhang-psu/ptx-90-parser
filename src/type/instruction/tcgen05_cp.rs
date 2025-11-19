@@ -10,6 +10,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -40,7 +42,7 @@ pub mod section_0 {
         B8x16B4x16P64, // .b8x16.b4x16_p64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05CpCtaGroupShapeMulticastDstSrcFmt {
         pub cp: (),                         // .cp
         pub cta_group: CtaGroup,            // .cta_group
@@ -49,6 +51,7 @@ pub mod section_0 {
         pub dst_src_fmt: Option<DstSrcFmt>, // {.dst_src_fmt}
         pub taddr: AddressOperand,          // [taddr]
         pub s_desc: GeneralOperand,         // s-desc
+        pub span: Span,
     }
 }
 

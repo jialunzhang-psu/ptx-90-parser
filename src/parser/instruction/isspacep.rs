@@ -5,9 +5,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -18,120 +24,42 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Space {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cluster").is_ok() {
-                    return Ok(Space::SharedCluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try ParamEntry
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".param::entry").is_ok() {
-                    return Ok(Space::ParamEntry);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Space::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Space::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Space::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Const
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".const").is_ok() {
-                    return Ok(Space::Const);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Local
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".local").is_ok() {
-                    return Ok(Space::Local);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Param
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".param").is_ok() {
-                    return Ok(Space::Param);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".shared::cluster",
-                ".param::entry",
-                ".shared::cta",
-                ".global",
-                ".shared",
-                ".const",
-                ".local",
-                ".param",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cluster"), |_, _span| {
+                    Space::SharedCluster
+                }),
+                map(string_p(".param::entry"), |_, _span| Space::ParamEntry),
+                map(string_p(".shared::cta"), |_, _span| Space::SharedCta),
+                map(string_p(".global"), |_, _span| Space::Global),
+                map(string_p(".shared"), |_, _span| Space::Shared),
+                map(string_p(".const"), |_, _span| Space::Const),
+                map(string_p(".local"), |_, _span| Space::Local),
+                map(string_p(".param"), |_, _span| Space::Param)
+            )
         }
     }
 
     impl PtxParser for IsspacepSpace {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("isspacep")?;
-            let space = Space::parse(stream)?;
-            stream.expect_complete()?;
-            let p = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(IsspacepSpace { space, p, a })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("isspacep"),
+                    Space::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, space, p, _, a, _), span| {
+                    ok!(IsspacepSpace {
+                        space = space,
+                        p = p,
+                        a = a,
+
+                    })
+                },
+            )
         }
     }
 }

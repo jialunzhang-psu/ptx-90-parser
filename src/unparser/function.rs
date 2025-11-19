@@ -193,11 +193,16 @@ impl PtxUnparser for RegisterDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
         push_directive(tokens, "reg");
         self.ty.unparse_tokens(tokens);
-        push_register_components(tokens, &self.name.val);
-        if let Some(range) = self.range {
-            tokens.push(PtxToken::LAngle);
-            push_decimal(tokens, range);
-            tokens.push(PtxToken::RAngle);
+        for (idx, target) in self.registers.iter().enumerate() {
+            if idx > 0 {
+                tokens.push(PtxToken::Comma);
+            }
+            push_register_components(tokens, &target.name.val);
+            if let Some(range) = target.range {
+                tokens.push(PtxToken::LAngle);
+                push_decimal(tokens, range);
+                tokens.push(PtxToken::RAngle);
+            }
         }
         tokens.push(PtxToken::Semicolon);
     }

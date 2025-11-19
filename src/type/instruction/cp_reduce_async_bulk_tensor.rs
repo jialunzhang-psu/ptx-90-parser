@@ -13,6 +13,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -57,7 +59,7 @@ pub mod section_0 {
         BulkGroup, // .bulk_group
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpReduceAsyncBulkTensorDimDstSrcRedopLoadModeCompletionMechanismLevelCacheHint {
         pub reduce: (),                                // .reduce
         pub async_: (),                                // .async
@@ -73,6 +75,7 @@ pub mod section_0 {
         pub tensormap: TexHandler2,                    // [tensorMap, tensorCoords]
         pub srcmem: AddressOperand,                    // [srcMem]
         pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
+        pub span: Span,
     }
 }
 

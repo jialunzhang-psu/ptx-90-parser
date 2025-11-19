@@ -10,6 +10,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -28,12 +30,13 @@ pub mod section_0 {
         F64, // .f64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TestpOpType {
         pub op: Op,            // .op
         pub type_: Type,       // .type
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 }
 

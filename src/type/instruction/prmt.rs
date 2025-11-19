@@ -7,6 +7,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -19,7 +21,7 @@ pub mod section_0 {
         Ecr,  // .ecr
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct PrmtB32Mode {
         pub b32: (),            // .b32
         pub mode: Option<Mode>, // {.mode}
@@ -27,6 +29,7 @@ pub mod section_0 {
         pub a: GeneralOperand,  // a
         pub b: GeneralOperand,  // b
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 }
 

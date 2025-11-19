@@ -13,6 +13,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -33,7 +35,7 @@ pub mod section_0 {
         Shared,    // .shared
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MbarrierArriveSemScopeStateB64 {
         pub arrive: (),                    // .arrive
         pub sem: Option<Sem>,              // {.sem}
@@ -43,9 +45,10 @@ pub mod section_0 {
         pub state2: GeneralOperand,        // state
         pub addr: AddressOperand,          // [addr]
         pub count: Option<GeneralOperand>, // {, count}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MbarrierArriveSemScopeSharedClusterB64 {
         pub arrive: (),                    // .arrive
         pub sem: Option<Sem>,              // {.sem}
@@ -55,9 +58,10 @@ pub mod section_0 {
         pub operand: GeneralOperand,       // _
         pub addr: AddressOperand,          // [addr]
         pub count: Option<GeneralOperand>, // {, count}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MbarrierArriveExpectTxSemScopeStateB64 {
         pub arrive: (),              // .arrive
         pub expect_tx: (),           // .expect_tx
@@ -68,9 +72,10 @@ pub mod section_0 {
         pub state2: GeneralOperand,  // state
         pub addr: AddressOperand,    // [addr]
         pub txcount: GeneralOperand, // txCount
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MbarrierArriveExpectTxSemScopeSharedClusterB64 {
         pub arrive: (),              // .arrive
         pub expect_tx: (),           // .expect_tx
@@ -81,9 +86,10 @@ pub mod section_0 {
         pub operand: GeneralOperand, // _
         pub addr: AddressOperand,    // [addr]
         pub txcount: GeneralOperand, // txCount
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MbarrierArriveNocompleteReleaseCtaStateB64 {
         pub arrive: (),             // .arrive
         pub nocomplete: (),         // .noComplete
@@ -94,6 +100,7 @@ pub mod section_0 {
         pub state2: GeneralOperand, // state
         pub addr: AddressOperand,   // [addr]
         pub count: GeneralOperand,  // count
+        pub span: Span,
     }
 }
 

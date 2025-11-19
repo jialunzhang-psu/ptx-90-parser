@@ -16,6 +16,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -31,7 +33,7 @@ pub mod section_0 {
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct ReduxSyncOpType {
         pub sync: (),                   // .sync
         pub op: Op,                     // .op
@@ -39,10 +41,13 @@ pub mod section_0 {
         pub dst: GeneralOperand,        // dst
         pub src: GeneralOperand,        // src
         pub membermask: GeneralOperand, // membermask
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -52,7 +57,7 @@ pub mod section_1 {
         Or,  // .or
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct ReduxSyncOpB32 {
         pub sync: (),                   // .sync
         pub op: Op,                     // .op
@@ -60,10 +65,13 @@ pub mod section_1 {
         pub dst: GeneralOperand,        // dst
         pub src: GeneralOperand,        // src
         pub membermask: GeneralOperand, // membermask
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -72,7 +80,7 @@ pub mod section_2 {
         Max, // .max
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct ReduxSyncOpAbsNanF32 {
         pub sync: (),                   // .sync
         pub op: Op,                     // .op
@@ -82,6 +90,7 @@ pub mod section_2 {
         pub dst: GeneralOperand,        // dst
         pub src: GeneralOperand,        // src
         pub membermask: GeneralOperand, // membermask
+        pub span: Span,
     }
 }
 

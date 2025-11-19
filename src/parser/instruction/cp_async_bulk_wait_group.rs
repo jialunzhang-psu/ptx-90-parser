@@ -4,43 +4,43 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
     use crate::r#type::instruction::cp_async_bulk_wait_group::section_0::*;
 
     impl PtxParser for CpAsyncBulkWaitGroupRead {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("cp")?;
-            stream.expect_string(".async")?;
-            let async_ = ();
-            stream.expect_complete()?;
-            stream.expect_string(".bulk")?;
-            let bulk = ();
-            stream.expect_complete()?;
-            stream.expect_string(".wait_group")?;
-            let wait_group = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let read = stream.expect_string(".read").is_ok();
-            if !read {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let n = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(CpAsyncBulkWaitGroupRead {
-                async_,
-                bulk,
-                wait_group,
-                read,
-                n,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("cp"),
+                    string_p(".async"),
+                    string_p(".bulk"),
+                    string_p(".wait_group"),
+                    map(optional(string_p(".read")), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, async_, bulk, wait_group, read, n, _), span| {
+                    ok!(CpAsyncBulkWaitGroupRead {
+                        async_ = async_,
+                        bulk = bulk,
+                        wait_group = wait_group,
+                        read = read,
+                        n = n,
+
+                    })
+                },
+            )
         }
     }
 }

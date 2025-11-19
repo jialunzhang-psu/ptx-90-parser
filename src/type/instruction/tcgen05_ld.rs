@@ -22,6 +22,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -76,7 +78,7 @@ pub mod section_0 {
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05LdSyncAlignedShape1NumPackB32 {
         pub ld: (),                // .ld
         pub sync: (),              // .sync
@@ -87,9 +89,10 @@ pub mod section_0 {
         pub b32: (),               // .b32
         pub r: GeneralOperand,     // r
         pub taddr: AddressOperand, // [taddr]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05LdSyncAlignedShape2NumPackB32 {
         pub ld: (),                          // .ld
         pub sync: (),                        // .sync
@@ -101,9 +104,10 @@ pub mod section_0 {
         pub r: GeneralOperand,               // r
         pub taddr: AddressOperand,           // [taddr]
         pub immhalfsplitoff: GeneralOperand, // immHalfSplitoff
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05LdRedSyncAlignedShape3NumRedopAbsNanF32 {
         pub ld: (),                 // .ld
         pub red: (),                // .red
@@ -118,9 +122,10 @@ pub mod section_0 {
         pub r: GeneralOperand,      // r
         pub redval: GeneralOperand, // redval
         pub taddr: AddressOperand,  // [taddr]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05LdRedSyncAlignedShape4NumRedopAbsNanF32 {
         pub ld: (),                          // .ld
         pub red: (),                         // .red
@@ -136,9 +141,10 @@ pub mod section_0 {
         pub redval: GeneralOperand,          // redval
         pub taddr: AddressOperand,           // [taddr]
         pub immhalfsplitoff: GeneralOperand, // immHalfSplitoff
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05LdRedSyncAlignedShape3NumRedopType {
         pub ld: (),                 // .ld
         pub red: (),                // .red
@@ -151,9 +157,10 @@ pub mod section_0 {
         pub r: GeneralOperand,      // r
         pub redval: GeneralOperand, // redval
         pub taddr: AddressOperand,  // [taddr]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05LdRedSyncAlignedShape4NumRedopType {
         pub ld: (),                          // .ld
         pub red: (),                         // .red
@@ -167,6 +174,7 @@ pub mod section_0 {
         pub redval: GeneralOperand,          // redval
         pub taddr: AddressOperand,           // [taddr]
         pub immhalfsplitoff: GeneralOperand, // immHalfSplitoff
+        pub span: Span,
     }
 }
 

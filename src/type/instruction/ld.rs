@@ -23,6 +23,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -109,7 +111,7 @@ pub mod section_0 {
         Sys,     // .sys
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdWeakSsCopLevelCacheHintLevelPrefetchSizeVecType {
         pub weak: bool,                                     // {.weak}
         pub ss: Option<Ss>,                                 // {.ss}
@@ -122,9 +124,10 @@ pub mod section_0 {
         pub a: AddressOperand,                              // [a]
         pub unified: bool,                                  // {.unified}
         pub cache_policy: Option<GeneralOperand>,           // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdWeakSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType
     {
         pub weak: bool,                                               // {.weak}
@@ -139,9 +142,10 @@ pub mod section_0 {
         pub a: AddressOperand,                                        // [a]
         pub unified: bool,                                            // {.unified}
         pub cache_policy: Option<GeneralOperand>,                     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdVolatileSsLevelPrefetchSizeVecType {
         pub volatile: (),                                   // .volatile
         pub ss: Option<Ss>,                                 // {.ss}
@@ -150,9 +154,10 @@ pub mod section_0 {
         pub type_: Type,                                    // .type
         pub d: GeneralOperand,                              // d
         pub a: AddressOperand,                              // [a]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdRelaxedScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType
     {
         pub relaxed: (),                                              // .relaxed
@@ -167,9 +172,10 @@ pub mod section_0 {
         pub d: GeneralOperand,                                        // d
         pub a: AddressOperand,                                        // [a]
         pub cache_policy: Option<GeneralOperand>,                     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdAcquireScopeSsLevel1EvictionPriorityLevel2EvictionPriorityLevelCacheHintLevelPrefetchSizeVecType
     {
         pub acquire: (),                                              // .acquire
@@ -184,9 +190,10 @@ pub mod section_0 {
         pub d: GeneralOperand,                                        // d
         pub a: AddressOperand,                                        // [a]
         pub cache_policy: Option<GeneralOperand>,                     // {, cache-policy}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LdMmioRelaxedSysGlobalType {
         pub mmio: (),          // .mmio
         pub relaxed: (),       // .relaxed
@@ -195,6 +202,7 @@ pub mod section_0 {
         pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
+        pub span: Span,
     }
 }
 

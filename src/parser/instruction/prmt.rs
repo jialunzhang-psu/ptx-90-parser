@@ -5,9 +5,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -18,114 +24,46 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Mode {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Rc16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rc16").is_ok() {
-                    return Ok(Mode::Rc16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F4e
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f4e").is_ok() {
-                    return Ok(Mode::F4e);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try B4e
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b4e").is_ok() {
-                    return Ok(Mode::B4e);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Rc8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rc8").is_ok() {
-                    return Ok(Mode::Rc8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Ecl
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".ecl").is_ok() {
-                    return Ok(Mode::Ecl);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Ecr
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".ecr").is_ok() {
-                    return Ok(Mode::Ecr);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".rc16", ".f4e", ".b4e", ".rc8", ".ecl", ".ecr"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".rc16"), |_, _span| Mode::Rc16),
+                map(string_p(".f4e"), |_, _span| Mode::F4e),
+                map(string_p(".b4e"), |_, _span| Mode::B4e),
+                map(string_p(".rc8"), |_, _span| Mode::Rc8),
+                map(string_p(".ecl"), |_, _span| Mode::Ecl),
+                map(string_p(".ecr"), |_, _span| Mode::Ecr)
+            )
         }
     }
 
     impl PtxParser for PrmtB32Mode {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("prmt")?;
-            stream.expect_string(".b32")?;
-            let b32 = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let mode = match Mode::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let c = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(PrmtB32Mode {
-                b32,
-                mode,
-                d,
-                a,
-                b,
-                c,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("prmt"),
+                    string_p(".b32"),
+                    optional(Mode::parse()),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, b32, mode, d, _, a, _, b, _, c, _), span| {
+                    ok!(PrmtB32Mode {
+                        b32 = b32,
+                        mode = mode,
+                        d = d,
+                        a = a,
+                        b = b,
+                        c = c,
+
+                    })
+                },
+            )
         }
     }
 }

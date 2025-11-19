@@ -9,6 +9,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -18,7 +20,7 @@ pub mod section_0 {
         GetFirstCtaidZ, // .get_first_ctaid::z
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct ClusterlaunchcontrolQueryCancelIsCanceledPredB128 {
         pub query_cancel: (),                    // .query_cancel
         pub is_canceled: (),                     // .is_canceled
@@ -26,9 +28,10 @@ pub mod section_0 {
         pub b128: (),                            // .b128
         pub pred2: GeneralOperand,               // pred
         pub try_cancel_response: GeneralOperand, // try_cancel_response
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct ClusterlaunchcontrolQueryCancelGetFirstCtaidV4B32B128 {
         pub query_cancel: (),                    // .query_cancel
         pub get_first_ctaid: (),                 // .get_first_ctaid
@@ -37,9 +40,10 @@ pub mod section_0 {
         pub b128: (),                            // .b128
         pub xdim: VectorOperand,                 // {xdim, ydim, zdim, _}
         pub try_cancel_response: GeneralOperand, // try_cancel_response
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct ClusterlaunchcontrolQueryCancelGetFirstCtaidDimensionB32B128 {
         pub query_cancel: (),                                          // .query_cancel
         pub get_first_ctaid_dimension: Option<GetFirstCtaidDimension>, // {.get_first_ctaid::dimension}
@@ -47,6 +51,7 @@ pub mod section_0 {
         pub b128: (),                                                  // .b128
         pub reg: GeneralOperand,                                       // reg
         pub try_cancel_response: GeneralOperand,                       // try_cancel_response
+        pub span: Span,
     }
 }
 

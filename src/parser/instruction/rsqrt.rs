@@ -5,63 +5,69 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
     use crate::r#type::instruction::rsqrt::section_0::*;
 
     impl PtxParser for RsqrtApproxFtzF32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("rsqrt")?;
-            stream.expect_string(".approx")?;
-            let approx = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ftz = stream.expect_string(".ftz").is_ok();
-            if !ftz {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(RsqrtApproxFtzF32 {
-                approx,
-                ftz,
-                f32,
-                d,
-                a,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("rsqrt"),
+                    string_p(".approx"),
+                    map(optional(string_p(".ftz")), |value, _| value.is_some()),
+                    string_p(".f32"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, approx, ftz, f32, d, _, a, _), span| {
+                    ok!(RsqrtApproxFtzF32 {
+                        approx = approx,
+                        ftz = ftz,
+                        f32 = f32,
+                        d = d,
+                        a = a,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for RsqrtApproxF64 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("rsqrt")?;
-            stream.expect_string(".approx")?;
-            let approx = ();
-            stream.expect_complete()?;
-            stream.expect_string(".f64")?;
-            let f64 = ();
-            stream.expect_complete()?;
-            let d = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(RsqrtApproxF64 { approx, f64, d, a })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("rsqrt"),
+                    string_p(".approx"),
+                    string_p(".f64"),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, approx, f64, d, _, a, _), span| {
+                    ok!(RsqrtApproxF64 {
+                        approx = approx,
+                        f64 = f64,
+                        d = d,
+                        a = a,
+
+                    })
+                },
+            )
         }
     }
 }

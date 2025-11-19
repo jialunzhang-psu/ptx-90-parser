@@ -15,6 +15,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -46,15 +48,16 @@ pub mod section_0 {
         AddrMode2,               // addr_mode_2
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TxqTqueryB32 {
         pub tquery: Tquery,    // .tquery
         pub b32: (),           // .b32
         pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TxqLevelTlqueryB32 {
         pub level: (),           // .level
         pub tlquery: Tlquery,    // .tlquery
@@ -62,14 +65,16 @@ pub mod section_0 {
         pub d: GeneralOperand,   // d
         pub a: AddressOperand,   // [a]
         pub lod: GeneralOperand, // lod
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TxqSqueryB32 {
         pub squery: Squery,    // .squery
         pub b32: (),           // .b32
         pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
+        pub span: Span,
     }
 }
 

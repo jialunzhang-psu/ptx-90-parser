@@ -36,6 +36,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -89,7 +91,7 @@ pub mod section_0 {
         Release, // .release
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MultimemLdReduceLdsemScopeSsOpType {
         pub ld_reduce: (),        // .ld_reduce
         pub ldsem: Option<Ldsem>, // {.ldsem}
@@ -99,9 +101,10 @@ pub mod section_0 {
         pub type_: Type,          // .type
         pub d: GeneralOperand,    // d
         pub a: AddressOperand,    // [a]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MultimemLdReduceWeakSsOpType {
         pub ld_reduce: (),     // .ld_reduce
         pub weak: (),          // .weak
@@ -110,9 +113,10 @@ pub mod section_0 {
         pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MultimemStStsemScopeSsType {
         pub st: (),               // .st
         pub stsem: Option<Stsem>, // {.stsem}
@@ -121,9 +125,10 @@ pub mod section_0 {
         pub type_: Type,          // .type
         pub a: AddressOperand,    // [a]
         pub b: GeneralOperand,    // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MultimemStWeakSsType {
         pub st: (),            // .st
         pub weak: (),          // .weak
@@ -131,9 +136,10 @@ pub mod section_0 {
         pub type_: Type,       // .type
         pub a: AddressOperand, // [a]
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MultimemRedRedsemScopeSsOpType {
         pub red: (),                // .red
         pub redsem: Option<Redsem>, // {.redsem}
@@ -143,10 +149,13 @@ pub mod section_0 {
         pub type_: Type,            // .type
         pub a: AddressOperand,      // [a]
         pub b: GeneralOperand,      // b
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -231,7 +240,7 @@ pub mod section_1 {
         F64,    // .f64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MultimemLdReduceLdsemScopeSsOpAccPrecVecType {
         pub ld_reduce: (),             // .ld_reduce
         pub ldsem: Option<Ldsem>,      // {.ldsem}
@@ -243,9 +252,10 @@ pub mod section_1 {
         pub type_: Type,               // .type
         pub d: GeneralOperand,         // d
         pub a: AddressOperand,         // [a]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MultimemLdReduceWeakSsOpAccPrecVecType {
         pub ld_reduce: (),             // .ld_reduce
         pub weak: (),                  // .weak
@@ -256,9 +266,10 @@ pub mod section_1 {
         pub type_: Type,               // .type
         pub d: GeneralOperand,         // d
         pub a: AddressOperand,         // [a]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MultimemStStsemScopeSsVecType {
         pub st: (),               // .st
         pub stsem: Option<Stsem>, // {.stsem}
@@ -268,9 +279,10 @@ pub mod section_1 {
         pub type_: Type,          // .type
         pub a: AddressOperand,    // [a]
         pub b: GeneralOperand,    // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MultimemStWeakSsVecType {
         pub st: (),            // .st
         pub weak: (),          // .weak
@@ -279,9 +291,10 @@ pub mod section_1 {
         pub type_: Type,       // .type
         pub a: AddressOperand, // [a]
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MultimemRedRedsemScopeSsRedopVecRedtype {
         pub red: (),                // .red
         pub redsem: Option<Redsem>, // {.redsem}
@@ -292,6 +305,7 @@ pub mod section_1 {
         pub redtype: Redtype,       // .redtype
         pub a: AddressOperand,      // [a]
         pub b: GeneralOperand,      // b
+        pub span: Span,
     }
 }
 

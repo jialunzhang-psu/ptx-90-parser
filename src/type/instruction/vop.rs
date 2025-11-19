@@ -14,6 +14,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -71,7 +73,7 @@ pub mod section_0 {
         H1, // .h1
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VaddDtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -82,9 +84,10 @@ pub mod section_0 {
         pub asel: Option<Asel>, // {.asel}
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VsubDtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -95,9 +98,10 @@ pub mod section_0 {
         pub asel: Option<Asel>, // {.asel}
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VabsdiffDtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -108,9 +112,10 @@ pub mod section_0 {
         pub asel: Option<Asel>, // {.asel}
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VminDtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -121,9 +126,10 @@ pub mod section_0 {
         pub asel: Option<Asel>, // {.asel}
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VmaxDtypeAtypeBtypeSat {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -134,9 +140,10 @@ pub mod section_0 {
         pub asel: Option<Asel>, // {.asel}
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VaddDtypeAtypeBtypeSatOp2 {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -149,9 +156,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VsubDtypeAtypeBtypeSatOp2 {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -164,9 +172,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VabsdiffDtypeAtypeBtypeSatOp2 {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -179,9 +188,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VminDtypeAtypeBtypeSatOp2 {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -194,9 +204,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VmaxDtypeAtypeBtypeSatOp2 {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -209,9 +220,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VaddDtypeAtypeBtypeSat1 {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -224,9 +236,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VsubDtypeAtypeBtypeSat1 {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -239,9 +252,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VabsdiffDtypeAtypeBtypeSat1 {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -254,9 +268,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VminDtypeAtypeBtypeSat1 {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -269,9 +284,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VmaxDtypeAtypeBtypeSat1 {
         pub dtype: Dtype,       // .dtype
         pub atype: Atype,       // .atype
@@ -284,6 +300,7 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 }
 

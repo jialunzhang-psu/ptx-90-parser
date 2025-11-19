@@ -11,6 +11,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -43,7 +45,7 @@ pub mod section_0 {
         _16x32bx2, // .16x32bx2
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05StSyncAlignedShape1NumUnpackB32 {
         pub st: (),                 // .st
         pub sync: (),               // .sync
@@ -54,9 +56,10 @@ pub mod section_0 {
         pub b32: (),                // .b32
         pub taddr: AddressOperand,  // [taddr]
         pub r: GeneralOperand,      // r
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05StSyncAlignedShape2NumUnpackB32 {
         pub st: (),                          // .st
         pub sync: (),                        // .sync
@@ -68,6 +71,7 @@ pub mod section_0 {
         pub taddr: AddressOperand,           // [taddr]
         pub immhalfsplitoff: GeneralOperand, // immHalfSplitoff
         pub r: GeneralOperand,               // r
+        pub span: Span,
     }
 }
 

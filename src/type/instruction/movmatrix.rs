@@ -8,6 +8,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -20,7 +22,7 @@ pub mod section_0 {
         B16, // .b16
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MovmatrixSyncAlignedShapeTransType {
         pub sync: (),          // .sync
         pub aligned: (),       // .aligned
@@ -29,6 +31,7 @@ pub mod section_0 {
         pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 }
 

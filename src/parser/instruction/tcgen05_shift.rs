@@ -5,9 +5,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -18,59 +24,35 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for CtaGroup {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try CtaGroup1
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::1").is_ok() {
-                    return Ok(CtaGroup::CtaGroup1);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try CtaGroup2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta_group::2").is_ok() {
-                    return Ok(CtaGroup::CtaGroup2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cta_group::1", ".cta_group::2"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".cta_group::1"), |_, _span| CtaGroup::CtaGroup1),
+                map(string_p(".cta_group::2"), |_, _span| CtaGroup::CtaGroup2)
+            )
         }
     }
 
     impl PtxParser for Tcgen05ShiftCtaGroupDown {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("tcgen05")?;
-            stream.expect_string(".shift")?;
-            let shift = ();
-            stream.expect_complete()?;
-            let cta_group = CtaGroup::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".down")?;
-            let down = ();
-            stream.expect_complete()?;
-            let taddr = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(Tcgen05ShiftCtaGroupDown {
-                shift,
-                cta_group,
-                down,
-                taddr,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("tcgen05"),
+                    string_p(".shift"),
+                    CtaGroup::parse(),
+                    string_p(".down"),
+                    AddressOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, shift, cta_group, down, taddr, _), span| {
+                    ok!(Tcgen05ShiftCtaGroupDown {
+                        shift = shift,
+                        cta_group = cta_group,
+                        down = down,
+                        taddr = taddr,
+
+                    })
+                },
+            )
         }
     }
 }

@@ -9,6 +9,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -23,7 +25,7 @@ pub mod section_0 {
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Mad24ModeType {
         pub mode: Mode,        // .mode
         pub type_: Type,       // .type
@@ -31,9 +33,10 @@ pub mod section_0 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Mad24HiSatS32 {
         pub hi: (),            // .hi
         pub sat: (),           // .sat
@@ -42,6 +45,7 @@ pub mod section_0 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 

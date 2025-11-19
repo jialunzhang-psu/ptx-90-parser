@@ -36,10 +36,10 @@ pub struct VariableDirective {
     /// .global .attribute(.managed) .u64 x;
     /// .global .attribute(.unified(19,95)) .f32 f;
     pub attributes: Vec<AttributeDirective>,
-    /// The data type of the variable (e.g., `.s32`, `.f64`).
-    pub ty: DataType,
     /// Modifiers applied to the variable (e.g., `.v4`, `.align 16`, `.ptr`).
     pub modifiers: Vec<VariableModifier>,
+    /// The data type of the variable (e.g., `.s32`, `.f64`).
+    pub ty: DataType,
     /// The variable name.
     pub name: VariableSymbol,
     /// The array dimensions, if any.
@@ -69,9 +69,9 @@ pub enum ParameterDirective {
     },
     Parameter {
         align: Option<u32>,
-        ty: DataType,
         ptr: bool,
         space: Option<ParamStateSpace>,
+        ty: DataType,
         name: VariableSymbol,
         array: Vec<Option<u64>>,
         span: Span,

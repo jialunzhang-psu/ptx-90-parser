@@ -28,6 +28,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -57,7 +59,7 @@ pub mod section_0 {
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaStoreDSyncAlignedLayoutShapeSsType {
         pub store: (),                      // .store
         pub d: (),                          // .d
@@ -70,10 +72,13 @@ pub mod section_0 {
         pub p: AddressOperand,              // [p]
         pub r: GeneralOperand,              // r
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -100,7 +105,7 @@ pub mod section_1 {
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaStoreDSyncAlignedLayoutShapeSsType1 {
         pub store: (),                      // .store
         pub d: (),                          // .d
@@ -113,10 +118,13 @@ pub mod section_1 {
         pub p: AddressOperand,              // [p]
         pub r: GeneralOperand,              // r
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -142,7 +150,7 @@ pub mod section_2 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaStoreDSyncAlignedLayoutShapeSsType2 {
         pub store: (),                      // .store
         pub d: (),                          // .d
@@ -155,10 +163,13 @@ pub mod section_2 {
         pub p: AddressOperand,              // [p]
         pub r: GeneralOperand,              // r
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 }
 
 pub mod section_3 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -184,7 +195,7 @@ pub mod section_3 {
         F64, // .f64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaStoreDSyncAlignedLayoutShapeSsType3 {
         pub store: (),                      // .store
         pub d: (),                          // .d
@@ -197,6 +208,7 @@ pub mod section_3 {
         pub p: AddressOperand,              // [p]
         pub r: GeneralOperand,              // r
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 }
 

@@ -20,6 +20,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -49,7 +51,7 @@ pub mod section_0 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TexGeomV4DtypeCtype {
         pub geom: Geom,                // .geom
         pub v4: (),                    // .v4
@@ -60,9 +62,10 @@ pub mod section_0 {
         pub a: TexHandler2,            // [a, c]
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TexGeomV4DtypeCtype1 {
         pub geom: Geom,                // .geom
         pub v4: (),                    // .v4
@@ -73,9 +76,10 @@ pub mod section_0 {
         pub a: TexHandler3,            // [a, b, c]
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TexGeomV2F16x2Ctype {
         pub geom: Geom,                // .geom
         pub v2: (),                    // .v2
@@ -86,9 +90,10 @@ pub mod section_0 {
         pub a: TexHandler2,            // [a, c]
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TexGeomV2F16x2Ctype1 {
         pub geom: Geom,                // .geom
         pub v2: (),                    // .v2
@@ -99,9 +104,10 @@ pub mod section_0 {
         pub a: TexHandler3,            // [a, b, c]
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TexBaseGeomV4DtypeCtype {
         pub base: (),                  // .base
         pub geom: Geom,                // .geom
@@ -113,9 +119,10 @@ pub mod section_0 {
         pub a: TexHandler3Optional,    // [a, {b,}, c]
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TexLevelGeomV4DtypeCtype {
         pub level: (),                 // .level
         pub geom: Geom,                // .geom
@@ -128,9 +135,10 @@ pub mod section_0 {
         pub lod: GeneralOperand,       // lod
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TexGradGeomV4DtypeCtype {
         pub grad: (),                  // .grad
         pub geom: Geom,                // .geom
@@ -144,9 +152,10 @@ pub mod section_0 {
         pub dpdy: GeneralOperand,      // dPdy
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TexBaseGeomV2F16x2Ctype {
         pub base: (),                  // .base
         pub geom: Geom,                // .geom
@@ -158,9 +167,10 @@ pub mod section_0 {
         pub a: TexHandler3Optional,    // [a, {b,}, c]
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TexLevelGeomV2F16x2Ctype {
         pub level: (),                 // .level
         pub geom: Geom,                // .geom
@@ -173,9 +183,10 @@ pub mod section_0 {
         pub lod: GeneralOperand,       // lod
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TexGradGeomV2F16x2Ctype {
         pub grad: (),                  // .grad
         pub geom: Geom,                // .geom
@@ -189,6 +200,7 @@ pub mod section_0 {
         pub dpdy: GeneralOperand,      // dPdy
         pub e: Option<GeneralOperand>, // {, e}
         pub f: Option<GeneralOperand>, // {, f}
+        pub span: Span,
     }
 }
 

@@ -4,6 +4,7 @@ use crate::analyzer::{
 use crate::naming;
 use crate::r#type::OperatorToken;
 use std::collections::BTreeMap;
+use std::fmt::Write;
 
 /// Output produced when generating parsers for a PTX section
 pub struct GeneratedParserOutput {
@@ -19,6 +20,39 @@ pub struct GeneratedParserOutput {
 pub struct ParserGenerator {
     /// Track generated enum parsers to avoid duplicates within a section
     generated_enum_parsers: BTreeMap<String, String>,
+}
+
+#[derive(Clone)]
+struct Component {
+    expr: String,
+    binding: String,
+    field_name: Option<String>,
+}
+
+impl Component {
+    fn field<T, U>(expr: T, binding: U) -> Self
+    where
+        T: Into<String>,
+        U: Into<String>,
+    {
+        let binding = binding.into();
+        Self {
+            expr: expr.into(),
+            field_name: Some(binding.clone()),
+            binding,
+        }
+    }
+
+    fn ignore<T>(expr: T) -> Self
+    where
+        T: Into<String>,
+    {
+        Self {
+            expr: expr.into(),
+            field_name: None,
+            binding: "_".to_string(),
+        }
+    }
 }
 
 impl ParserGenerator {
@@ -105,351 +139,372 @@ impl ParserGenerator {
 
     /// Generate import statements
     pub fn generate_imports() -> String {
-        r#"use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+        r#"use crate::{alt, ok, seq_n};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, minus_p, optional, pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, between, map, try_map},
+};
 use crate::r#type::common::*;"#
             .to_string()
+    }
+
+    fn escape_literal(&self, value: &str) -> String {
+        value.replace('\\', "\\\\").replace('\"', "\\\"")
+    }
+
+    fn string_parser(&self, value: &str) -> String {
+        format!("string_p(\"{}\")", self.escape_literal(value))
+    }
+
+    fn map_to_bool(&self, expr: &str) -> String {
+        format!(
+            "map({}, |value, _| value.is_some())",
+            expr
+        )
+    }
+
+    fn optional_with_comma(&self, parser_expr: &str) -> String {
+        format!(
+            "map(optional(seq_n!(comma_p(), {})), |value, _| value.map(|(_, operand)| operand))",
+            parser_expr
+        )
+    }
+
+    fn build_seq_expr(&self, components: &[Component]) -> String {
+        if components.len() == 1 {
+            return components[0].expr.clone();
+        }
+        let joined = components
+            .iter()
+            .map(|component| format!("                {}", component.expr))
+            .collect::<Vec<_>>()
+            .join(",\n");
+        format!("seq_n!(\n{}\n            )", joined)
+    }
+
+    fn build_seq_from_exprs(&self, exprs: &[String]) -> String {
+        if exprs.len() == 1 {
+            return exprs[0].clone();
+        }
+        let joined = exprs
+            .iter()
+            .map(|expr| format!("                {}", expr))
+            .collect::<Vec<_>>()
+            .join(",\n");
+        format!("seq_n!(\n{}\n            )", joined)
+    }
+
+    fn is_combinable_sequence(items: &[(AnalyzedModifier, String)]) -> bool {
+        if items.len() < 2 {
+            return false;
+        }
+        let first_is_directive = matches!(&items[0].0, AnalyzedModifier::Atom((ident, _)) if ident.starts_with('.'));
+        if let AnalyzedModifier::Atom((ident, _)) = &items[0].0 {
+            if ident.starts_with(".b") {
+                eprintln!("Sequence candidate items: {:?}", items);
+            }
+        }
+        let rest_are_choices = items[1..].iter().all(|(modifier, _)| {
+            matches!(modifier, AnalyzedModifier::Choice { .. })
+        });
+        first_is_directive && rest_are_choices
+    }
+
+    fn combinable_sequence_expr(
+        &self,
+        items: &[(AnalyzedModifier, String)],
+    ) -> Option<String> {
+        if !Self::is_combinable_sequence(items) {
+            return None;
+        }
+        eprintln!("Generating combinable sequence parser for {:?}", items);
+
+        let prefix = match &items[0].0 {
+            AnalyzedModifier::Atom((ident, _)) => ident.clone(),
+            _ => return None,
+        };
+
+        let mut parts = Vec::new();
+        for (modifier, _) in &items[1..] {
+            if let AnalyzedModifier::Choice { base, options } = modifier {
+                let type_name = base.1.clone();
+                let mut literals = Vec::new();
+                let mut variants = Vec::new();
+
+                for (option, variant_name) in options {
+                    if let AnalyzedModifier::Atom((literal, _)) = option {
+                        literals.push(literal.clone());
+                        variants.push(variant_name.clone());
+                    } else {
+                        return None;
+                    }
+                }
+
+                parts.push((type_name, literals, variants));
+            } else {
+                return None;
+            }
+        }
+
+        let mut expr = String::new();
+        expr.push_str("|stream| {\n");
+        expr.push_str("            stream.try_with_span(|stream| {\n");
+        expr.push_str("                stream.with_partial_token_mode(|stream| {\n");
+        expr.push_str(&format!(
+            "                    stream.expect_string(\"{}\")?;\n",
+            self.escape_literal(&prefix)
+        ));
+
+        for (idx, (type_name, literals, variants)) in parts.iter().enumerate() {
+            let literal_list = literals
+                .iter()
+                .map(|lit| format!("\"{}\"", self.escape_literal(lit)))
+                .collect::<Vec<_>>()
+                .join(", ");
+            expr.push_str(&format!(
+                "                    let part{idx} = match stream.expect_strings(&[{literal_list}])? {{\n"
+            ));
+            for (value_idx, variant_name) in variants.iter().enumerate() {
+                expr.push_str(&format!(
+                    "                        {} => {}::{},\n",
+                    value_idx, type_name, variant_name
+                ));
+            }
+            expr.push_str("                        _ => unreachable!(),\n");
+            expr.push_str("                    };\n");
+        }
+
+        let tuple_parts = std::iter::once("()".to_string())
+            .chain((0..parts.len()).map(|idx| format!("part{}", idx)))
+            .collect::<Vec<_>>()
+            .join(", ");
+        expr.push_str(&format!("                    Ok(({}))\n", tuple_parts));
+        expr.push_str("                })\n");
+        expr.push_str("            })\n");
+        expr.push_str("        }\n");
+
+        Some(expr)
+    }
+
+    fn build_pattern(&self, components: &[Component]) -> String {
+        let bindings = components
+            .iter()
+            .map(|c| c.binding.clone())
+            .collect::<Vec<_>>()
+            .join(", ");
+        format!("({})", bindings)
+    }
+
+    fn build_field_initializers(&self, components: &[Component]) -> String {
+        let mut lines = String::new();
+        for component in components {
+            if let Some(field) = &component.field_name {
+                writeln!(
+                    &mut lines,
+                    "                    {} = {},",
+                    field, component.binding
+                )
+                .unwrap();
+            }
+        }
+        lines
     }
 
     /// Generate PtxParser implementation for an instruction
     fn generate_parser_impl(&mut self, instr: &AnalyzedInstruction) -> String {
         let struct_name = &instr.rust_name;
-        let opcode = &instr.head.opcode;
+        let mut components = Vec::new();
 
-        let mut output = String::new();
-        output.push_str(&format!("impl PtxParser for {} {{\n", struct_name));
-        output.push_str(&format!(
-            "    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {{\n"
-        ));
+        components.push(Component::ignore(self.string_parser(&instr.head.opcode)));
 
-        // Parse opcode
-        output.push_str(&format!("        stream.expect_string(\"{}\")?;\n", opcode));
-
-        // Parse modifiers
         for (modifier, rust_name) in &instr.head.modifiers {
-            let parse_code = self.generate_modifier_parser(modifier, rust_name);
-            output.push_str(&parse_code);
-            // Ensure complete token consumption after each modifier
-            output.push_str("        stream.expect_complete()?;\n");
+            let expr = self.modifier_field_expr(modifier);
+            components.push(Component::field(expr, rust_name.clone()));
         }
 
-        // Parse operands
         for (idx, operand) in instr.operands.iter().enumerate() {
-            // Add comma before each operand except the first
-            if idx > 0 {
-                // If the operand is optional, make the comma optional too
-                let is_optional = matches!(
-                    operand.operand,
-                    AnalyzedOperandElement::Optional(_)
-                        | AnalyzedOperandElement::PipeOptionalChoice(_)
-                );
-
-                if is_optional {
-                    output.push_str("        let saved_pos = stream.position();\n");
-                    output.push_str(
-                        "        let has_comma = stream.expect(&PtxToken::Comma).is_ok();\n",
-                    );
-                    output.push_str("        if !has_comma {\n");
-                    output.push_str("            stream.set_position(saved_pos);\n");
-                    output.push_str("        }\n");
-                } else {
-                    output.push_str("        stream.expect(&PtxToken::Comma)?;\n");
-                }
-            }
-            let parse_code = self.generate_operand_parser(operand);
-            output.push_str(&parse_code);
+            self.add_operand_components(idx, operand, &mut components);
         }
 
-        // Ensure we've consumed complete tokens (not stopped mid-token)
-        output.push_str("        stream.expect_complete()?;\n");
+        components.push(Component::ignore("semicolon_p()".to_string()));
 
-        // Expect semicolon at end of instruction
-        output.push_str("        stream.expect(&PtxToken::Semicolon)?;\n");
+        let seq_expr = self.build_seq_expr(&components);
+        let pattern = self.build_pattern(&components);
+        let field_initializers = self.build_field_initializers(&components);
 
-        // Construct and return the struct
-        output.push_str(&format!("        Ok({} {{\n", struct_name));
-
-        // Add modifier fields
-        for (_modifier, rust_name) in &instr.head.modifiers {
-            output.push_str(&format!("            {},\n", rust_name));
-        }
-
-        // Add operand fields
-        for operand in &instr.operands {
-            // Operator field
-            if let Some((_op, rust_name)) = &operand.operator {
-                output.push_str(&format!("            {},\n", rust_name));
-            }
-
-            // Operand element field(s)
-            // PipeChoice and PipeOptionalChoice need TWO fields
-            use AnalyzedOperandElement::*;
-            match &operand.operand {
-                PipeChoice(((_, first_name), (_, second_name))) => {
-                    // Add both fields for d|p
-                    output.push_str(&format!("            {},\n", first_name));
-                    output.push_str(&format!("            {},\n", second_name));
-                }
-                PipeOptionalChoice(((_, first_name), (_, second_name))) => {
-                    // Add both fields for d{|p}
-                    output.push_str(&format!("            {},\n", first_name));
-                    output.push_str(&format!("            {},\n", second_name));
-                }
-                _ => {
-                    // Single field for all other types
-                    let operand_name = Self::get_operand_rust_name(&operand.operand);
-                    output.push_str(&format!("            {},\n", operand_name));
-                }
-            }
-
-            // Operand modifier field
-            if let Some((_modifier, rust_name)) = &operand.modifier {
-                output.push_str(&format!("            {},\n", rust_name));
-            }
-        }
-
-        output.push_str("        })\n");
-        output.push_str("    }\n");
-        output.push_str("}\n");
-
-        output
+        format!(
+            r#"impl PtxParser for {} {{
+    fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {{
+        try_map(
+            {},
+            |{}, span| {{
+                ok!({} {{
+{}
+                }})
+            }},
+        )
+    }}
+}}
+"#,
+            struct_name, seq_expr, pattern, struct_name, field_initializers
+        )
     }
 
-    /// Generate parser code for a modifier
-    fn generate_modifier_parser(&mut self, modifier: &AnalyzedModifier, rust_name: &str) -> String {
+
+    fn modifier_field_expr(&mut self, modifier: &AnalyzedModifier) -> String {
         match modifier {
-            AnalyzedModifier::Atom((ident, _)) => {
-                format!(
-                    "        stream.expect_string(\"{}\")?;\n        let {} = ();\n",
-                    ident, rust_name
-                )
-            }
+            AnalyzedModifier::Optional(inner) => match &inner.0 {
+                AnalyzedModifier::Atom((ident, _)) => {
+                    let expr = format!("optional({})", self.string_parser(ident));
+                    self.map_to_bool(&expr)
+                }
+                _ => {
+                    let expr = self.modifier_value_expr(&inner.0);
+                    format!("optional({})", expr)
+                }
+            },
+            _ => self.modifier_value_expr(modifier),
+        }
+    }
+
+    fn modifier_value_expr(&mut self, modifier: &AnalyzedModifier) -> String {
+        match modifier {
+            AnalyzedModifier::Atom((ident, _)) => self.string_parser(ident),
             AnalyzedModifier::Choice { base, options } => {
                 let type_name = &base.1;
-
-                // Generate enum parser if not already generated
                 if !self.generated_enum_parsers.contains_key(type_name) {
                     let enum_parser = self.generate_enum_parser(type_name, options);
                     self.generated_enum_parsers
                         .insert(type_name.clone(), enum_parser);
                 }
-
-                format!(
-                    "        let {} = {}::parse(stream)?;\n",
-                    rust_name, type_name
-                )
+                format!("{}::parse()", type_name)
             }
             AnalyzedModifier::Sequence(items) => {
-                let mut code = String::new();
-                let mut tuple_vars = Vec::new();
-
-                for (item, item_rust_name) in items {
-                    let item_code = self.generate_modifier_parser(item, item_rust_name);
-                    code.push_str(&item_code);
-                    tuple_vars.push(item_rust_name.clone());
-                }
-
-                // Ensure complete token consumption after sequence
-                code.push_str("        stream.expect_complete()?;\n");
-
-                let tuple_value = format!("({})", tuple_vars.join(", "));
-                code.push_str(&format!("        let {} = {};\n", rust_name, tuple_value));
-
-                code
-            }
-            AnalyzedModifier::Optional(inner_boxed) => {
-                let (inner, inner_rust_name) = inner_boxed.as_ref();
-                match inner {
-                    AnalyzedModifier::Atom((ident, _)) => {
-                        // Optional atom - try to match the directive
-                        format!(
-                            "        let saved_pos = stream.position();\n        let {} = stream.expect_string(\"{}\").is_ok();\n        if !{} {{\n            stream.set_position(saved_pos);\n        }}\n",
-                            rust_name, ident, rust_name
-                        )
-                    }
-                    AnalyzedModifier::Choice { base, options } => {
-                        // For Choice types, generate enum parser if not already generated
-                        let inner_type = &base.1;
-                        if !self.generated_enum_parsers.contains_key(inner_type) {
-                            let enum_parser = self.generate_enum_parser(inner_type, options);
-                            self.generated_enum_parsers
-                                .insert(inner_type.clone(), enum_parser);
-                        }
-
-                        // Use try-parse pattern
-                        format!(
-                            "        let saved_pos = stream.position();\n        let {} = match {}::parse(stream) {{\n            Ok(val) => Some(val),\n            Err(_) => {{\n                stream.set_position(saved_pos);\n                None\n            }}\n        }};\n",
-                            rust_name, inner_type
-                        )
-                    }
-                    _ => {
-                        // For other types, parse the inner element and wrap in Option
-                        let mut code = String::new();
-                        code.push_str("        let saved_pos = stream.position();\n");
-                        code.push_str(&format!("        let {} = match (|| {{\n", rust_name));
-                        code.push_str(&self.generate_modifier_parser(inner, inner_rust_name));
-                        code.push_str(&format!(
-                            "            Ok::<_, PtxParseError>({})\n",
-                            inner_rust_name
-                        ));
-                        code.push_str("        })() {\n");
-                        code.push_str("            Ok(val) => Some(val),\n");
-                        code.push_str("            Err(_) => {\n");
-                        code.push_str("                stream.set_position(saved_pos);\n");
-                        code.push_str("                None\n");
-                        code.push_str("            }\n");
-                        code.push_str("        };\n");
-                        code
-                    }
+                if let Some(expr) = self.combinable_sequence_expr(items) {
+                    expr
+                } else {
+                    let exprs: Vec<String> = items
+                        .iter()
+                        .map(|(item, _)| self.modifier_value_expr(item))
+                        .collect();
+                    self.build_seq_from_exprs(&exprs)
                 }
             }
+            AnalyzedModifier::Optional(_) => unreachable!("optional handled separately"),
         }
     }
 
-    /// Generate parser code for an operand
-    fn generate_operand_parser(&mut self, operand: &AnalyzedOperand) -> String {
-        let mut code = String::new();
-
-        // Parse operator prefix if present
-        if let Some((operator, rust_name)) = &operand.operator {
-            let op_token = match operator {
-                OperatorToken::Negate => "Minus",
-                OperatorToken::LogicalNot => "Exclaim",
+    fn add_operand_components(
+        &mut self,
+        idx: usize,
+        operand: &AnalyzedOperand,
+        components: &mut Vec<Component>,
+    ) {
+        if matches!(operand.operand, AnalyzedOperandElement::Optional(_)) {
+            let binding = Self::get_operand_rust_name(&operand.operand);
+            let expr = if idx == 0 {
+                "map(optional(GeneralOperand::parse()), |value, _| value)".to_string()
+            } else {
+                self.optional_with_comma("GeneralOperand::parse()")
             };
-            code.push_str(&format!(
-                "        let {} = stream.consume_if(|t| matches!(t, PtxToken::{})).is_some();\n",
-                rust_name, op_token
-            ));
+            components.push(Component::field(expr, binding));
+            return;
         }
 
-        // Parse operand element
-        let operand_code = self.generate_operand_element_parser(&operand.operand);
-        code.push_str(&operand_code);
+        if idx > 0 {
+            components.push(Component::ignore("comma_p()".to_string()));
+        }
 
-        // Parse operand modifier if present
+        if let Some((operator, rust_name)) = &operand.operator {
+            let expr = self.operator_expr(operator);
+            components.push(Component::field(expr, rust_name.clone()));
+        }
+
+        for component in self.operand_element_components(&operand.operand) {
+            components.push(component);
+        }
+
         if let Some((modifier, rust_name)) = &operand.modifier {
-            let modifier_code = self.generate_modifier_parser(modifier, rust_name);
-            code.push_str(&modifier_code);
+            let expr = self.modifier_field_expr(modifier);
+            components.push(Component::field(expr, rust_name.clone()));
         }
-
-        // Ensure complete token consumption after each operand
-        code.push_str("        stream.expect_complete()?;\n");
-
-        code
     }
 
-    /// Generate parser code for an operand element
-    fn generate_operand_element_parser(&mut self, element: &AnalyzedOperandElement) -> String {
+    fn operator_expr(&self, operator: &OperatorToken) -> String {
+        let parser = match operator {
+            OperatorToken::Negate => "minus_p",
+            OperatorToken::LogicalNot => "exclamation_p",
+        };
+        let expr = format!("optional({}())", parser);
+        self.map_to_bool(&expr)
+    }
+
+    fn operand_element_components(
+        &mut self,
+        element: &AnalyzedOperandElement,
+    ) -> Vec<Component> {
         use AnalyzedOperandElement::*;
-
-        let rust_name = Self::get_operand_rust_name(element);
-
         match element {
-            Item(_) => {
-                format!(
-                    "        let {} = GeneralOperand::parse(stream)?;\n",
-                    rust_name
-                )
+            Item((_, rust_name)) => {
+                vec![Component::field("GeneralOperand::parse()", rust_name.clone())]
             }
-            Address(_) => {
-                format!(
-                    "        let {} = AddressOperand::parse(stream)?;\n",
-                    rust_name
-                )
+            Address((_, rust_name)) => {
+                vec![Component::field("AddressOperand::parse()", rust_name.clone())]
             }
-            Optional((_ident, _)) => {
-                format!(
-                    "        let saved_pos = stream.position();\n        let {} = match GeneralOperand::parse(stream) {{\n            Ok(val) => Some(val),\n            Err(_) => {{\n                stream.set_position(saved_pos);\n                None\n            }}\n        }};\n",
-                    rust_name
-                )
+            Optional((_, rust_name)) => {
+                vec![Component::field("optional(GeneralOperand::parse())", rust_name.clone())]
             }
-            ParenthesizedOperand(_) => {
-                format!(
-                    "        stream.expect(&PtxToken::LParen)?;\n        let {} = GeneralOperand::parse(stream)?;\n        stream.expect(&PtxToken::RParen)?;\n",
-                    rust_name
-                )
+            ParenthesizedOperand((_, rust_name)) => {
+                vec![Component::field(
+                    "between(lparen_p(), rparen_p(), GeneralOperand::parse())",
+                    rust_name.clone(),
+                )]
             }
             PipeChoice(((_, first_name), (_, second_name))) => {
-                format!(
-                    "        let {} = GeneralOperand::parse(stream)?;\n        stream.expect(&PtxToken::Pipe)?;\n        let {} = GeneralOperand::parse(stream)?;\n",
-                    first_name, second_name
-                )
+                vec![
+                    Component::field("GeneralOperand::parse()", first_name.clone()),
+                    Component::ignore("pipe_p()"),
+                    Component::field("GeneralOperand::parse()", second_name.clone()),
+                ]
             }
             PipeOptionalChoice(((_, first_name), (_, second_name))) => {
-                format!(
-                    "        let {} = GeneralOperand::parse(stream)?;\n        let saved_pos = stream.position();\n        let {} = if stream.consume_if(|t| matches!(t, PtxToken::Pipe)).is_some() {{\n            Some(GeneralOperand::parse(stream)?)\n        }} else {{\n            stream.set_position(saved_pos);\n            None\n        }};\n",
-                    first_name, second_name
-                )
+                let expr = "map(optional(seq_n!(pipe_p(), GeneralOperand::parse())), |value, _| value.map(|(_, operand)| operand))".to_string();
+                vec![
+                    Component::field("GeneralOperand::parse()", first_name.clone()),
+                    Component::field(expr, second_name.clone()),
+                ]
             }
-            SquareGroup(operands) => match operands.len() {
-                2 => format!("        let {} = TexHandler2::parse(stream)?;\n", rust_name),
-                3 => {
-                    if operands.iter().any(|(_, _, optional)| *optional) {
-                        format!(
-                            "        let {} = TexHandler3Optional::parse(stream)?;\n",
-                            rust_name
-                        )
-                    } else {
-                        format!("        let {} = TexHandler3::parse(stream)?;\n", rust_name)
-                    }
-                }
-                _ => {
-                    let mut code = String::new();
-                    let mut field_names = Vec::new();
-
-                    code.push_str("        stream.expect(&PtxToken::LBracket)?;\n");
-
-                    for (idx, (_, field_name, _)) in operands.iter().enumerate() {
-                        if idx > 0 {
-                            code.push_str("        stream.expect(&PtxToken::Comma)?;\n");
-                        }
-                        code.push_str(&format!(
-                            "        let {} = GeneralOperand::parse(stream)?;\n",
-                            field_name
-                        ));
-                        field_names.push(field_name.clone());
-                    }
-
-                    code.push_str("        stream.expect(&PtxToken::RBracket)?;\n");
-                    code.push_str(&format!(
-                        "        let {} = ({});\n",
-                        rust_name,
-                        field_names.join(", ")
-                    ));
-
-                    code
-                }
-            },
+            SquareGroup(items) => {
+                let binding = Self::get_operand_rust_name(element);
+                vec![Component::field(self.square_group_expr(items), binding)]
+            }
             CurlyGroup(_) => {
-                format!(
-                    "        let {} = VectorOperand::parse(stream)?;\n",
-                    rust_name
-                )
+                let binding = Self::get_operand_rust_name(element);
+                vec![Component::field("VectorOperand::parse()", binding)]
             }
-            ParamList(_) => {
-                format!(
-                    "        stream.expect(&PtxToken::LParen)?;\n        let mut {} = Vec::new();\n        // Parse comma-separated operands\n        loop {{\n            // Try to parse an operand\n            let saved_pos = stream.position();\n            match GeneralOperand::parse(stream) {{\n                Ok(operand) => {{\n                    {}.push(operand);\n                    // Check for comma\n                    if stream.expect(&PtxToken::Comma).is_err() {{\n                        break;\n                    }}\n                }}\n                Err(_) => {{\n                    stream.set_position(saved_pos);\n                    break;\n                }}\n            }}\n        }}\n        stream.expect(&PtxToken::RParen)?;\n",
-                    rust_name, rust_name
-                )
+            ParamList(rust_name) => {
+                vec![Component::field(
+                    "between(lparen_p(), rparen_p(), sep_by(GeneralOperand::parse(), comma_p()))",
+                    rust_name.clone(),
+                )]
             }
-            ImmediateNumber((num, _)) => {
-                format!(
-                    "        stream.expect_string(\"{}\")?;\n        let {} = ();\n",
-                    num, rust_name
-                )
+            ImmediateNumber((value, rust_name)) => {
+                let expr = format!(
+                    "map({}, |_, _| ())",
+                    self.string_parser(value)
+                );
+                vec![Component::field(expr, rust_name.clone())]
             }
             Choice { base, options } => {
+                let binding = Self::get_operand_rust_name(element);
                 let type_name = &base.1;
-
-                // Generate enum parser if not already generated
                 if !self.generated_enum_parsers.contains_key(type_name) {
-                    // Convert to AnalyzedModifier format, variant names are already computed in analyzer
                     let analyzed_options: Vec<(AnalyzedModifier, String)> = options
                         .iter()
-                        .map(|(ident, variant_name)| {
+                        .map(|(ident, variant)| {
                             (
-                                AnalyzedModifier::Atom((ident.clone(), String::new())),
-                                variant_name.clone(),
+                                AnalyzedModifier::Atom((ident.clone(), variant.clone())),
+                                variant.clone(),
                             )
                         })
                         .collect();
@@ -457,16 +512,143 @@ use crate::r#type::common::*;"#
                     self.generated_enum_parsers
                         .insert(type_name.clone(), enum_parser);
                 }
+                vec![Component::field(format!("{}::parse()", type_name), binding)]
+            }
+        }
+    }
 
+    fn square_group_expr(&mut self, items: &[(String, String, bool)]) -> String {
+        match items.len() {
+            2 => "TexHandler2::parse()".to_string(),
+            3 => {
+                if items.iter().any(|(_, _, optional)| *optional) {
+                    "TexHandler3Optional::parse()".to_string()
+                } else {
+                    "TexHandler3::parse()".to_string()
+                }
+            }
+            _ => {
+                let mut inner = Vec::new();
+                for (idx, (_, rust_name, is_optional)) in items.iter().enumerate() {
+                    if idx == 0 {
+                        if *is_optional {
+                            inner.push(Component::field(
+                                "optional(GeneralOperand::parse())",
+                                rust_name.clone(),
+                            ));
+                        } else {
+                            inner.push(Component::field(
+                                "GeneralOperand::parse()",
+                                rust_name.clone(),
+                            ));
+                        }
+                    } else if *is_optional {
+                        inner.push(Component::field(
+                            self.optional_with_comma("GeneralOperand::parse()"),
+                            rust_name.clone(),
+                        ));
+                    } else {
+                        inner.push(Component::ignore("comma_p()"));
+                        inner.push(Component::field(
+                            "GeneralOperand::parse()",
+                            rust_name.clone(),
+                        ));
+                    }
+                }
+                let inner_seq = self.build_seq_expr(&inner);
+                let inner_pattern = self.build_pattern(&inner);
+                let tuple_fields = inner
+                    .iter()
+                    .filter_map(|component| component.field_name.clone())
+                    .collect::<Vec<_>>();
+                let tuple_expr = format!("({})", tuple_fields.join(", "));
                 format!(
-                    "        let {} = {}::parse(stream)?;\n",
-                    rust_name, type_name
+                    "map(between(lbracket_p(), rbracket_p(), {}), |{}, _| {})",
+                    inner_seq, inner_pattern, tuple_expr
                 )
             }
         }
     }
 
-    /// Get the rust name from an operand element
+    fn enum_variant_expr(
+        &mut self,
+        enum_name: &str,
+        variant_name: &str,
+        modifier: &AnalyzedModifier,
+    ) -> String {
+        match modifier {
+            AnalyzedModifier::Atom((ident, _)) => format!(
+                "map({}, |_, _span| {}::{})",
+                self.string_parser(ident),
+                enum_name,
+                variant_name
+            ),
+            AnalyzedModifier::Sequence(items) => {
+                let seq_expr = if let Some(expr) = self.combinable_sequence_expr(items) {
+                    expr
+                } else {
+                    let exprs: Vec<String> = items
+                        .iter()
+                        .map(|(item, _)| self.modifier_value_expr(item))
+                        .collect();
+                    self.build_seq_from_exprs(&exprs)
+                };
+                let bindings: Vec<String> = items
+                    .iter()
+                    .enumerate()
+                    .map(|(idx, (_, rust_name))| {
+                        if rust_name.is_empty() {
+                            format!("part{}", idx)
+                        } else {
+                            rust_name.clone()
+                        }
+                    })
+                    .collect();
+                let pattern = format!("({})", bindings.join(", "));
+                let args = bindings.join(", ");
+                let constructor = if args.is_empty() {
+                    format!("{}::{}", enum_name, variant_name)
+                } else {
+                    format!("{}::{}({})", enum_name, variant_name, args)
+                };
+                format!(
+                    "map({}, |{}, _span| {})",
+                    seq_expr, pattern, constructor
+                )
+            }
+            AnalyzedModifier::Choice { .. } => {
+                let expr = self.modifier_value_expr(modifier);
+                format!(
+                    "map({}, |value, _span| {}::{}(value))",
+                    expr, enum_name, variant_name
+                )
+            }
+            AnalyzedModifier::Optional(inner) => {
+                self.enum_variant_expr(enum_name, variant_name, &inner.0)
+            }
+        }
+    }
+
+    fn generate_enum_parser(
+        &mut self,
+        enum_name: &str,
+        options: &[(AnalyzedModifier, String)],
+    ) -> String {
+        let variants = options
+            .iter()
+            .map(|(modifier, variant)| self.enum_variant_expr(enum_name, variant, modifier))
+            .collect::<Vec<_>>();
+        let joined = variants
+            .iter()
+            .map(|expr| format!("            {}", expr))
+            .collect::<Vec<_>>()
+            .join(",\n");
+        format!(
+            "impl PtxParser for {} {{\n    fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {{\n        alt!(\n{}\n        )\n    }}\n}}\n",
+            enum_name, joined
+        )
+    }
+
     fn get_operand_rust_name(operand: &AnalyzedOperandElement) -> String {
         use AnalyzedOperandElement::*;
         match operand {
@@ -475,9 +657,8 @@ use crate::r#type::common::*;"#
             | Optional((_, rust_name))
             | ParenthesizedOperand((_, rust_name))
             | ImmediateNumber((_, rust_name)) => rust_name.clone(),
-            PipeChoice(((_, first_name), _)) | PipeOptionalChoice(((_, first_name), _)) => {
-                first_name.clone()
-            }
+            PipeChoice(((_, first_name), _))
+            | PipeOptionalChoice(((_, first_name), _)) => first_name.clone(),
             CurlyGroup(items) => items
                 .first()
                 .map(|(_, rust_name)| rust_name.clone())
@@ -487,128 +668,18 @@ use crate::r#type::common::*;"#
                 .map(|(_, rust_name, _)| rust_name.clone())
                 .unwrap_or_else(|| "group".to_string()),
             ParamList(rust_name) => rust_name.clone(),
-            Choice { base, .. } => {
-                // base.1 contains the PascalCase type name (e.g., "CpSize")
-                // Convert to snake_case for use as variable/field name (e.g., "cp_size")
-                naming::to_snake_case(&base.1)
-            }
+            Choice { base, .. } => naming::to_snake_case(&base.1),
         }
-    }
-
-    /// Generate parser for an enum type (for Choice modifiers)
-    fn generate_enum_parser(
-        &mut self,
-        enum_name: &str,
-        options: &[(AnalyzedModifier, String)],
-    ) -> String {
-        let mut output = String::new();
-
-        output.push_str(&format!("impl PtxParser for {} {{\n", enum_name));
-        output.push_str(
-            "    fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {\n",
-        );
-
-        // Options are already sorted by text length (descending) in analyzer.rs
-        // Try each variant in order (longest first)
-        for (idx, (option, variant_rust_name)) in options.iter().enumerate() {
-            if idx > 0 {
-                output.push_str("        let saved_pos = stream.position();\n");
-            }
-
-            output.push_str(&format!("        // Try {}\n", variant_rust_name));
-            output.push_str("        {\n");
-
-            match option {
-                AnalyzedModifier::Atom((ident, _)) => {
-                    output.push_str(&format!(
-                        "            let saved_pos = stream.position();\n            if stream.expect_string(\"{}\").is_ok() {{\n",
-                        ident
-                    ));
-                    output.push_str(&format!(
-                        "                return Ok({}::{});\n",
-                        enum_name, variant_rust_name
-                    ));
-                    output.push_str("            }\n");
-                    output.push_str("            stream.set_position(saved_pos);\n");
-                }
-                AnalyzedModifier::Sequence(items) => {
-                    let mut sequence_code = String::new();
-                    let mut tuple_vars = Vec::new();
-
-                    for (item, item_rust_name) in items {
-                        sequence_code
-                            .push_str(&self.generate_modifier_parser(item, item_rust_name));
-                        tuple_vars.push(item_rust_name.clone());
-                    }
-
-                    let tuple_pattern = format!("({})", tuple_vars.join(", "));
-                    let variant_args = tuple_vars.join(", ");
-
-                    output.push_str("            let saved_seq_pos = stream.position();\n");
-                    output.push_str("            match (|| -> Result<_, PtxParseError> {\n");
-                    output.push_str(&sequence_code);
-                    output.push_str(&format!("                Ok({})\n", tuple_pattern));
-                    output.push_str("            })() {\n");
-                    output.push_str(&format!("                Ok({}) => {{\n", tuple_pattern));
-                    output.push_str(&format!(
-                        "                    return Ok({}::{}({}));\n",
-                        enum_name, variant_rust_name, variant_args
-                    ));
-                    output.push_str("                }\n");
-                    output.push_str("                Err(_) => {\n");
-                    output.push_str("                    stream.set_position(saved_seq_pos);\n");
-                    output.push_str("                }\n");
-                    output.push_str("            }\n");
-                }
-                _ => {
-                    // For other complex types, try to parse them
-                    output.push_str("            // TODO: implement parser for complex variant\n");
-                }
-            }
-
-            output.push_str("        }\n");
-
-            if idx > 0 {
-                output.push_str("        stream.set_position(saved_pos);\n");
-            }
-        }
-
-        // Generate error for when no variant matches
-        output.push_str("        let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span { start: 0, end: 0 });\n");
-        output.push_str(&format!(
-            "        let expected = &[{}];\n",
-            options
-                .iter()
-                .map(|(opt, _)| match opt {
-                    AnalyzedModifier::Atom((ident, _)) => format!("\"{}\"", ident),
-                    _ => "\"<complex>\"".to_string(),
-                })
-                .collect::<Vec<_>>()
-                .join(", ")
-        ));
-        output.push_str("        let found = stream.peek().map(|(t, _)| format!(\"{:?}\", t)).unwrap_or_else(|_| \"<end of input>\".to_string());\n");
-        output.push_str("        Err(crate::parser::unexpected_value(span, expected, found))\n");
-        output.push_str("    }\n");
-        output.push_str("}\n");
-
-        output
     }
 }
 
-// ============================================================================
-// Module generation
-// ============================================================================
-
 /// Generate the content for parser mod.rs file
-/// Generate the parser mod.rs file content
 /// Takes a list of (module_name, opcodes, structs) tuples
-/// Note: opcodes is now Vec<String> to support files with multiple opcodes
 pub fn generate_parser_mod_rs_content(
     modules: &[(String, Vec<String>, Vec<(String, String)>)],
 ) -> String {
     let mut output = String::new();
 
-    // Generate module declarations
     output.push_str("// Auto-generated module declarations\n");
     output.push_str("// DO NOT EDIT MANUALLY\n");
     output.push_str("#![allow(unused)]\n\n");
@@ -622,9 +693,9 @@ pub fn generate_parser_mod_rs_content(
     }
     output.push_str("\n");
 
-    // Generate the internal instruction parser (without label/pred)
-    output.push_str("/// Parse instruction without label or predicate\n");
-    output.push_str("pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Inst, PtxParseError> {\n");
+    output.push_str(
+        "pub(crate) fn parse_instruction_inner(stream: &mut PtxTokenStream) -> Result<Inst, PtxParseError> {\n",
+    );
     output.push_str("    let start_pos = stream.position();\n");
     output.push_str("    \n");
     output.push_str("    // Peek at the opcode to determine which parser to try\n");
@@ -633,16 +704,17 @@ pub fn generate_parser_mod_rs_content(
     );
     output.push_str("        name.as_str()\n");
     output.push_str("    } else {\n");
-    output.push_str("        let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(0..0);\n");
-    output.push_str("        return Err(crate::parser::unexpected_value(span, &[\"instruction opcode\"], \"not an identifier\"));\n");
+    output.push_str(
+        "        let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span::new(0, 0));\n",
+    );
+    output.push_str(
+        "        return Err(crate::unexpected_value!(span, &[\"instruction opcode\"], \"not an identifier\"));\n",
+    );
     output.push_str("    };\n");
     output.push_str("    \n");
     output.push_str("    // Dispatch based on opcode\n");
     output.push_str("    match opcode {\n");
 
-    // Group instructions by opcode
-    // Now handles files with multiple opcodes (e.g., bar.txt has both "bar" and "barrier")
-    use std::collections::BTreeMap;
     let mut opcode_map: BTreeMap<String, Vec<(String, String, String)>> = BTreeMap::new();
     for (module_name, opcodes, structs) in modules {
         for opcode in opcodes {
@@ -659,18 +731,16 @@ pub fn generate_parser_mod_rs_content(
         }
     }
 
-    // Generate match arms for each opcode
     for (opcode, parsers) in opcode_map {
         output.push_str(&format!("        \"{}\" => {{\n", opcode));
         for (module_name, section_name, struct_name) in parsers {
             output.push_str("            stream.set_position(start_pos);\n");
-            // Use match instead of if-let to avoid retaining Result on stack
             output.push_str(&format!(
-                "            match <crate::r#type::instruction::{}::{}::{} as PtxParser>::parse(stream) {{\n",
+                "            match <crate::r#type::instruction::{}::{}::{} as PtxParser>::parse()(stream) {{\n",
                 module_name, section_name, struct_name
             ));
             output.push_str(&format!(
-                "                Ok(inst) => return Ok(Inst::{}(inst)),\n",
+                "                Ok((inst, _)) => return Ok(Inst::{}(inst)),\n",
                 struct_name
             ));
             output.push_str("                Err(_) => {}\n");
@@ -683,8 +753,21 @@ pub fn generate_parser_mod_rs_content(
     output.push_str("    }\n");
     output.push_str("    \n");
     output.push_str("    // If no parser matched, return error\n");
-    output.push_str("    let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(0..0);\n");
-    output.push_str("    Err(crate::parser::unexpected_value(span, &[\"valid PTX instruction\"], \"no matching instruction format\"))\n");
+    output.push_str(
+        "    let span = stream.peek().map(|(_, s)| s.clone()).unwrap_or(Span::new(0, 0));\n",
+    );
+    output.push_str(
+        "    Err(crate::unexpected_value!(span, &[\"valid PTX instruction\"], \"no matching instruction format\"))\n",
+    );
+    output.push_str("}\n");
+    output.push_str("\n");
+
+    output.push_str("impl PtxParser for Inst {\n");
+    output.push_str(
+        "    fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {\n",
+    );
+    output.push_str("        |stream| stream.try_with_span(|stream| parse_instruction_inner(stream))\n");
+    output.push_str("    }\n");
     output.push_str("}\n");
     output.push_str("\n");
 

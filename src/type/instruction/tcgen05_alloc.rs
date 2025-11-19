@@ -9,6 +9,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -17,7 +19,7 @@ pub mod section_0 {
         CtaGroup2, // .cta_group::2
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05AllocCtaGroupSyncAlignedSharedCtaB32 {
         pub alloc: (),             // .alloc
         pub cta_group: CtaGroup,   // .cta_group
@@ -27,9 +29,10 @@ pub mod section_0 {
         pub b32: (),               // .b32
         pub dst: AddressOperand,   // [dst]
         pub ncols: GeneralOperand, // nCols
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05DeallocCtaGroupSyncAlignedB32 {
         pub dealloc: (),           // .dealloc
         pub cta_group: CtaGroup,   // .cta_group
@@ -38,14 +41,16 @@ pub mod section_0 {
         pub b32: (),               // .b32
         pub taddr: GeneralOperand, // taddr
         pub ncols: GeneralOperand, // nCols
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05RelinquishAllocPermitCtaGroupSyncAligned {
         pub relinquish_alloc_permit: (), // .relinquish_alloc_permit
         pub cta_group: CtaGroup,         // .cta_group
         pub sync: (),                    // .sync
         pub aligned: (),                 // .aligned
+        pub span: Span,
     }
 }
 

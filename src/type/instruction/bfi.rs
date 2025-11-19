@@ -7,6 +7,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -15,7 +17,7 @@ pub mod section_0 {
         B64, // .b64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct BfiType {
         pub type_: Type,       // .type
         pub f: GeneralOperand, // f
@@ -23,6 +25,7 @@ pub mod section_0 {
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
         pub d: GeneralOperand, // d
+        pub span: Span,
     }
 }
 

@@ -99,7 +99,9 @@ impl TypeGenerator {
         // Wrap everything in a module
         let mut output = String::new();
         output.push_str(&format!("pub mod {} {{\n", module_name));
-        output.push_str("    use crate::r#type::common::*;\n\n");
+        output.push_str("    use crate::r#type::common::*;\n");
+        output.push_str("    use crate::parser::Span;\n");
+        output.push_str("    use crate::Spanned;\n\n");
 
         // Indent enum definitions
         for line in enum_output.lines() {
@@ -179,7 +181,7 @@ impl TypeGenerator {
 
         let mut output = String::new();
 
-        output.push_str(&format!("#[derive(Debug, Clone, PartialEq)]\n"));
+        output.push_str(&format!("#[derive(Debug, Clone, PartialEq, Spanned)]\n"));
         output.push_str(&format!("pub struct {} {{\n", struct_name));
 
         // Generate fields from modifiers
@@ -259,6 +261,9 @@ impl TypeGenerator {
                 ));
             }
         }
+
+        // Add span field
+        output.push_str("    pub span: Span,\n");
 
         output.push_str("}");
 

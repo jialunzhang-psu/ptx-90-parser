@@ -70,6 +70,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -114,7 +116,7 @@ pub mod section_0 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSpSyncAlignedShapeDtypeF16F16 {
         pub mma_async: (),               // .mma_async
         pub sp: (),                      // .sp
@@ -134,9 +136,10 @@ pub mod section_0 {
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_a: GeneralOperand, // imm-trans-a
         pub imm_trans_b: GeneralOperand, // imm-trans-b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSpSyncAlignedShapeDtypeF16F161 {
         pub mma_async: (),               // .mma_async
         pub sp: (),                      // .sp
@@ -155,10 +158,13 @@ pub mod section_0 {
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_b: GeneralOperand, // imm-trans-b
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -202,7 +208,7 @@ pub mod section_1 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSpSyncAlignedShapeDtypeBf16Bf16 {
         pub mma_async: (),               // .mma_async
         pub sp: (),                      // .sp
@@ -222,9 +228,10 @@ pub mod section_1 {
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_a: GeneralOperand, // imm-trans-a
         pub imm_trans_b: GeneralOperand, // imm-trans-b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSpSyncAlignedShapeDtypeBf16Bf161 {
         pub mma_async: (),               // .mma_async
         pub sp: (),                      // .sp
@@ -243,10 +250,13 @@ pub mod section_1 {
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
         pub imm_trans_b: GeneralOperand, // imm-trans-b
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -290,7 +300,7 @@ pub mod section_2 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSpSyncAlignedShapeDtypeTf32Tf32 {
         pub mma_async: (),               // .mma_async
         pub sp: (),                      // .sp
@@ -308,9 +318,10 @@ pub mod section_2 {
         pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSpSyncAlignedShapeDtypeTf32Tf321 {
         pub mma_async: (),               // .mma_async
         pub sp: (),                      // .sp
@@ -328,10 +339,13 @@ pub mod section_2 {
         pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub span: Span,
     }
 }
 
 pub mod section_3 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -388,7 +402,7 @@ pub mod section_3 {
         E5m2, // .e5m2
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSpSyncAlignedShapeDtypeAtypeBtype {
         pub mma_async: (),               // .mma_async
         pub sp: (),                      // .sp
@@ -406,9 +420,10 @@ pub mod section_3 {
         pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSpSyncAlignedShapeDtypeAtypeBtype1 {
         pub mma_async: (),               // .mma_async
         pub sp: (),                      // .sp
@@ -426,10 +441,13 @@ pub mod section_3 {
         pub scale_d: GeneralOperand,     // scale-d
         pub imm_scale_a: GeneralOperand, // imm-scale-a
         pub imm_scale_b: GeneralOperand, // imm-scale-b
+        pub span: Span,
     }
 }
 
 pub mod section_4 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -466,7 +484,7 @@ pub mod section_4 {
         U8, // .u8
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSpSyncAlignedShapeSatfiniteS32AtypeBtype {
         pub mma_async: (),           // .mma_async
         pub sp: (),                  // .sp
@@ -483,9 +501,10 @@ pub mod section_4 {
         pub sp_meta: GeneralOperand, // sp-meta
         pub sp_sel: GeneralOperand,  // sp-sel
         pub scale_d: GeneralOperand, // scale-d
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WgmmaMmaAsyncSpSyncAlignedShapeSatfiniteS32AtypeBtype1 {
         pub mma_async: (),           // .mma_async
         pub sp: (),                  // .sp
@@ -502,6 +521,7 @@ pub mod section_4 {
         pub sp_meta: GeneralOperand, // sp-meta
         pub sp_sel: GeneralOperand,  // sp-sel
         pub scale_d: GeneralOperand, // scale-d
+        pub span: Span,
     }
 }
 

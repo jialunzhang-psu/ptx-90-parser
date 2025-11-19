@@ -199,8 +199,14 @@ pub enum FunctionStatement {
 /// .reg .ty name<range>
 #[derive(Debug, Clone, PartialEq, Spanned)]
 pub struct RegisterDirective {
-    pub name: VariableSymbol,
     pub ty: DataType,
+    pub registers: Vec<RegisterTarget>,
+    pub span: Span,
+}
+
+#[derive(Debug, Clone, PartialEq, Spanned)]
+pub struct RegisterTarget {
+    pub name: VariableSymbol,
     pub range: Option<u32>,
     pub span: Span,
 }

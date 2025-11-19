@@ -70,6 +70,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -113,7 +115,7 @@ pub mod section_0 {
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadASyncAlignedLayoutShapeSsAtype {
         pub load: (),                       // .load
         pub a: (),                          // .a
@@ -126,9 +128,10 @@ pub mod section_0 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadBSyncAlignedLayoutShapeSsBtype {
         pub load: (),                       // .load
         pub b: (),                          // .b
@@ -141,9 +144,10 @@ pub mod section_0 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadCSyncAlignedLayoutShapeSsCtype {
         pub load: (),                       // .load
         pub c: (),                          // .c
@@ -156,10 +160,13 @@ pub mod section_0 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -197,7 +204,7 @@ pub mod section_1 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadASyncAlignedLayoutShapeSsAtype1 {
         pub load: (),                       // .load
         pub a: (),                          // .a
@@ -210,9 +217,10 @@ pub mod section_1 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadBSyncAlignedLayoutShapeSsBtype1 {
         pub load: (),                       // .load
         pub b: (),                          // .b
@@ -225,9 +233,10 @@ pub mod section_1 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadCSyncAlignedLayoutShapeSsCtype1 {
         pub load: (),                       // .load
         pub c: (),                          // .c
@@ -240,10 +249,13 @@ pub mod section_1 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -279,7 +291,7 @@ pub mod section_2 {
         F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadASyncAlignedLayoutShapeSsAtype2 {
         pub load: (),                       // .load
         pub a: (),                          // .a
@@ -292,9 +304,10 @@ pub mod section_2 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadBSyncAlignedLayoutShapeSsBtype2 {
         pub load: (),                       // .load
         pub b: (),                          // .b
@@ -307,9 +320,10 @@ pub mod section_2 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadCSyncAlignedLayoutShapeSsCtype2 {
         pub load: (),                       // .load
         pub c: (),                          // .c
@@ -322,10 +336,13 @@ pub mod section_2 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 }
 
 pub mod section_3 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -361,7 +378,7 @@ pub mod section_3 {
         F64, // .f64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadASyncAlignedLayoutShapeSsAtype3 {
         pub load: (),                       // .load
         pub a: (),                          // .a
@@ -374,9 +391,10 @@ pub mod section_3 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadBSyncAlignedLayoutShapeSsBtype3 {
         pub load: (),                       // .load
         pub b: (),                          // .b
@@ -389,9 +407,10 @@ pub mod section_3 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadCSyncAlignedLayoutShapeSsCtype3 {
         pub load: (),                       // .load
         pub c: (),                          // .c
@@ -404,10 +423,13 @@ pub mod section_3 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 }
 
 pub mod section_4 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -445,7 +467,7 @@ pub mod section_4 {
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadASyncAlignedRowShapeSsAtype {
         pub load: (),                       // .load
         pub a: (),                          // .a
@@ -458,9 +480,10 @@ pub mod section_4 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadBSyncAlignedColShapeSsBtype {
         pub load: (),                       // .load
         pub b: (),                          // .b
@@ -473,9 +496,10 @@ pub mod section_4 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadCSyncAlignedLayoutShapeSsCtype4 {
         pub load: (),                       // .load
         pub c: (),                          // .c
@@ -488,10 +512,13 @@ pub mod section_4 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 }
 
 pub mod section_5 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -527,7 +554,7 @@ pub mod section_5 {
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadASyncAlignedRowShapeSsAtype1 {
         pub load: (),                       // .load
         pub a: (),                          // .a
@@ -540,9 +567,10 @@ pub mod section_5 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadBSyncAlignedColShapeSsBtype1 {
         pub load: (),                       // .load
         pub b: (),                          // .b
@@ -555,9 +583,10 @@ pub mod section_5 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct WmmaLoadCSyncAlignedLayoutShapeSsCtype5 {
         pub load: (),                       // .load
         pub c: (),                          // .c
@@ -570,6 +599,7 @@ pub mod section_5 {
         pub r: GeneralOperand,              // r
         pub p: AddressOperand,              // [p]
         pub stride: Option<GeneralOperand>, // {, stride}
+        pub span: Span,
     }
 }
 

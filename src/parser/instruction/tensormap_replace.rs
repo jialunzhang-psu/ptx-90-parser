@@ -12,9 +12,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -25,387 +31,169 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Field1 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try GlobalAddress
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global_address").is_ok() {
-                    return Ok(Field1::GlobalAddress);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Rank
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".rank").is_ok() {
-                    return Ok(Field1::Rank);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".global_address", ".rank"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".global_address"), |_, _span| {
+                    Field1::GlobalAddress
+                }),
+                map(string_p(".rank"), |_, _span| Field1::Rank)
+            )
         }
     }
 
     impl PtxParser for Field2 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try ElementStride
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".element_stride").is_ok() {
-                    return Ok(Field2::ElementStride);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try GlobalStride
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global_stride").is_ok() {
-                    return Ok(Field2::GlobalStride);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try GlobalDim
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global_dim").is_ok() {
-                    return Ok(Field2::GlobalDim);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try BoxDim
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".box_dim").is_ok() {
-                    return Ok(Field2::BoxDim);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".element_stride",
-                ".global_stride",
-                ".global_dim",
-                ".box_dim",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".element_stride"), |_, _span| {
+                    Field2::ElementStride
+                }),
+                map(string_p(".global_stride"), |_, _span| Field2::GlobalStride),
+                map(string_p(".global_dim"), |_, _span| Field2::GlobalDim),
+                map(string_p(".box_dim"), |_, _span| Field2::BoxDim)
+            )
         }
     }
 
     impl PtxParser for Field3 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try InterleaveLayout
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".interleave_layout").is_ok() {
-                    return Ok(Field3::InterleaveLayout);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try SwizzleAtomicity
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".swizzle_atomicity").is_ok() {
-                    return Ok(Field3::SwizzleAtomicity);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try SwizzleMode
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".swizzle_mode").is_ok() {
-                    return Ok(Field3::SwizzleMode);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try FillMode
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".fill_mode").is_ok() {
-                    return Ok(Field3::FillMode);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Elemtype
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".elemtype").is_ok() {
-                    return Ok(Field3::Elemtype);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".interleave_layout",
-                ".swizzle_atomicity",
-                ".swizzle_mode",
-                ".fill_mode",
-                ".elemtype",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".interleave_layout"), |_, _span| {
+                    Field3::InterleaveLayout
+                }),
+                map(string_p(".swizzle_atomicity"), |_, _span| {
+                    Field3::SwizzleAtomicity
+                }),
+                map(string_p(".swizzle_mode"), |_, _span| Field3::SwizzleMode),
+                map(string_p(".fill_mode"), |_, _span| Field3::FillMode),
+                map(string_p(".elemtype"), |_, _span| Field3::Elemtype)
+            )
         }
     }
 
     impl PtxParser for Mode {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Tile
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".tile").is_ok() {
-                    return Ok(Mode::Tile);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".tile"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".tile"), |_, _span| Mode::Tile))
         }
     }
 
     impl PtxParser for Ss {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Ss::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Ss::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cta", ".global"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cta"), |_, _span| Ss::SharedCta),
+                map(string_p(".global"), |_, _span| Ss::Global)
+            )
         }
     }
 
     impl PtxParser for Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b32").is_ok() {
-                    return Ok(Type::B32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b64").is_ok() {
-                    return Ok(Type::B64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".b32", ".b64"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".b32"), |_, _span| Type::B32),
+                map(string_p(".b64"), |_, _span| Type::B64)
+            )
         }
     }
 
     impl PtxParser for TensormapReplaceModeField1SsB1024Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("tensormap")?;
-            stream.expect_string(".replace")?;
-            let replace = ();
-            stream.expect_complete()?;
-            let mode = Mode::parse(stream)?;
-            stream.expect_complete()?;
-            let field1 = Field1::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b1024")?;
-            let b1024 = ();
-            stream.expect_complete()?;
-            let type_ = Type::parse(stream)?;
-            stream.expect_complete()?;
-            let addr = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let new_val = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(TensormapReplaceModeField1SsB1024Type {
-                replace,
-                mode,
-                field1,
-                ss,
-                b1024,
-                type_,
-                addr,
-                new_val,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("tensormap"),
+                    string_p(".replace"),
+                    Mode::parse(),
+                    Field1::parse(),
+                    optional(Ss::parse()),
+                    string_p(".b1024"),
+                    Type::parse(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, replace, mode, field1, ss, b1024, type_, addr, _, new_val, _), span| {
+                    ok!(TensormapReplaceModeField1SsB1024Type {
+                        replace = replace,
+                        mode = mode,
+                        field1 = field1,
+                        ss = ss,
+                        b1024 = b1024,
+                        type_ = type_,
+                        addr = addr,
+                        new_val = new_val,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for TensormapReplaceModeField2SsB1024Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("tensormap")?;
-            stream.expect_string(".replace")?;
-            let replace = ();
-            stream.expect_complete()?;
-            let mode = Mode::parse(stream)?;
-            stream.expect_complete()?;
-            let field2 = Field2::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b1024")?;
-            let b1024 = ();
-            stream.expect_complete()?;
-            let type_ = Type::parse(stream)?;
-            stream.expect_complete()?;
-            let addr = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let ord = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let new_val = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(TensormapReplaceModeField2SsB1024Type {
-                replace,
-                mode,
-                field2,
-                ss,
-                b1024,
-                type_,
-                addr,
-                ord,
-                new_val,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("tensormap"),
+                    string_p(".replace"),
+                    Mode::parse(),
+                    Field2::parse(),
+                    optional(Ss::parse()),
+                    string_p(".b1024"),
+                    Type::parse(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, replace, mode, field2, ss, b1024, type_, addr, _, ord, _, new_val, _),
+                 span| {
+                    ok!(TensormapReplaceModeField2SsB1024Type {
+                        replace = replace,
+                        mode = mode,
+                        field2 = field2,
+                        ss = ss,
+                        b1024 = b1024,
+                        type_ = type_,
+                        addr = addr,
+                        ord = ord,
+                        new_val = new_val,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for TensormapReplaceModeField3SsB1024Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("tensormap")?;
-            stream.expect_string(".replace")?;
-            let replace = ();
-            stream.expect_complete()?;
-            let mode = Mode::parse(stream)?;
-            stream.expect_complete()?;
-            let field3 = Field3::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let ss = match Ss::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".b1024")?;
-            let b1024 = ();
-            stream.expect_complete()?;
-            let type_ = Type::parse(stream)?;
-            stream.expect_complete()?;
-            let addr = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let new_val = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(TensormapReplaceModeField3SsB1024Type {
-                replace,
-                mode,
-                field3,
-                ss,
-                b1024,
-                type_,
-                addr,
-                new_val,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("tensormap"),
+                    string_p(".replace"),
+                    Mode::parse(),
+                    Field3::parse(),
+                    optional(Ss::parse()),
+                    string_p(".b1024"),
+                    Type::parse(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, replace, mode, field3, ss, b1024, type_, addr, _, new_val, _), span| {
+                    ok!(TensormapReplaceModeField3SsB1024Type {
+                        replace = replace,
+                        mode = mode,
+                        field3 = field3,
+                        ss = ss,
+                        b1024 = b1024,
+                        type_ = type_,
+                        addr = addr,
+                        new_val = new_val,
+
+                    })
+                },
+            )
         }
     }
 }

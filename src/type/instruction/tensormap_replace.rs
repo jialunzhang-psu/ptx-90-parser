@@ -14,6 +14,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -56,7 +58,7 @@ pub mod section_0 {
         Elemtype,         // .elemtype
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TensormapReplaceModeField1SsB1024Type {
         pub replace: (),             // .replace
         pub mode: Mode,              // .mode
@@ -66,9 +68,10 @@ pub mod section_0 {
         pub type_: Type,             // .type
         pub addr: AddressOperand,    // [addr]
         pub new_val: GeneralOperand, // new_val
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TensormapReplaceModeField2SsB1024Type {
         pub replace: (),             // .replace
         pub mode: Mode,              // .mode
@@ -79,9 +82,10 @@ pub mod section_0 {
         pub addr: AddressOperand,    // [addr]
         pub ord: GeneralOperand,     // ord
         pub new_val: GeneralOperand, // new_val
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct TensormapReplaceModeField3SsB1024Type {
         pub replace: (),             // .replace
         pub mode: Mode,              // .mode
@@ -91,6 +95,7 @@ pub mod section_0 {
         pub type_: Type,             // .type
         pub addr: AddressOperand,    // [addr]
         pub new_val: GeneralOperand, // new_val
+        pub span: Span,
     }
 }
 

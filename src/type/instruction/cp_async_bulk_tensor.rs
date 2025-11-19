@@ -34,6 +34,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -80,7 +82,7 @@ pub mod section_0 {
         L2CacheHint, // .L2::cache_hint
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncBulkTensorDimDstSrcLoadModeCompletionMechanismCtaGroupLevelCacheHint {
         pub async_: (),                                // .async
         pub bulk: (),                                  // .bulk
@@ -97,10 +99,13 @@ pub mod section_0 {
         pub mbar: AddressOperand,                      // [mbar]
         pub im2colinfo: Option<GeneralOperand>,        // {, im2colInfo}
         pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -152,7 +157,7 @@ pub mod section_1 {
         L2CacheHint, // .L2::cache_hint
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncBulkTensorDimDstSrcLoadModeCompletionMechanismMulticastCtaGroupLevelCacheHint {
         pub async_: (),                                // .async
         pub bulk: (),                                  // .bulk
@@ -171,10 +176,13 @@ pub mod section_1 {
         pub im2colinfo: Option<GeneralOperand>,        // {, im2colInfo}
         pub ctamask: Option<GeneralOperand>,           // {, ctaMask}
         pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -213,7 +221,7 @@ pub mod section_2 {
         L2CacheHint, // .L2::cache_hint
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncBulkTensorDimDstSrcLoadModeCompletionMechanismLevelCacheHint {
         pub async_: (),                                // .async
         pub bulk: (),                                  // .bulk
@@ -227,6 +235,7 @@ pub mod section_2 {
         pub tensormap: TexHandler2,                    // [tensorMap, tensorCoords]
         pub srcmem: AddressOperand,                    // [srcMem]
         pub cache_policy: Option<GeneralOperand>,      // {, cache-policy}
+        pub span: Span,
     }
 }
 

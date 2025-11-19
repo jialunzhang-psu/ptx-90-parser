@@ -27,6 +27,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -137,7 +139,7 @@ pub mod section_0 {
         B77, // .b77
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vset4AtypeBtypeCmp {
         pub atype: Atype,       // .atype
         pub btype: Btype,       // .btype
@@ -149,9 +151,10 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Vset4AtypeBtypeCmpAdd {
         pub atype: Atype,       // .atype
         pub btype: Btype,       // .btype
@@ -164,6 +167,7 @@ pub mod section_0 {
         pub b: GeneralOperand,  // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub c: GeneralOperand,  // c
+        pub span: Span,
     }
 }
 

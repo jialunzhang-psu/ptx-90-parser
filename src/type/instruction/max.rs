@@ -19,6 +19,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -37,24 +39,26 @@ pub mod section_0 {
         S32,   // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MaxAtype {
         pub atype: Atype,      // .atype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MaxReluBtype {
         pub relu: bool,        // {.relu}
         pub btype: Btype,      // .btype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MaxFtzNanXorsignAbsF32 {
         pub ftz: bool,         // {.ftz}
         pub nan: bool,         // {.NaN}
@@ -63,9 +67,10 @@ pub mod section_0 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MaxFtzNanAbsF32 {
         pub ftz: bool,         // {.ftz}
         pub nan: bool,         // {.NaN}
@@ -75,17 +80,19 @@ pub mod section_0 {
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MaxF64 {
         pub f64: (),           // .f64
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MaxFtzNanXorsignAbsF16 {
         pub ftz: bool,         // {.ftz}
         pub nan: bool,         // {.NaN}
@@ -94,9 +101,10 @@ pub mod section_0 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MaxFtzNanXorsignAbsF16x2 {
         pub ftz: bool,         // {.ftz}
         pub nan: bool,         // {.NaN}
@@ -105,9 +113,10 @@ pub mod section_0 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MaxNanXorsignAbsBf16 {
         pub nan: bool,         // {.NaN}
         pub xorsign_abs: bool, // {.xorsign.abs}
@@ -115,9 +124,10 @@ pub mod section_0 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MaxNanXorsignAbsBf16x2 {
         pub nan: bool,         // {.NaN}
         pub xorsign_abs: bool, // {.xorsign.abs}
@@ -125,6 +135,7 @@ pub mod section_0 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 

@@ -16,6 +16,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -50,7 +52,7 @@ pub mod section_0 {
         Zero,  // .zero
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SuredBOpGeomCtypeMode {
         pub b: (),             // .b
         pub op: Op,            // .op
@@ -59,10 +61,13 @@ pub mod section_0 {
         pub mode: Mode,        // .mode
         pub a: TexHandler2,    // [a, b]
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -94,7 +99,7 @@ pub mod section_1 {
         Zero,  // .zero
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct SuredPOpGeomCtypeMode {
         pub p: (),             // .p
         pub op: Op,            // .op
@@ -103,6 +108,7 @@ pub mod section_1 {
         pub mode: Mode,        // .mode
         pub a: TexHandler2,    // [a, b]
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 

@@ -8,6 +8,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -17,7 +19,7 @@ pub mod section_0 {
         Uni, // .uni
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VoteSyncModePred {
         pub sync: (),                   // .sync
         pub mode: Mode,                 // .mode
@@ -26,9 +28,10 @@ pub mod section_0 {
         pub a_op: bool,                 // {!} operator
         pub a: GeneralOperand,          // {!}a
         pub membermask: GeneralOperand, // membermask
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct VoteSyncBallotB32 {
         pub sync: (),                   // .sync
         pub ballot: (),                 // .ballot
@@ -37,6 +40,7 @@ pub mod section_0 {
         pub a_op: bool,                 // {!} operator
         pub a: GeneralOperand,          // {!}a
         pub membermask: GeneralOperand, // membermask
+        pub span: Span,
     }
 }
 

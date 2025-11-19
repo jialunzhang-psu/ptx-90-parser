@@ -8,9 +8,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -21,133 +27,49 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Op {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Notanumber
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".notanumber").is_ok() {
-                    return Ok(Op::Notanumber);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Subnormal
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".subnormal").is_ok() {
-                    return Ok(Op::Subnormal);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Infinite
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".infinite").is_ok() {
-                    return Ok(Op::Infinite);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Finite
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".finite").is_ok() {
-                    return Ok(Op::Finite);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Number
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".number").is_ok() {
-                    return Ok(Op::Number);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Normal
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".normal").is_ok() {
-                    return Ok(Op::Normal);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".notanumber",
-                ".subnormal",
-                ".infinite",
-                ".finite",
-                ".number",
-                ".normal",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".notanumber"), |_, _span| Op::Notanumber),
+                map(string_p(".subnormal"), |_, _span| Op::Subnormal),
+                map(string_p(".infinite"), |_, _span| Op::Infinite),
+                map(string_p(".finite"), |_, _span| Op::Finite),
+                map(string_p(".number"), |_, _span| Op::Number),
+                map(string_p(".normal"), |_, _span| Op::Normal)
+            )
         }
     }
 
     impl PtxParser for Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Type::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f64").is_ok() {
-                    return Ok(Type::F64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".f32", ".f64"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".f32"), |_, _span| Type::F32),
+                map(string_p(".f64"), |_, _span| Type::F64)
+            )
         }
     }
 
     impl PtxParser for TestpOpType {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("testp")?;
-            let op = Op::parse(stream)?;
-            stream.expect_complete()?;
-            let type_ = Type::parse(stream)?;
-            stream.expect_complete()?;
-            let p = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let a = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(TestpOpType { op, type_, p, a })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("testp"),
+                    Op::parse(),
+                    Type::parse(),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, op, type_, p, _, a, _), span| {
+                    ok!(TestpOpType {
+                        op = op,
+                        type_ = type_,
+                        p = p,
+                        a = a,
+
+                    })
+                },
+            )
         }
     }
 }

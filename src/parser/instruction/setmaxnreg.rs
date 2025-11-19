@@ -5,9 +5,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -18,63 +24,37 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for Action {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Inc
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".inc").is_ok() {
-                    return Ok(Action::Inc);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Dec
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".dec").is_ok() {
-                    return Ok(Action::Dec);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".inc", ".dec"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".inc"), |_, _span| Action::Inc),
+                map(string_p(".dec"), |_, _span| Action::Dec)
+            )
         }
     }
 
     impl PtxParser for SetmaxnregActionSyncAlignedU32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("setmaxnreg")?;
-            let action = Action::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".sync")?;
-            let sync = ();
-            stream.expect_complete()?;
-            stream.expect_string(".aligned")?;
-            let aligned = ();
-            stream.expect_complete()?;
-            stream.expect_string(".u32")?;
-            let u32 = ();
-            stream.expect_complete()?;
-            let imm_reg_count = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(SetmaxnregActionSyncAlignedU32 {
-                action,
-                sync,
-                aligned,
-                u32,
-                imm_reg_count,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("setmaxnreg"),
+                    Action::parse(),
+                    string_p(".sync"),
+                    string_p(".aligned"),
+                    string_p(".u32"),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, action, sync, aligned, u32, imm_reg_count, _), span| {
+                    ok!(SetmaxnregActionSyncAlignedU32 {
+                        action = action,
+                        sync = sync,
+                        aligned = aligned,
+                        u32 = u32,
+                        imm_reg_count = imm_reg_count,
+
+                    })
+                },
+            )
         }
     }
 }

@@ -5,67 +5,67 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
     use crate::r#type::instruction::brx_idx::section_0::*;
 
     impl PtxParser for BrxIdxUni {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("brx")?;
-            stream.expect_string(".idx")?;
-            let idx = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let uni = stream.expect_string(".uni").is_ok();
-            if !uni {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let index = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let tlist = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BrxIdxUni {
-                idx,
-                uni,
-                index,
-                tlist,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("brx"),
+                    string_p(".idx"),
+                    map(optional(string_p(".uni")), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, idx, uni, index, _, tlist, _), span| {
+                    ok!(BrxIdxUni {
+                        idx = idx,
+                        uni = uni,
+                        index = index,
+                        tlist = tlist,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for BrxIdxUni1 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("brx")?;
-            stream.expect_string(".idx")?;
-            let idx = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let uni = stream.expect_string(".uni").is_ok();
-            if !uni {
-                stream.set_position(saved_pos);
-            }
-            stream.expect_complete()?;
-            let index = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let tlist = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(BrxIdxUni1 {
-                idx,
-                uni,
-                index,
-                tlist,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("brx"),
+                    string_p(".idx"),
+                    map(optional(string_p(".uni")), |value, _| value.is_some()),
+                    GeneralOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    semicolon_p()
+                ),
+                |(_, idx, uni, index, _, tlist, _), span| {
+                    ok!(BrxIdxUni1 {
+                        idx = idx,
+                        uni = uni,
+                        index = index,
+                        tlist = tlist,
+
+                    })
+                },
+            )
         }
     }
 }

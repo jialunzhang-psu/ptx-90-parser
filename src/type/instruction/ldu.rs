@@ -13,6 +13,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -45,21 +47,23 @@ pub mod section_0 {
         V4, // .v4
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LduSsType {
         pub ss: Option<Ss>,    // {.ss}
         pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct LduSsVecType {
         pub ss: Option<Ss>,    // {.ss}
         pub vec: Vec,          // .vec
         pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: AddressOperand, // [a]
+        pub span: Span,
     }
 }
 

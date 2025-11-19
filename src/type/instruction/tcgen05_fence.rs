@@ -7,16 +7,20 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05FenceBeforeThreadSync {
         pub fence_before_thread_sync: (), // .fence::before_thread_sync
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct Tcgen05FenceAfterThreadSync {
         pub fence_after_thread_sync: (), // .fence::after_thread_sync
+        pub span: Span,
     }
 }
 

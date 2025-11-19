@@ -9,6 +9,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -29,7 +31,7 @@ pub mod section_0 {
         Shared,        // .shared
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct MbarrierCompleteTxSemScopeSpaceB64 {
         pub complete_tx: (),         // .complete_tx
         pub sem: Option<Sem>,        // {.sem}
@@ -38,6 +40,7 @@ pub mod section_0 {
         pub b64: (),                 // .b64
         pub addr: AddressOperand,    // [addr]
         pub txcount: GeneralOperand, // txCount
+        pub span: Span,
     }
 }
 

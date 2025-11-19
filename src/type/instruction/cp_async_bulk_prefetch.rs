@@ -8,6 +8,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -20,7 +22,7 @@ pub mod section_0 {
         L2CacheHint, // .L2::cache_hint
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CpAsyncBulkPrefetchL2SrcLevelCacheHint {
         pub async_: (),                               // .async
         pub bulk: (),                                 // .bulk
@@ -31,6 +33,7 @@ pub mod section_0 {
         pub srcmem: AddressOperand,                   // [srcMem]
         pub size: GeneralOperand,                     // size
         pub cache_policy: Option<GeneralOperand>,     // {, cache-policy}
+        pub span: Span,
     }
 }
 

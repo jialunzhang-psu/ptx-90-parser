@@ -7,6 +7,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -16,11 +18,12 @@ pub mod section_0 {
         Texref,     // .texref
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct IstypepType {
         pub type_: Type,       // .type
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
+        pub span: Span,
     }
 }
 

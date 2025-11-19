@@ -28,9 +28,15 @@
 
 #![allow(unused)]
 
-use crate::lexer::PtxToken;
-use crate::parser::{PtxParseError, PtxParser, PtxTokenStream, Span};
+use crate::parser::{
+    PtxParseError, PtxParser, PtxTokenStream, Span,
+    util::{
+        between, comma_p, directive_p, exclamation_p, lbracket_p, lparen_p, map, minus_p, optional,
+        pipe_p, rbracket_p, rparen_p, semicolon_p, sep_by, string_p, try_map,
+    },
+};
 use crate::r#type::common::*;
+use crate::{alt, ok, seq_n};
 
 pub mod section_0 {
     use super::*;
@@ -41,768 +47,332 @@ pub mod section_0 {
     // ============================================================================
 
     impl PtxParser for LevelCacheHint {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2CacheHint
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::cache_hint").is_ok() {
-                    return Ok(LevelCacheHint::L2CacheHint);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::cache_hint"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".L2::cache_hint"), |_, _span| {
+                LevelCacheHint::L2CacheHint
+            }))
         }
     }
 
     impl PtxParser for Op {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try And
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".and").is_ok() {
-                    return Ok(Op::And);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Xor
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".xor").is_ok() {
-                    return Ok(Op::Xor);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Add
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".add").is_ok() {
-                    return Ok(Op::Add);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Inc
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".inc").is_ok() {
-                    return Ok(Op::Inc);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Dec
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".dec").is_ok() {
-                    return Ok(Op::Dec);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Min
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".min").is_ok() {
-                    return Ok(Op::Min);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Max
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".max").is_ok() {
-                    return Ok(Op::Max);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Or
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".or").is_ok() {
-                    return Ok(Op::Or);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".and", ".xor", ".add", ".inc", ".dec", ".min", ".max", ".or",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".and"), |_, _span| Op::And),
+                map(string_p(".xor"), |_, _span| Op::Xor),
+                map(string_p(".add"), |_, _span| Op::Add),
+                map(string_p(".inc"), |_, _span| Op::Inc),
+                map(string_p(".dec"), |_, _span| Op::Dec),
+                map(string_p(".min"), |_, _span| Op::Min),
+                map(string_p(".max"), |_, _span| Op::Max),
+                map(string_p(".or"), |_, _span| Op::Or)
+            )
         }
     }
 
     impl PtxParser for Scope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cluster").is_ok() {
-                    return Ok(Scope::Cluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Cta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Scope::Cta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Gpu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".gpu").is_ok() {
-                    return Ok(Scope::Gpu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Sys
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sys").is_ok() {
-                    return Ok(Scope::Sys);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cluster", ".cta", ".gpu", ".sys"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".cluster"), |_, _span| Scope::Cluster),
+                map(string_p(".cta"), |_, _span| Scope::Cta),
+                map(string_p(".gpu"), |_, _span| Scope::Gpu),
+                map(string_p(".sys"), |_, _span| Scope::Sys)
+            )
         }
     }
 
     impl PtxParser for Sem {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Relaxed
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".relaxed").is_ok() {
-                    return Ok(Sem::Relaxed);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Release
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".release").is_ok() {
-                    return Ok(Sem::Release);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".relaxed", ".release"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".relaxed"), |_, _span| Sem::Relaxed),
+                map(string_p(".release"), |_, _span| Sem::Release)
+            )
         }
     }
 
     impl PtxParser for Space {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cluster").is_ok() {
-                    return Ok(Space::SharedCluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Space::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Space::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Space::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cluster", ".shared::cta", ".global", ".shared"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cluster"), |_, _span| {
+                    Space::SharedCluster
+                }),
+                map(string_p(".shared::cta"), |_, _span| Space::SharedCta),
+                map(string_p(".global"), |_, _span| Space::Global),
+                map(string_p(".shared"), |_, _span| Space::Shared)
+            )
         }
     }
 
     impl PtxParser for Type {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try B32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b32").is_ok() {
-                    return Ok(Type::B32);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try B64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".b64").is_ok() {
-                    return Ok(Type::B64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u32").is_ok() {
-                    return Ok(Type::U32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try U64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".u64").is_ok() {
-                    return Ok(Type::U64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s32").is_ok() {
-                    return Ok(Type::S32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try S64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".s64").is_ok() {
-                    return Ok(Type::S64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try F32
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f32").is_ok() {
-                    return Ok(Type::F32);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try F64
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f64").is_ok() {
-                    return Ok(Type::F64);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[
-                ".b32", ".b64", ".u32", ".u64", ".s32", ".s64", ".f32", ".f64",
-            ];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".b32"), |_, _span| Type::B32),
+                map(string_p(".b64"), |_, _span| Type::B64),
+                map(string_p(".u32"), |_, _span| Type::U32),
+                map(string_p(".u64"), |_, _span| Type::U64),
+                map(string_p(".s32"), |_, _span| Type::S32),
+                map(string_p(".s64"), |_, _span| Type::S64),
+                map(string_p(".f32"), |_, _span| Type::F32),
+                map(string_p(".f64"), |_, _span| Type::F64)
+            )
         }
     }
 
     impl PtxParser for RedOpSpaceSemScopeLevelCacheHintType {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("red")?;
-            let op = Op::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let space = match Space::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_cache_hint = match LevelCacheHint::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let type_ = Type::parse(stream)?;
-            stream.expect_complete()?;
-            let a = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let cache_policy = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(RedOpSpaceSemScopeLevelCacheHintType {
-                op,
-                space,
-                sem,
-                scope,
-                level_cache_hint,
-                type_,
-                a,
-                b,
-                cache_policy,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("red"),
+                    Op::parse(),
+                    optional(Space::parse()),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    optional(LevelCacheHint::parse()),
+                    Type::parse(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(_, op, space, sem, scope, level_cache_hint, type_, a, _, b, cache_policy, _),
+                 span| {
+                    ok!(RedOpSpaceSemScopeLevelCacheHintType {
+                        op = op,
+                        space = space,
+                        sem = sem,
+                        scope = scope,
+                        level_cache_hint = level_cache_hint,
+                        type_ = type_,
+                        a = a,
+                        b = b,
+                        cache_policy = cache_policy,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for RedAddSpaceSemScopeNoftzLevelCacheHintF16 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("red")?;
-            stream.expect_string(".add")?;
-            let add = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let space = match Space::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".noftz")?;
-            let noftz = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_cache_hint = match LevelCacheHint::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".f16")?;
-            let f16 = ();
-            stream.expect_complete()?;
-            let a = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let cache_policy = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(RedAddSpaceSemScopeNoftzLevelCacheHintF16 {
-                add,
-                space,
-                sem,
-                scope,
-                noftz,
-                level_cache_hint,
-                f16,
-                a,
-                b,
-                cache_policy,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("red"),
+                    string_p(".add"),
+                    optional(Space::parse()),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    string_p(".noftz"),
+                    optional(LevelCacheHint::parse()),
+                    string_p(".f16"),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    add,
+                    space,
+                    sem,
+                    scope,
+                    noftz,
+                    level_cache_hint,
+                    f16,
+                    a,
+                    _,
+                    b,
+                    cache_policy,
+                    _,
+                ),
+                 span| {
+                    ok!(RedAddSpaceSemScopeNoftzLevelCacheHintF16 {
+                        add = add,
+                        space = space,
+                        sem = sem,
+                        scope = scope,
+                        noftz = noftz,
+                        level_cache_hint = level_cache_hint,
+                        f16 = f16,
+                        a = a,
+                        b = b,
+                        cache_policy = cache_policy,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for RedAddSpaceSemScopeNoftzLevelCacheHintF16x2 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("red")?;
-            stream.expect_string(".add")?;
-            let add = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let space = match Space::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".noftz")?;
-            let noftz = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_cache_hint = match LevelCacheHint::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".f16x2")?;
-            let f16x2 = ();
-            stream.expect_complete()?;
-            let a = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let cache_policy = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(RedAddSpaceSemScopeNoftzLevelCacheHintF16x2 {
-                add,
-                space,
-                sem,
-                scope,
-                noftz,
-                level_cache_hint,
-                f16x2,
-                a,
-                b,
-                cache_policy,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("red"),
+                    string_p(".add"),
+                    optional(Space::parse()),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    string_p(".noftz"),
+                    optional(LevelCacheHint::parse()),
+                    string_p(".f16x2"),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    add,
+                    space,
+                    sem,
+                    scope,
+                    noftz,
+                    level_cache_hint,
+                    f16x2,
+                    a,
+                    _,
+                    b,
+                    cache_policy,
+                    _,
+                ),
+                 span| {
+                    ok!(RedAddSpaceSemScopeNoftzLevelCacheHintF16x2 {
+                        add = add,
+                        space = space,
+                        sem = sem,
+                        scope = scope,
+                        noftz = noftz,
+                        level_cache_hint = level_cache_hint,
+                        f16x2 = f16x2,
+                        a = a,
+                        b = b,
+                        cache_policy = cache_policy,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for RedAddSpaceSemScopeNoftzLevelCacheHintBf16 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("red")?;
-            stream.expect_string(".add")?;
-            let add = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let space = match Space::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".noftz")?;
-            let noftz = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_cache_hint = match LevelCacheHint::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".bf16")?;
-            let bf16 = ();
-            stream.expect_complete()?;
-            let a = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let cache_policy = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(RedAddSpaceSemScopeNoftzLevelCacheHintBf16 {
-                add,
-                space,
-                sem,
-                scope,
-                noftz,
-                level_cache_hint,
-                bf16,
-                a,
-                b,
-                cache_policy,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("red"),
+                    string_p(".add"),
+                    optional(Space::parse()),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    string_p(".noftz"),
+                    optional(LevelCacheHint::parse()),
+                    string_p(".bf16"),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    add,
+                    space,
+                    sem,
+                    scope,
+                    noftz,
+                    level_cache_hint,
+                    bf16,
+                    a,
+                    _,
+                    b,
+                    cache_policy,
+                    _,
+                ),
+                 span| {
+                    ok!(RedAddSpaceSemScopeNoftzLevelCacheHintBf16 {
+                        add = add,
+                        space = space,
+                        sem = sem,
+                        scope = scope,
+                        noftz = noftz,
+                        level_cache_hint = level_cache_hint,
+                        bf16 = bf16,
+                        a = a,
+                        b = b,
+                        cache_policy = cache_policy,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for RedAddSpaceSemScopeNoftzLevelCacheHintBf16x2 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("red")?;
-            stream.expect_string(".add")?;
-            let add = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let space = match Space::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".noftz")?;
-            let noftz = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_cache_hint = match LevelCacheHint::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".bf16x2")?;
-            let bf16x2 = ();
-            stream.expect_complete()?;
-            let a = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let cache_policy = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(RedAddSpaceSemScopeNoftzLevelCacheHintBf16x2 {
-                add,
-                space,
-                sem,
-                scope,
-                noftz,
-                level_cache_hint,
-                bf16x2,
-                a,
-                b,
-                cache_policy,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("red"),
+                    string_p(".add"),
+                    optional(Space::parse()),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    string_p(".noftz"),
+                    optional(LevelCacheHint::parse()),
+                    string_p(".bf16x2"),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    add,
+                    space,
+                    sem,
+                    scope,
+                    noftz,
+                    level_cache_hint,
+                    bf16x2,
+                    a,
+                    _,
+                    b,
+                    cache_policy,
+                    _,
+                ),
+                 span| {
+                    ok!(RedAddSpaceSemScopeNoftzLevelCacheHintBf16x2 {
+                        add = add,
+                        space = space,
+                        sem = sem,
+                        scope = scope,
+                        noftz = noftz,
+                        level_cache_hint = level_cache_hint,
+                        bf16x2 = bf16x2,
+                        a = a,
+                        b = b,
+                        cache_policy = cache_policy,
+
+                    })
+                },
+            )
         }
     }
 }
@@ -816,602 +386,261 @@ pub mod section_1 {
     // ============================================================================
 
     impl PtxParser for HalfWordType {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Bf16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".bf16").is_ok() {
-                    return Ok(HalfWordType::Bf16);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F16
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16").is_ok() {
-                    return Ok(HalfWordType::F16);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".bf16", ".f16"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".bf16"), |_, _span| HalfWordType::Bf16),
+                map(string_p(".f16"), |_, _span| HalfWordType::F16)
+            )
         }
     }
 
     impl PtxParser for LevelCacheHint {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try L2CacheHint
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".L2::cache_hint").is_ok() {
-                    return Ok(LevelCacheHint::L2CacheHint);
-                }
-                stream.set_position(saved_pos);
-            }
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".L2::cache_hint"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(map(string_p(".L2::cache_hint"), |_, _span| {
+                LevelCacheHint::L2CacheHint
+            }))
         }
     }
 
     impl PtxParser for Op {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Add
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".add").is_ok() {
-                    return Ok(Op::Add);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Min
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".min").is_ok() {
-                    return Ok(Op::Min);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Max
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".max").is_ok() {
-                    return Ok(Op::Max);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".add", ".min", ".max"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".add"), |_, _span| Op::Add),
+                map(string_p(".min"), |_, _span| Op::Min),
+                map(string_p(".max"), |_, _span| Op::Max)
+            )
         }
     }
 
     impl PtxParser for PackedType {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Bf16x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".bf16x2").is_ok() {
-                    return Ok(PackedType::Bf16x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try F16x2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".f16x2").is_ok() {
-                    return Ok(PackedType::F16x2);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".bf16x2", ".f16x2"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".bf16x2"), |_, _span| PackedType::Bf16x2),
+                map(string_p(".f16x2"), |_, _span| PackedType::F16x2)
+            )
         }
     }
 
     impl PtxParser for Scope {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Cluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cluster").is_ok() {
-                    return Ok(Scope::Cluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Cta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".cta").is_ok() {
-                    return Ok(Scope::Cta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Gpu
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".gpu").is_ok() {
-                    return Ok(Scope::Gpu);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Sys
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".sys").is_ok() {
-                    return Ok(Scope::Sys);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".cluster", ".cta", ".gpu", ".sys"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".cluster"), |_, _span| Scope::Cluster),
+                map(string_p(".cta"), |_, _span| Scope::Cta),
+                map(string_p(".gpu"), |_, _span| Scope::Gpu),
+                map(string_p(".sys"), |_, _span| Scope::Sys)
+            )
         }
     }
 
     impl PtxParser for Sem {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try Relaxed
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".relaxed").is_ok() {
-                    return Ok(Sem::Relaxed);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try Release
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".release").is_ok() {
-                    return Ok(Sem::Release);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".relaxed", ".release"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".relaxed"), |_, _span| Sem::Relaxed),
+                map(string_p(".release"), |_, _span| Sem::Release)
+            )
         }
     }
 
     impl PtxParser for Space {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try SharedCluster
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cluster").is_ok() {
-                    return Ok(Space::SharedCluster);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try SharedCta
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared::cta").is_ok() {
-                    return Ok(Space::SharedCta);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Global
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".global").is_ok() {
-                    return Ok(Space::Global);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try Shared
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".shared").is_ok() {
-                    return Ok(Space::Shared);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".shared::cluster", ".shared::cta", ".global", ".shared"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".shared::cluster"), |_, _span| {
+                    Space::SharedCluster
+                }),
+                map(string_p(".shared::cta"), |_, _span| Space::SharedCta),
+                map(string_p(".global"), |_, _span| Space::Global),
+                map(string_p(".shared"), |_, _span| Space::Shared)
+            )
         }
     }
 
     impl PtxParser for Vec16Bit {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try V2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v2").is_ok() {
-                    return Ok(Vec16Bit::V2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try V4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v4").is_ok() {
-                    return Ok(Vec16Bit::V4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let saved_pos = stream.position();
-            // Try V8
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v8").is_ok() {
-                    return Ok(Vec16Bit::V8);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".v2", ".v4", ".v8"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".v2"), |_, _span| Vec16Bit::V2),
+                map(string_p(".v4"), |_, _span| Vec16Bit::V4),
+                map(string_p(".v8"), |_, _span| Vec16Bit::V8)
+            )
         }
     }
 
     impl PtxParser for Vec32Bit {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            // Try V2
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v2").is_ok() {
-                    return Ok(Vec32Bit::V2);
-                }
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            // Try V4
-            {
-                let saved_pos = stream.position();
-                if stream.expect_string(".v4").is_ok() {
-                    return Ok(Vec32Bit::V4);
-                }
-                stream.set_position(saved_pos);
-            }
-            stream.set_position(saved_pos);
-            let span = stream
-                .peek()
-                .map(|(_, s)| s.clone())
-                .unwrap_or(Span { start: 0, end: 0 });
-            let expected = &[".v2", ".v4"];
-            let found = stream
-                .peek()
-                .map(|(t, _)| format!("{:?}", t))
-                .unwrap_or_else(|_| "<end of input>".to_string());
-            Err(crate::parser::unexpected_value(span, expected, found))
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            alt!(
+                map(string_p(".v2"), |_, _span| Vec32Bit::V2),
+                map(string_p(".v4"), |_, _span| Vec32Bit::V4)
+            )
         }
     }
 
     impl PtxParser for RedAddSpaceSemScopeLevelCacheHintVec32BitF32 {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("red")?;
-            stream.expect_string(".add")?;
-            let add = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let space = match Space::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_cache_hint = match LevelCacheHint::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let vec_32_bit = Vec32Bit::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect_string(".f32")?;
-            let f32 = ();
-            stream.expect_complete()?;
-            let a = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let cache_policy = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(RedAddSpaceSemScopeLevelCacheHintVec32BitF32 {
-                add,
-                space,
-                sem,
-                scope,
-                level_cache_hint,
-                vec_32_bit,
-                f32,
-                a,
-                b,
-                cache_policy,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("red"),
+                    string_p(".add"),
+                    optional(Space::parse()),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    optional(LevelCacheHint::parse()),
+                    Vec32Bit::parse(),
+                    string_p(".f32"),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    add,
+                    space,
+                    sem,
+                    scope,
+                    level_cache_hint,
+                    vec_32_bit,
+                    f32,
+                    a,
+                    _,
+                    b,
+                    cache_policy,
+                    _,
+                ),
+                 span| {
+                    ok!(RedAddSpaceSemScopeLevelCacheHintVec32BitF32 {
+                        add = add,
+                        space = space,
+                        sem = sem,
+                        scope = scope,
+                        level_cache_hint = level_cache_hint,
+                        vec_32_bit = vec_32_bit,
+                        f32 = f32,
+                        a = a,
+                        b = b,
+                        cache_policy = cache_policy,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for RedOpSpaceSemScopeNoftzLevelCacheHintVec16BitHalfWordType {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("red")?;
-            let op = Op::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let space = match Space::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".noftz")?;
-            let noftz = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_cache_hint = match LevelCacheHint::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let vec_16_bit = Vec16Bit::parse(stream)?;
-            stream.expect_complete()?;
-            let half_word_type = HalfWordType::parse(stream)?;
-            stream.expect_complete()?;
-            let a = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let cache_policy = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(RedOpSpaceSemScopeNoftzLevelCacheHintVec16BitHalfWordType {
-                op,
-                space,
-                sem,
-                scope,
-                noftz,
-                level_cache_hint,
-                vec_16_bit,
-                half_word_type,
-                a,
-                b,
-                cache_policy,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("red"),
+                    Op::parse(),
+                    optional(Space::parse()),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    string_p(".noftz"),
+                    optional(LevelCacheHint::parse()),
+                    Vec16Bit::parse(),
+                    HalfWordType::parse(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    op,
+                    space,
+                    sem,
+                    scope,
+                    noftz,
+                    level_cache_hint,
+                    vec_16_bit,
+                    half_word_type,
+                    a,
+                    _,
+                    b,
+                    cache_policy,
+                    _,
+                ),
+                 span| {
+                    ok!(RedOpSpaceSemScopeNoftzLevelCacheHintVec16BitHalfWordType {
+                        op = op,
+                        space = space,
+                        sem = sem,
+                        scope = scope,
+                        noftz = noftz,
+                        level_cache_hint = level_cache_hint,
+                        vec_16_bit = vec_16_bit,
+                        half_word_type = half_word_type,
+                        a = a,
+                        b = b,
+                        cache_policy = cache_policy,
+
+                    })
+                },
+            )
         }
     }
 
     impl PtxParser for RedOpSpaceSemScopeNoftzLevelCacheHintVec32BitPackedType {
-        fn parse(stream: &mut PtxTokenStream) -> Result<Self, PtxParseError> {
-            stream.expect_string("red")?;
-            let op = Op::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let space = match Space::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let sem = match Sem::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let scope = match Scope::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_string(".noftz")?;
-            let noftz = ();
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let level_cache_hint = match LevelCacheHint::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            let vec_32_bit = Vec32Bit::parse(stream)?;
-            stream.expect_complete()?;
-            let packed_type = PackedType::parse(stream)?;
-            stream.expect_complete()?;
-            let a = AddressOperand::parse(stream)?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Comma)?;
-            let b = GeneralOperand::parse(stream)?;
-            stream.expect_complete()?;
-            let saved_pos = stream.position();
-            let has_comma = stream.expect(&PtxToken::Comma).is_ok();
-            if !has_comma {
-                stream.set_position(saved_pos);
-            }
-            let saved_pos = stream.position();
-            let cache_policy = match GeneralOperand::parse(stream) {
-                Ok(val) => Some(val),
-                Err(_) => {
-                    stream.set_position(saved_pos);
-                    None
-                }
-            };
-            stream.expect_complete()?;
-            stream.expect_complete()?;
-            stream.expect(&PtxToken::Semicolon)?;
-            Ok(RedOpSpaceSemScopeNoftzLevelCacheHintVec32BitPackedType {
-                op,
-                space,
-                sem,
-                scope,
-                noftz,
-                level_cache_hint,
-                vec_32_bit,
-                packed_type,
-                a,
-                b,
-                cache_policy,
-            })
+        fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+            try_map(
+                seq_n!(
+                    string_p("red"),
+                    Op::parse(),
+                    optional(Space::parse()),
+                    optional(Sem::parse()),
+                    optional(Scope::parse()),
+                    string_p(".noftz"),
+                    optional(LevelCacheHint::parse()),
+                    Vec32Bit::parse(),
+                    PackedType::parse(),
+                    AddressOperand::parse(),
+                    comma_p(),
+                    GeneralOperand::parse(),
+                    map(
+                        optional(seq_n!(comma_p(), GeneralOperand::parse())),
+                        |value, _| value.map(|(_, operand)| operand)
+                    ),
+                    semicolon_p()
+                ),
+                |(
+                    _,
+                    op,
+                    space,
+                    sem,
+                    scope,
+                    noftz,
+                    level_cache_hint,
+                    vec_32_bit,
+                    packed_type,
+                    a,
+                    _,
+                    b,
+                    cache_policy,
+                    _,
+                ),
+                 span| {
+                    ok!(RedOpSpaceSemScopeNoftzLevelCacheHintVec32BitPackedType {
+                        op = op,
+                        space = space,
+                        sem = sem,
+                        scope = scope,
+                        noftz = noftz,
+                        level_cache_hint = level_cache_hint,
+                        vec_32_bit = vec_32_bit,
+                        packed_type = packed_type,
+                        a = a,
+                        b = b,
+                        cache_policy = cache_policy,
+
+                    })
+                },
+            )
         }
     }
 }

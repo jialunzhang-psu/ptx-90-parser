@@ -113,7 +113,7 @@ fn build_named_arm(
     };
     let set_arm = quote! {
         #path { span: #binding, .. } => {
-            *#binding = span.clone();
+            *#binding = span;
         }
     };
 

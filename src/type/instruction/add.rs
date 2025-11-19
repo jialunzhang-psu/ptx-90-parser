@@ -25,6 +25,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -39,25 +41,29 @@ pub mod section_0 {
         S64,   // .s64
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AddType {
         pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AddSatS32 {
         pub sat: bool,         // {.sat}
         pub s32: (),           // .s32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -68,7 +74,7 @@ pub mod section_1 {
         Rp, // .rp
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AddRndFtzSatF32 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub ftz: bool,         // {.ftz}
@@ -77,9 +83,10 @@ pub mod section_1 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AddRndFtzF32x2 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub ftz: bool,         // {.ftz}
@@ -87,19 +94,23 @@ pub mod section_1 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AddRndF64 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub f64: (),           // .f64
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 
 pub mod section_2 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -107,7 +118,7 @@ pub mod section_2 {
         Rn, // .rn
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AddRndFtzSatF16 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub ftz: bool,         // {.ftz}
@@ -116,9 +127,10 @@ pub mod section_2 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AddRndFtzSatF16x2 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub ftz: bool,         // {.ftz}
@@ -127,28 +139,33 @@ pub mod section_2 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AddRndBf16 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub bf16: (),          // .bf16
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AddRndBf16x2 {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub bf16x2: (),        // .bf16x2
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
+        pub span: Span,
     }
 }
 
 pub mod section_3 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -165,7 +182,7 @@ pub mod section_3 {
         F16,  // .f16
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct AddRndSatF32Atype {
         pub rnd: Option<Rnd>,  // {.rnd}
         pub sat: bool,         // {.sat}
@@ -174,6 +191,7 @@ pub mod section_3 {
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub c: GeneralOperand, // c
+        pub span: Span,
     }
 }
 

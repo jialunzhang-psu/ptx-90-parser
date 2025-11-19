@@ -8,6 +8,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -20,7 +22,7 @@ pub mod section_0 {
         MbarrierCompleteTxBytes, // .mbarrier::complete_tx::bytes
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct ClusterlaunchcontrolTryCancelAsyncSpaceCompletionMechanismMulticastClusterAllB128 {
         pub try_cancel: (),                            // .try_cancel
         pub async_: (),                                // .async
@@ -30,6 +32,7 @@ pub mod section_0 {
         pub b128: (),                                  // .b128
         pub addr: AddressOperand,                      // [addr]
         pub mbar: AddressOperand,                      // [mbar]
+        pub span: Span,
     }
 }
 

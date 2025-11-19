@@ -14,3 +14,11 @@ pub trait Spanned: Sized {
         self
     }
 }
+
+#[macro_export]
+macro_rules! span {
+    ($range:expr) => {{
+        let r = $range;
+        $crate::Span::new(r.start, r.end)
+    }};
+}

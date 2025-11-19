@@ -13,6 +13,8 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -26,7 +28,7 @@ pub mod section_0 {
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CvtPackSatConverttypeAbtype {
         pub pack: (),                 // .pack
         pub sat: (),                  // .sat
@@ -35,10 +37,13 @@ pub mod section_0 {
         pub d: GeneralOperand,        // d
         pub a: GeneralOperand,        // a
         pub b: GeneralOperand,        // b
+        pub span: Span,
     }
 }
 
 pub mod section_1 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
     #[derive(Debug, Clone, PartialEq)]
@@ -61,7 +66,7 @@ pub mod section_1 {
         B32, // .b32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Spanned)]
     pub struct CvtPackSatConverttypeAbtypeCtype {
         pub pack: (),                 // .pack
         pub sat: (),                  // .sat
@@ -72,6 +77,7 @@ pub mod section_1 {
         pub a: GeneralOperand,        // a
         pub b: GeneralOperand,        // b
         pub c: GeneralOperand,        // c
+        pub span: Span,
     }
 }
 

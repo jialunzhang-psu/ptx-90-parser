@@ -6,10 +6,14 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
+    use crate::Spanned;
+    use crate::parser::Span;
     use crate::r#type::common::*;
 
-    #[derive(Debug, Clone, PartialEq)]
-    pub struct Brkpt {}
+    #[derive(Debug, Clone, PartialEq, Spanned)]
+    pub struct Brkpt {
+        pub span: Span,
+    }
 }
 
 // Re-export types with section suffixes to avoid naming conflicts
