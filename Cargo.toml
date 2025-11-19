@@ -23,5 +23,5 @@ path = "src/main.rs"
 thiserror = "1.0"
 clap = { version = "4.5", features = ["derive"] }
 logos = "0.15.1"
-span-derive = { path = "crates/span-derive" }
-cmap-macro = { path = "crates/cmap-macro" }
+span-derive = { path = "crates/span-derive", version = "*" }
+cmap-macro = { path = "crates/cmap-macro", version = "*" }
