@@ -1,16 +1,13 @@
+use ptx_90_parser_construct::{func, okmap};
+
 use crate::{
     alt, c,
     lexer::PtxToken,
     mapc, ok,
     parser::{
-        ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, Span,
         util::{
-            alt, between, colon_p, comma_p, directive_exact_p, directive_p, identifier_p,
-            integer_p, langle_p, lbrace_p, lparen_p, many, map, minus_p, optional,
-            parse_signed_integer, parse_u32_literal, parse_unsigned_integer, plus_p, rangle_p,
-            rbrace_p, register_p, rparen_p, semicolon_p, sep_by, sep_by1, seq, seq5, skip_first,
-            skip_semicolon, string_literal_p, try_map,
-        },
+            alt, between, colon_p, comma_p, directive_exact_p, directive_p, identifier_p, integer_p, langle_p, lbrace_p, lparen_p, many, map, minus_p, optional, parse_signed_integer, parse_u32_literal, parse_unsigned_integer, plus_p, pure, rangle_p, rbrace_p, register_p, rparen_p, semicolon_p, sep_by, sep_by1, seq, seq5, skip_first, skip_second, skip_semicolon, string_literal_p, try_map, u32_p
+        }, ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, Span
     },
     seq_n,
     r#type::{
@@ -18,9 +15,9 @@ use crate::{
         CallTargetsDirective, DataType, DwarfDirective, DwarfDirectiveKind, EntryFunctionDirective,
         EntryFunctionHeaderDirective, FuncFunctionDirective, FuncFunctionHeaderDirective,
         FunctionBody, FunctionDim, FunctionStatement, FunctionSymbol, Instruction, Label,
-        LocationDirective, ParameterDirective, PragmaDirective, PragmaDirectiveKind,
-        RegisterDirective, RegisterTarget, SectionDirective, SectionEntry, StatementDirective,
-        StatementSectionDirectiveLine, VariableDirective, VariableSymbol,
+        LocationDirective, LocationInlinedAt, ParameterDirective, PragmaDirective,
+        PragmaDirectiveKind, RegisterDirective, RegisterTarget, SectionDirective, SectionEntry,
+        StatementDirective, StatementSectionDirectiveLine, VariableDirective, VariableSymbol,
     },
 };
 
@@ -207,27 +204,20 @@ fn noreturn_parser() -> impl Fn(&mut PtxTokenStream) -> Result<(bool, Span), Ptx
 
 fn abi_preserve_parser()
 -> impl Fn(&mut PtxTokenStream) -> Result<(Option<u32>, Span), PtxParseError> {
-    try_map(
-        optional(seq(directive_exact_p("abi_preserve"), integer_p())),
-        |value, span| {
-            let parsed = value
-                .map(|(_, literal)| parse_u32_literal(&literal, span))
-                .transpose()?;
-            Ok(parsed)
-        },
+    map(
+        optional(skip_first(directive_exact_p("abi_preserve"), u32_p())),
+        |value, _span| value,
     )
 }
 
 fn abi_preserve_control_parser()
 -> impl Fn(&mut PtxTokenStream) -> Result<(Option<u32>, Span), PtxParseError> {
-    try_map(
-        optional(seq(directive_exact_p("abi_preserve_control"), integer_p())),
-        |value, span| {
-            let parsed = value
-                .map(|(_, literal)| parse_u32_literal(&literal, span))
-                .transpose()?;
-            Ok(parsed)
-        },
+    map(
+        optional(skip_first(
+            directive_exact_p("abi_preserve_control"),
+            u32_p(),
+        )),
+        |value, _span| value,
     )
 }
 fn dwarf_directive()
@@ -353,17 +343,12 @@ fn section_directive()
 
 fn register_statement()
 -> impl Fn(&mut PtxTokenStream) -> Result<(RegisterDirective, Span), PtxParseError> {
-    try_map(
+    mapc!(
         skip_semicolon(seq(
             skip_first(directive_exact_p("reg"), DataType::parse()),
             register_targets_parser(),
         )),
-        |(ty, registers), span| {
-            ok!(RegisterDirective {
-                ty,
-                registers,
-            })
-        },
+        RegisterDirective { ty, registers }
     )
 }
 
@@ -403,42 +388,31 @@ fn register_symbol() -> impl Fn(&mut PtxTokenStream) -> Result<(VariableSymbol, 
 }
 
 fn register_count() -> impl Fn(&mut PtxTokenStream) -> Result<(u32, Span), PtxParseError> {
-    try_map(
-        between(langle_p(), rangle_p(), integer_p()),
-        |value, span| {
-            let count = parse_u32_literal(&value, span)?;
-            Ok(count)
-        },
-    )
+    between(langle_p(), rangle_p(), u32_p())
 }
 
 fn location_directive()
 -> impl Fn(&mut PtxTokenStream) -> Result<(LocationDirective, Span), PtxParseError> {
-    try_map(
+    mapc!(
         seq_n!(
-            skip_first(directive_exact_p("loc"), integer_p()),
-            integer_p(),
-            integer_p()
+            skip_first(directive_exact_p("loc"), u32_p()),
+            u32_p(),
+            u32_p(),
+            pure(Option::<LocationInlinedAt>::None)
         ),
-        |(file_idx, line_idx, col_idx), span| {
-            let file_index = parse_u32_literal(&file_idx, span)?;
-            let line = parse_u32_literal(&line_idx, span)?;
-            let column = parse_u32_literal(&col_idx, span)?;
-            Ok(LocationDirective {
-                file_index,
-                line,
-                column,
-                inlined_at: None,
-                span,
-            })
-        },
+        LocationDirective {
+            file_index,
+            line,
+            column,
+            inlined_at,
+        }
     )
 }
 
 fn section_name_parser() -> impl Fn(&mut PtxTokenStream) -> Result<(String, Span), PtxParseError> {
     alt(
-        map(directive_p(), |name, _| format!(".{name}")),
-        map(identifier_p(), |name, _| name),
+        map(directive_p(), func!(|name| format!(".{name}"))),
+        identifier_p(),
     )
 }
 
@@ -451,9 +425,10 @@ fn section_entry_parser()
 -> impl Fn(&mut PtxTokenStream) -> Result<(SectionEntry, Span), PtxParseError> {
     alt(
         label_entry(),
-        map(section_directive_line(), |line, _| {
-            SectionEntry::Directive(line)
-        }),
+        map(
+            section_directive_line(),
+            func!(|line| SectionEntry::Directive(line)),
+        ),
     )
 }
 
@@ -470,14 +445,14 @@ fn section_directive_line()
             directive_exact_p("b8"),
             sep_by1(signed_integer_literal(), comma_p()),
         )),
-        |values, span| {
+        func!(|values| {
             let mut out = Vec::new();
             for (text, value_span) in values {
                 let value = parse_signed_integer(&text, value_span, -128, 255)?;
                 out.push(value as i16);
             }
             ok!(StatementSectionDirectiveLine::B8 { values = out })
-        },
+        }),
     );
 
     let b16 = try_map(
@@ -758,19 +733,13 @@ impl PtxParser for FuncFunctionHeaderDirective {
                 ),
                 FuncFunctionHeaderDirective::Pragma { args, _ }
             ),
-            try_map(
-                skip_first(directive_exact_p("abi_preserve"), integer_p()),
-                |val_str, span| {
-                    let value = parse_u32_literal(&val_str, span)?;
-                    ok!(FuncFunctionHeaderDirective::AbiPreserve { value })
-                }
+            mapc!(
+                skip_first(directive_exact_p("abi_preserve"), u32_p()),
+                FuncFunctionHeaderDirective::AbiPreserve { value }
             ),
-            try_map(
-                skip_first(directive_exact_p("abi_preserve_control"), integer_p()),
-                |val_str, span| {
-                    let value = parse_u32_literal(&val_str, span)?;
-                    ok!(FuncFunctionHeaderDirective::AbiPreserveControl { value })
-                }
+            mapc!(
+                skip_first(directive_exact_p("abi_preserve_control"), u32_p()),
+                FuncFunctionHeaderDirective::AbiPreserveControl { value }
             )
         )
     }
@@ -779,73 +748,58 @@ impl PtxParser for FuncFunctionHeaderDirective {
 impl PtxParser for EntryFunctionHeaderDirective {
     fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
         alt!(
-            try_map(
-                skip_first(directive_exact_p("maxnreg"), integer_p()),
-                |val_str, span| {
-                    let value = parse_u32_literal(&val_str, span)?;
-                    ok!(EntryFunctionHeaderDirective::MaxNReg { value })
-                }
+            mapc!(
+                skip_first(directive_exact_p("maxnreg"), u32_p()),
+                EntryFunctionHeaderDirective::MaxNReg { value }
             ),
             try_map(
-                skip_first(
-                    directive_exact_p("maxntid"),
-                    sep_by1(integer_p(), comma_p())
-                ),
+                skip_first(directive_exact_p("maxntid"), sep_by1(u32_p(), comma_p())),
                 |dim_strs, span| {
                     let dim = parse_function_dim(&dim_strs, span)?;
                     ok!(EntryFunctionHeaderDirective::MaxNTid { dim })
                 }
             ),
             try_map(
-                skip_first(
-                    directive_exact_p("reqntid"),
-                    sep_by1(integer_p(), comma_p())
-                ),
+                skip_first(directive_exact_p("reqntid"), sep_by1(u32_p(), comma_p())),
                 |dim_strs, span| {
                     let dim = parse_function_dim(&dim_strs, span)?;
                     ok!(EntryFunctionHeaderDirective::ReqNTid { dim })
                 }
             ),
-            try_map(
-                skip_first(directive_exact_p("minnctapersm"), integer_p()),
-                |val_str, span| {
-                    let value = parse_u32_literal(&val_str, span)?;
-                    ok!(EntryFunctionHeaderDirective::MinNCtaPerSm { value })
-                }
+            mapc!(
+                skip_first(directive_exact_p("minnctapersm"), u32_p()),
+                EntryFunctionHeaderDirective::MinNCtaPerSm { value }
             ),
-            try_map(
-                skip_first(directive_exact_p("maxnctapersm"), integer_p()),
-                |val_str, span| {
-                    let value = parse_u32_literal(&val_str, span)?;
-                    ok!(EntryFunctionHeaderDirective::MaxNCtaPerSm { value })
-                }
+            mapc!(
+                skip_first(directive_exact_p("maxnctapersm"), u32_p()),
+                EntryFunctionHeaderDirective::MaxNCtaPerSm { value }
             ),
-            try_map(
+            mapc!(
                 skip_first(
                     directive_exact_p("pragma"),
-                    seq(sep_by1(string_literal_p(), comma_p()), semicolon_p())
+                    skip_second(sep_by1(string_literal_p(), comma_p()), semicolon_p())
                 ),
-                |(args, _), span| { ok!(EntryFunctionHeaderDirective::Pragma { args }) }
+                EntryFunctionHeaderDirective::Pragma { args }
             )
         )
     }
 }
 
-fn parse_function_dim(dims: &[String], span: Span) -> Result<FunctionDim, PtxParseError> {
+fn parse_function_dim(dims: &[u32], span: Span) -> Result<FunctionDim, PtxParseError> {
     match dims.len() {
         1 => {
-            let x = parse_u32_literal(&dims[0], span)?;
+            let x = dims[0];
             Ok(FunctionDim::X { x, span })
         }
         2 => {
-            let x = parse_u32_literal(&dims[0], span)?;
-            let y = parse_u32_literal(&dims[1], span)?;
+            let x = dims[0];
+            let y = dims[1];
             Ok(FunctionDim::XY { x, y, span })
         }
         3 => {
-            let x = parse_u32_literal(&dims[0], span)?;
-            let y = parse_u32_literal(&dims[1], span)?;
-            let z = parse_u32_literal(&dims[2], span)?;
+            let x = dims[0];
+            let y = dims[1];
+            let z = dims[2];
             Ok(FunctionDim::XYZ { x, y, z, span })
         }
         _ => Err(PtxParseError {

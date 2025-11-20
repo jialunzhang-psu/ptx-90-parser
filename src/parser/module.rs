@@ -5,8 +5,8 @@ use crate::{
     parser::{
         ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, Span,
         util::{
-            comma_p, directive_exact_p, identifier_p, integer_p, many, optional, parse_u32_literal,
-            parse_u64_literal, sep_by, seq, skip_first, skip_semicolon, string_literal_p, try_map,
+            comma_p, directive_exact_p, identifier_p, many, optional, parse_u32_literal, sep_by,
+            seq, skip_first, skip_semicolon, string_literal_p, try_map, u32_p, u64_p,
         },
     },
     seq_n,
@@ -228,19 +228,16 @@ impl PtxParser for FileDirective {
             skip_first(
                 directive_exact_p("file"),
                 seq_n!(
-                    integer_p(),
+                    u32_p(),
                     string_literal_p(),
                     optional(skip_first(
                         comma_p(),
-                        seq(integer_p(), skip_first(comma_p(), integer_p())),
+                        seq(u64_p(), skip_first(comma_p(), u64_p())),
                     )),
                 ),
             ),
-            |(index_str, path, maybe_timestamps), span| {
-                let index = parse_u32_literal(&index_str, span)?;
-                let (timestamp, file_size) = if let Some((ts_str, size_str)) = maybe_timestamps {
-                    let ts = parse_u64_literal(&ts_str, span)?;
-                    let size = parse_u64_literal(&size_str, span)?;
+            |(index, path, maybe_timestamps), span| {
+                let (timestamp, file_size) = if let Some((ts, size)) = maybe_timestamps {
                     (Some(ts), Some(size))
                 } else {
                     (None, None)
@@ -259,13 +256,13 @@ impl PtxParser for FileDirective {
 impl PtxParser for AddressSize {
     fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
         try_map(
-            integer_p(),
-            func!(|value| match value.as_str() {
-                "32" => ok!(AddressSize::Size32),
-                "64" => ok!(AddressSize::Size64),
-                _ => err!(ParseErrorKind::InvalidLiteral(format!(
+            u32_p(),
+            func!(|value| match value {
+                32 => ok!(AddressSize::Size32),
+                64 => ok!(AddressSize::Size64),
+                other => err!(ParseErrorKind::InvalidLiteral(format!(
                     "invalid address size: {} (expected 32 or 64)",
-                    value
+                    other
                 ))),
             }),
         )
@@ -299,14 +296,12 @@ fn version_number_p() -> impl Fn(&mut PtxTokenStream) -> Result<((u32, u32), Spa
         }
 
         // Otherwise parse as integer.integer
-        let (major_str, major_span) = integer_p()(stream)?;
+        let (major, _) = u32_p()(stream)?;
         stream.expect(&PtxToken::Dot)?;
-        let (minor_str, minor_span) = integer_p()(stream)?;
+        let (minor, _) = u32_p()(stream)?;
 
         let end_pos = stream.position().0;
         let span = Span::new(start_pos, end_pos);
-        let major = parse_u32_literal(&major_str, major_span)?;
-        let minor = parse_u32_literal(&minor_str, minor_span)?;
         Ok(((major, minor), span))
     }
 }

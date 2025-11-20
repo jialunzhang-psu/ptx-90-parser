@@ -3,10 +3,10 @@ use crate::{
     parser::{
         ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, Span,
         util::{
-            at_p, between, comma_p, directive_exact_p, directive_p, exclamation_p, identifier_p,
-            lbrace_p, lbracket_p, literal_p, lparen_p, map, minus_p, optional, alt,
-            parse_index_suffix, parse_u64_literal, plus_p, rbrace_p, rbracket_p, register_p,
-            rparen_p, sep_by1, seq, seq3, try_map,
+            alt, at_p, between, comma_p, directive_exact_p, directive_p, exclamation_p,
+            identifier_p, lbrace_p, lbracket_p, literal_p, lparen_p, map, minus_p, optional,
+            parse_index_suffix, plus_p, rbrace_p, rbracket_p, register_p, rparen_p, sep_by1, seq,
+            seq3, skip_first, try_map, u64_p,
         },
     },
     seq_n, span,
@@ -136,20 +136,16 @@ impl PtxParser for AttributeDirective {
             map(directive_exact_p("managed"), |_, span| {
                 c!(AttributeDirective::Managed)
             }),
-            try_map(
-                seq(
+            mapc!(
+                skip_first(
                     directive_exact_p("unified"),
                     between(
                         lparen_p(),
                         rparen_p(),
-                        seq_n!(Immediate::parse(), comma_p(), Immediate::parse()),
+                        seq_n!(u64_p(), skip_first(comma_p(), u64_p()))
                     ),
                 ),
-                |(_, (first, _, second)), span| {
-                    let uuid1 = parse_u64_literal(&first.value, first.span)?;
-                    let uuid2 = parse_u64_literal(&second.value, second.span)?;
-                    ok!(AttributeDirective::Unified { uuid1, uuid2 })
-                },
+                AttributeDirective::Unified { uuid1, uuid2 }
             ),
         )
     }
@@ -672,12 +668,12 @@ impl PtxParser for AddressOffset {
 impl PtxParser for AddressOperand {
     fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
         alt!(
-            map(
+            mapc!(
                 seq(
                     VariableSymbol::parse(),
-                    seq3(lbracket_p(), Immediate::parse(), rbracket_p()),
+                    between(lbracket_p(), rbracket_p(), Immediate::parse()),
                 ),
-                |(base, (_, index, _)), span| c!(AddressOperand::Array { base, index }),
+                AddressOperand::Array { base, index }
             ),
             mapc!(
                 between(

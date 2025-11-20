@@ -3,10 +3,9 @@ use crate::{
     parser::{
         ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, Span,
         util::{
-            between, comma_p, directive_exact_p, directive_p, equals_p, integer_p, lbrace_p,
-            lbracket_p, many, map, optional, parse_u32_literal, parse_u64_literal, rbrace_p,
-            rbracket_p, semicolon_p, sep_by, seq, skip_first, string_literal_p,
-            try_map,
+            between, comma_p, directive_exact_p, directive_p, equals_p, lbrace_p, lbracket_p, many,
+            map, optional, rbrace_p, rbracket_p, semicolon_p, sep_by, seq, skip_first,
+            string_literal_p, try_map, u32_p, u64_p,
         },
     },
     seq_n,
@@ -67,11 +66,8 @@ impl PtxParser for VariableDirective {
 impl PtxParser for VariableModifier {
     fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
         let alignment = try_map(
-            skip_first(directive_exact_p("align"), integer_p()),
-            |value, span| {
-                let value = parse_u32_literal(&value, span)?;
-                ok!(VariableModifier::Alignment { value })
-            },
+            skip_first(directive_exact_p("align"), u32_p()),
+            |value, span| ok!(VariableModifier::Alignment { value }),
         );
         let ptr = map(
             directive_exact_p("ptr"),
@@ -174,26 +170,16 @@ fn array_dimensions_parser()
 fn array_dimension_parser()
 -> impl Fn(&mut PtxTokenStream) -> Result<(Option<u64>, Span), PtxParseError> {
     try_map(
-        between(lbracket_p(), rbracket_p(), optional(integer_p())),
-        |maybe_value, span| {
-            if let Some(value) = maybe_value {
-                let parsed = parse_u64_literal(&value, span)?;
-                Ok(Some(parsed))
-            } else {
-                Ok(None)
-            }
-        },
+        between(lbracket_p(), rbracket_p(), optional(u64_p())),
+        |maybe_value, _span| Ok(maybe_value),
     )
 }
 
 fn parse_alignment_modifier() -> impl Fn(&mut PtxTokenStream) -> Result<(u32, Span), PtxParseError>
 {
     try_map(
-        seq(directive_exact_p("align"), integer_p()),
-        |(_, value), span| {
-            let amount = parse_u32_literal(&value, span)?;
-            Ok(amount)
-        },
+        seq(directive_exact_p("align"), u32_p()),
+        |(_, value), _span| Ok(value),
     )
 }
 
