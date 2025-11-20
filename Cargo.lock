@@ -191,6 +191,8 @@ dependencies = [
 [[package]]
 name = "ptx-90-parser-construct"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f74e251e21e987ba0523feeb5fe3890066aa6d0082209f12fc0c4cc989105455"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -200,6 +202,8 @@ dependencies = [
 [[package]]
 name = "ptx-90-parser-span-derive"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dad6b27c5e171c366bb0ddde97d734ba42d6c0ddb19cdc0e54e42b5f5ae2a469"
 dependencies = [
  "proc-macro2",
  "quote",
