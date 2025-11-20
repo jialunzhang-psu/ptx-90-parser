@@ -1,0 +1,21 @@
+[package]
+name = "ptx-90-parser-construct"
+version = "0.1.0"
+edition = "2021"
+description = "Constructor helper macros used by the PTX 9.0 parser."
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/jialunzhang-psu/ptx-90-parser"
+homepage = "https://github.com/jialunzhang-psu/ptx-90-parser"
+documentation = "https://docs.rs/ptx-90-parser-construct"
+keywords = ["ptx", "parser", "proc-macro"]
+categories = ["development-tools::build-utilities"]
+
+[lib]
+name = "ptx_90_parser_construct"
+proc-macro = true
+
+[dependencies]
+syn = { version = "2.0", features = ["full", "extra-traits"] }
+quote = "1.0"
+proc-macro2 = "1.0"

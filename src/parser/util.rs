@@ -6,7 +6,7 @@ use crate::{
 };
 
 // Note: The c!, ok!, err! macros have been replaced with procedural macros
-// defined in crates/cmap-macro. The old m! macro has been superseded by cclosure!.
+// defined in crates/ptx-90-parser-construct. The old m! macro has been superseded by cclosure!.
 
 /// Macro to simplify map with cclosure!.
 ///

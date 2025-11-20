@@ -64,10 +64,10 @@ pub mod r#type;
 pub mod pretty_print;
 
 // Re-export derive macro for the `Spanned` trait so downstream crates can use it.
-pub use span_derive::Spanned;
+pub use ptx_90_parser_span_derive::Spanned;
 
 // Re-export procedural macros for constructor mapping and error handling
-pub use cmap_macro::{c, cclosure, err, func, ok, okmap};
+pub use ptx_90_parser_construct::{c, cclosure, err, func, ok, okmap};
 
 // Re-export convenience macros for parser combinators
 // Note: map! and try_map! are declarative macros defined in parser/util.rs

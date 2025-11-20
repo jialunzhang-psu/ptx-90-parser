@@ -10,6 +10,9 @@ keywords = ["ptx", "cuda", "parser"]
 homepage = "https://github.com/jialunzhang-psu/ptx-90-parser"
 categories = ["parser-implementations"]
 repository = "https://github.com/jialunzhang-psu/ptx-90-parser"
+exclude = [
+    ".cargo/**",
+]
 
 [lib]
 name = "ptx_parser"
@@ -23,5 +26,5 @@ path = "src/main.rs"
 thiserror = "1.0"
 clap = { version = "4.5", features = ["derive"] }
 logos = "0.15.1"
-span-derive = { path = "crates/span-derive", version = "*" }
-cmap-macro = { path = "crates/cmap-macro", version = "*" }
+ptx_90_parser_span_derive = { package = "ptx-90-parser-span-derive", version = "0.1.0" }
+ptx_90_parser_construct = { package = "ptx-90-parser-construct", version = "0.1.0" }
