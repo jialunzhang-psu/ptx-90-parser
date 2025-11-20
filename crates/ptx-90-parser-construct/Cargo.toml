@@ -9,7 +9,6 @@ repository = "https://github.com/jialunzhang-psu/ptx-90-parser"
 homepage = "https://github.com/jialunzhang-psu/ptx-90-parser"
 documentation = "https://docs.rs/ptx-90-parser-construct"
 keywords = ["ptx", "parser", "proc-macro"]
-categories = ["development-tools::build-utilities"]
 
 [lib]
 name = "ptx_90_parser_construct"
