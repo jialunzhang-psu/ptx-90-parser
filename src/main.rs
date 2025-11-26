@@ -3,8 +3,8 @@ use std::path::{Path, PathBuf};
 
 use clap::{Parser, Subcommand};
 
-use ptx_parser::{parse_ptx, run_with_large_stack};
 use ptx_parser::pretty_print::{TreeDisplay, TreeFormatter, print_compact_module};
+use ptx_parser::{parse_ptx, run_with_large_stack};
 
 #[derive(Parser)]
 #[command(name = "ptx-parser", about = "Utilities for parsing PTX assembly")]
@@ -70,7 +70,10 @@ fn print_ast(path: &Path, compact: bool) -> Result<(), Box<dyn std::error::Error
     Ok(())
 }
 
-fn print_ast_with_large_stack(module: ptx_parser::r#type::Module, source: String) -> Result<(), Box<dyn std::error::Error>> {
+fn print_ast_with_large_stack(
+    module: ptx_parser::r#type::Module,
+    source: String,
+) -> Result<(), Box<dyn std::error::Error>> {
     run_with_large_stack(move || {
         let mut formatter = TreeFormatter::new();
         module
@@ -81,7 +84,8 @@ fn print_ast_with_large_stack(module: ptx_parser::r#type::Module, source: String
     Ok(())
 }
 
-
-fn parse_with_large_stack(source: String) -> Result<ptx_parser::r#type::Module, ptx_parser::PtxParseError> {
+fn parse_with_large_stack(
+    source: String,
+) -> Result<ptx_parser::r#type::Module, ptx_parser::PtxParseError> {
     run_with_large_stack(move || parse_ptx(&source))
 }

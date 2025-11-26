@@ -6,7 +6,7 @@ use crate::{
             alt, at_p, between, comma_p, directive_exact_p, directive_p, exclamation_p,
             identifier_p, lbrace_p, lbracket_p, literal_p, lparen_p, map, minus_p, optional,
             parse_index_suffix, plus_p, rbrace_p, rbracket_p, register_p, rparen_p, sep_by1, seq,
-            seq3, skip_first, try_map, u64_p,
+            skip_first, try_map, u64_p,
         },
     },
     seq_n, span,

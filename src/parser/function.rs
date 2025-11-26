@@ -1,13 +1,18 @@
-use ptx_90_parser_construct::{func, okmap};
+use ptx_90_parser_construct::func;
 
 use crate::{
     alt, c,
     lexer::PtxToken,
     mapc, ok,
     parser::{
+        ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, Span,
         util::{
-            alt, between, colon_p, comma_p, directive_exact_p, directive_p, identifier_p, integer_p, langle_p, lbrace_p, lparen_p, many, map, minus_p, optional, parse_signed_integer, parse_u32_literal, parse_unsigned_integer, plus_p, pure, rangle_p, rbrace_p, register_p, rparen_p, semicolon_p, sep_by, sep_by1, seq, seq5, skip_first, skip_second, skip_semicolon, string_literal_p, try_map, u32_p
-        }, ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, Span
+            alt, between, colon_p, comma_p, directive_exact_p, directive_p, identifier_p,
+            integer_p, langle_p, lbrace_p, lparen_p, many, map, minus_p, optional,
+            parse_signed_integer, parse_u32_literal, parse_unsigned_integer, plus_p, pure,
+            rangle_p, rbrace_p, register_p, rparen_p, semicolon_p, sep_by, sep_by1, seq, seq5,
+            skip_first, skip_second, skip_semicolon, string_literal_p, try_map, u32_p,
+        },
     },
     seq_n,
     r#type::{

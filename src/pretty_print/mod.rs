@@ -1,3 +1,4 @@
+mod primitives;
 /// Pretty-print module for displaying PTX AST nodes in a tree structure.
 ///
 /// This module provides the `TreeDisplay` trait and supporting infrastructure
@@ -14,18 +15,16 @@
 ///
 /// All TreeDisplay implementations are located in this module to keep
 /// the type definitions clean and separate formatting concerns.
-
 mod tree_display;
 mod tree_formatter;
-mod primitives;
 
 // TreeDisplay implementations for PTX types
-mod compact;
 mod common;
-mod module;
+mod compact;
 mod function;
-mod variable;
 mod instruction;
+mod module;
+mod variable;
 
 pub use compact::print_compact_module;
 pub use tree_display::TreeDisplay;

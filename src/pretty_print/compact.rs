@@ -1,9 +1,5 @@
 use crate::r#type::{
-    AddressSize,
-    Module,
-    ModuleDirective,
-    ModuleInfoDirectiveKind,
-    ModuleVariableDirective,
+    AddressSize, Module, ModuleDirective, ModuleInfoDirectiveKind, ModuleVariableDirective,
     TargetString,
 };
 
@@ -11,16 +7,24 @@ use crate::r#type::{
 pub fn print_compact_module(module: &Module) {
     for directive in &module.directives {
         match directive {
-            ModuleDirective::ModuleInfo { directive: info, .. } => match info {
-                ModuleInfoDirectiveKind::Version { directive: version, .. } => {
+            ModuleDirective::ModuleInfo {
+                directive: info, ..
+            } => match info {
+                ModuleInfoDirectiveKind::Version {
+                    directive: version, ..
+                } => {
                     println!(".version {}.{}", version.major, version.minor);
                 }
-                ModuleInfoDirectiveKind::Target { directive: target, .. } => {
+                ModuleInfoDirectiveKind::Target {
+                    directive: target, ..
+                } => {
                     let values: Vec<&'static str> =
                         target.entries.iter().map(target_string_name).collect();
                     println!(".target {}", values.join(", "));
                 }
-                ModuleInfoDirectiveKind::AddressSize { directive: addr, .. } => {
+                ModuleInfoDirectiveKind::AddressSize {
+                    directive: addr, ..
+                } => {
                     let value = match addr.size {
                         AddressSize::Size32 { .. } => 32,
                         AddressSize::Size64 { .. } => 64,
@@ -48,7 +52,9 @@ pub fn print_compact_module(module: &Module) {
                 }
                 println!(".func {}", function.name.val);
             }
-            ModuleDirective::AliasFunction { directive: alias, .. } => {
+            ModuleDirective::AliasFunction {
+                directive: alias, ..
+            } => {
                 println!(".alias {} {}", alias.alias.val, alias.target.val);
             }
             ModuleDirective::ModuleVariable {
@@ -68,16 +74,24 @@ pub fn print_compact_module(module: &Module) {
 
 fn print_module_variable(var: &ModuleVariableDirective) {
     match var {
-        ModuleVariableDirective::Global { directive: decl, .. } => {
+        ModuleVariableDirective::Global {
+            directive: decl, ..
+        } => {
             println!(".global {}", describe_variable_decl(decl))
         }
-        ModuleVariableDirective::Shared { directive: decl, .. } => {
+        ModuleVariableDirective::Shared {
+            directive: decl, ..
+        } => {
             println!(".shared {}", describe_variable_decl(decl))
         }
-        ModuleVariableDirective::Const { directive: decl, .. } => {
+        ModuleVariableDirective::Const {
+            directive: decl, ..
+        } => {
             println!(".const {}", describe_variable_decl(decl))
         }
-        ModuleVariableDirective::Tex { directive: decl, .. } => {
+        ModuleVariableDirective::Tex {
+            directive: decl, ..
+        } => {
             println!(".tex {}", describe_variable_decl(decl))
         }
     }

@@ -1,4 +1,4 @@
-use super::tree_formatter::{truncate_with_ellipsis};
+use super::tree_formatter::truncate_with_ellipsis;
 use crate::Span;
 
 #[test]

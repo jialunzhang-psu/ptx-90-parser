@@ -1,8 +1,7 @@
-/// TreeDisplay implementations for primitive types that commonly appear in the AST.
-
-use std::fmt;
-use super::{TreeDisplay, TreeFormatter};
 use super::tree_formatter::truncate_with_ellipsis;
+use super::{TreeDisplay, TreeFormatter};
+/// TreeDisplay implementations for primitive types that commonly appear in the AST.
+use std::fmt;
 
 impl TreeDisplay for String {
     fn tree_display(&self, f: &mut TreeFormatter, _source: &str) -> fmt::Result {

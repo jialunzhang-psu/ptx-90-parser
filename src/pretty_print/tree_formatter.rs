@@ -1,11 +1,10 @@
+use super::TreeDisplay;
+use crate::Span;
 /// Helper struct for formatting tree structures with box-drawing characters.
 ///
 /// Manages indentation, prefixes, and provides utility methods for common
 /// formatting patterns like displaying fields, vectors, and options.
-
 use std::fmt::{self, Write};
-use crate::Span;
-use super::TreeDisplay;
 
 pub struct TreeFormatter {
     buffer: String,

@@ -1,4 +1,4 @@
-use crate::{lexer::PtxToken, span, LexError};
+use crate::{LexError, lexer::PtxToken, span};
 use thiserror::Error;
 
 pub(crate) mod common;
@@ -763,14 +763,17 @@ where
 // println!("Parsed {} directives", module.directives.len());
 // ```
 pub fn parse_ptx(source: &str) -> Result<crate::r#type::module::Module, PtxParseError> {
-    use crate::{tokenize, PtxTokenStream, r#type::Module};
+    use crate::{PtxTokenStream, tokenize, r#type::Module};
 
     let tokens = tokenize(source)?;
     let mut stream = PtxTokenStream::new(&tokens);
     let (module, _) = Module::parse()(&mut stream)?;
     if !stream.is_at_end() {
         let pos = stream.position();
-        let remaining = tokens.get(pos.0).map(|(tok, _)| format!("{:?}", tok)).unwrap_or_else(|| "EOF".into());
+        let remaining = tokens
+            .get(pos.0)
+            .map(|(tok, _)| format!("{:?}", tok))
+            .unwrap_or_else(|| "EOF".into());
         return Err(PtxParseError {
             kind: ParseErrorKind::UnexpectedToken {
                 expected: vec!["end of file".into()],

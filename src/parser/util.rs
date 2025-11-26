@@ -268,12 +268,16 @@ pub fn integer_p() -> impl Fn(&mut PtxTokenStream) -> Result<(String, Span), Ptx
 
 /// Parser that expects an integer literal token and returns it as `u32`.
 pub fn u32_p() -> impl Fn(&mut PtxTokenStream) -> Result<(u32, Span), PtxParseError> {
-    try_map(integer_p(), |literal, span| parse_u32_literal(&literal, span))
+    try_map(integer_p(), |literal, span| {
+        parse_u32_literal(&literal, span)
+    })
 }
 
 /// Parser that expects an integer literal token and returns it as `u64`.
 pub fn u64_p() -> impl Fn(&mut PtxTokenStream) -> Result<(u64, Span), PtxParseError> {
-    try_map(integer_p(), |literal, span| parse_u64_literal(&literal, span))
+    try_map(integer_p(), |literal, span| {
+        parse_u64_literal(&literal, span)
+    })
 }
 
 /// Parser that expects an identifier token and returns (name, span).

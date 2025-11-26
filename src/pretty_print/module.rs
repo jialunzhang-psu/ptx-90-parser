@@ -1,7 +1,7 @@
 // TreeDisplay implementations for module types (src/type/module.rs)
 
-use crate::r#type::module::*;
 use super::{TreeDisplay, TreeFormatter};
+use crate::r#type::module::*;
 
 impl TreeDisplay for Module {
     fn tree_display(&self, f: &mut TreeFormatter, source: &str) -> std::fmt::Result {
@@ -13,31 +13,61 @@ impl TreeDisplay for Module {
 impl TreeDisplay for ModuleDirective {
     fn tree_display(&self, f: &mut TreeFormatter, source: &str) -> std::fmt::Result {
         match self {
-            ModuleDirective::ModuleVariable { linkage, directive, span } => {
-                f.root(&format!("ModuleDirective::ModuleVariable [{}]", f.format_raw(*span, source)))?;
+            ModuleDirective::ModuleVariable {
+                linkage,
+                directive,
+                span,
+            } => {
+                f.root(&format!(
+                    "ModuleDirective::ModuleVariable [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_option(false, "linkage", linkage, source)?;
                 f.field_with_child(true, "directive", directive, source)
             }
-            ModuleDirective::EntryFunction { linkage, directive, span } => {
-                f.root(&format!("ModuleDirective::EntryFunction [{}]", f.format_raw(*span, source)))?;
+            ModuleDirective::EntryFunction {
+                linkage,
+                directive,
+                span,
+            } => {
+                f.root(&format!(
+                    "ModuleDirective::EntryFunction [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_option(false, "linkage", linkage, source)?;
                 f.field_with_child(true, "directive", directive, source)
             }
-            ModuleDirective::FuncFunction { linkage, directive, span } => {
-                f.root(&format!("ModuleDirective::FuncFunction [{}]", f.format_raw(*span, source)))?;
+            ModuleDirective::FuncFunction {
+                linkage,
+                directive,
+                span,
+            } => {
+                f.root(&format!(
+                    "ModuleDirective::FuncFunction [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_option(false, "linkage", linkage, source)?;
                 f.field_with_child(true, "directive", directive, source)
             }
             ModuleDirective::AliasFunction { directive, span } => {
-                f.root(&format!("ModuleDirective::AliasFunction [{}]", f.format_raw(*span, source)))?;
+                f.root(&format!(
+                    "ModuleDirective::AliasFunction [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_with_child(true, "directive", directive, source)
             }
             ModuleDirective::ModuleInfo { directive, span } => {
-                f.root(&format!("ModuleDirective::ModuleInfo [{}]", f.format_raw(*span, source)))?;
+                f.root(&format!(
+                    "ModuleDirective::ModuleInfo [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_with_child(true, "directive", directive, source)
             }
             ModuleDirective::Debug { directive, span } => {
-                f.root(&format!("ModuleDirective::Debug [{}]", f.format_raw(*span, source)))?;
+                f.root(&format!(
+                    "ModuleDirective::Debug [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_with_child(true, "directive", directive, source)
             }
         }
@@ -48,15 +78,24 @@ impl TreeDisplay for ModuleInfoDirectiveKind {
     fn tree_display(&self, f: &mut TreeFormatter, source: &str) -> std::fmt::Result {
         match self {
             ModuleInfoDirectiveKind::Version { directive, span } => {
-                f.root(&format!("ModuleInfoDirectiveKind::Version [{}]", f.format_raw(*span, source)))?;
+                f.root(&format!(
+                    "ModuleInfoDirectiveKind::Version [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_with_child(true, "directive", directive, source)
             }
             ModuleInfoDirectiveKind::Target { directive, span } => {
-                f.root(&format!("ModuleInfoDirectiveKind::Target [{}]", f.format_raw(*span, source)))?;
+                f.root(&format!(
+                    "ModuleInfoDirectiveKind::Target [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_with_child(true, "directive", directive, source)
             }
             ModuleInfoDirectiveKind::AddressSize { directive, span } => {
-                f.root(&format!("ModuleInfoDirectiveKind::AddressSize [{}]", f.format_raw(*span, source)))?;
+                f.root(&format!(
+                    "ModuleInfoDirectiveKind::AddressSize [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_with_child(true, "directive", directive, source)
             }
         }
@@ -65,7 +104,10 @@ impl TreeDisplay for ModuleInfoDirectiveKind {
 
 impl TreeDisplay for VersionDirective {
     fn tree_display(&self, f: &mut TreeFormatter, source: &str) -> std::fmt::Result {
-        f.root(&format!("VersionDirective [{}]", f.format_raw(self.span, source)))?;
+        f.root(&format!(
+            "VersionDirective [{}]",
+            f.format_raw(self.span, source)
+        ))?;
         f.field(false, "major", &self.major.to_string())?;
         f.field(true, "minor", &self.minor.to_string())
     }
@@ -73,14 +115,20 @@ impl TreeDisplay for VersionDirective {
 
 impl TreeDisplay for TargetDirective {
     fn tree_display(&self, f: &mut TreeFormatter, source: &str) -> std::fmt::Result {
-        f.root(&format!("TargetDirective [{}]", f.format_raw(self.span, source)))?;
+        f.root(&format!(
+            "TargetDirective [{}]",
+            f.format_raw(self.span, source)
+        ))?;
         f.field_vec(true, "entries", &self.entries, source)
     }
 }
 
 impl TreeDisplay for AddressSizeDirective {
     fn tree_display(&self, f: &mut TreeFormatter, source: &str) -> std::fmt::Result {
-        f.root(&format!("AddressSizeDirective [{}]", f.format_raw(self.span, source)))?;
+        f.root(&format!(
+            "AddressSizeDirective [{}]",
+            f.format_raw(self.span, source)
+        ))?;
         f.field_with_child(true, "size", &self.size, source)
     }
 }
@@ -89,15 +137,24 @@ impl TreeDisplay for ModuleDebugDirective {
     fn tree_display(&self, f: &mut TreeFormatter, source: &str) -> std::fmt::Result {
         match self {
             ModuleDebugDirective::File { directive, span } => {
-                f.root(&format!("ModuleDebugDirective::File [{}]", f.format_raw(*span, source)))?;
+                f.root(&format!(
+                    "ModuleDebugDirective::File [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_with_child(true, "directive", directive, source)
             }
             ModuleDebugDirective::Section { directive, span } => {
-                f.root(&format!("ModuleDebugDirective::Section [{}]", f.format_raw(*span, source)))?;
+                f.root(&format!(
+                    "ModuleDebugDirective::Section [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_with_child(true, "directive", directive, source)
             }
             ModuleDebugDirective::Dwarf { directive, span } => {
-                f.root(&format!("ModuleDebugDirective::Dwarf [{}]", f.format_raw(*span, source)))?;
+                f.root(&format!(
+                    "ModuleDebugDirective::Dwarf [{}]",
+                    f.format_raw(*span, source)
+                ))?;
                 f.field_with_child(true, "directive", directive, source)
             }
         }
@@ -106,7 +163,10 @@ impl TreeDisplay for ModuleDebugDirective {
 
 impl TreeDisplay for FileDirective {
     fn tree_display(&self, f: &mut TreeFormatter, source: &str) -> std::fmt::Result {
-        f.root(&format!("FileDirective [{}]", f.format_raw(self.span, source)))?;
+        f.root(&format!(
+            "FileDirective [{}]",
+            f.format_raw(self.span, source)
+        ))?;
         f.field(false, "index", &self.index.to_string())?;
         f.field(false, "path", &format!("\"{}\"", self.path))?;
         match self.timestamp {
@@ -171,7 +231,11 @@ impl TreeDisplay for TargetString {
             TargetString::Debug { span } => ("Debug", span),
             TargetString::MapF64ToF32 { span } => ("MapF64ToF32", span),
         };
-        f.root(&format!("TargetString::{} [{}]", variant, f.format_raw(*span, source)))
+        f.root(&format!(
+            "TargetString::{} [{}]",
+            variant,
+            f.format_raw(*span, source)
+        ))
     }
 }
 
@@ -181,6 +245,10 @@ impl TreeDisplay for AddressSize {
             AddressSize::Size32 { span } => ("Size32", span),
             AddressSize::Size64 { span } => ("Size64", span),
         };
-        f.root(&format!("AddressSize::{} [{}]", variant, f.format_raw(*span, source)))
+        f.root(&format!(
+            "AddressSize::{} [{}]",
+            variant,
+            f.format_raw(*span, source)
+        ))
     }
 }

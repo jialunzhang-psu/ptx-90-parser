@@ -1,6 +1,9 @@
 mod util;
 
-use ptx_parser::{parse_ptx, pretty_print::{TreeDisplay, TreeFormatter}};
+use ptx_parser::{
+    parse_ptx,
+    pretty_print::{TreeDisplay, TreeFormatter},
+};
 
 fn tree_display_with_large_stack(source: &str) -> String {
     let source_owned = source.to_string();
@@ -8,7 +11,9 @@ fn tree_display_with_large_stack(source: &str) -> String {
     ptx_parser::run_with_large_stack(move || {
         let module = parse_ptx(&source_owned).expect("Failed to parse PTX");
         let mut formatter = TreeFormatter::new();
-        module.tree_display(&mut formatter, &source_owned).expect("Failed to display tree");
+        module
+            .tree_display(&mut formatter, &source_owned)
+            .expect("Failed to display tree");
         formatter.finish()
     })
 }
