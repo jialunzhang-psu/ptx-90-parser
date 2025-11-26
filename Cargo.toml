@@ -1,6 +1,6 @@
 [package]
 name = "ptx-90-parser"
-version = "0.4.1"
+version = "0.4.2"
 edition = "2024"
 description = "Parse NVIDIA PTX 9.0 assembly into a structured AST and explore modules via a CLI."
 license = "MIT"
@@ -28,3 +28,4 @@ clap = { version = "4.5", features = ["derive"] }
 logos = "0.15.1"
 ptx_90_parser_span_derive = { package = "ptx-90-parser-span-derive", version = "0.1.0" }
 ptx_90_parser_construct = { package = "ptx-90-parser-construct", version = "0.1.0" }
+stacker = "0.1"

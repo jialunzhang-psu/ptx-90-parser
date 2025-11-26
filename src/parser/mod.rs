@@ -1,5 +1,7 @@
 use crate::{LexError, lexer::PtxToken, span};
 use thiserror::Error;
+#[cfg(debug_assertions)]
+use stacker;
 
 pub(crate) mod common;
 pub(crate) mod function;
@@ -763,6 +765,19 @@ where
 // println!("Parsed {} directives", module.directives.len());
 // ```
 pub fn parse_ptx(source: &str) -> Result<crate::r#type::module::Module, PtxParseError> {
+    #[cfg(debug_assertions)]
+    {
+        // Debug builds can have very deep combinator stacks; force a large stack for parsing.
+        return stacker::grow(256 * 1024 * 1024, || parse_ptx_inner(source));
+    }
+
+    #[cfg(not(debug_assertions))]
+    {
+        parse_ptx_inner(source)
+    }
+}
+
+fn parse_ptx_inner(source: &str) -> Result<crate::r#type::module::Module, PtxParseError> {
     use crate::{PtxTokenStream, tokenize, r#type::Module};
 
     let tokens = tokenize(source)?;

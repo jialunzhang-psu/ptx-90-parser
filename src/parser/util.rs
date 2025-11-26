@@ -1210,15 +1210,30 @@ macro_rules! alt {
     () => {
         compile_error!("alt! requires at least one parser")
     };
+    // Single parser - just return it.
     ($parser:expr $(,)?) => {
         $parser
     };
-    ($parser_a:expr, $parser_b:expr $(,)?) => {
-        $crate::parser::util::alt($parser_a, $parser_b)
-    };
-    ($parser_a:expr, $parser_b:expr, $($rest:expr),+ $(,)?) => {
-        $crate::parser::util::alt($parser_a, $crate::alt!($parser_b, $($rest),+))
-    };
+    // Two or more parsers - expand to an iterative dispatcher to avoid deep recursion.
+    ($parser_head:expr, $($parser_tail:expr),+ $(,)?) => {{
+        move |stream: &mut $crate::parser::PtxTokenStream| {
+            $crate::alt!(@attempt stream $parser_head, $($parser_tail),+)
+        }
+    }};
+    (@attempt $stream:ident $last:expr) => {{
+        let parser_ref = &$last;
+        match $stream.try_with_span(|s| parser_ref(s)) {
+            Ok((result, _)) => Ok(result),
+            Err(e) => Err(e),
+        }
+    }};
+    (@attempt $stream:ident $parser_curr:expr, $($parser_rest:expr),+) => {{
+        let parser_ref = &$parser_curr;
+        match $stream.try_with_span(|s| parser_ref(s)) {
+            Ok((result, _)) => Ok(result),
+            Err(_) => $crate::alt!(@attempt $stream $($parser_rest),+),
+        }
+    }};
 }
 
 /// Alternative combinator - try first parser, if it fails try second.
