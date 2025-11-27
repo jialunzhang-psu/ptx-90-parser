@@ -82,6 +82,11 @@ impl UnparserGenerator {
 
         output.push_str(&format!("impl PtxUnparser for {} {{\n", struct_name));
         output.push_str("    fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {\n");
+        output.push_str("        self.unparse_tokens_mode(tokens, false);\n");
+        output.push_str("    }\n");
+        output.push_str(
+            "    fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {\n",
+        );
         output.push_str(&format!("        push_opcode(tokens, \"{}\");\n", opcode));
 
         for (modifier, rust_name) in &instr.head.modifiers {
@@ -94,6 +99,7 @@ impl UnparserGenerator {
         }
 
         output.push_str("        tokens.push(PtxToken::Semicolon);\n");
+        output.push_str("        if spaced { tokens.push(PtxToken::Newline); }\n");
         output.push_str("    }\n");
         output.push_str("}\n");
 
@@ -246,6 +252,7 @@ impl UnparserGenerator {
             &operand.operand,
             &format!("self.{}", field_name),
             2,
+            true,
         ));
 
         if let Some((modifier, rust_name)) = &operand.modifier {
@@ -260,14 +267,21 @@ impl UnparserGenerator {
         element: &AnalyzedOperandElement,
         value_expr: &str,
         indent: usize,
+        leading_space: bool,
     ) -> String {
         let mut code = String::new();
         let indent_str = self.indent(indent);
 
         match element {
             AnalyzedOperandElement::Item(_) | AnalyzedOperandElement::Address(_) => {
+                if leading_space {
+                    code.push_str(&format!(
+                        "{}if spaced {{ tokens.push(PtxToken::Space); }}\n",
+                        indent_str
+                    ));
+                }
                 code.push_str(&format!(
-                    "{}{}.unparse_tokens(tokens);\n",
+                    "{}{}.unparse_tokens_mode(tokens, spaced);\n",
                     indent_str, value_expr
                 ));
             }
@@ -277,36 +291,60 @@ impl UnparserGenerator {
                     "{}if let Some({}) = {}.as_ref() {{\n",
                     indent_str, binding, value_expr
                 ));
+                if leading_space {
+                    code.push_str(&format!(
+                        "{}    if spaced {{ tokens.push(PtxToken::Space); }}\n",
+                        indent_str
+                    ));
+                }
                 code.push_str(&format!(
-                    "{}    {}.unparse_tokens(tokens);\n",
+                    "{}    {}.unparse_tokens_mode(tokens, spaced);\n",
                     indent_str, binding
                 ));
                 code.push_str(&format!("{}}}\n", indent_str));
             }
             AnalyzedOperandElement::ParenthesizedOperand(_) => {
+                if leading_space {
+                    code.push_str(&format!(
+                        "{}if spaced {{ tokens.push(PtxToken::Space); }}\n",
+                        indent_str
+                    ));
+                }
                 code.push_str(&format!("{}tokens.push(PtxToken::LParen);\n", indent_str));
                 code.push_str(&format!(
-                    "{}{}.unparse_tokens(tokens);\n",
+                    "{}{}.unparse_tokens_mode(tokens, spaced);\n",
                     indent_str, value_expr
                 ));
                 code.push_str(&format!("{}tokens.push(PtxToken::RParen);\n", indent_str));
             }
             AnalyzedOperandElement::PipeChoice(((_, first_name), (_, second_name))) => {
+                if leading_space {
+                    code.push_str(&format!(
+                        "{}if spaced {{ tokens.push(PtxToken::Space); }}\n",
+                        indent_str
+                    ));
+                }
                 // d|p outputs: d.unparse_tokens(), Pipe, p.unparse_tokens()
                 code.push_str(&format!(
-                    "{}self.{}.unparse_tokens(tokens);\n",
+                    "{}self.{}.unparse_tokens_mode(tokens, spaced);\n",
                     indent_str, first_name
                 ));
                 code.push_str(&format!("{}tokens.push(PtxToken::Pipe);\n", indent_str));
                 code.push_str(&format!(
-                    "{}self.{}.unparse_tokens(tokens);\n",
+                    "{}self.{}.unparse_tokens_mode(tokens, spaced);\n",
                     indent_str, second_name
                 ));
             }
             AnalyzedOperandElement::PipeOptionalChoice(((_, _first_name), (_, second_name))) => {
+                if leading_space {
+                    code.push_str(&format!(
+                        "{}if spaced {{ tokens.push(PtxToken::Space); }}\n",
+                        indent_str
+                    ));
+                }
                 // Base operand
                 code.push_str(&format!(
-                    "{}{}.unparse_tokens(tokens);\n",
+                    "{}{}.unparse_tokens_mode(tokens, spaced);\n",
                     indent_str, value_expr
                 ));
 
@@ -318,18 +356,30 @@ impl UnparserGenerator {
                 ));
                 code.push_str(&format!("{}    tokens.push(PtxToken::Pipe);\n", indent_str));
                 code.push_str(&format!(
-                    "{}    {}.unparse_tokens(tokens);\n",
+                    "{}    {}.unparse_tokens_mode(tokens, spaced);\n",
                     indent_str, binding
                 ));
                 code.push_str(&format!("{}}}\n", indent_str));
             }
             AnalyzedOperandElement::SquareGroup(_) | AnalyzedOperandElement::CurlyGroup(_) => {
+                if leading_space {
+                    code.push_str(&format!(
+                        "{}if spaced {{ tokens.push(PtxToken::Space); }}\n",
+                        indent_str
+                    ));
+                }
                 code.push_str(&format!(
-                    "{}{}.unparse_tokens(tokens);\n",
+                    "{}{}.unparse_tokens_mode(tokens, spaced);\n",
                     indent_str, value_expr
                 ));
             }
             AnalyzedOperandElement::ParamList(_) => {
+                if leading_space {
+                    code.push_str(&format!(
+                        "{}if spaced {{ tokens.push(PtxToken::Space); }}\n",
+                        indent_str
+                    ));
+                }
                 let binding = self.unique_binding("params");
                 code.push_str(&format!("{}tokens.push(PtxToken::LParen);\n", indent_str));
                 code.push_str(&format!(
@@ -341,7 +391,7 @@ impl UnparserGenerator {
                     indent_str
                 ));
                 code.push_str(&format!(
-                    "{}    operand.unparse_tokens(tokens);\n",
+                    "{}    operand.unparse_tokens_mode(tokens, spaced);\n",
                     indent_str
                 ));
                 code.push_str(&format!("{}}}\n", indent_str));
@@ -349,12 +399,24 @@ impl UnparserGenerator {
                 let _ = binding;
             }
             AnalyzedOperandElement::ImmediateNumber((num, _)) => {
+                if leading_space {
+                    code.push_str(&format!(
+                        "{}if spaced {{ tokens.push(PtxToken::Space); }}\n",
+                        indent_str
+                    ));
+                }
                 code.push_str(&format!(
                     "{}push_token_from_str(tokens, \"{}\");\n",
                     indent_str, num
                 ));
             }
             AnalyzedOperandElement::Choice { base, options } => {
+                if leading_space {
+                    code.push_str(&format!(
+                        "{}if spaced {{ tokens.push(PtxToken::Space); }}\n",
+                        indent_str
+                    ));
+                }
                 let enum_name = &base.1;
                 code.push_str(&format!("{}match &{} {{\n", indent_str, value_expr));
                 for (option_ident, variant_name) in options {
@@ -644,12 +706,15 @@ pub fn generate_unparser_mod_rs_content(modules: &[(String, Vec<(String, String)
 
     output.push_str("impl PtxUnparser for Inst {\n");
     output.push_str("    fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {\n");
+    output.push_str("        self.unparse_tokens_mode(tokens, false);\n");
+    output.push_str("    }\n");
+    output.push_str("    fn unparse_tokens_mode(&self, tokens: &mut Vec<PtxToken>, spaced: bool) {\n");
     output.push_str("        match self {\n");
 
     for (_module_name, structs) in modules {
         for (_section_name, struct_name) in structs {
             output.push_str(&format!(
-                "            Inst::{}(value) => value.unparse_tokens(tokens),\n",
+                "            Inst::{}(value) => value.unparse_tokens_mode(tokens, spaced),\n",
                 struct_name
             ));
         }

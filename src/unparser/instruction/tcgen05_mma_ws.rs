@@ -27,81 +27,98 @@ pub mod section_0 {
 
     impl PtxUnparser for Tcgen05MmaWsCtaGroup1KindCollectorUsage {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-            push_directive(tokens, "mma");
-            push_directive(tokens, "ws");
-            push_directive(tokens, "cta_group::1");
-            match &self.kind {
-                Kind::KindF8f6f4 => {
-                    push_directive(tokens, "kind::f8f6f4");
-                }
-                Kind::KindTf32 => {
-                    push_directive(tokens, "kind::tf32");
-                }
-                Kind::KindF16 => {
-                    push_directive(tokens, "kind::f16");
-                }
-            }
-            if self.collector_usage {
-                push_directive(tokens, "collector_usage");
-            }
-            self.d_tmem.unparse_tokens(tokens);
+                    push_directive(tokens, "mma");
+                    push_directive(tokens, "ws");
+                    push_directive(tokens, "cta_group::1");
+                    match &self.kind {
+                            Kind::KindF8f6f4 => {
+                                    push_directive(tokens, "kind::f8f6f4");
+                            }
+                            Kind::KindTf32 => {
+                                    push_directive(tokens, "kind::tf32");
+                            }
+                            Kind::KindF16 => {
+                                    push_directive(tokens, "kind::f16");
+                            }
+                    }
+                    if self.collector_usage {
+                            push_directive(tokens, "collector_usage");
+                    }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.a_desc.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.b_desc.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.idesc.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.idesc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.enable_input_d.unparse_tokens(tokens);
-            if self.zero_column_mask_desc.is_some() {
-                tokens.push(PtxToken::Comma);
-            }
-            if let Some(opt_0) = self.zero_column_mask_desc.as_ref() {
-                opt_0.unparse_tokens(tokens);
-            }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if self.zero_column_mask_desc.is_some() { tokens.push(PtxToken::Comma); }
+                    if let Some(opt_0) = self.zero_column_mask_desc.as_ref() {
+                        if spaced { tokens.push(PtxToken::Space); }
+                        opt_0.unparse_tokens_mode(tokens, spaced);
+                    }
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for Tcgen05MmaWsCtaGroup1KindCollectorUsage1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-            push_directive(tokens, "mma");
-            push_directive(tokens, "ws");
-            push_directive(tokens, "cta_group::1");
-            match &self.kind {
-                Kind::KindF8f6f4 => {
-                    push_directive(tokens, "kind::f8f6f4");
-                }
-                Kind::KindTf32 => {
-                    push_directive(tokens, "kind::tf32");
-                }
-                Kind::KindF16 => {
-                    push_directive(tokens, "kind::f16");
-                }
-            }
-            if self.collector_usage {
-                push_directive(tokens, "collector_usage");
-            }
-            self.d_tmem.unparse_tokens(tokens);
+                    push_directive(tokens, "mma");
+                    push_directive(tokens, "ws");
+                    push_directive(tokens, "cta_group::1");
+                    match &self.kind {
+                            Kind::KindF8f6f4 => {
+                                    push_directive(tokens, "kind::f8f6f4");
+                            }
+                            Kind::KindTf32 => {
+                                    push_directive(tokens, "kind::tf32");
+                            }
+                            Kind::KindF16 => {
+                                    push_directive(tokens, "kind::f16");
+                            }
+                    }
+                    if self.collector_usage {
+                            push_directive(tokens, "collector_usage");
+                    }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.a_tmem.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.b_desc.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.idesc.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.idesc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.enable_input_d.unparse_tokens(tokens);
-            if self.zero_column_mask_desc.is_some() {
-                tokens.push(PtxToken::Comma);
-            }
-            if let Some(opt_1) = self.zero_column_mask_desc.as_ref() {
-                opt_1.unparse_tokens(tokens);
-            }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if self.zero_column_mask_desc.is_some() { tokens.push(PtxToken::Comma); }
+                    if let Some(opt_1) = self.zero_column_mask_desc.as_ref() {
+                        if spaced { tokens.push(PtxToken::Space); }
+                        opt_1.unparse_tokens_mode(tokens, spaced);
+                    }
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
 
 pub mod section_1 {
@@ -110,79 +127,93 @@ pub mod section_1 {
 
     impl PtxUnparser for Tcgen05MmaWsCtaGroup1KindI8CollectorUsage {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-            push_directive(tokens, "mma");
-            push_directive(tokens, "ws");
-            push_directive(tokens, "cta_group::1");
-            push_directive(tokens, "kind::i8");
-            if let Some(collector_usage_2) = self.collector_usage.as_ref() {
-                match collector_usage_2 {
-                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
-                        let mut combined = String::new();
-                        combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
-                        combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
-                        tokens.push(PtxToken::Dot);
-                        tokens.push(PtxToken::Identifier(
-                            format!("{}{}", "collector", combined).into(),
-                        ));
+                    push_directive(tokens, "mma");
+                    push_directive(tokens, "ws");
+                    push_directive(tokens, "cta_group::1");
+                    push_directive(tokens, "kind::i8");
+                    if let Some(collector_usage_2) = self.collector_usage.as_ref() {
+                            match collector_usage_2 {
+                                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                            let mut combined = String::new();
+                                            combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                            combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                            tokens.push(PtxToken::Dot);
+                                            tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
+                                    }
+                            }
                     }
-                }
-            }
-            self.d_tmem.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.a_desc.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.b_desc.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.idesc.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.idesc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.enable_input_d.unparse_tokens(tokens);
-            if self.zero_column_mask_desc.is_some() {
-                tokens.push(PtxToken::Comma);
-            }
-            if let Some(opt_3) = self.zero_column_mask_desc.as_ref() {
-                opt_3.unparse_tokens(tokens);
-            }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if self.zero_column_mask_desc.is_some() { tokens.push(PtxToken::Comma); }
+                    if let Some(opt_3) = self.zero_column_mask_desc.as_ref() {
+                        if spaced { tokens.push(PtxToken::Space); }
+                        opt_3.unparse_tokens_mode(tokens, spaced);
+                    }
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for Tcgen05MmaWsCtaGroup1KindI8CollectorUsage1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-            push_directive(tokens, "mma");
-            push_directive(tokens, "ws");
-            push_directive(tokens, "cta_group::1");
-            push_directive(tokens, "kind::i8");
-            if let Some(collector_usage_4) = self.collector_usage.as_ref() {
-                match collector_usage_4 {
-                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
-                        let mut combined = String::new();
-                        combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
-                        combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
-                        tokens.push(PtxToken::Dot);
-                        tokens.push(PtxToken::Identifier(
-                            format!("{}{}", "collector", combined).into(),
-                        ));
+                    push_directive(tokens, "mma");
+                    push_directive(tokens, "ws");
+                    push_directive(tokens, "cta_group::1");
+                    push_directive(tokens, "kind::i8");
+                    if let Some(collector_usage_4) = self.collector_usage.as_ref() {
+                            match collector_usage_4 {
+                                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                                            let mut combined = String::new();
+                                            combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                                            combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                                            tokens.push(PtxToken::Dot);
+                                            tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
+                                    }
+                            }
                     }
-                }
-            }
-            self.d_tmem.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.a_tmem.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.b_desc.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.idesc.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.idesc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.enable_input_d.unparse_tokens(tokens);
-            if self.zero_column_mask_desc.is_some() {
-                tokens.push(PtxToken::Comma);
-            }
-            if let Some(opt_5) = self.zero_column_mask_desc.as_ref() {
-                opt_5.unparse_tokens(tokens);
-            }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if self.zero_column_mask_desc.is_some() { tokens.push(PtxToken::Comma); }
+                    if let Some(opt_5) = self.zero_column_mask_desc.as_ref() {
+                        if spaced { tokens.push(PtxToken::Space); }
+                        opt_5.unparse_tokens_mode(tokens, spaced);
+                    }
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+

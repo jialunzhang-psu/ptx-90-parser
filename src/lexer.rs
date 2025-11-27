@@ -86,6 +86,11 @@ pub enum PtxToken {
     #[regex(r"[a-zA-Z][a-zA-Z0-9_$]*", |lex| lex.slice().to_string())]
     #[regex(r"[_$%][a-zA-Z0-9_$]*", priority = 1, callback = |lex| lex.slice().to_string())]
     Identifier(String),
+    /// Whitespace tokens emitted by the unparser only (never produced by the lexer).
+    #[token("\u{0000}")]
+    Space,
+    #[token("\u{0001}")]
+    Newline,
     #[regex(r#""([^"\\]|\\.)*""#, |lex| {
         let slice = lex.slice();
         slice[1..slice.len() - 1].to_string()
@@ -104,15 +109,15 @@ impl PtxToken {
             | PtxToken::OctalInteger(s)
             | PtxToken::Float(s)
             | PtxToken::FloatExponent(s)
-            | PtxToken::HexFloatSingle(s)
-            | PtxToken::HexFloatDouble(s)
-            | PtxToken::Register(s)
-            | PtxToken::StringLiteral(s) => s.as_str(),
-            PtxToken::DoubleColon => "::",
-            PtxToken::Dot => ".",
-            PtxToken::Comma => ",",
-            PtxToken::Semicolon => ";",
-            PtxToken::Colon => ":",
+        | PtxToken::HexFloatSingle(s)
+        | PtxToken::HexFloatDouble(s)
+        | PtxToken::Register(s)
+        | PtxToken::StringLiteral(s) => s.as_str(),
+        PtxToken::DoubleColon => "::",
+        PtxToken::Dot => ".",
+        PtxToken::Comma => ",",
+        PtxToken::Semicolon => ";",
+        PtxToken::Colon => ":",
             PtxToken::LParen => "(",
             PtxToken::RParen => ")",
             PtxToken::LBracket => "[",
@@ -133,6 +138,8 @@ impl PtxToken {
             PtxToken::Caret => "^",
             PtxToken::Tilde => "~",
             PtxToken::At => "@",
+            PtxToken::Space => " ",
+            PtxToken::Newline => "\n",
         }
     }
 
@@ -173,7 +180,9 @@ impl PtxToken {
             | PtxToken::Ampersand
             | PtxToken::Caret
             | PtxToken::Tilde
-            | PtxToken::At => 1,
+            | PtxToken::At
+            | PtxToken::Space
+            | PtxToken::Newline => 1,
         }
     }
 }

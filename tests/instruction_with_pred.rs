@@ -54,7 +54,7 @@ fn test_roundtrip_with_predicate() {
     ptx_parser::run_with_large_stack(|| {
         let input = "@%p1 mov.u32 %r0, 42;";
         let parsed: Instruction = util::parse(input);
-        let tokens = parsed.to_tokens();
+        let tokens = parsed.to_tokens_spaced();
         let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
 
         let reparsed: Instruction = util::parse(&unparsed);

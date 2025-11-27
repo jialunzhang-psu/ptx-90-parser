@@ -14,19 +14,27 @@ pub mod section_0 {
 
     impl PtxUnparser for ClzType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "clz");
-            match &self.type_ {
-                Type::B32 => {
-                    push_directive(tokens, "b32");
-                }
-                Type::B64 => {
-                    push_directive(tokens, "b64");
-                }
-            }
-            self.d.unparse_tokens(tokens);
+                    match &self.type_ {
+                            Type::B32 => {
+                                    push_directive(tokens, "b32");
+                            }
+                            Type::B64 => {
+                                    push_directive(tokens, "b64");
+                            }
+                    }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.a.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+

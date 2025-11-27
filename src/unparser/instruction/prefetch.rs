@@ -20,72 +20,94 @@ pub mod section_0 {
 
     impl PtxUnparser for PrefetchSpaceLevel {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "prefetch");
-            if let Some(space_0) = self.space.as_ref() {
-                match space_0 {
-                    Space::Global => {
-                        push_directive(tokens, "global");
+                    if let Some(space_0) = self.space.as_ref() {
+                            match space_0 {
+                                    Space::Global => {
+                                            push_directive(tokens, "global");
+                                    }
+                                    Space::Local => {
+                                            push_directive(tokens, "local");
+                                    }
+                            }
                     }
-                    Space::Local => {
-                        push_directive(tokens, "local");
+                    match &self.level {
+                            Level::L1 => {
+                                    push_directive(tokens, "L1");
+                            }
+                            Level::L2 => {
+                                    push_directive(tokens, "L2");
+                            }
                     }
-                }
-            }
-            match &self.level {
-                Level::L1 => {
-                    push_directive(tokens, "L1");
-                }
-                Level::L2 => {
-                    push_directive(tokens, "L2");
-                }
-            }
-            self.a.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for PrefetchGlobalLevelEvictionPriority {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "prefetch");
-            push_directive(tokens, "global");
-            match &self.level_eviction_priority {
-                LevelEvictionPriority::L2EvictNormal => {
-                    push_directive(tokens, "L2::evict_normal");
-                }
-                LevelEvictionPriority::L2EvictLast => {
-                    push_directive(tokens, "L2::evict_last");
-                }
-            }
-            self.a.unparse_tokens(tokens);
+                    push_directive(tokens, "global");
+                    match &self.level_eviction_priority {
+                            LevelEvictionPriority::L2EvictNormal => {
+                                    push_directive(tokens, "L2::evict_normal");
+                            }
+                            LevelEvictionPriority::L2EvictLast => {
+                                    push_directive(tokens, "L2::evict_last");
+                            }
+                    }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for PrefetchuL1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "prefetchu");
-            push_directive(tokens, "L1");
-            self.a.unparse_tokens(tokens);
+                    push_directive(tokens, "L1");
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for PrefetchTensormapSpaceTensormap {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "prefetch");
-            if let Some(tensormap_space_1) = self.tensormap_space.as_ref() {
-                match tensormap_space_1 {
-                    TensormapSpace::Const => {
-                        push_directive(tokens, "const");
+                    if let Some(tensormap_space_1) = self.tensormap_space.as_ref() {
+                            match tensormap_space_1 {
+                                    TensormapSpace::Const => {
+                                            push_directive(tokens, "const");
+                                    }
+                                    TensormapSpace::Param => {
+                                            push_directive(tokens, "param");
+                                    }
+                            }
                     }
-                    TensormapSpace::Param => {
-                        push_directive(tokens, "param");
-                    }
-                }
-            }
-            push_directive(tokens, "tensormap");
-            self.a.unparse_tokens(tokens);
+                    push_directive(tokens, "tensormap");
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+

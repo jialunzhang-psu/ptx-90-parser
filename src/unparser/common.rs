@@ -10,7 +10,7 @@ use crate::{
         function::{DwarfDirective, DwarfDirectiveKind},
         variable::ParamStateSpace,
     },
-    unparser::PtxUnparser,
+    unparser::{PtxUnparser, push_space, push_newline},
 };
 
 fn push_tokenized(tokens: &mut Vec<PtxToken>, text: &str) {
@@ -92,44 +92,57 @@ fn push_numeric(tokens: &mut Vec<PtxToken>, literal: &str) {
     tokens.push(numeric_token(literal));
 }
 
-fn push_dwarf_values<I>(tokens: &mut Vec<PtxToken>, iter: I)
+fn push_dwarf_values<I>(tokens: &mut Vec<PtxToken>, iter: I, spaced: bool)
 where
     I: IntoIterator<Item = u64>,
 {
     for (idx, value) in iter.into_iter().enumerate() {
         if idx > 0 {
             tokens.push(PtxToken::Comma);
+            push_space(tokens, spaced);
         }
+        push_space(tokens, spaced);
         push_hex_literal(tokens, value);
     }
 }
 
 impl PtxUnparser for DwarfDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        self.unparse_tokens_mode(tokens, false);
+    }
+
+    fn unparse_tokens_mode(&self, tokens: &mut Vec<PtxToken>, spaced: bool) {
         push_directive(tokens, "dwarf");
+        push_space(tokens, spaced);
         match &self.kind {
             DwarfDirectiveKind::ByteValues(values) => {
                 push_directive(tokens, "byte");
-                push_dwarf_values(tokens, values.iter().map(|v| u64::from(*v)));
+                push_space(tokens, spaced);
+                push_dwarf_values(tokens, values.iter().map(|v| u64::from(*v)), spaced);
             }
             DwarfDirectiveKind::FourByteValues(values) => {
                 push_directive(tokens, "4byte");
-                push_dwarf_values(tokens, values.iter().map(|v| u64::from(*v)));
+                push_space(tokens, spaced);
+                push_dwarf_values(tokens, values.iter().map(|v| u64::from(*v)), spaced);
             }
             DwarfDirectiveKind::QuadValues(values) => {
                 push_directive(tokens, "quad");
-                push_dwarf_values(tokens, values.iter().copied());
+                push_space(tokens, spaced);
+                push_dwarf_values(tokens, values.iter().copied(), spaced);
             }
             DwarfDirectiveKind::FourByteLabel(label) => {
                 push_directive(tokens, "4byte");
+                push_space(tokens, spaced);
                 push_identifier(tokens, &label.val);
             }
             DwarfDirectiveKind::QuadLabel(label) => {
                 push_directive(tokens, "quad");
+                push_space(tokens, spaced);
                 push_identifier(tokens, &label.val);
             }
         }
         tokens.push(PtxToken::Semicolon);
+        push_newline(tokens, spaced);
     }
 }
 
@@ -530,16 +543,21 @@ impl PtxUnparser for VariableSymbol {
 
 impl PtxUnparser for crate::r#type::common::Instruction {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        self.unparse_tokens_mode(tokens, false);
+    }
+
+    fn unparse_tokens_mode(&self, tokens: &mut Vec<PtxToken>, spaced: bool) {
         // Emit predicate if present
         if let Some(predicate) = &self.predicate {
             tokens.push(PtxToken::At);
             if predicate.negated {
                 tokens.push(PtxToken::Exclaim);
             }
-            predicate.operand.unparse_tokens(tokens);
+            predicate.operand.unparse_tokens_mode(tokens, spaced);
+            push_space(tokens, spaced);
         }
 
         // Emit the instruction
-        self.inst.unparse_tokens(tokens);
+        self.inst.unparse_tokens_mode(tokens, spaced);
     }
 }

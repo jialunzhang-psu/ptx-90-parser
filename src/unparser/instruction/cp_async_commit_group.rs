@@ -13,10 +13,16 @@ pub mod section_0 {
 
     impl PtxUnparser for CpAsyncCommitGroup {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cp");
-            push_directive(tokens, "async");
-            push_directive(tokens, "commit_group");
+                    push_directive(tokens, "async");
+                    push_directive(tokens, "commit_group");
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+

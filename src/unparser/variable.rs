@@ -8,15 +8,19 @@ use crate::{
             VariableModifier,
         },
     },
-    unparser::{push_decimal, push_directive, push_identifier},
+    unparser::{push_decimal, push_directive, push_identifier, push_space},
 };
 
 impl PtxUnparser for InitializerValue {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        self.unparse_tokens_mode(tokens, false);
+    }
+
+    fn unparse_tokens_mode(&self, tokens: &mut Vec<PtxToken>, spaced: bool) {
         match self {
             InitializerValue::NumericLiteral {
                 value: immediate, ..
-            } => immediate.unparse_tokens(tokens),
+            } => immediate.unparse_tokens_mode(tokens, spaced),
             InitializerValue::FunctionSymbol { name: symbol, .. } => {
                 push_identifier(tokens, &symbol.val)
             }
@@ -29,8 +33,12 @@ impl PtxUnparser for InitializerValue {
 
 impl PtxUnparser for GlobalInitializer {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        self.unparse_tokens_mode(tokens, false);
+    }
+
+    fn unparse_tokens_mode(&self, tokens: &mut Vec<PtxToken>, spaced: bool) {
         match self {
-            GlobalInitializer::Scalar { value, .. } => value.unparse_tokens(tokens),
+            GlobalInitializer::Scalar { value, .. } => value.unparse_tokens_mode(tokens, spaced),
             GlobalInitializer::Aggregate {
                 values: elements, ..
             } => {
@@ -38,8 +46,9 @@ impl PtxUnparser for GlobalInitializer {
                 for (index, element) in elements.iter().enumerate() {
                     if index > 0 {
                         tokens.push(PtxToken::Comma);
+                        push_space(tokens, spaced);
                     }
-                    element.unparse_tokens(tokens);
+                    element.unparse_tokens_mode(tokens, spaced);
                 }
                 tokens.push(PtxToken::RBrace);
             }
@@ -49,12 +58,17 @@ impl PtxUnparser for GlobalInitializer {
 
 impl PtxUnparser for VariableModifier {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        self.unparse_tokens_mode(tokens, false);
+    }
+
+    fn unparse_tokens_mode(&self, tokens: &mut Vec<PtxToken>, spaced: bool) {
         match self {
             VariableModifier::Vector { value: width, .. } => {
                 push_directive(tokens, &format!("v{width}"));
             }
             VariableModifier::Alignment { value, .. } => {
                 push_directive(tokens, "align");
+                push_space(tokens, spaced);
                 push_decimal(tokens, value.to_string());
             }
             VariableModifier::Ptr { .. } => push_directive(tokens, "ptr"),
@@ -62,7 +76,8 @@ impl PtxUnparser for VariableModifier {
     }
 }
 
-fn unparse_array_dimensions(tokens: &mut Vec<PtxToken>, extents: &[Option<u64>]) {
+fn unparse_array_dimensions(tokens: &mut Vec<PtxToken>, extents: &[Option<u64>], spaced: bool) {
+    let _ = spaced;
     for extent in extents {
         tokens.push(PtxToken::LBracket);
         if let Some(value) = extent {
@@ -72,10 +87,15 @@ fn unparse_array_dimensions(tokens: &mut Vec<PtxToken>, extents: &[Option<u64>])
     }
 }
 
-fn unparse_initializer(tokens: &mut Vec<PtxToken>, initializer: &Option<GlobalInitializer>) {
+fn unparse_initializer(
+    tokens: &mut Vec<PtxToken>,
+    initializer: &Option<GlobalInitializer>,
+    spaced: bool,
+) {
     if let Some(initializer) = initializer {
         tokens.push(PtxToken::Equals);
-        initializer.unparse_tokens(tokens);
+        push_space(tokens, spaced);
+        initializer.unparse_tokens_mode(tokens, spaced);
     }
 }
 
@@ -84,15 +104,19 @@ fn unparse_prefix(
     linkage_modifiers: &[VariableModifier],
     other_modifiers: &[VariableModifier],
     attributes: &[AttributeDirective],
+    spaced: bool,
 ) {
     for attribute in attributes {
-        attribute.unparse_tokens(tokens);
+        attribute.unparse_tokens_mode(tokens, spaced);
+        push_space(tokens, spaced);
     }
     for modifier in linkage_modifiers {
-        modifier.unparse_tokens(tokens);
+        modifier.unparse_tokens_mode(tokens, spaced);
+        push_space(tokens, spaced);
     }
     for modifier in other_modifiers {
-        modifier.unparse_tokens(tokens);
+        modifier.unparse_tokens_mode(tokens, spaced);
+        push_space(tokens, spaced);
     }
 }
 
@@ -106,41 +130,59 @@ fn split_modifiers(
 
 impl PtxUnparser for VariableDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        self.unparse_tokens_mode(tokens, false);
+    }
+
+    fn unparse_tokens_mode(&self, tokens: &mut Vec<PtxToken>, spaced: bool) {
         let (linkage_modifiers, other_modifiers) = split_modifiers(&self.modifiers);
         unparse_prefix(
             tokens,
             &linkage_modifiers,
             &other_modifiers,
             &self.attributes,
+            spaced,
         );
-
-        self.ty.unparse_tokens(tokens);
-
+        if spaced {
+            if let Some(PtxToken::Space) = tokens.last() {
+                // remove trailing space if prefix was empty
+                tokens.pop();
+            }
+        }
+        self.ty.unparse_tokens_mode(tokens, spaced);
+        push_space(tokens, spaced);
         push_identifier(tokens, &self.name.val);
-        unparse_array_dimensions(tokens, &self.array_dims);
-        unparse_initializer(tokens, &self.initializer);
+        unparse_array_dimensions(tokens, &self.array_dims, spaced);
+        unparse_initializer(tokens, &self.initializer, spaced);
         tokens.push(PtxToken::Semicolon);
     }
 }
 
 impl PtxUnparser for ModuleVariableDirective {
     fn unparse_tokens(&self, tokens: &mut Vec<PtxToken>) {
+        self.unparse_tokens_mode(tokens, false);
+    }
+
+    fn unparse_tokens_mode(&self, tokens: &mut Vec<PtxToken>, spaced: bool) {
         match self {
             ModuleVariableDirective::Tex { directive, .. } => {
                 push_directive(tokens, "tex");
-                directive.unparse_tokens(tokens);
+                push_space(tokens, spaced);
+                directive.unparse_tokens_mode(tokens, spaced);
             }
             ModuleVariableDirective::Shared { directive, .. } => {
                 push_directive(tokens, "shared");
-                directive.unparse_tokens(tokens);
+                push_space(tokens, spaced);
+                directive.unparse_tokens_mode(tokens, spaced);
             }
             ModuleVariableDirective::Global { directive, .. } => {
                 push_directive(tokens, "global");
-                directive.unparse_tokens(tokens);
+                push_space(tokens, spaced);
+                directive.unparse_tokens_mode(tokens, spaced);
             }
             ModuleVariableDirective::Const { directive, .. } => {
                 push_directive(tokens, "const");
-                directive.unparse_tokens(tokens);
+                push_space(tokens, spaced);
+                directive.unparse_tokens_mode(tokens, spaced);
             }
         }
     }

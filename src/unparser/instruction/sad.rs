@@ -14,35 +14,45 @@ pub mod section_0 {
 
     impl PtxUnparser for SadType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "sad");
-            match &self.type_ {
-                Type::U16 => {
-                    push_directive(tokens, "u16");
-                }
-                Type::U32 => {
-                    push_directive(tokens, "u32");
-                }
-                Type::U64 => {
-                    push_directive(tokens, "u64");
-                }
-                Type::S16 => {
-                    push_directive(tokens, "s16");
-                }
-                Type::S32 => {
-                    push_directive(tokens, "s32");
-                }
-                Type::S64 => {
-                    push_directive(tokens, "s64");
-                }
-            }
-            self.d.unparse_tokens(tokens);
+                    match &self.type_ {
+                            Type::U16 => {
+                                    push_directive(tokens, "u16");
+                            }
+                            Type::U32 => {
+                                    push_directive(tokens, "u32");
+                            }
+                            Type::U64 => {
+                                    push_directive(tokens, "u64");
+                            }
+                            Type::S16 => {
+                                    push_directive(tokens, "s16");
+                            }
+                            Type::S32 => {
+                                    push_directive(tokens, "s32");
+                            }
+                            Type::S64 => {
+                                    push_directive(tokens, "s64");
+                            }
+                    }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.a.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.b.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.c.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+

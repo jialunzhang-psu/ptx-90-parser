@@ -21,197 +21,217 @@ pub mod section_0 {
 
     impl PtxUnparser for SustBDimCopVecCtypeMode {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "sust");
-            push_directive(tokens, "b");
-            match &self.dim {
-                Dim::_1d => {
-                    push_directive(tokens, "1d");
-                }
-                Dim::_2d => {
-                    push_directive(tokens, "2d");
-                }
-                Dim::_3d => {
-                    push_directive(tokens, "3d");
-                }
-            }
-            if let Some(cop_0) = self.cop.as_ref() {
-                match cop_0 {
-                    Cop::Wb => {
-                        push_directive(tokens, "wb");
+                    push_directive(tokens, "b");
+                    match &self.dim {
+                            Dim::_1d => {
+                                    push_directive(tokens, "1d");
+                            }
+                            Dim::_2d => {
+                                    push_directive(tokens, "2d");
+                            }
+                            Dim::_3d => {
+                                    push_directive(tokens, "3d");
+                            }
                     }
-                    Cop::Cg => {
-                        push_directive(tokens, "cg");
+                    if let Some(cop_0) = self.cop.as_ref() {
+                            match cop_0 {
+                                    Cop::Wb => {
+                                            push_directive(tokens, "wb");
+                                    }
+                                    Cop::Cg => {
+                                            push_directive(tokens, "cg");
+                                    }
+                                    Cop::Cs => {
+                                            push_directive(tokens, "cs");
+                                    }
+                                    Cop::Wt => {
+                                            push_directive(tokens, "wt");
+                                    }
+                            }
                     }
-                    Cop::Cs => {
-                        push_directive(tokens, "cs");
+                    match &self.vec {
+                            Vec::None => {
+                                    push_token_from_str(tokens, "none");
+                            }
+                            Vec::V2 => {
+                                    push_directive(tokens, "v2");
+                            }
+                            Vec::V4 => {
+                                    push_directive(tokens, "v4");
+                            }
                     }
-                    Cop::Wt => {
-                        push_directive(tokens, "wt");
+                    match &self.ctype {
+                            Ctype::B16 => {
+                                    push_directive(tokens, "b16");
+                            }
+                            Ctype::B32 => {
+                                    push_directive(tokens, "b32");
+                            }
+                            Ctype::B64 => {
+                                    push_directive(tokens, "b64");
+                            }
+                            Ctype::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
                     }
-                }
-            }
-            match &self.vec {
-                Vec::None => {
-                    push_token_from_str(tokens, "none");
-                }
-                Vec::V2 => {
-                    push_directive(tokens, "v2");
-                }
-                Vec::V4 => {
-                    push_directive(tokens, "v4");
-                }
-            }
-            match &self.ctype {
-                Ctype::B16 => {
-                    push_directive(tokens, "b16");
-                }
-                Ctype::B32 => {
-                    push_directive(tokens, "b32");
-                }
-                Ctype::B64 => {
-                    push_directive(tokens, "b64");
-                }
-                Ctype::B8 => {
-                    push_directive(tokens, "b8");
-                }
-            }
-            if let Some(mode_1) = self.mode.as_ref() {
-                match mode_1 {
-                    Mode::Clamp => {
-                        push_directive(tokens, "clamp");
+                    if let Some(mode_1) = self.mode.as_ref() {
+                            match mode_1 {
+                                    Mode::Clamp => {
+                                            push_directive(tokens, "clamp");
+                                    }
+                                    Mode::Trap => {
+                                            push_directive(tokens, "trap");
+                                    }
+                                    Mode::Zero => {
+                                            push_directive(tokens, "zero");
+                                    }
+                            }
                     }
-                    Mode::Trap => {
-                        push_directive(tokens, "trap");
-                    }
-                    Mode::Zero => {
-                        push_directive(tokens, "zero");
-                    }
-                }
-            }
-            self.a.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.c.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for SustPDimVecB32Mode {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "sust");
-            push_directive(tokens, "p");
-            match &self.dim {
-                Dim::_1d => {
-                    push_directive(tokens, "1d");
-                }
-                Dim::_2d => {
-                    push_directive(tokens, "2d");
-                }
-                Dim::_3d => {
-                    push_directive(tokens, "3d");
-                }
-            }
-            match &self.vec {
-                Vec::None => {
-                    push_token_from_str(tokens, "none");
-                }
-                Vec::V2 => {
-                    push_directive(tokens, "v2");
-                }
-                Vec::V4 => {
-                    push_directive(tokens, "v4");
-                }
-            }
-            push_directive(tokens, "b32");
-            if let Some(mode_2) = self.mode.as_ref() {
-                match mode_2 {
-                    Mode::Clamp => {
-                        push_directive(tokens, "clamp");
+                    push_directive(tokens, "p");
+                    match &self.dim {
+                            Dim::_1d => {
+                                    push_directive(tokens, "1d");
+                            }
+                            Dim::_2d => {
+                                    push_directive(tokens, "2d");
+                            }
+                            Dim::_3d => {
+                                    push_directive(tokens, "3d");
+                            }
                     }
-                    Mode::Trap => {
-                        push_directive(tokens, "trap");
+                    match &self.vec {
+                            Vec::None => {
+                                    push_token_from_str(tokens, "none");
+                            }
+                            Vec::V2 => {
+                                    push_directive(tokens, "v2");
+                            }
+                            Vec::V4 => {
+                                    push_directive(tokens, "v4");
+                            }
                     }
-                    Mode::Zero => {
-                        push_directive(tokens, "zero");
+                    push_directive(tokens, "b32");
+                    if let Some(mode_2) = self.mode.as_ref() {
+                            match mode_2 {
+                                    Mode::Clamp => {
+                                            push_directive(tokens, "clamp");
+                                    }
+                                    Mode::Trap => {
+                                            push_directive(tokens, "trap");
+                                    }
+                                    Mode::Zero => {
+                                            push_directive(tokens, "zero");
+                                    }
+                            }
                     }
-                }
-            }
-            self.a.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.c.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for SustBAdimCopVecCtypeMode {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "sust");
-            push_directive(tokens, "b");
-            match &self.adim {
-                Adim::A1d => {
-                    push_directive(tokens, "a1d");
-                }
-                Adim::A2d => {
-                    push_directive(tokens, "a2d");
-                }
-            }
-            if let Some(cop_3) = self.cop.as_ref() {
-                match cop_3 {
-                    Cop::Wb => {
-                        push_directive(tokens, "wb");
+                    push_directive(tokens, "b");
+                    match &self.adim {
+                            Adim::A1d => {
+                                    push_directive(tokens, "a1d");
+                            }
+                            Adim::A2d => {
+                                    push_directive(tokens, "a2d");
+                            }
                     }
-                    Cop::Cg => {
-                        push_directive(tokens, "cg");
+                    if let Some(cop_3) = self.cop.as_ref() {
+                            match cop_3 {
+                                    Cop::Wb => {
+                                            push_directive(tokens, "wb");
+                                    }
+                                    Cop::Cg => {
+                                            push_directive(tokens, "cg");
+                                    }
+                                    Cop::Cs => {
+                                            push_directive(tokens, "cs");
+                                    }
+                                    Cop::Wt => {
+                                            push_directive(tokens, "wt");
+                                    }
+                            }
                     }
-                    Cop::Cs => {
-                        push_directive(tokens, "cs");
+                    match &self.vec {
+                            Vec::None => {
+                                    push_token_from_str(tokens, "none");
+                            }
+                            Vec::V2 => {
+                                    push_directive(tokens, "v2");
+                            }
+                            Vec::V4 => {
+                                    push_directive(tokens, "v4");
+                            }
                     }
-                    Cop::Wt => {
-                        push_directive(tokens, "wt");
+                    match &self.ctype {
+                            Ctype::B16 => {
+                                    push_directive(tokens, "b16");
+                            }
+                            Ctype::B32 => {
+                                    push_directive(tokens, "b32");
+                            }
+                            Ctype::B64 => {
+                                    push_directive(tokens, "b64");
+                            }
+                            Ctype::B8 => {
+                                    push_directive(tokens, "b8");
+                            }
                     }
-                }
-            }
-            match &self.vec {
-                Vec::None => {
-                    push_token_from_str(tokens, "none");
-                }
-                Vec::V2 => {
-                    push_directive(tokens, "v2");
-                }
-                Vec::V4 => {
-                    push_directive(tokens, "v4");
-                }
-            }
-            match &self.ctype {
-                Ctype::B16 => {
-                    push_directive(tokens, "b16");
-                }
-                Ctype::B32 => {
-                    push_directive(tokens, "b32");
-                }
-                Ctype::B64 => {
-                    push_directive(tokens, "b64");
-                }
-                Ctype::B8 => {
-                    push_directive(tokens, "b8");
-                }
-            }
-            if let Some(mode_4) = self.mode.as_ref() {
-                match mode_4 {
-                    Mode::Clamp => {
-                        push_directive(tokens, "clamp");
+                    if let Some(mode_4) = self.mode.as_ref() {
+                            match mode_4 {
+                                    Mode::Clamp => {
+                                            push_directive(tokens, "clamp");
+                                    }
+                                    Mode::Trap => {
+                                            push_directive(tokens, "trap");
+                                    }
+                                    Mode::Zero => {
+                                            push_directive(tokens, "zero");
+                                    }
+                            }
                     }
-                    Mode::Trap => {
-                        push_directive(tokens, "trap");
-                    }
-                    Mode::Zero => {
-                        push_directive(tokens, "zero");
-                    }
-                }
-            }
-            self.a.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.c.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+

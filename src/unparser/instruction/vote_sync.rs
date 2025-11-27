@@ -15,47 +15,59 @@ pub mod section_0 {
 
     impl PtxUnparser for VoteSyncModePred {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "vote");
-            push_directive(tokens, "sync");
-            match &self.mode {
-                Mode::All => {
-                    push_directive(tokens, "all");
-                }
-                Mode::Any => {
-                    push_directive(tokens, "any");
-                }
-                Mode::Uni => {
-                    push_directive(tokens, "uni");
-                }
-            }
-            push_directive(tokens, "pred");
-            self.d.unparse_tokens(tokens);
+                    push_directive(tokens, "sync");
+                    match &self.mode {
+                            Mode::All => {
+                                    push_directive(tokens, "all");
+                            }
+                            Mode::Any => {
+                                    push_directive(tokens, "any");
+                            }
+                            Mode::Uni => {
+                                    push_directive(tokens, "uni");
+                            }
+                    }
+                    push_directive(tokens, "pred");
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.a_op {
-                tokens.push(PtxToken::Exclaim);
-            }
-            self.a.unparse_tokens(tokens);
+            if self.a_op { tokens.push(PtxToken::Exclaim); }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.membermask.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.membermask.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for VoteSyncBallotB32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "vote");
-            push_directive(tokens, "sync");
-            push_directive(tokens, "ballot");
-            push_directive(tokens, "b32");
-            self.d.unparse_tokens(tokens);
+                    push_directive(tokens, "sync");
+                    push_directive(tokens, "ballot");
+                    push_directive(tokens, "b32");
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.a_op {
-                tokens.push(PtxToken::Exclaim);
-            }
-            self.a.unparse_tokens(tokens);
+            if self.a_op { tokens.push(PtxToken::Exclaim); }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.membermask.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.membermask.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+

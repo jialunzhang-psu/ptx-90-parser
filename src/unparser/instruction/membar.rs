@@ -35,223 +35,271 @@ pub mod section_0 {
 
     impl PtxUnparser for FenceSemScope {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "fence");
-            if let Some(sem_0) = self.sem.as_ref() {
-                match sem_0 {
-                    Sem::AcqRel => {
-                        push_directive(tokens, "acq_rel");
+                    if let Some(sem_0) = self.sem.as_ref() {
+                            match sem_0 {
+                                    Sem::AcqRel => {
+                                            push_directive(tokens, "acq_rel");
+                                    }
+                                    Sem::Acquire => {
+                                            push_directive(tokens, "acquire");
+                                    }
+                                    Sem::Release => {
+                                            push_directive(tokens, "release");
+                                    }
+                                    Sem::Sc => {
+                                            push_directive(tokens, "sc");
+                                    }
+                            }
                     }
-                    Sem::Acquire => {
-                        push_directive(tokens, "acquire");
+                    match &self.scope {
+                            Scope::Cluster => {
+                                    push_directive(tokens, "cluster");
+                            }
+                            Scope::Cta => {
+                                    push_directive(tokens, "cta");
+                            }
+                            Scope::Gpu => {
+                                    push_directive(tokens, "gpu");
+                            }
+                            Scope::Sys => {
+                                    push_directive(tokens, "sys");
+                            }
                     }
-                    Sem::Release => {
-                        push_directive(tokens, "release");
-                    }
-                    Sem::Sc => {
-                        push_directive(tokens, "sc");
-                    }
-                }
-            }
-            match &self.scope {
-                Scope::Cluster => {
-                    push_directive(tokens, "cluster");
-                }
-                Scope::Cta => {
-                    push_directive(tokens, "cta");
-                }
-                Scope::Gpu => {
-                    push_directive(tokens, "gpu");
-                }
-                Scope::Sys => {
-                    push_directive(tokens, "sys");
-                }
-            }
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for FenceAcquireSyncRestrictSharedClusterCluster {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "fence");
-            push_directive(tokens, "acquire");
-            push_directive(tokens, "sync_restrict::shared::cluster");
-            push_directive(tokens, "cluster");
+                    push_directive(tokens, "acquire");
+                    push_directive(tokens, "sync_restrict::shared::cluster");
+                    push_directive(tokens, "cluster");
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for FenceReleaseSyncRestrictSharedCtaCluster {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "fence");
-            push_directive(tokens, "release");
-            push_directive(tokens, "sync_restrict::shared::cta");
-            push_directive(tokens, "cluster");
+                    push_directive(tokens, "release");
+                    push_directive(tokens, "sync_restrict::shared::cta");
+                    push_directive(tokens, "cluster");
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for FenceOpRestrictReleaseCluster {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "fence");
-            match &self.op_restrict {
-                OpRestrict::MbarrierInit => {
-                    push_directive(tokens, "mbarrier_init");
-                }
-            }
-            push_directive(tokens, "release");
-            push_directive(tokens, "cluster");
+                    match &self.op_restrict {
+                            OpRestrict::MbarrierInit => {
+                                    push_directive(tokens, "mbarrier_init");
+                            }
+                    }
+                    push_directive(tokens, "release");
+                    push_directive(tokens, "cluster");
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for FenceProxyProxykind {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "fence");
-            push_directive(tokens, "proxy");
-            match &self.proxykind {
-                Proxykind::AsyncSharedCluster => {
-                    push_directive(tokens, "async.shared::cluster");
-                }
-                Proxykind::AsyncSharedCta => {
-                    push_directive(tokens, "async.shared::cta");
-                }
-                Proxykind::AsyncGlobal => {
-                    push_directive(tokens, "async.global");
-                }
-                Proxykind::Alias => {
-                    push_directive(tokens, "alias");
-                }
-                Proxykind::Async => {
-                    push_directive(tokens, "async");
-                }
-            }
+                    push_directive(tokens, "proxy");
+                    match &self.proxykind {
+                            Proxykind::AsyncSharedCluster => {
+                                    push_directive(tokens, "async.shared::cluster");
+                            }
+                            Proxykind::AsyncSharedCta => {
+                                    push_directive(tokens, "async.shared::cta");
+                            }
+                            Proxykind::AsyncGlobal => {
+                                    push_directive(tokens, "async.global");
+                            }
+                            Proxykind::Alias => {
+                                    push_directive(tokens, "alias");
+                            }
+                            Proxykind::Async => {
+                                    push_directive(tokens, "async");
+                            }
+                    }
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for FenceProxyToProxykindFromProxykindReleaseScope {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "fence");
-            push_directive(tokens, "proxy");
-            match &self.to_proxykind_from_proxykind {
-                ToProxykindFromProxykind::TensormapGeneric => {
-                    push_directive(tokens, "tensormap::generic");
-                }
-            }
-            push_directive(tokens, "release");
-            match &self.scope {
-                Scope::Cluster => {
-                    push_directive(tokens, "cluster");
-                }
-                Scope::Cta => {
-                    push_directive(tokens, "cta");
-                }
-                Scope::Gpu => {
-                    push_directive(tokens, "gpu");
-                }
-                Scope::Sys => {
-                    push_directive(tokens, "sys");
-                }
-            }
+                    push_directive(tokens, "proxy");
+                    match &self.to_proxykind_from_proxykind {
+                            ToProxykindFromProxykind::TensormapGeneric => {
+                                    push_directive(tokens, "tensormap::generic");
+                            }
+                    }
+                    push_directive(tokens, "release");
+                    match &self.scope {
+                            Scope::Cluster => {
+                                    push_directive(tokens, "cluster");
+                            }
+                            Scope::Cta => {
+                                    push_directive(tokens, "cta");
+                            }
+                            Scope::Gpu => {
+                                    push_directive(tokens, "gpu");
+                            }
+                            Scope::Sys => {
+                                    push_directive(tokens, "sys");
+                            }
+                    }
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for FenceProxyToProxykindFromProxykindAcquireScope {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "fence");
-            push_directive(tokens, "proxy");
-            match &self.to_proxykind_from_proxykind {
-                ToProxykindFromProxykind::TensormapGeneric => {
-                    push_directive(tokens, "tensormap::generic");
-                }
-            }
-            push_directive(tokens, "acquire");
-            match &self.scope {
-                Scope::Cluster => {
-                    push_directive(tokens, "cluster");
-                }
-                Scope::Cta => {
-                    push_directive(tokens, "cta");
-                }
-                Scope::Gpu => {
-                    push_directive(tokens, "gpu");
-                }
-                Scope::Sys => {
-                    push_directive(tokens, "sys");
-                }
-            }
-            self.addr.unparse_tokens(tokens);
+                    push_directive(tokens, "proxy");
+                    match &self.to_proxykind_from_proxykind {
+                            ToProxykindFromProxykind::TensormapGeneric => {
+                                    push_directive(tokens, "tensormap::generic");
+                            }
+                    }
+                    push_directive(tokens, "acquire");
+                    match &self.scope {
+                            Scope::Cluster => {
+                                    push_directive(tokens, "cluster");
+                            }
+                            Scope::Cta => {
+                                    push_directive(tokens, "cta");
+                            }
+                            Scope::Gpu => {
+                                    push_directive(tokens, "gpu");
+                            }
+                            Scope::Sys => {
+                                    push_directive(tokens, "sys");
+                            }
+                    }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.addr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.size.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.size.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for FenceProxyAsyncGenericAcquireSyncRestrictSharedClusterCluster {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "fence");
-            push_directive(tokens, "proxy");
-            push_directive(tokens, "async::generic");
-            push_directive(tokens, "acquire");
-            push_directive(tokens, "sync_restrict::shared::cluster");
-            push_directive(tokens, "cluster");
+                    push_directive(tokens, "proxy");
+                    push_directive(tokens, "async::generic");
+                    push_directive(tokens, "acquire");
+                    push_directive(tokens, "sync_restrict::shared::cluster");
+                    push_directive(tokens, "cluster");
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for FenceProxyAsyncGenericReleaseSyncRestrictSharedCtaCluster {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "fence");
-            push_directive(tokens, "proxy");
-            push_directive(tokens, "async::generic");
-            push_directive(tokens, "release");
-            push_directive(tokens, "sync_restrict::shared::cta");
-            push_directive(tokens, "cluster");
+                    push_directive(tokens, "proxy");
+                    push_directive(tokens, "async::generic");
+                    push_directive(tokens, "release");
+                    push_directive(tokens, "sync_restrict::shared::cta");
+                    push_directive(tokens, "cluster");
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for MembarLevel {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "membar");
-            match &self.level {
-                Level::Cta => {
-                    push_directive(tokens, "cta");
-                }
-                Level::Sys => {
-                    push_directive(tokens, "sys");
-                }
-                Level::Gl => {
-                    push_directive(tokens, "gl");
-                }
-            }
+                    match &self.level {
+                            Level::Cta => {
+                                    push_directive(tokens, "cta");
+                            }
+                            Level::Sys => {
+                                    push_directive(tokens, "sys");
+                            }
+                            Level::Gl => {
+                                    push_directive(tokens, "gl");
+                            }
+                    }
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for MembarProxyProxykind {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "membar");
-            push_directive(tokens, "proxy");
-            match &self.proxykind {
-                Proxykind::AsyncSharedCluster => {
-                    push_directive(tokens, "async.shared::cluster");
-                }
-                Proxykind::AsyncSharedCta => {
-                    push_directive(tokens, "async.shared::cta");
-                }
-                Proxykind::AsyncGlobal => {
-                    push_directive(tokens, "async.global");
-                }
-                Proxykind::Alias => {
-                    push_directive(tokens, "alias");
-                }
-                Proxykind::Async => {
-                    push_directive(tokens, "async");
-                }
-            }
+                    push_directive(tokens, "proxy");
+                    match &self.proxykind {
+                            Proxykind::AsyncSharedCluster => {
+                                    push_directive(tokens, "async.shared::cluster");
+                            }
+                            Proxykind::AsyncSharedCta => {
+                                    push_directive(tokens, "async.shared::cta");
+                            }
+                            Proxykind::AsyncGlobal => {
+                                    push_directive(tokens, "async.global");
+                            }
+                            Proxykind::Alias => {
+                                    push_directive(tokens, "alias");
+                            }
+                            Proxykind::Async => {
+                                    push_directive(tokens, "async");
+                            }
+                    }
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+

@@ -11,15 +11,8 @@ impl PtxUnlexer {
     where
         W: Write,
     {
-        let mut prev: Option<&PtxToken> = None;
         for token in tokens {
-            if let Some(previous) = prev {
-                if needs_space(previous, token) {
-                    writer.write_char(' ')?;
-                }
-            }
             write_token(writer, token)?;
-            prev = Some(token);
         }
         Ok(())
     }
@@ -74,32 +67,7 @@ fn write_token<W: Write>(writer: &mut W, token: &PtxToken) -> fmt::Result {
         PtxToken::Caret => writer.write_char('^'),
         PtxToken::Tilde => writer.write_char('~'),
         PtxToken::At => writer.write_char('@'),
+        PtxToken::Space => writer.write_char(' '),
+        PtxToken::Newline => writer.write_char('\n'),
     }
-}
-
-fn needs_space(prev: &PtxToken, curr: &PtxToken) -> bool {
-    if no_space_after(prev) || no_space_before(curr) {
-        return false;
-    }
-    true
-}
-
-fn no_space_after(token: &PtxToken) -> bool {
-    matches!(
-        token,
-        PtxToken::LParen | PtxToken::LBracket | PtxToken::LBrace | PtxToken::Dot
-    )
-}
-
-fn no_space_before(token: &PtxToken) -> bool {
-    matches!(
-        token,
-        PtxToken::RParen
-            | PtxToken::RBracket
-            | PtxToken::RBrace
-            | PtxToken::Comma
-            | PtxToken::Semicolon
-            | PtxToken::Colon
-            | PtxToken::Dot
-    )
 }

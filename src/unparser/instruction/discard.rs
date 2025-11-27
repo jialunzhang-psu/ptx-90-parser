@@ -14,19 +14,27 @@ pub mod section_0 {
 
     impl PtxUnparser for DiscardGlobalLevel {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "discard");
-            if self.global {
-                push_directive(tokens, "global");
-            }
-            match &self.level {
-                Level::L2 => {
-                    push_directive(tokens, "L2");
-                }
-            }
-            self.a.unparse_tokens(tokens);
+                    if self.global {
+                            push_directive(tokens, "global");
+                    }
+                    match &self.level {
+                            Level::L2 => {
+                                    push_directive(tokens, "L2");
+                            }
+                    }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.size.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.size.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+

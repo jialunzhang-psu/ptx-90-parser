@@ -1,6 +1,6 @@
 //! Original PTX specification:
 //!
-//! mov.type  d, a;
+//! mov.type  d, a; 
 //! // mov.type  d, sreg;
 //! // mov.type  d, avar;       // get address of variable
 //! // mov.type  d, avar+imm;   // get address of variable with offset
@@ -28,95 +28,126 @@ pub mod section_0 {
 
     impl PtxUnparser for MovType {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mov");
-            match &self.type_ {
-                Type::Pred => {
-                    push_directive(tokens, "pred");
-                }
-                Type::B16 => {
-                    push_directive(tokens, "b16");
-                }
-                Type::B32 => {
-                    push_directive(tokens, "b32");
-                }
-                Type::B64 => {
-                    push_directive(tokens, "b64");
-                }
-                Type::U16 => {
-                    push_directive(tokens, "u16");
-                }
-                Type::U32 => {
-                    push_directive(tokens, "u32");
-                }
-                Type::U64 => {
-                    push_directive(tokens, "u64");
-                }
-                Type::S16 => {
-                    push_directive(tokens, "s16");
-                }
-                Type::S32 => {
-                    push_directive(tokens, "s32");
-                }
-                Type::S64 => {
-                    push_directive(tokens, "s64");
-                }
-                Type::F32 => {
-                    push_directive(tokens, "f32");
-                }
-                Type::F64 => {
-                    push_directive(tokens, "f64");
-                }
-            }
-            self.d.unparse_tokens(tokens);
+                    match &self.type_ {
+                            Type::Pred => {
+                                    push_directive(tokens, "pred");
+                            }
+                            Type::B16 => {
+                                    push_directive(tokens, "b16");
+                            }
+                            Type::B32 => {
+                                    push_directive(tokens, "b32");
+                            }
+                            Type::B64 => {
+                                    push_directive(tokens, "b64");
+                            }
+                            Type::U16 => {
+                                    push_directive(tokens, "u16");
+                            }
+                            Type::U32 => {
+                                    push_directive(tokens, "u32");
+                            }
+                            Type::U64 => {
+                                    push_directive(tokens, "u64");
+                            }
+                            Type::S16 => {
+                                    push_directive(tokens, "s16");
+                            }
+                            Type::S32 => {
+                                    push_directive(tokens, "s32");
+                            }
+                            Type::S64 => {
+                                    push_directive(tokens, "s64");
+                            }
+                            Type::F32 => {
+                                    push_directive(tokens, "f32");
+                            }
+                            Type::F64 => {
+                                    push_directive(tokens, "f64");
+                            }
+                    }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.a.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for MovU32 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mov");
-            push_directive(tokens, "u32");
-            self.d.unparse_tokens(tokens);
+                    push_directive(tokens, "u32");
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.fname.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.fname.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for MovU64 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mov");
-            push_directive(tokens, "u64");
-            self.d.unparse_tokens(tokens);
+                    push_directive(tokens, "u64");
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.fname.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.fname.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for MovU321 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mov");
-            push_directive(tokens, "u32");
-            self.d.unparse_tokens(tokens);
+                    push_directive(tokens, "u32");
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.kernel.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.kernel.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
 
     impl PtxUnparser for MovU641 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mov");
-            push_directive(tokens, "u64");
-            self.d.unparse_tokens(tokens);
+                    push_directive(tokens, "u64");
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.kernel.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.kernel.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
 
 pub mod section_1 {
@@ -125,25 +156,33 @@ pub mod section_1 {
 
     impl PtxUnparser for MovType1 {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mov");
-            match &self.type_ {
-                Type::B128 => {
-                    push_directive(tokens, "b128");
-                }
-                Type::B16 => {
-                    push_directive(tokens, "b16");
-                }
-                Type::B32 => {
-                    push_directive(tokens, "b32");
-                }
-                Type::B64 => {
-                    push_directive(tokens, "b64");
-                }
-            }
-            self.d.unparse_tokens(tokens);
+                    match &self.type_ {
+                            Type::B128 => {
+                                    push_directive(tokens, "b128");
+                            }
+                            Type::B16 => {
+                                    push_directive(tokens, "b16");
+                            }
+                            Type::B32 => {
+                                    push_directive(tokens, "b32");
+                            }
+                            Type::B64 => {
+                                    push_directive(tokens, "b64");
+                            }
+                    }
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.a.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+

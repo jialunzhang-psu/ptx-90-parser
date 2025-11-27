@@ -13,14 +13,22 @@ pub mod section_0 {
 
     impl PtxUnparser for ElectSync {
         fn unparse_tokens(&self, tokens: &mut ::std::vec::Vec<PtxToken>) {
+            self.unparse_tokens_mode(tokens, false);
+        }
+        fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "elect");
-            push_directive(tokens, "sync");
-            self.d.unparse_tokens(tokens);
-            tokens.push(PtxToken::Pipe);
-            self.p.unparse_tokens(tokens);
+                    push_directive(tokens, "sync");
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.d.unparse_tokens_mode(tokens, spaced);
+                    tokens.push(PtxToken::Pipe);
+                    self.p.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            self.membermask.unparse_tokens(tokens);
+                    if spaced { tokens.push(PtxToken::Space); }
+                    self.membermask.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
+            if spaced { tokens.push(PtxToken::Newline); }
         }
     }
+
 }
+
