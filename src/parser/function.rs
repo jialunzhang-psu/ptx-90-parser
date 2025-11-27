@@ -426,6 +426,19 @@ fn section_body_parser()
     between(lbrace_p(), rbrace_p(), many(section_entry_parser()))
 }
 
+fn skip_optional_semicolon<T, P>(
+    parser: P,
+) -> impl Fn(&mut PtxTokenStream) -> Result<(T, Span), PtxParseError>
+where
+    P: Fn(&mut PtxTokenStream) -> Result<(T, Span), PtxParseError>,
+{
+    move |stream| {
+        let (value, span) = parser(stream)?;
+        let _ = optional(semicolon_p())(stream)?;
+        Ok((value, span))
+    }
+}
+
 fn section_entry_parser()
 -> impl Fn(&mut PtxTokenStream) -> Result<(SectionEntry, Span), PtxParseError> {
     alt(
@@ -446,7 +459,7 @@ fn label_entry() -> impl Fn(&mut PtxTokenStream) -> Result<(SectionEntry, Span),
 fn section_directive_line()
 -> impl Fn(&mut PtxTokenStream) -> Result<(StatementSectionDirectiveLine, Span), PtxParseError> {
     let b8 = try_map(
-        skip_semicolon(skip_first(
+        skip_optional_semicolon(skip_first(
             directive_exact_p("b8"),
             sep_by1(signed_integer_literal(), comma_p()),
         )),
@@ -461,7 +474,7 @@ fn section_directive_line()
     );
 
     let b16 = try_map(
-        skip_semicolon(skip_first(
+        skip_optional_semicolon(skip_first(
             directive_exact_p("b16"),
             sep_by1(signed_integer_literal(), comma_p()),
         )),
@@ -476,12 +489,18 @@ fn section_directive_line()
     );
 
     let b32 = try_map(
-        skip_semicolon(skip_first(directive_exact_p("b32"), b32_section_suffix())),
+        skip_optional_semicolon(skip_first(
+            directive_exact_p("b32"),
+            b32_section_suffix(),
+        )),
         |line, span| Ok(line.with_span(span)),
     );
 
     let b64 = try_map(
-        skip_semicolon(skip_first(directive_exact_p("b64"), b64_section_suffix())),
+        skip_optional_semicolon(skip_first(
+            directive_exact_p("b64"),
+            b64_section_suffix(),
+        )),
         |line, span| Ok(line.with_span(span)),
     );
 
