@@ -90,7 +90,6 @@ fn unparse_section_line(tokens: &mut Vec<PtxToken>, line: &StatementSectionDirec
                 push_space(tokens, spaced);
                 push_signed_decimal_i64(tokens, *value as i64);
             }
-            tokens.push(PtxToken::Semicolon);
             push_newline(tokens, spaced);
         }
         StatementSectionDirectiveLine::B16 { values, .. } => {
@@ -103,7 +102,6 @@ fn unparse_section_line(tokens: &mut Vec<PtxToken>, line: &StatementSectionDirec
                 push_space(tokens, spaced);
                 push_signed_decimal_i64(tokens, *value as i64);
             }
-            tokens.push(PtxToken::Semicolon);
             push_newline(tokens, spaced);
         }
         StatementSectionDirectiveLine::B32Immediate { values, .. } => {
@@ -116,7 +114,6 @@ fn unparse_section_line(tokens: &mut Vec<PtxToken>, line: &StatementSectionDirec
                 push_space(tokens, spaced);
                 push_signed_decimal_i64(tokens, *value);
             }
-            tokens.push(PtxToken::Semicolon);
             push_newline(tokens, spaced);
         }
         StatementSectionDirectiveLine::B64Immediate { values, .. } => {
@@ -129,21 +126,18 @@ fn unparse_section_line(tokens: &mut Vec<PtxToken>, line: &StatementSectionDirec
                 push_space(tokens, spaced);
                 push_signed_decimal_i128(tokens, *value);
             }
-            tokens.push(PtxToken::Semicolon);
             push_newline(tokens, spaced);
         }
         StatementSectionDirectiveLine::B32Label { labels, .. } => {
             push_directive(tokens, "b32");
             push_space(tokens, spaced);
             push_identifier(tokens, &labels.val);
-            tokens.push(PtxToken::Semicolon);
             push_newline(tokens, spaced);
         }
         StatementSectionDirectiveLine::B64Label { labels, .. } => {
             push_directive(tokens, "b64");
             push_space(tokens, spaced);
             push_identifier(tokens, &labels.val);
-            tokens.push(PtxToken::Semicolon);
             push_newline(tokens, spaced);
         }
         StatementSectionDirectiveLine::B32LabelPlusImm { entries, .. } => {
@@ -159,7 +153,6 @@ fn unparse_section_line(tokens: &mut Vec<PtxToken>, line: &StatementSectionDirec
                 let magnitude = (*offset as i128).abs();
                 push_decimal(tokens, magnitude);
             }
-            tokens.push(PtxToken::Semicolon);
             push_newline(tokens, spaced);
         }
         StatementSectionDirectiveLine::B64LabelPlusImm { entries, .. } => {
@@ -175,7 +168,6 @@ fn unparse_section_line(tokens: &mut Vec<PtxToken>, line: &StatementSectionDirec
                 let magnitude = (*offset as i128).abs();
                 push_decimal(tokens, magnitude);
             }
-            tokens.push(PtxToken::Semicolon);
             push_newline(tokens, spaced);
         }
         StatementSectionDirectiveLine::B32LabelDiff { entries, .. } => {
@@ -186,7 +178,6 @@ fn unparse_section_line(tokens: &mut Vec<PtxToken>, line: &StatementSectionDirec
             tokens.push(PtxToken::Minus);
             push_space(tokens, spaced);
             push_identifier(tokens, &right.val);
-            tokens.push(PtxToken::Semicolon);
             push_newline(tokens, spaced);
         }
         StatementSectionDirectiveLine::B64LabelDiff { entries, .. } => {
@@ -197,7 +188,6 @@ fn unparse_section_line(tokens: &mut Vec<PtxToken>, line: &StatementSectionDirec
             tokens.push(PtxToken::Minus);
             push_space(tokens, spaced);
             push_identifier(tokens, &right.val);
-            tokens.push(PtxToken::Semicolon);
             push_newline(tokens, spaced);
         }
     }
@@ -362,7 +352,6 @@ impl PtxUnparser for StatementDirective {
                         push_decimal(tokens, offset.abs());
                     }
                 }
-                tokens.push(PtxToken::Semicolon);
                 push_newline(tokens, spaced);
             }
             StatementDirective::Dwarf {

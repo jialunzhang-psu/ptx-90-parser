@@ -1,7 +1,8 @@
 use std::fs;
+use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 
 use ptx_parser::pretty_print::{TreeDisplay, TreeFormatter, print_compact_module};
 use ptx_parser::{parse_ptx, run_with_large_stack};
@@ -28,6 +29,23 @@ enum Command {
         #[arg(long)]
         compact: bool,
     },
+    /// Parse a PTX file and output the AST in a machine-readable format.
+    OutputAst {
+        /// Path to the PTX source file to parse and emit.
+        input_file: PathBuf,
+        /// Output format for the emitted AST.
+        #[arg(long, value_enum, default_value_t = AstOutputFormat::Json)]
+        format: AstOutputFormat,
+        /// Optional path to write output; defaults to stdout.
+        #[arg(long)]
+        output: Option<PathBuf>,
+    },
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
+enum AstOutputFormat {
+    Json,
+    Tree,
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -39,6 +57,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             input_file,
             compact,
         } => print_ast(&input_file, compact)?,
+        Command::OutputAst {
+            input_file,
+            format,
+            output,
+        } => output_ast(&input_file, format, output.as_deref())?,
     }
 
     Ok(())
@@ -53,6 +76,40 @@ fn parse_file(path: &Path) -> Result<(), Box<dyn std::error::Error>> {
         path.display(),
         module.directives.len()
     );
+
+    Ok(())
+}
+
+fn output_ast(
+    path: &Path,
+    format: AstOutputFormat,
+    output: Option<&Path>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let source = fs::read_to_string(path)?;
+    let module = parse_with_large_stack(source.clone())?;
+
+    match (format, output) {
+        (AstOutputFormat::Json, Some(out_path)) => {
+            let file = fs::File::create(out_path)?;
+            serde_json::to_writer_pretty(io::BufWriter::new(file), &module)?;
+        }
+        (AstOutputFormat::Json, None) => {
+            let mut stdout = io::stdout().lock();
+            serde_json::to_writer_pretty(&mut stdout, &module)?;
+            stdout.write_all(b"\n")?;
+        }
+        (AstOutputFormat::Tree, Some(out_path)) => {
+            let mut file = fs::File::create(out_path)?;
+            let mut formatter = TreeFormatter::new();
+            module
+                .tree_display(&mut formatter, &source)
+                .expect("Failed to display tree");
+            writeln!(file, "{}", formatter.finish())?;
+        }
+        (AstOutputFormat::Tree, None) => {
+            print_ast_with_large_stack(module, source)?;
+        }
+    }
 
     Ok(())
 }

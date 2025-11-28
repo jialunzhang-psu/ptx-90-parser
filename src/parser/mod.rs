@@ -1,4 +1,5 @@
 use crate::{LexError, lexer::PtxToken, span};
+use serde::Serialize;
 use thiserror::Error;
 #[cfg(debug_assertions)]
 use stacker;
@@ -10,7 +11,7 @@ pub(crate) mod module;
 pub(crate) mod util;
 pub(crate) mod variable;
 
-#[derive(Debug, Default, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, Default, PartialEq, Eq, Copy, Clone, Serialize)]
 pub struct Span {
     pub start: usize,
     pub end: usize,

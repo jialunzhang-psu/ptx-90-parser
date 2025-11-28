@@ -293,16 +293,16 @@ fn parses_pragma_directive_variants() {
 fn parses_section_directive() {
     let source = ".section .debug_str {
     label0:
-    .b8 1, -2;
-    .b16 -32, 64;
-    .b32 1, -2;
-    .b64 1, -2;
-    .b32 label_a;
-    .b64 label_g;
-    .b32 label_c+4;
-    .b64 label_i+16;
-    .b32 label_e-label_f;
-    .b64 label_k-label_l;
+    .b8 1, -2
+    .b16 -32, 64
+    .b32 1, -2
+    .b64 1, -2
+    .b32 label_a
+    .b64 label_g
+    .b32 label_c+4
+    .b64 label_i+16
+    .b32 label_e-label_f
+    .b64 label_k-label_l
 }";
     let directive = parse::<StatementDirective>(source);
     match directive {

@@ -2,9 +2,10 @@ use crate::Spanned;
 use crate::parser::Span;
 use crate::r#type::common::{AttributeDirective, DataType};
 use crate::r#type::{FunctionSymbol, Immediate, VariableSymbol};
+use serde::Serialize;
 
 /// Module-level declarations that reserve storage in a specific address space.
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum ModuleVariableDirective {
     /// Deprecated `.tex` variable declaration.
     ///
@@ -29,7 +30,7 @@ pub enum ModuleVariableDirective {
 }
 
 /// Module-scoped variable declaration shared by `.tex`, `.shared`, `.global`, and `.const`.
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub struct VariableDirective {
     /// Example:
     /// .global .attribute(.managed) .s32 g;
@@ -52,7 +53,7 @@ pub struct VariableDirective {
 }
 
 /// Qualifiers left on module variable declarations (e.g. `.v4`).
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum VariableModifier {
     Vector { value: u32, span: Span },
     Alignment { value: u32, span: Span },
@@ -60,7 +61,7 @@ pub enum VariableModifier {
 }
 
 /// Parameters, used in function declarations and calls, e.g., `.param .b32 p`.
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum ParameterDirective {
     Register {
         ty: DataType,
@@ -79,7 +80,7 @@ pub enum ParameterDirective {
 }
 
 /// Address space qualifiers for parameters.
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum ParamStateSpace {
     /// .const
     Const { span: Span },
@@ -92,7 +93,7 @@ pub enum ParamStateSpace {
 }
 
 // Values that can appear in global initialiser lists.
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum InitializerValue {
     NumericLiteral { value: Immediate, span: Span },
     FunctionSymbol { name: FunctionSymbol, span: Span },
@@ -100,7 +101,7 @@ pub enum InitializerValue {
 }
 
 /// Structured representation of a global variable initialiser.
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum GlobalInitializer {
     Scalar {
         value: InitializerValue,

@@ -83,7 +83,10 @@ pub use parser::{
     ParseErrorKind, PtxParseError, PtxParser, PtxTokenStream, Span, StreamPosition, parse_ptx,
 };
 
-/// Execute `f` on a dedicated thread with a larger stack so recursive parsers don't overflow.
+/// Execute `f` on a dedicated thread with a larger stack in debug builds to
+/// avoid overflows from deep recursion. In release builds, run directly without
+/// the extra thread to reduce overhead.
+#[cfg(debug_assertions)]
 pub fn run_with_large_stack<F, R>(f: F) -> R
 where
     F: FnOnce() -> R + Send + 'static,
@@ -95,6 +98,15 @@ where
         .expect("failed to spawn large stack thread")
         .join()
         .unwrap_or_else(|panic| std::panic::resume_unwind(panic))
+}
+
+#[cfg(not(debug_assertions))]
+pub fn run_with_large_stack<F, R>(f: F) -> R
+where
+    F: FnOnce() -> R + Send + 'static,
+    R: Send + 'static,
+{
+    f()
 }
 
 // Unlexer exports

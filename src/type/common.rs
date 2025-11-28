@@ -4,8 +4,9 @@
 
 use crate::Spanned;
 use crate::parser::Span;
+use serde::Serialize;
 
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum CodeLinkage {
     /// `.visible`
     Visible { span: Span },
@@ -15,7 +16,7 @@ pub enum CodeLinkage {
     Weak { span: Span },
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum DataLinkage {
     /// `.visible`
     Visible { span: Span },
@@ -27,7 +28,7 @@ pub enum DataLinkage {
     Common { span: Span },
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum AttributeDirective {
     /// `.unified(uuid1, uuid2)`
     Unified { uuid1: u64, uuid2: u64, span: Span },
@@ -35,7 +36,7 @@ pub enum AttributeDirective {
     Managed { span: Span },
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum DataType {
     /// `.u8`
     U8 { span: Span },
@@ -85,14 +86,14 @@ pub enum DataType {
 /* -------------------- Math Basics ----------------- */
 /* -------------------------------------------------- */
 
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum Sign {
     Negative { span: Span },
     Positive { span: Span },
 }
 
 /// Axis component for 3-component special registers (x/y/z)
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum Axis {
     /// No axis component present
     None {
@@ -113,7 +114,7 @@ pub enum Axis {
 /* -------------------- Special Registers ------------ */
 /* --------------------------------------------------- */
 
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum SpecialRegister {
     /// `%aggr_smem_size`
     AggrSmemSize { span: Span },
@@ -200,14 +201,14 @@ pub enum SpecialRegister {
 /* --------------------------------------------------- */
 
 /// Texture handler with 2 operands, e.g. [%r1, %r2]
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub struct TexHandler2 {
     pub operands: [GeneralOperand; 2],
     pub span: Span,
 }
 
 /// Texture handler with optional sampler operand, e.g. `[tex, coords]` or `[tex, sampler, coords]`
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub struct TexHandler3Optional {
     pub handle: GeneralOperand,
     pub sampler: Option<GeneralOperand>,
@@ -216,7 +217,7 @@ pub struct TexHandler3Optional {
 }
 
 /// Texture handler with optional sampler operand, e.g. `[tex, coords]` or `[tex, sampler, coords]`
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub struct TexHandler3 {
     pub handle: GeneralOperand,
     pub sampler: GeneralOperand,
@@ -224,13 +225,13 @@ pub struct TexHandler3 {
     pub span: Span,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum GeneralOperand {
     Vec { operand: VectorOperand, span: Span },
     Single { operand: Operand, span: Span },
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum VectorOperand {
     /// {%r1}
     Vector1 { operand: Operand, span: Span },
@@ -244,7 +245,7 @@ pub enum VectorOperand {
     Vector8 { operands: [Operand; 8], span: Span },
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum Operand {
     /// %r1
     Register {
@@ -264,7 +265,7 @@ pub enum Operand {
 }
 
 /// Register operand starting with % (e.g., `%r1`).
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub struct RegisterOperand {
     pub name: String,
     /// Optional component suffix (e.g., `.x`, `.y`, `.z`, `.w`)
@@ -273,14 +274,14 @@ pub struct RegisterOperand {
 }
 
 /// Predicate register names (e.g., `%p0`).
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub struct PredicateRegister {
     pub name: String,
     pub span: Span,
 }
 
 /// Representation of an address operand.
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum AddressOperand {
     /// base[immIndex]
     Array {
@@ -299,7 +300,7 @@ pub enum AddressOperand {
 }
 
 /// Base location referenced by an address expression.
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum AddressBase {
     Register {
         operand: RegisterOperand,
@@ -312,7 +313,7 @@ pub enum AddressBase {
 }
 
 /// Specific adjustment applied within a displacement term.
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub enum AddressOffset {
     Register {
         operand: RegisterOperand,
@@ -344,7 +345,7 @@ pub enum AddressOffset {
 /// - Scientific notation: `1.5e10`, `3.2E-5`, `1e3`
 /// - Hex float (single-precision, 32-bit): `0f3f800000` (8 hex digits after `0f`)
 /// - Hex float (double-precision, 64-bit): `0d3ff0000000000000` (16 hex digits after `0d`)
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub struct Immediate {
     /// The literal value as a string (includes prefix, digits, and optional 'U' suffix)
     pub value: String,
@@ -356,21 +357,21 @@ pub struct Immediate {
 /* --------------------------------------------------- */
 
 /// Function symbol
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub struct FunctionSymbol {
     pub val: String,
     pub span: Span,
 }
 
 /// Variable symbol
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub struct VariableSymbol {
     pub val: String,
     pub span: Span,
 }
 
 /// Label name (e.g., `L__label_1`).
-#[derive(Debug, Clone, PartialEq, Eq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Eq, Spanned, Serialize)]
 pub struct Label {
     pub val: String,
     pub span: Span,
@@ -381,7 +382,7 @@ pub struct Label {
 /* --------------------------------------------------- */
 
 /// Predicate guard for conditional instruction execution
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct Predicate {
     pub negated: bool,
     pub operand: Operand,
@@ -394,7 +395,7 @@ pub struct Predicate {
 
 /// Represents a complete instruction with optional label and predicate guard
 /// Format: [label:] [@{!}pred] instruction
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct Instruction {
     pub predicate: Option<Predicate>,
     pub inst: crate::r#type::instruction::Inst,

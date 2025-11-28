@@ -7,22 +7,25 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::Spanned;
-    use crate::parser::Span;
     use crate::r#type::common::*;
+    use crate::parser::Span;
+    use crate::Spanned;
 
-    #[derive(Debug, Clone, PartialEq)]
+    use serde::Serialize;
+
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Type {
         U32, // .u32
         U64, // .u64
     }
 
-    #[derive(Debug, Clone, PartialEq, Spanned)]
+    #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct StackrestoreType {
-        pub type_: Type,       // .type
+        pub type_: Type, // .type
         pub a: GeneralOperand, // a
         pub span: Span,
     }
+
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

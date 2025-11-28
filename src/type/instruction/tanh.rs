@@ -7,27 +7,30 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::Spanned;
-    use crate::parser::Span;
     use crate::r#type::common::*;
+    use crate::parser::Span;
+    use crate::Spanned;
 
-    #[derive(Debug, Clone, PartialEq)]
+    use serde::Serialize;
+
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Type {
         Bf16x2, // .bf16x2
-        F16x2,  // .f16x2
-        Bf16,   // .bf16
-        F16,    // .f16
-        F32,    // .f32
+        F16x2, // .f16x2
+        Bf16, // .bf16
+        F16, // .f16
+        F32, // .f32
     }
 
-    #[derive(Debug, Clone, PartialEq, Spanned)]
+    #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct TanhApproxType {
-        pub approx: (),        // .approx
-        pub type_: Type,       // .type
+        pub approx: (), // .approx
+        pub type_: Type, // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub span: Span,
     }
+
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

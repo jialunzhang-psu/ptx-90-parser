@@ -4,16 +4,17 @@ use super::variable::ModuleVariableDirective;
 use crate::Spanned;
 use crate::parser::Span;
 use crate::r#type::{AliasFunctionDirective, EntryFunctionDirective, FuncFunctionDirective};
+use serde::Serialize;
 
 /// A full PTX module containing directives and function definitions.
-#[derive(Debug, Clone, PartialEq, Spanned, Default)]
+#[derive(Debug, Clone, PartialEq, Spanned, Default, Serialize)]
 pub struct Module {
     pub directives: Vec<ModuleDirective>,
     pub span: Span,
 }
 
 /// Module-level directives recognised by the parser.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum ModuleDirective {
     ModuleVariable {
         linkage: Option<DataLinkage>,
@@ -45,7 +46,7 @@ pub enum ModuleDirective {
 }
 
 /// Directives that apply to the PTX module as a whole.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum ModuleInfoDirectiveKind {
     Version {
         directive: VersionDirective,
@@ -70,7 +71,7 @@ pub enum ModuleInfoDirectiveKind {
 /// .version 3.1
 /// .version 3.0
 /// .version 2.3
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct VersionDirective {
     pub major: u32,
     pub minor: u32,
@@ -106,7 +107,7 @@ pub struct VersionDirective {
 /// .target sm_90       // baseline target architecture
 /// .target sm_90a      // PTX using architecture-specific features
 /// .target sm_100f     // PTX using family-specific features
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct TargetDirective {
     pub entries: Vec<TargetString>,
     pub span: Span,
@@ -120,14 +121,14 @@ pub struct TargetDirective {
 ///
 /// Example:
 /// .address_size 64
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct AddressSizeDirective {
     pub size: AddressSize,
     pub span: Span,
 }
 
 /// Debugging directives defined by the PTX ISA.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum ModuleDebugDirective {
     File {
         directive: FileDirective,
@@ -152,7 +153,7 @@ pub enum ModuleDebugDirective {
 /// .file 1 "example.cu"
 /// .file 2 "kernel.cu"
 /// .file 1 "kernel.cu", 1339013327, 64118
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct FileDirective {
     pub index: u32,
     pub path: String,
@@ -162,7 +163,7 @@ pub struct FileDirective {
 }
 
 /// Target specifiers used in the `.target` directive.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum TargetString {
     Sm120a { span: Span },
     Sm120f { span: Span },
@@ -214,7 +215,7 @@ pub enum TargetString {
 }
 
 /// Address size options for the `.address_size` directive.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum AddressSize {
     Size32 { span: Span },
     Size64 { span: Span },

@@ -15,29 +15,31 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::Spanned;
-    use crate::parser::Span;
     use crate::r#type::common::*;
+    use crate::parser::Span;
+    use crate::Spanned;
 
-    #[derive(Debug, Clone, PartialEq)]
+    use serde::Serialize;
+
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Dtype {
         U32, // .u32
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Atype {
         U32, // .u32
         S32, // .s32
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Mode {
         Clamp, // .clamp
-        Wrap,  // .wrap
+        Wrap, // .wrap
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Asel {
         B0, // .b0
         B1, // .b1
@@ -47,7 +49,7 @@ pub mod section_0 {
         H1, // .h1
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Bsel {
         B0, // .b0
         B1, // .b1
@@ -57,14 +59,14 @@ pub mod section_0 {
         H1, // .h1
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Op2 {
         Add, // .add
         Min, // .min
         Max, // .max
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Dsel {
         B0, // .b0
         B1, // .b1
@@ -74,117 +76,118 @@ pub mod section_0 {
         H1, // .h1
     }
 
-    #[derive(Debug, Clone, PartialEq, Spanned)]
+    #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct VshlDtypeAtypeU32SatMode {
-        pub dtype: Dtype,       // .dtype
-        pub atype: Atype,       // .atype
-        pub u32: (),            // .u32
-        pub sat: bool,          // {.sat}
-        pub mode: Mode,         // .mode
-        pub d: GeneralOperand,  // d
-        pub a: GeneralOperand,  // a
+        pub dtype: Dtype, // .dtype
+        pub atype: Atype, // .atype
+        pub u32: (), // .u32
+        pub sat: bool, // {.sat}
+        pub mode: Mode, // .mode
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand,  // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq, Spanned)]
+    #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct VshrDtypeAtypeU32SatMode {
-        pub dtype: Dtype,       // .dtype
-        pub atype: Atype,       // .atype
-        pub u32: (),            // .u32
-        pub sat: bool,          // {.sat}
-        pub mode: Mode,         // .mode
-        pub d: GeneralOperand,  // d
-        pub a: GeneralOperand,  // a
+        pub dtype: Dtype, // .dtype
+        pub atype: Atype, // .atype
+        pub u32: (), // .u32
+        pub sat: bool, // {.sat}
+        pub mode: Mode, // .mode
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand,  // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
         pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq, Spanned)]
+    #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct VshlDtypeAtypeU32SatModeOp2 {
-        pub dtype: Dtype,       // .dtype
-        pub atype: Atype,       // .atype
-        pub u32: (),            // .u32
-        pub sat: bool,          // {.sat}
-        pub mode: Mode,         // .mode
-        pub op2: Op2,           // .op2
-        pub d: GeneralOperand,  // d
-        pub a: GeneralOperand,  // a
+        pub dtype: Dtype, // .dtype
+        pub atype: Atype, // .atype
+        pub u32: (), // .u32
+        pub sat: bool, // {.sat}
+        pub mode: Mode, // .mode
+        pub op2: Op2, // .op2
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand,  // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand,  // c
+        pub c: GeneralOperand, // c
         pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq, Spanned)]
+    #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct VshrDtypeAtypeU32SatModeOp2 {
-        pub dtype: Dtype,       // .dtype
-        pub atype: Atype,       // .atype
-        pub u32: (),            // .u32
-        pub sat: bool,          // {.sat}
-        pub mode: Mode,         // .mode
-        pub op2: Op2,           // .op2
-        pub d: GeneralOperand,  // d
-        pub a: GeneralOperand,  // a
+        pub dtype: Dtype, // .dtype
+        pub atype: Atype, // .atype
+        pub u32: (), // .u32
+        pub sat: bool, // {.sat}
+        pub mode: Mode, // .mode
+        pub op2: Op2, // .op2
+        pub d: GeneralOperand, // d
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand,  // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand,  // c
+        pub c: GeneralOperand, // c
         pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq, Spanned)]
+    #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct VshlDtypeAtypeU32SatMode1 {
-        pub dtype: Dtype,       // .dtype
-        pub atype: Atype,       // .atype
-        pub u32: (),            // .u32
-        pub sat: bool,          // {.sat}
-        pub mode: Mode,         // .mode
-        pub d: GeneralOperand,  // d
-        pub dsel: Dsel,         // .dsel
-        pub a: GeneralOperand,  // a
+        pub dtype: Dtype, // .dtype
+        pub atype: Atype, // .atype
+        pub u32: (), // .u32
+        pub sat: bool, // {.sat}
+        pub mode: Mode, // .mode
+        pub d: GeneralOperand, // d
+        pub dsel: Dsel, // .dsel
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand,  // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand,  // c
+        pub c: GeneralOperand, // c
         pub span: Span,
     }
 
-    #[derive(Debug, Clone, PartialEq, Spanned)]
+    #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct VshrDtypeAtypeU32SatMode1 {
-        pub dtype: Dtype,       // .dtype
-        pub atype: Atype,       // .atype
-        pub u32: (),            // .u32
-        pub sat: bool,          // {.sat}
-        pub mode: Mode,         // .mode
-        pub d: GeneralOperand,  // d
-        pub dsel: Dsel,         // .dsel
-        pub a: GeneralOperand,  // a
+        pub dtype: Dtype, // .dtype
+        pub atype: Atype, // .atype
+        pub u32: (), // .u32
+        pub sat: bool, // {.sat}
+        pub mode: Mode, // .mode
+        pub d: GeneralOperand, // d
+        pub dsel: Dsel, // .dsel
+        pub a: GeneralOperand, // a
         pub asel: Option<Asel>, // {.asel}
-        pub b: GeneralOperand,  // b
+        pub b: GeneralOperand, // b
         pub bsel: Option<Bsel>, // {.bsel}
-        pub c: GeneralOperand,  // c
+        pub c: GeneralOperand, // c
         pub span: Span,
     }
+
 }
 
 // Re-export types with section suffixes to avoid naming conflicts
 // e.g., Type0 for section_0::Type, Type1 for section_1::Type
-pub use section_0::Asel as Asel0;
-pub use section_0::Atype as Atype0;
-pub use section_0::Bsel as Bsel0;
-pub use section_0::Dsel as Dsel0;
-pub use section_0::Dtype as Dtype0;
-pub use section_0::Mode as Mode0;
-pub use section_0::Op2 as Op20;
 pub use section_0::VshlDtypeAtypeU32SatMode;
-pub use section_0::VshlDtypeAtypeU32SatMode1;
-pub use section_0::VshlDtypeAtypeU32SatModeOp2;
 pub use section_0::VshrDtypeAtypeU32SatMode;
-pub use section_0::VshrDtypeAtypeU32SatMode1;
+pub use section_0::VshlDtypeAtypeU32SatModeOp2;
 pub use section_0::VshrDtypeAtypeU32SatModeOp2;
+pub use section_0::VshlDtypeAtypeU32SatMode1;
+pub use section_0::VshrDtypeAtypeU32SatMode1;
+pub use section_0::Dtype as Dtype0;
+pub use section_0::Atype as Atype0;
+pub use section_0::Mode as Mode0;
+pub use section_0::Asel as Asel0;
+pub use section_0::Bsel as Bsel0;
+pub use section_0::Op2 as Op20;
+pub use section_0::Dsel as Dsel0;

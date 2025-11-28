@@ -3,6 +3,7 @@ use super::variable::{ParameterDirective, VariableDirective};
 use crate::Spanned;
 use crate::parser::Span;
 use crate::r#type::{AttributeDirective, DataType, FunctionSymbol, VariableSymbol};
+use serde::Serialize;
 
 /// Alias directive relating one function symbol to another.
 ///
@@ -11,7 +12,7 @@ use crate::r#type::{AttributeDirective, DataType, FunctionSymbol, VariableSymbol
 ///
 /// Example:
 /// .alias foo, bar;
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct AliasFunctionDirective {
     pub alias: FunctionSymbol,
     pub target: FunctionSymbol,
@@ -19,7 +20,7 @@ pub struct AliasFunctionDirective {
 }
 
 /// A PTX kernel declared with the `.entry` directive.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct FuncFunctionDirective {
     /// Example:
     /// .func .attribute(.unified(0xAB, 0xCD)) bar() { ... }
@@ -47,7 +48,7 @@ pub struct FuncFunctionDirective {
 }
 
 /// A PTX device function declared with the `.func` directive.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct EntryFunctionDirective {
     /// Name of the entry function.
     pub name: FunctionSymbol,
@@ -61,7 +62,7 @@ pub struct EntryFunctionDirective {
 }
 
 /// Directive tokens that may decorate a PTX function header.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum FuncFunctionHeaderDirective {
     /// Syntax:
     /// .noreturn
@@ -90,7 +91,7 @@ pub enum FuncFunctionHeaderDirective {
 }
 
 /// Directive tokens that may decorate a PTX function header.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum EntryFunctionHeaderDirective {
     /// Syntax:
     /// .maxnreg n
@@ -165,7 +166,7 @@ pub enum EntryFunctionHeaderDirective {
 }
 
 /// Statements contained within a PTX function body.
-#[derive(Debug, Clone, Default, PartialEq, Spanned)]
+#[derive(Debug, Clone, Default, PartialEq, Spanned, Serialize)]
 pub struct FunctionBody {
     pub statements: Vec<FunctionStatement>,
     pub span: Span,
@@ -173,7 +174,7 @@ pub struct FunctionBody {
 
 /// Nested statement block enclosed in braces.
 /// Executable items that appear within a function body.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum FunctionStatement {
     Label {
         label: Label,
@@ -197,14 +198,14 @@ pub enum FunctionStatement {
 ///
 /// Syntax:
 /// .reg .ty name<range>
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct RegisterDirective {
     pub ty: DataType,
     pub registers: Vec<RegisterTarget>,
     pub span: Span,
 }
 
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct RegisterTarget {
     pub name: VariableSymbol,
     pub range: Option<u32>,
@@ -212,7 +213,7 @@ pub struct RegisterTarget {
 }
 
 /// Directive that applies to individual statements.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum StatementDirective {
     Loc {
         directive: LocationDirective,
@@ -273,13 +274,13 @@ pub enum StatementDirective {
 /// .4byte  label
 /// .quad   label
 /// ```
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct DwarfDirective {
     pub kind: DwarfDirectiveKind,
     pub span: Span,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum DwarfDirectiveKind {
     ByteValues(Vec<u8>),
     FourByteValues(Vec<u32>),
@@ -339,20 +340,20 @@ pub enum DwarfDirectiveKind {
 ///     .b8 0
 ///    }
 /// ```
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct SectionDirective {
     pub name: String,
     pub entries: Vec<SectionEntry>,
     pub span: Span,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum SectionEntry {
     Label { label: Label, span: Span },
     Directive(StatementSectionDirectiveLine),
 }
 
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum StatementSectionDirectiveLine {
     B8 { values: Vec<i16>, span: Span },
     B16 { values: Vec<i32>, span: Span },
@@ -371,7 +372,7 @@ pub enum StatementSectionDirectiveLine {
 /// Syntax:
 ///     .loc file_index line_number column_position
 ///     .loc file_index line_number column_position,function_name label {+ immediate }, inlined_at file_index2 line_number2 column_position2
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct LocationDirective {
     pub file_index: u32,
     pub line: u32,
@@ -380,7 +381,7 @@ pub struct LocationDirective {
     pub span: Span,
 }
 
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct LocationInlinedAt {
     pub file_index: u32,
     pub line: u32,
@@ -398,13 +399,13 @@ pub struct LocationInlinedAt {
 ///     .pragma "used_bytes_mask mask";
 ///     .pragma "enable_smem_spilling";
 ///     .pragma "frequency n";
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct PragmaDirective {
     pub kind: PragmaDirectiveKind,
     pub span: Span,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum PragmaDirectiveKind {
     Nounroll,
     UsedBytesMask { mask: String },
@@ -417,7 +418,7 @@ pub enum PragmaDirectiveKind {
 ///
 /// Syntax:
 ///    .branchtargets label1, label2, label3, ...;
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct BranchTargetsDirective {
     pub labels: Vec<Label>,
     pub span: Span,
@@ -427,7 +428,7 @@ pub struct BranchTargetsDirective {
 ///
 /// Syntax:
 ///     .calltargets func1, func2, func3, ...;
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct CallTargetsDirective {
     pub targets: Vec<FunctionSymbol>,
     pub span: Span,
@@ -444,7 +445,7 @@ pub struct CallTargetsDirective {
 ///     label: .callprototype (ret-param) _ {.abi_preserve N} {.abi_preserve_control N};
 ///     // input, return parameters
 ///     label: .callprototype (ret-param) _ (param-list) {.abi_preserve N} {.abi_preserve_control N};
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct CallPrototypeDirective {
     pub return_param: Option<ParameterDirective>,
     pub params: Vec<ParameterDirective>,
@@ -455,7 +456,7 @@ pub struct CallPrototypeDirective {
 }
 
 /// Dimension triplet used by several function header directives.
-#[derive(Debug, Clone, PartialEq, Spanned)]
+#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub enum FunctionDim {
     X { x: u32, span: Span },
     XY { x: u32, y: u32, span: Span },

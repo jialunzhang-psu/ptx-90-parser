@@ -7,23 +7,26 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::Spanned;
-    use crate::parser::Span;
     use crate::r#type::common::*;
+    use crate::parser::Span;
+    use crate::Spanned;
 
-    #[derive(Debug, Clone, PartialEq)]
+    use serde::Serialize;
+
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum LevelEvictionPriority {
         L2EvictNormal, // .L2::evict_normal
     }
 
-    #[derive(Debug, Clone, PartialEq, Spanned)]
+    #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct ApplypriorityGlobalLevelEvictionPriority {
-        pub global: bool,                                   // {.global}
+        pub global: bool, // {.global}
         pub level_eviction_priority: LevelEvictionPriority, // .level::eviction_priority
-        pub a: AddressOperand,                              // [a]
-        pub size: GeneralOperand,                           // size
+        pub a: AddressOperand, // [a]
+        pub size: GeneralOperand, // size
         pub span: Span,
     }
+
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

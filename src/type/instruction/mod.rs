@@ -2,10 +2,12 @@
 // DO NOT EDIT MANUALLY
 #![allow(unused)]
 
+use serde::Serialize;
+
 pub mod abs;
 pub mod activemask;
-pub mod add;
 pub mod add_cc;
+pub mod add;
 pub mod addc;
 pub mod alloca;
 pub mod and;
@@ -29,21 +31,21 @@ pub mod clz;
 pub mod cnot;
 pub mod copysign;
 pub mod cos;
-pub mod cp_async;
-pub mod cp_async_bulk;
 pub mod cp_async_bulk_commit_group;
-pub mod cp_async_bulk_prefetch;
 pub mod cp_async_bulk_prefetch_tensor;
+pub mod cp_async_bulk_prefetch;
 pub mod cp_async_bulk_tensor;
+pub mod cp_async_bulk;
 pub mod cp_async_bulk_wait_group;
 pub mod cp_async_commit_group;
 pub mod cp_async_mbarrier_arrive;
+pub mod cp_async;
 pub mod cp_async_wait_group;
-pub mod cp_reduce_async_bulk;
 pub mod cp_reduce_async_bulk_tensor;
+pub mod cp_reduce_async_bulk;
 pub mod createpolicy;
-pub mod cvt;
 pub mod cvt_pack;
+pub mod cvt;
 pub mod cvta;
 pub mod discard;
 pub mod div;
@@ -58,15 +60,15 @@ pub mod getctarank;
 pub mod griddepcontrol;
 pub mod isspacep;
 pub mod istypep;
-pub mod ld;
 pub mod ld_global_nc;
+pub mod ld;
 pub mod ldmatrix;
 pub mod ldu;
 pub mod lg2;
 pub mod lop3;
+pub mod mad_cc;
 pub mod mad;
 pub mod mad24;
-pub mod mad_cc;
 pub mod madc;
 pub mod mapa;
 pub mod match_sync;
@@ -81,8 +83,8 @@ pub mod mbarrier_pending_count;
 pub mod mbarrier_test_wait;
 pub mod membar;
 pub mod min;
-pub mod mma;
 pub mod mma_sp;
+pub mod mma;
 pub mod mov;
 pub mod movmatrix;
 pub mod mul;
@@ -96,36 +98,36 @@ pub mod pmevent;
 pub mod popc;
 pub mod prefetch;
 pub mod prmt;
-pub mod rcp;
 pub mod rcp_approx_ftz_f64;
-pub mod red;
+pub mod rcp;
 pub mod red_async;
+pub mod red;
 pub mod redux_sync;
 pub mod rem;
 pub mod ret;
-pub mod rsqrt;
 pub mod rsqrt_approx_ftz_f64;
+pub mod rsqrt;
 pub mod sad;
 pub mod selp;
 pub mod set;
 pub mod setmaxnreg;
 pub mod setp;
 pub mod shf;
-pub mod shfl;
 pub mod shfl_sync;
+pub mod shfl;
 pub mod shl;
 pub mod shr;
 pub mod sin;
 pub mod slct;
 pub mod sqrt;
-pub mod st;
 pub mod st_async;
 pub mod st_bulk;
+pub mod st;
 pub mod stackrestore;
 pub mod stacksave;
 pub mod stmatrix;
-pub mod sub;
 pub mod sub_cc;
+pub mod sub;
 pub mod subc;
 pub mod suld;
 pub mod suq;
@@ -138,10 +140,10 @@ pub mod tcgen05_commit;
 pub mod tcgen05_cp;
 pub mod tcgen05_fence;
 pub mod tcgen05_ld;
-pub mod tcgen05_mma;
 pub mod tcgen05_mma_sp;
-pub mod tcgen05_mma_ws;
+pub mod tcgen05_mma;
 pub mod tcgen05_mma_ws_sp;
+pub mod tcgen05_mma_ws;
 pub mod tcgen05_shift;
 pub mod tcgen05_st;
 pub mod tcgen05_wait;
@@ -156,16 +158,16 @@ pub mod vmad;
 pub mod vop;
 pub mod vop2;
 pub mod vop4;
-pub mod vote;
 pub mod vote_sync;
+pub mod vote;
 pub mod vset;
 pub mod vset2;
 pub mod vset4;
 pub mod vsh;
 pub mod wgmma_commit_group;
 pub mod wgmma_fence;
-pub mod wgmma_mma_async;
 pub mod wgmma_mma_async_sp;
+pub mod wgmma_mma_async;
 pub mod wgmma_wait_group;
 pub mod wmma_load;
 pub mod wmma_mma;
@@ -173,7 +175,7 @@ pub mod wmma_store;
 pub mod xor;
 
 /// Top-level instruction type encompassing all PTX instructions
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum Inst {
     AbsType(abs::section_0::AbsType),
     AbsFtzF32(abs::section_0::AbsFtzF32),
@@ -768,3 +770,4 @@ pub enum Inst {
     WmmaStoreDSyncAlignedLayoutShapeSsType3(wmma_store::section_3::WmmaStoreDSyncAlignedLayoutShapeSsType3),
     XorType(xor::section_0::XorType),
 }
+

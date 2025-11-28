@@ -7,25 +7,28 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::Spanned;
-    use crate::parser::Span;
     use crate::r#type::common::*;
+    use crate::parser::Span;
+    use crate::Spanned;
 
-    #[derive(Debug, Clone, PartialEq)]
+    use serde::Serialize;
+
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum State {
         SharedCta, // .shared::cta
-        Shared,    // .shared
+        Shared, // .shared
     }
 
-    #[derive(Debug, Clone, PartialEq, Spanned)]
+    #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MbarrierInitStateB64 {
-        pub init: (),              // .init
-        pub state: Option<State>,  // {.state}
-        pub b64: (),               // .b64
-        pub addr: AddressOperand,  // [addr]
+        pub init: (), // .init
+        pub state: Option<State>, // {.state}
+        pub b64: (), // .b64
+        pub addr: AddressOperand, // [addr]
         pub count: GeneralOperand, // count
         pub span: Span,
     }
+
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

@@ -102,6 +102,7 @@ impl TypeGenerator {
         output.push_str("    use crate::r#type::common::*;\n");
         output.push_str("    use crate::parser::Span;\n");
         output.push_str("    use crate::Spanned;\n\n");
+        output.push_str("    use serde::Serialize;\n\n");
 
         // Indent enum definitions
         for line in enum_output.lines() {
@@ -133,7 +134,7 @@ impl TypeGenerator {
 
     fn emit_enum_definition(enum_name: &str, enum_def: &EnumDefinition) -> String {
         let mut output = String::new();
-        output.push_str(&format!("#[derive(Debug, Clone, PartialEq)]\n"));
+        output.push_str(&format!("#[derive(Debug, Clone, PartialEq, Serialize)]\n"));
         output.push_str(&format!("pub enum {} {{\n", enum_name));
         for (variant_name, raw_value, tuple_types) in &enum_def.variants {
             if let Some(types) = tuple_types {
@@ -181,7 +182,9 @@ impl TypeGenerator {
 
         let mut output = String::new();
 
-        output.push_str(&format!("#[derive(Debug, Clone, PartialEq, Spanned)]\n"));
+        output.push_str(&format!(
+            "#[derive(Debug, Clone, PartialEq, Spanned, Serialize)]\n"
+        ));
         output.push_str(&format!("pub struct {} {{\n", struct_name));
 
         // Generate fields from modifiers
@@ -485,6 +488,7 @@ pub fn generate_mod_rs_content_v2(modules: &[(String, Vec<(String, String)>)]) -
     output.push_str("// Auto-generated module declarations\n");
     output.push_str("// DO NOT EDIT MANUALLY\n");
     output.push_str("#![allow(unused)]\n\n");
+    output.push_str("use serde::Serialize;\n\n");
 
     for (module_name, _) in modules {
         output.push_str(&format!("pub mod {};\n", module_name));
@@ -493,7 +497,7 @@ pub fn generate_mod_rs_content_v2(modules: &[(String, Vec<(String, String)>)]) -
 
     // Generate Inst enum
     output.push_str("/// Top-level instruction type encompassing all PTX instructions\n");
-    output.push_str("#[derive(Debug, Clone, PartialEq)]\n");
+    output.push_str("#[derive(Debug, Clone, PartialEq, Serialize)]\n");
     output.push_str("pub enum Inst {\n");
 
     for (module_name, structs) in modules {

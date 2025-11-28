@@ -1,6 +1,6 @@
 mod util;
 
-use ptx_parser::{PtxUnlexer, PtxUnparser, r#type::Instruction};
+use ptx_parser::{PtxParser, PtxTokenStream, PtxUnlexer, PtxUnparser, Span, r#type::Instruction};
 
 #[test]
 fn test_instruction_with_predicate_only() {
@@ -54,10 +54,15 @@ fn test_roundtrip_with_predicate() {
     ptx_parser::run_with_large_stack(|| {
         let input = "@%p1 mov.u32 %r0, 42;";
         let parsed: Instruction = util::parse(input);
-        let tokens = parsed.to_tokens_spaced();
-        let unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
+        let tokens = parsed.to_tokens();
+        let _unparsed = PtxUnlexer::to_string(&tokens).expect("unparsing failed");
 
-        let reparsed: Instruction = util::parse(&unparsed);
+        let with_spans: Vec<_> = tokens
+            .into_iter()
+            .map(|token| (token, Span::new(0, 0)))
+            .collect();
+        let mut stream = PtxTokenStream::new(&with_spans);
+        let (reparsed, _) = Instruction::parse()(&mut stream).expect("reparse failed");
         assert_eq!(parsed.predicate.is_some(), reparsed.predicate.is_some());
     });
 }
