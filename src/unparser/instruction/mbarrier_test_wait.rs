@@ -23,48 +23,56 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mbarrier");
-                    push_directive(tokens, "test_wait");
-                    if let Some(sem_0) = self.sem.as_ref() {
-                            match sem_0 {
-                                    Sem::Acquire => {
-                                            push_directive(tokens, "acquire");
-                                    }
-                                    Sem::Relaxed => {
-                                            push_directive(tokens, "relaxed");
-                                    }
-                            }
+            push_directive(tokens, "test_wait");
+            if let Some(sem_0) = self.sem.as_ref() {
+                match sem_0 {
+                    Sem::Acquire => {
+                        push_directive(tokens, "acquire");
                     }
-                    if let Some(scope_1) = self.scope.as_ref() {
-                            match scope_1 {
-                                    Scope::Cluster => {
-                                            push_directive(tokens, "cluster");
-                                    }
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
-                            }
+                    Sem::Relaxed => {
+                        push_directive(tokens, "relaxed");
                     }
-                    if let Some(state_2) = self.state.as_ref() {
-                            match state_2 {
-                                    State::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    State::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                }
+            }
+            if let Some(scope_1) = self.scope.as_ref() {
+                match scope_1 {
+                    Scope::Cluster => {
+                        push_directive(tokens, "cluster");
                     }
-                    push_directive(tokens, "b64");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.waitcomplete.unparse_tokens_mode(tokens, spaced);
+                    Scope::Cta => {
+                        push_directive(tokens, "cta");
+                    }
+                }
+            }
+            if let Some(state_2) = self.state.as_ref() {
+                match state_2 {
+                    State::SharedCta => {
+                        push_directive(tokens, "shared::cta");
+                    }
+                    State::Shared => {
+                        push_directive(tokens, "shared");
+                    }
+                }
+            }
+            push_directive(tokens, "b64");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.waitcomplete.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.addr.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.addr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.state2.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.state2.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -74,49 +82,57 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mbarrier");
-                    push_directive(tokens, "test_wait");
-                    push_directive(tokens, "parity");
-                    if let Some(sem_3) = self.sem.as_ref() {
-                            match sem_3 {
-                                    Sem::Acquire => {
-                                            push_directive(tokens, "acquire");
-                                    }
-                                    Sem::Relaxed => {
-                                            push_directive(tokens, "relaxed");
-                                    }
-                            }
+            push_directive(tokens, "test_wait");
+            push_directive(tokens, "parity");
+            if let Some(sem_3) = self.sem.as_ref() {
+                match sem_3 {
+                    Sem::Acquire => {
+                        push_directive(tokens, "acquire");
                     }
-                    if let Some(scope_4) = self.scope.as_ref() {
-                            match scope_4 {
-                                    Scope::Cluster => {
-                                            push_directive(tokens, "cluster");
-                                    }
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
-                            }
+                    Sem::Relaxed => {
+                        push_directive(tokens, "relaxed");
                     }
-                    if let Some(state_5) = self.state.as_ref() {
-                            match state_5 {
-                                    State::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    State::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                }
+            }
+            if let Some(scope_4) = self.scope.as_ref() {
+                match scope_4 {
+                    Scope::Cluster => {
+                        push_directive(tokens, "cluster");
                     }
-                    push_directive(tokens, "b64");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.waitcomplete.unparse_tokens_mode(tokens, spaced);
+                    Scope::Cta => {
+                        push_directive(tokens, "cta");
+                    }
+                }
+            }
+            if let Some(state_5) = self.state.as_ref() {
+                match state_5 {
+                    State::SharedCta => {
+                        push_directive(tokens, "shared::cta");
+                    }
+                    State::Shared => {
+                        push_directive(tokens, "shared");
+                    }
+                }
+            }
+            push_directive(tokens, "b64");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.waitcomplete.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.addr.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.addr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.phaseparity.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.phaseparity.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -126,53 +142,65 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mbarrier");
-                    push_directive(tokens, "try_wait");
-                    if let Some(sem_6) = self.sem.as_ref() {
-                            match sem_6 {
-                                    Sem::Acquire => {
-                                            push_directive(tokens, "acquire");
-                                    }
-                                    Sem::Relaxed => {
-                                            push_directive(tokens, "relaxed");
-                                    }
-                            }
+            push_directive(tokens, "try_wait");
+            if let Some(sem_6) = self.sem.as_ref() {
+                match sem_6 {
+                    Sem::Acquire => {
+                        push_directive(tokens, "acquire");
                     }
-                    if let Some(scope_7) = self.scope.as_ref() {
-                            match scope_7 {
-                                    Scope::Cluster => {
-                                            push_directive(tokens, "cluster");
-                                    }
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
-                            }
+                    Sem::Relaxed => {
+                        push_directive(tokens, "relaxed");
                     }
-                    if let Some(state_8) = self.state.as_ref() {
-                            match state_8 {
-                                    State::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    State::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                }
+            }
+            if let Some(scope_7) = self.scope.as_ref() {
+                match scope_7 {
+                    Scope::Cluster => {
+                        push_directive(tokens, "cluster");
                     }
-                    push_directive(tokens, "b64");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.waitcomplete.unparse_tokens_mode(tokens, spaced);
+                    Scope::Cta => {
+                        push_directive(tokens, "cta");
+                    }
+                }
+            }
+            if let Some(state_8) = self.state.as_ref() {
+                match state_8 {
+                    State::SharedCta => {
+                        push_directive(tokens, "shared::cta");
+                    }
+                    State::Shared => {
+                        push_directive(tokens, "shared");
+                    }
+                }
+            }
+            push_directive(tokens, "b64");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.waitcomplete.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.addr.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.addr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.state2.unparse_tokens_mode(tokens, spaced);
-            if self.suspendtimehint.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_9) = self.suspendtimehint.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_9.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.state2.unparse_tokens_mode(tokens, spaced);
+            if self.suspendtimehint.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_9) = self.suspendtimehint.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_9.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -182,56 +210,66 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mbarrier");
-                    push_directive(tokens, "try_wait");
-                    push_directive(tokens, "parity");
-                    if let Some(sem_10) = self.sem.as_ref() {
-                            match sem_10 {
-                                    Sem::Acquire => {
-                                            push_directive(tokens, "acquire");
-                                    }
-                                    Sem::Relaxed => {
-                                            push_directive(tokens, "relaxed");
-                                    }
-                            }
+            push_directive(tokens, "try_wait");
+            push_directive(tokens, "parity");
+            if let Some(sem_10) = self.sem.as_ref() {
+                match sem_10 {
+                    Sem::Acquire => {
+                        push_directive(tokens, "acquire");
                     }
-                    if let Some(scope_11) = self.scope.as_ref() {
-                            match scope_11 {
-                                    Scope::Cluster => {
-                                            push_directive(tokens, "cluster");
-                                    }
-                                    Scope::Cta => {
-                                            push_directive(tokens, "cta");
-                                    }
-                            }
+                    Sem::Relaxed => {
+                        push_directive(tokens, "relaxed");
                     }
-                    if let Some(state_12) = self.state.as_ref() {
-                            match state_12 {
-                                    State::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    State::Shared => {
-                                            push_directive(tokens, "shared");
-                                    }
-                            }
+                }
+            }
+            if let Some(scope_11) = self.scope.as_ref() {
+                match scope_11 {
+                    Scope::Cluster => {
+                        push_directive(tokens, "cluster");
                     }
-                    push_directive(tokens, "b64");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.waitcomplete.unparse_tokens_mode(tokens, spaced);
+                    Scope::Cta => {
+                        push_directive(tokens, "cta");
+                    }
+                }
+            }
+            if let Some(state_12) = self.state.as_ref() {
+                match state_12 {
+                    State::SharedCta => {
+                        push_directive(tokens, "shared::cta");
+                    }
+                    State::Shared => {
+                        push_directive(tokens, "shared");
+                    }
+                }
+            }
+            push_directive(tokens, "b64");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.waitcomplete.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.addr.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.addr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.phaseparity.unparse_tokens_mode(tokens, spaced);
-            if self.suspendtimehint.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_13) = self.suspendtimehint.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_13.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.phaseparity.unparse_tokens_mode(tokens, spaced);
+            if self.suspendtimehint.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_13) = self.suspendtimehint.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_13.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

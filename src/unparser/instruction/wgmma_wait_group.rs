@@ -17,15 +17,17 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "wgmma");
-                    push_directive(tokens, "wait_group");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.n.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "wait_group");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.n.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

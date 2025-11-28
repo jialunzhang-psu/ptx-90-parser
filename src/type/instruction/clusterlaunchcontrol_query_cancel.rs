@@ -9,9 +9,9 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -24,43 +24,42 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct ClusterlaunchcontrolQueryCancelIsCanceledPredB128 {
-        pub query_cancel: (), // .query_cancel
-        pub is_canceled: (), // .is_canceled
-        pub pred: (), // .pred
-        pub b128: (), // .b128
-        pub pred2: GeneralOperand, // pred
+        pub query_cancel: (),                    // .query_cancel
+        pub is_canceled: (),                     // .is_canceled
+        pub pred: (),                            // .pred
+        pub b128: (),                            // .b128
+        pub pred2: GeneralOperand,               // pred
         pub try_cancel_response: GeneralOperand, // try_cancel_response
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct ClusterlaunchcontrolQueryCancelGetFirstCtaidV4B32B128 {
-        pub query_cancel: (), // .query_cancel
-        pub get_first_ctaid: (), // .get_first_ctaid
-        pub v4: (), // .v4
-        pub b32: (), // .b32
-        pub b128: (), // .b128
-        pub xdim: VectorOperand, // {xdim, ydim, zdim, _}
+        pub query_cancel: (),                    // .query_cancel
+        pub get_first_ctaid: (),                 // .get_first_ctaid
+        pub v4: (),                              // .v4
+        pub b32: (),                             // .b32
+        pub b128: (),                            // .b128
+        pub xdim: VectorOperand,                 // {xdim, ydim, zdim, _}
         pub try_cancel_response: GeneralOperand, // try_cancel_response
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct ClusterlaunchcontrolQueryCancelGetFirstCtaidDimensionB32B128 {
-        pub query_cancel: (), // .query_cancel
+        pub query_cancel: (),                                          // .query_cancel
         pub get_first_ctaid_dimension: Option<GetFirstCtaidDimension>, // {.get_first_ctaid::dimension}
-        pub b32: (), // .b32
-        pub b128: (), // .b128
-        pub reg: GeneralOperand, // reg
-        pub try_cancel_response: GeneralOperand, // try_cancel_response
+        pub b32: (),                                                   // .b32
+        pub b128: (),                                                  // .b128
+        pub reg: GeneralOperand,                                       // reg
+        pub try_cancel_response: GeneralOperand,                       // try_cancel_response
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts
 // e.g., Type0 for section_0::Type, Type1 for section_1::Type
-pub use section_0::ClusterlaunchcontrolQueryCancelIsCanceledPredB128;
-pub use section_0::ClusterlaunchcontrolQueryCancelGetFirstCtaidV4B32B128;
 pub use section_0::ClusterlaunchcontrolQueryCancelGetFirstCtaidDimensionB32B128;
+pub use section_0::ClusterlaunchcontrolQueryCancelGetFirstCtaidV4B32B128;
+pub use section_0::ClusterlaunchcontrolQueryCancelIsCanceledPredB128;
 pub use section_0::GetFirstCtaidDimension as GetFirstCtaidDimension0;

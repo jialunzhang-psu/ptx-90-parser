@@ -33,64 +33,70 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "ld");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.shape1 {
-                            Shape1::_16x128b => {
-                                    push_directive(tokens, "16x128b");
-                            }
-                            Shape1::_16x256b => {
-                                    push_directive(tokens, "16x256b");
-                            }
-                            Shape1::_16x64b => {
-                                    push_directive(tokens, "16x64b");
-                            }
-                            Shape1::_32x32b => {
-                                    push_directive(tokens, "32x32b");
-                            }
+            push_directive(tokens, "ld");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.shape1 {
+                Shape1::_16x128b => {
+                    push_directive(tokens, "16x128b");
+                }
+                Shape1::_16x256b => {
+                    push_directive(tokens, "16x256b");
+                }
+                Shape1::_16x64b => {
+                    push_directive(tokens, "16x64b");
+                }
+                Shape1::_32x32b => {
+                    push_directive(tokens, "32x32b");
+                }
+            }
+            match &self.num {
+                Num::X128 => {
+                    push_directive(tokens, "x128");
+                }
+                Num::X16 => {
+                    push_directive(tokens, "x16");
+                }
+                Num::X32 => {
+                    push_directive(tokens, "x32");
+                }
+                Num::X64 => {
+                    push_directive(tokens, "x64");
+                }
+                Num::X1 => {
+                    push_directive(tokens, "x1");
+                }
+                Num::X2 => {
+                    push_directive(tokens, "x2");
+                }
+                Num::X4 => {
+                    push_directive(tokens, "x4");
+                }
+                Num::X8 => {
+                    push_directive(tokens, "x8");
+                }
+            }
+            if let Some(pack_0) = self.pack.as_ref() {
+                match pack_0 {
+                    Pack::Pack16b => {
+                        push_directive(tokens, "pack::16b");
                     }
-                    match &self.num {
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X1 => {
-                                    push_directive(tokens, "x1");
-                            }
-                            Num::X2 => {
-                                    push_directive(tokens, "x2");
-                            }
-                            Num::X4 => {
-                                    push_directive(tokens, "x4");
-                            }
-                            Num::X8 => {
-                                    push_directive(tokens, "x8");
-                            }
-                    }
-                    if let Some(pack_0) = self.pack.as_ref() {
-                            match pack_0 {
-                                    Pack::Pack16b => {
-                                            push_directive(tokens, "pack::16b");
-                                    }
-                            }
-                    }
-                    push_directive(tokens, "b32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.r.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            push_directive(tokens, "b32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.r.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.taddr.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.taddr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -100,58 +106,66 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "ld");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.shape2 {
-                            Shape2::_16x32bx2 => {
-                                    push_directive(tokens, "16x32bx2");
-                            }
+            push_directive(tokens, "ld");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.shape2 {
+                Shape2::_16x32bx2 => {
+                    push_directive(tokens, "16x32bx2");
+                }
+            }
+            match &self.num {
+                Num::X128 => {
+                    push_directive(tokens, "x128");
+                }
+                Num::X16 => {
+                    push_directive(tokens, "x16");
+                }
+                Num::X32 => {
+                    push_directive(tokens, "x32");
+                }
+                Num::X64 => {
+                    push_directive(tokens, "x64");
+                }
+                Num::X1 => {
+                    push_directive(tokens, "x1");
+                }
+                Num::X2 => {
+                    push_directive(tokens, "x2");
+                }
+                Num::X4 => {
+                    push_directive(tokens, "x4");
+                }
+                Num::X8 => {
+                    push_directive(tokens, "x8");
+                }
+            }
+            if let Some(pack_1) = self.pack.as_ref() {
+                match pack_1 {
+                    Pack::Pack16b => {
+                        push_directive(tokens, "pack::16b");
                     }
-                    match &self.num {
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X1 => {
-                                    push_directive(tokens, "x1");
-                            }
-                            Num::X2 => {
-                                    push_directive(tokens, "x2");
-                            }
-                            Num::X4 => {
-                                    push_directive(tokens, "x4");
-                            }
-                            Num::X8 => {
-                                    push_directive(tokens, "x8");
-                            }
-                    }
-                    if let Some(pack_1) = self.pack.as_ref() {
-                            match pack_1 {
-                                    Pack::Pack16b => {
-                                            push_directive(tokens, "pack::16b");
-                                    }
-                            }
-                    }
-                    push_directive(tokens, "b32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.r.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            push_directive(tokens, "b32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.r.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.taddr.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.taddr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.immhalfsplitoff.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.immhalfsplitoff.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -161,66 +175,74 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "ld");
-                    push_directive(tokens, "red");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.shape3 {
-                            Shape3::_32x32b => {
-                                    push_directive(tokens, "32x32b");
-                            }
-                    }
-                    match &self.num {
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X1 => {
-                                    push_directive(tokens, "x1");
-                            }
-                            Num::X2 => {
-                                    push_directive(tokens, "x2");
-                            }
-                            Num::X4 => {
-                                    push_directive(tokens, "x4");
-                            }
-                            Num::X8 => {
-                                    push_directive(tokens, "x8");
-                            }
-                    }
-                    match &self.redop {
-                            Redop::Min => {
-                                    push_directive(tokens, "min");
-                            }
-                            Redop::Max => {
-                                    push_directive(tokens, "max");
-                            }
-                    }
-                    if self.abs {
-                            push_directive(tokens, "abs");
-                    }
-                    if self.nan {
-                            push_directive(tokens, "NaN");
-                    }
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.r.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "ld");
+            push_directive(tokens, "red");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.shape3 {
+                Shape3::_32x32b => {
+                    push_directive(tokens, "32x32b");
+                }
+            }
+            match &self.num {
+                Num::X128 => {
+                    push_directive(tokens, "x128");
+                }
+                Num::X16 => {
+                    push_directive(tokens, "x16");
+                }
+                Num::X32 => {
+                    push_directive(tokens, "x32");
+                }
+                Num::X64 => {
+                    push_directive(tokens, "x64");
+                }
+                Num::X1 => {
+                    push_directive(tokens, "x1");
+                }
+                Num::X2 => {
+                    push_directive(tokens, "x2");
+                }
+                Num::X4 => {
+                    push_directive(tokens, "x4");
+                }
+                Num::X8 => {
+                    push_directive(tokens, "x8");
+                }
+            }
+            match &self.redop {
+                Redop::Min => {
+                    push_directive(tokens, "min");
+                }
+                Redop::Max => {
+                    push_directive(tokens, "max");
+                }
+            }
+            if self.abs {
+                push_directive(tokens, "abs");
+            }
+            if self.nan {
+                push_directive(tokens, "NaN");
+            }
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.r.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.redval.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.redval.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.taddr.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.taddr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -230,69 +252,79 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "ld");
-                    push_directive(tokens, "red");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.shape4 {
-                            Shape4::_16x32bx2 => {
-                                    push_directive(tokens, "16x32bx2");
-                            }
-                    }
-                    match &self.num {
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X1 => {
-                                    push_directive(tokens, "x1");
-                            }
-                            Num::X2 => {
-                                    push_directive(tokens, "x2");
-                            }
-                            Num::X4 => {
-                                    push_directive(tokens, "x4");
-                            }
-                            Num::X8 => {
-                                    push_directive(tokens, "x8");
-                            }
-                    }
-                    match &self.redop {
-                            Redop::Min => {
-                                    push_directive(tokens, "min");
-                            }
-                            Redop::Max => {
-                                    push_directive(tokens, "max");
-                            }
-                    }
-                    if self.abs {
-                            push_directive(tokens, "abs");
-                    }
-                    if self.nan {
-                            push_directive(tokens, "NaN");
-                    }
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.r.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "ld");
+            push_directive(tokens, "red");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.shape4 {
+                Shape4::_16x32bx2 => {
+                    push_directive(tokens, "16x32bx2");
+                }
+            }
+            match &self.num {
+                Num::X128 => {
+                    push_directive(tokens, "x128");
+                }
+                Num::X16 => {
+                    push_directive(tokens, "x16");
+                }
+                Num::X32 => {
+                    push_directive(tokens, "x32");
+                }
+                Num::X64 => {
+                    push_directive(tokens, "x64");
+                }
+                Num::X1 => {
+                    push_directive(tokens, "x1");
+                }
+                Num::X2 => {
+                    push_directive(tokens, "x2");
+                }
+                Num::X4 => {
+                    push_directive(tokens, "x4");
+                }
+                Num::X8 => {
+                    push_directive(tokens, "x8");
+                }
+            }
+            match &self.redop {
+                Redop::Min => {
+                    push_directive(tokens, "min");
+                }
+                Redop::Max => {
+                    push_directive(tokens, "max");
+                }
+            }
+            if self.abs {
+                push_directive(tokens, "abs");
+            }
+            if self.nan {
+                push_directive(tokens, "NaN");
+            }
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.r.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.redval.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.redval.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.taddr.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.taddr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.immhalfsplitoff.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.immhalfsplitoff.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -302,67 +334,75 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "ld");
-                    push_directive(tokens, "red");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.shape3 {
-                            Shape3::_32x32b => {
-                                    push_directive(tokens, "32x32b");
-                            }
-                    }
-                    match &self.num {
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X1 => {
-                                    push_directive(tokens, "x1");
-                            }
-                            Num::X2 => {
-                                    push_directive(tokens, "x2");
-                            }
-                            Num::X4 => {
-                                    push_directive(tokens, "x4");
-                            }
-                            Num::X8 => {
-                                    push_directive(tokens, "x8");
-                            }
-                    }
-                    match &self.redop {
-                            Redop::Min => {
-                                    push_directive(tokens, "min");
-                            }
-                            Redop::Max => {
-                                    push_directive(tokens, "max");
-                            }
-                    }
-                    match &self.type_ {
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.r.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "ld");
+            push_directive(tokens, "red");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.shape3 {
+                Shape3::_32x32b => {
+                    push_directive(tokens, "32x32b");
+                }
+            }
+            match &self.num {
+                Num::X128 => {
+                    push_directive(tokens, "x128");
+                }
+                Num::X16 => {
+                    push_directive(tokens, "x16");
+                }
+                Num::X32 => {
+                    push_directive(tokens, "x32");
+                }
+                Num::X64 => {
+                    push_directive(tokens, "x64");
+                }
+                Num::X1 => {
+                    push_directive(tokens, "x1");
+                }
+                Num::X2 => {
+                    push_directive(tokens, "x2");
+                }
+                Num::X4 => {
+                    push_directive(tokens, "x4");
+                }
+                Num::X8 => {
+                    push_directive(tokens, "x8");
+                }
+            }
+            match &self.redop {
+                Redop::Min => {
+                    push_directive(tokens, "min");
+                }
+                Redop::Max => {
+                    push_directive(tokens, "max");
+                }
+            }
+            match &self.type_ {
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.r.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.redval.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.redval.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.taddr.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.taddr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -372,72 +412,80 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "ld");
-                    push_directive(tokens, "red");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    match &self.shape4 {
-                            Shape4::_16x32bx2 => {
-                                    push_directive(tokens, "16x32bx2");
-                            }
-                    }
-                    match &self.num {
-                            Num::X128 => {
-                                    push_directive(tokens, "x128");
-                            }
-                            Num::X16 => {
-                                    push_directive(tokens, "x16");
-                            }
-                            Num::X32 => {
-                                    push_directive(tokens, "x32");
-                            }
-                            Num::X64 => {
-                                    push_directive(tokens, "x64");
-                            }
-                            Num::X1 => {
-                                    push_directive(tokens, "x1");
-                            }
-                            Num::X2 => {
-                                    push_directive(tokens, "x2");
-                            }
-                            Num::X4 => {
-                                    push_directive(tokens, "x4");
-                            }
-                            Num::X8 => {
-                                    push_directive(tokens, "x8");
-                            }
-                    }
-                    match &self.redop {
-                            Redop::Min => {
-                                    push_directive(tokens, "min");
-                            }
-                            Redop::Max => {
-                                    push_directive(tokens, "max");
-                            }
-                    }
-                    match &self.type_ {
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.r.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "ld");
+            push_directive(tokens, "red");
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            match &self.shape4 {
+                Shape4::_16x32bx2 => {
+                    push_directive(tokens, "16x32bx2");
+                }
+            }
+            match &self.num {
+                Num::X128 => {
+                    push_directive(tokens, "x128");
+                }
+                Num::X16 => {
+                    push_directive(tokens, "x16");
+                }
+                Num::X32 => {
+                    push_directive(tokens, "x32");
+                }
+                Num::X64 => {
+                    push_directive(tokens, "x64");
+                }
+                Num::X1 => {
+                    push_directive(tokens, "x1");
+                }
+                Num::X2 => {
+                    push_directive(tokens, "x2");
+                }
+                Num::X4 => {
+                    push_directive(tokens, "x4");
+                }
+                Num::X8 => {
+                    push_directive(tokens, "x8");
+                }
+            }
+            match &self.redop {
+                Redop::Min => {
+                    push_directive(tokens, "min");
+                }
+                Redop::Max => {
+                    push_directive(tokens, "max");
+                }
+            }
+            match &self.type_ {
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.r.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.redval.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.redval.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.taddr.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.taddr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.immhalfsplitoff.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.immhalfsplitoff.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

@@ -109,15 +109,15 @@ impl PtxToken {
             | PtxToken::OctalInteger(s)
             | PtxToken::Float(s)
             | PtxToken::FloatExponent(s)
-        | PtxToken::HexFloatSingle(s)
-        | PtxToken::HexFloatDouble(s)
-        | PtxToken::Register(s)
-        | PtxToken::StringLiteral(s) => s.as_str(),
-        PtxToken::DoubleColon => "::",
-        PtxToken::Dot => ".",
-        PtxToken::Comma => ",",
-        PtxToken::Semicolon => ";",
-        PtxToken::Colon => ":",
+            | PtxToken::HexFloatSingle(s)
+            | PtxToken::HexFloatDouble(s)
+            | PtxToken::Register(s)
+            | PtxToken::StringLiteral(s) => s.as_str(),
+            PtxToken::DoubleColon => "::",
+            PtxToken::Dot => ".",
+            PtxToken::Comma => ",",
+            PtxToken::Semicolon => ";",
+            PtxToken::Colon => ":",
             PtxToken::LParen => "(",
             PtxToken::RParen => ")",
             PtxToken::LBracket => "[",

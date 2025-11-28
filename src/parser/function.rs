@@ -489,18 +489,12 @@ fn section_directive_line()
     );
 
     let b32 = try_map(
-        skip_optional_semicolon(skip_first(
-            directive_exact_p("b32"),
-            b32_section_suffix(),
-        )),
+        skip_optional_semicolon(skip_first(directive_exact_p("b32"), b32_section_suffix())),
         |line, span| Ok(line.with_span(span)),
     );
 
     let b64 = try_map(
-        skip_optional_semicolon(skip_first(
-            directive_exact_p("b64"),
-            b64_section_suffix(),
-        )),
+        skip_optional_semicolon(skip_first(directive_exact_p("b64"), b64_section_suffix())),
         |line, span| Ok(line.with_span(span)),
     );
 

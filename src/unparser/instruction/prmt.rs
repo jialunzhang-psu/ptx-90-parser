@@ -18,44 +18,52 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "prmt");
-                    push_directive(tokens, "b32");
-                    if let Some(mode_0) = self.mode.as_ref() {
-                            match mode_0 {
-                                    Mode::Rc16 => {
-                                            push_directive(tokens, "rc16");
-                                    }
-                                    Mode::F4e => {
-                                            push_directive(tokens, "f4e");
-                                    }
-                                    Mode::B4e => {
-                                            push_directive(tokens, "b4e");
-                                    }
-                                    Mode::Rc8 => {
-                                            push_directive(tokens, "rc8");
-                                    }
-                                    Mode::Ecl => {
-                                            push_directive(tokens, "ecl");
-                                    }
-                                    Mode::Ecr => {
-                                            push_directive(tokens, "ecr");
-                                    }
-                            }
+            push_directive(tokens, "b32");
+            if let Some(mode_0) = self.mode.as_ref() {
+                match mode_0 {
+                    Mode::Rc16 => {
+                        push_directive(tokens, "rc16");
                     }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                    Mode::F4e => {
+                        push_directive(tokens, "f4e");
+                    }
+                    Mode::B4e => {
+                        push_directive(tokens, "b4e");
+                    }
+                    Mode::Rc8 => {
+                        push_directive(tokens, "rc8");
+                    }
+                    Mode::Ecl => {
+                        push_directive(tokens, "ecl");
+                    }
+                    Mode::Ecr => {
+                        push_directive(tokens, "ecr");
+                    }
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.c.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

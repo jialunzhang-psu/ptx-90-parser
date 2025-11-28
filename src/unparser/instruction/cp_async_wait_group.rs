@@ -18,12 +18,16 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cp");
-                    push_directive(tokens, "async");
-                    push_directive(tokens, "wait_group");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.n.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "async");
+            push_directive(tokens, "wait_group");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.n.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -33,12 +37,12 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cp");
-                    push_directive(tokens, "async");
-                    push_directive(tokens, "wait_all");
+            push_directive(tokens, "async");
+            push_directive(tokens, "wait_all");
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

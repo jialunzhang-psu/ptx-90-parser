@@ -52,111 +52,117 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    if let Some(irnd_0) = self.irnd.as_ref() {
-                            match irnd_0 {
-                                    Irnd::Rni => {
-                                            push_directive(tokens, "rni");
-                                    }
-                                    Irnd::Rzi => {
-                                            push_directive(tokens, "rzi");
-                                    }
-                                    Irnd::Rmi => {
-                                            push_directive(tokens, "rmi");
-                                    }
-                                    Irnd::Rpi => {
-                                            push_directive(tokens, "rpi");
-                                    }
-                            }
+            if let Some(irnd_0) = self.irnd.as_ref() {
+                match irnd_0 {
+                    Irnd::Rni => {
+                        push_directive(tokens, "rni");
                     }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
+                    Irnd::Rzi => {
+                        push_directive(tokens, "rzi");
                     }
-                    if self.sat {
-                            push_directive(tokens, "sat");
+                    Irnd::Rmi => {
+                        push_directive(tokens, "rmi");
                     }
-                    match &self.dtype {
-                            Dtype::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
-                            Dtype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Dtype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Dtype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Dtype::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Dtype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Dtype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Dtype::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                            Dtype::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
+                    Irnd::Rpi => {
+                        push_directive(tokens, "rpi");
                     }
-                    match &self.atype {
-                            Atype::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
-                            Atype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Atype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Atype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Atype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Atype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Atype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Atype::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Atype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Atype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Atype::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                            Atype::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            if self.sat {
+                push_directive(tokens, "sat");
+            }
+            match &self.dtype {
+                Dtype::Bf16 => {
+                    push_directive(tokens, "bf16");
+                }
+                Dtype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Dtype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Dtype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Dtype::F16 => {
+                    push_directive(tokens, "f16");
+                }
+                Dtype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Dtype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+                Dtype::U8 => {
+                    push_directive(tokens, "u8");
+                }
+                Dtype::S8 => {
+                    push_directive(tokens, "s8");
+                }
+            }
+            match &self.atype {
+                Atype::Bf16 => {
+                    push_directive(tokens, "bf16");
+                }
+                Atype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Atype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Atype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Atype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Atype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Atype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Atype::F16 => {
+                    push_directive(tokens, "f16");
+                }
+                Atype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Atype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+                Atype::U8 => {
+                    push_directive(tokens, "u8");
+                }
+                Atype::S8 => {
+                    push_directive(tokens, "s8");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -166,111 +172,117 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    if let Some(frnd_1) = self.frnd.as_ref() {
-                            match frnd_1 {
-                                    Frnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                                    Frnd::Rz => {
-                                            push_directive(tokens, "rz");
-                                    }
-                                    Frnd::Rm => {
-                                            push_directive(tokens, "rm");
-                                    }
-                                    Frnd::Rp => {
-                                            push_directive(tokens, "rp");
-                                    }
-                            }
+            if let Some(frnd_1) = self.frnd.as_ref() {
+                match frnd_1 {
+                    Frnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
+                    Frnd::Rz => {
+                        push_directive(tokens, "rz");
                     }
-                    if self.sat {
-                            push_directive(tokens, "sat");
+                    Frnd::Rm => {
+                        push_directive(tokens, "rm");
                     }
-                    match &self.dtype {
-                            Dtype::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
-                            Dtype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Dtype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Dtype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Dtype::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Dtype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Dtype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Dtype::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                            Dtype::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
+                    Frnd::Rp => {
+                        push_directive(tokens, "rp");
                     }
-                    match &self.atype {
-                            Atype::Bf16 => {
-                                    push_directive(tokens, "bf16");
-                            }
-                            Atype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Atype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Atype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Atype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Atype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Atype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Atype::F16 => {
-                                    push_directive(tokens, "f16");
-                            }
-                            Atype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Atype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Atype::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                            Atype::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            if self.sat {
+                push_directive(tokens, "sat");
+            }
+            match &self.dtype {
+                Dtype::Bf16 => {
+                    push_directive(tokens, "bf16");
+                }
+                Dtype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Dtype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Dtype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Dtype::F16 => {
+                    push_directive(tokens, "f16");
+                }
+                Dtype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Dtype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+                Dtype::U8 => {
+                    push_directive(tokens, "u8");
+                }
+                Dtype::S8 => {
+                    push_directive(tokens, "s8");
+                }
+            }
+            match &self.atype {
+                Atype::Bf16 => {
+                    push_directive(tokens, "bf16");
+                }
+                Atype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Atype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Atype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Atype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Atype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Atype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Atype::F16 => {
+                    push_directive(tokens, "f16");
+                }
+                Atype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Atype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+                Atype::U8 => {
+                    push_directive(tokens, "u8");
+                }
+                Atype::S8 => {
+                    push_directive(tokens, "s8");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -280,29 +292,35 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    match &self.frnd2 {
-                            Frnd2::Rn => {
-                                    push_directive(tokens, "rn");
-                            }
-                            Frnd2::Rz => {
-                                    push_directive(tokens, "rz");
-                            }
-                    }
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    if self.satfinite {
-                            push_directive(tokens, "satfinite");
-                    }
-                    push_directive(tokens, "f16");
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.frnd2 {
+                Frnd2::Rn => {
+                    push_directive(tokens, "rn");
+                }
+                Frnd2::Rz => {
+                    push_directive(tokens, "rz");
+                }
+            }
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            if self.satfinite {
+                push_directive(tokens, "satfinite");
+            }
+            push_directive(tokens, "f16");
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -312,32 +330,40 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    match &self.frnd2 {
-                            Frnd2::Rn => {
-                                    push_directive(tokens, "rn");
-                            }
-                            Frnd2::Rz => {
-                                    push_directive(tokens, "rz");
-                            }
-                    }
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    if self.satfinite {
-                            push_directive(tokens, "satfinite");
-                    }
-                    push_directive(tokens, "f16x2");
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.frnd2 {
+                Frnd2::Rn => {
+                    push_directive(tokens, "rn");
+                }
+                Frnd2::Rz => {
+                    push_directive(tokens, "rz");
+                }
+            }
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            if self.satfinite {
+                push_directive(tokens, "satfinite");
+            }
+            push_directive(tokens, "f16x2");
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -347,28 +373,38 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rs");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    if self.satfinite {
-                            push_directive(tokens, "satfinite");
-                    }
-                    push_directive(tokens, "f16x2");
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rs");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            if self.satfinite {
+                push_directive(tokens, "satfinite");
+            }
+            push_directive(tokens, "f16x2");
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.rbits.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.rbits.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -378,29 +414,35 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    match &self.frnd2 {
-                            Frnd2::Rn => {
-                                    push_directive(tokens, "rn");
-                            }
-                            Frnd2::Rz => {
-                                    push_directive(tokens, "rz");
-                            }
-                    }
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    if self.satfinite {
-                            push_directive(tokens, "satfinite");
-                    }
-                    push_directive(tokens, "bf16");
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.frnd2 {
+                Frnd2::Rn => {
+                    push_directive(tokens, "rn");
+                }
+                Frnd2::Rz => {
+                    push_directive(tokens, "rz");
+                }
+            }
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            if self.satfinite {
+                push_directive(tokens, "satfinite");
+            }
+            push_directive(tokens, "bf16");
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -410,32 +452,40 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    match &self.frnd2 {
-                            Frnd2::Rn => {
-                                    push_directive(tokens, "rn");
-                            }
-                            Frnd2::Rz => {
-                                    push_directive(tokens, "rz");
-                            }
-                    }
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    if self.satfinite {
-                            push_directive(tokens, "satfinite");
-                    }
-                    push_directive(tokens, "bf16x2");
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.frnd2 {
+                Frnd2::Rn => {
+                    push_directive(tokens, "rn");
+                }
+                Frnd2::Rz => {
+                    push_directive(tokens, "rz");
+                }
+            }
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            if self.satfinite {
+                push_directive(tokens, "satfinite");
+            }
+            push_directive(tokens, "bf16x2");
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -445,28 +495,38 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rs");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    if self.satfinite {
-                            push_directive(tokens, "satfinite");
-                    }
-                    push_directive(tokens, "bf16x2");
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rs");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            if self.satfinite {
+                push_directive(tokens, "satfinite");
+            }
+            push_directive(tokens, "bf16x2");
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.rbits.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.rbits.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -476,19 +536,25 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rna");
-                    if self.satfinite {
-                            push_directive(tokens, "satfinite");
-                    }
-                    push_directive(tokens, "tf32");
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rna");
+            if self.satfinite {
+                push_directive(tokens, "satfinite");
+            }
+            push_directive(tokens, "tf32");
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -498,29 +564,35 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    match &self.frnd2 {
-                            Frnd2::Rn => {
-                                    push_directive(tokens, "rn");
-                            }
-                            Frnd2::Rz => {
-                                    push_directive(tokens, "rz");
-                            }
-                    }
-                    if self.satfinite {
-                            push_directive(tokens, "satfinite");
-                    }
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    push_directive(tokens, "tf32");
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.frnd2 {
+                Frnd2::Rn => {
+                    push_directive(tokens, "rn");
+                }
+                Frnd2::Rz => {
+                    push_directive(tokens, "rz");
+                }
+            }
+            if self.satfinite {
+                push_directive(tokens, "satfinite");
+            }
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            push_directive(tokens, "tf32");
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -530,30 +602,38 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rn");
-                    push_directive(tokens, "satfinite");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    match &self.f8x2type {
-                            F8x2type::E4m3x2 => {
-                                    push_directive(tokens, "e4m3x2");
-                            }
-                            F8x2type::E5m2x2 => {
-                                    push_directive(tokens, "e5m2x2");
-                            }
-                    }
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rn");
+            push_directive(tokens, "satfinite");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            match &self.f8x2type {
+                F8x2type::E4m3x2 => {
+                    push_directive(tokens, "e4m3x2");
+                }
+                F8x2type::E5m2x2 => {
+                    push_directive(tokens, "e5m2x2");
+                }
+            }
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -563,27 +643,33 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rn");
-                    push_directive(tokens, "satfinite");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    match &self.f8x2type {
-                            F8x2type::E4m3x2 => {
-                                    push_directive(tokens, "e4m3x2");
-                            }
-                            F8x2type::E5m2x2 => {
-                                    push_directive(tokens, "e5m2x2");
-                            }
-                    }
-                    push_directive(tokens, "f16x2");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rn");
+            push_directive(tokens, "satfinite");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            match &self.f8x2type {
+                F8x2type::E4m3x2 => {
+                    push_directive(tokens, "e4m3x2");
+                }
+                F8x2type::E5m2x2 => {
+                    push_directive(tokens, "e5m2x2");
+                }
+            }
+            push_directive(tokens, "f16x2");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -593,26 +679,32 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rn");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    push_directive(tokens, "f16x2");
-                    match &self.f8x2type {
-                            F8x2type::E4m3x2 => {
-                                    push_directive(tokens, "e4m3x2");
-                            }
-                            F8x2type::E5m2x2 => {
-                                    push_directive(tokens, "e5m2x2");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rn");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            push_directive(tokens, "f16x2");
+            match &self.f8x2type {
+                F8x2type::E4m3x2 => {
+                    push_directive(tokens, "e4m3x2");
+                }
+                F8x2type::E5m2x2 => {
+                    push_directive(tokens, "e5m2x2");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -622,30 +714,38 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rs");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    push_directive(tokens, "satfinite");
-                    match &self.f8x4type {
-                            F8x4type::E4m3x4 => {
-                                    push_directive(tokens, "e4m3x4");
-                            }
-                            F8x4type::E5m2x4 => {
-                                    push_directive(tokens, "e5m2x4");
-                            }
-                    }
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rs");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            push_directive(tokens, "satfinite");
+            match &self.f8x4type {
+                F8x4type::E4m3x4 => {
+                    push_directive(tokens, "e4m3x4");
+                }
+                F8x4type::E5m2x4 => {
+                    push_directive(tokens, "e5m2x4");
+                }
+            }
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.rbits.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.rbits.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -655,27 +755,35 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rn");
-                    push_directive(tokens, "satfinite");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    match &self.f4x2type {
-                            F4x2type::E2m1x2 => {
-                                    push_directive(tokens, "e2m1x2");
-                            }
-                    }
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rn");
+            push_directive(tokens, "satfinite");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            match &self.f4x2type {
+                F4x2type::E2m1x2 => {
+                    push_directive(tokens, "e2m1x2");
+                }
+            }
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -685,23 +793,29 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rn");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    push_directive(tokens, "f16x2");
-                    match &self.f4x2type {
-                            F4x2type::E2m1x2 => {
-                                    push_directive(tokens, "e2m1x2");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rn");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            push_directive(tokens, "f16x2");
+            match &self.f4x2type {
+                F4x2type::E2m1x2 => {
+                    push_directive(tokens, "e2m1x2");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -711,27 +825,35 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rs");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    push_directive(tokens, "satfinite");
-                    match &self.f4x4type {
-                            F4x4type::E2m1x4 => {
-                                    push_directive(tokens, "e2m1x4");
-                            }
-                    }
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rs");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            push_directive(tokens, "satfinite");
+            match &self.f4x4type {
+                F4x4type::E2m1x4 => {
+                    push_directive(tokens, "e2m1x4");
+                }
+            }
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.rbits.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.rbits.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -741,30 +863,38 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rn");
-                    push_directive(tokens, "satfinite");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    match &self.f6x2type {
-                            F6x2type::E2m3x2 => {
-                                    push_directive(tokens, "e2m3x2");
-                            }
-                            F6x2type::E3m2x2 => {
-                                    push_directive(tokens, "e3m2x2");
-                            }
-                    }
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rn");
+            push_directive(tokens, "satfinite");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            match &self.f6x2type {
+                F6x2type::E2m3x2 => {
+                    push_directive(tokens, "e2m3x2");
+                }
+                F6x2type::E3m2x2 => {
+                    push_directive(tokens, "e3m2x2");
+                }
+            }
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -774,26 +904,32 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rn");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    push_directive(tokens, "f16x2");
-                    match &self.f6x2type {
-                            F6x2type::E2m3x2 => {
-                                    push_directive(tokens, "e2m3x2");
-                            }
-                            F6x2type::E3m2x2 => {
-                                    push_directive(tokens, "e3m2x2");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rn");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            push_directive(tokens, "f16x2");
+            match &self.f6x2type {
+                F6x2type::E2m3x2 => {
+                    push_directive(tokens, "e2m3x2");
+                }
+                F6x2type::E3m2x2 => {
+                    push_directive(tokens, "e3m2x2");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -803,30 +939,38 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rs");
-                    if self.relu {
-                            push_directive(tokens, "relu");
-                    }
-                    push_directive(tokens, "satfinite");
-                    match &self.f6x4type {
-                            F6x4type::E2m3x4 => {
-                                    push_directive(tokens, "e2m3x4");
-                            }
-                            F6x4type::E3m2x4 => {
-                                    push_directive(tokens, "e3m2x4");
-                            }
-                    }
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rs");
+            if self.relu {
+                push_directive(tokens, "relu");
+            }
+            push_directive(tokens, "satfinite");
+            match &self.f6x4type {
+                F6x4type::E2m3x4 => {
+                    push_directive(tokens, "e2m3x4");
+                }
+                F6x4type::E3m2x4 => {
+                    push_directive(tokens, "e3m2x4");
+                }
+            }
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.rbits.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.rbits.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -836,29 +980,37 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    match &self.frnd3 {
-                            Frnd3::Rz => {
-                                    push_directive(tokens, "rz");
-                            }
-                            Frnd3::Rp => {
-                                    push_directive(tokens, "rp");
-                            }
-                    }
-                    if self.satfinite {
-                            push_directive(tokens, "satfinite");
-                    }
-                    push_directive(tokens, "ue8m0x2");
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.frnd3 {
+                Frnd3::Rz => {
+                    push_directive(tokens, "rz");
+                }
+                Frnd3::Rp => {
+                    push_directive(tokens, "rp");
+                }
+            }
+            if self.satfinite {
+                push_directive(tokens, "satfinite");
+            }
+            push_directive(tokens, "ue8m0x2");
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -868,26 +1020,32 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    match &self.frnd3 {
-                            Frnd3::Rz => {
-                                    push_directive(tokens, "rz");
-                            }
-                            Frnd3::Rp => {
-                                    push_directive(tokens, "rp");
-                            }
-                    }
-                    if self.satfinite {
-                            push_directive(tokens, "satfinite");
-                    }
-                    push_directive(tokens, "ue8m0x2");
-                    push_directive(tokens, "bf16x2");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.frnd3 {
+                Frnd3::Rz => {
+                    push_directive(tokens, "rz");
+                }
+                Frnd3::Rp => {
+                    push_directive(tokens, "rp");
+                }
+            }
+            if self.satfinite {
+                push_directive(tokens, "satfinite");
+            }
+            push_directive(tokens, "ue8m0x2");
+            push_directive(tokens, "bf16x2");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -897,18 +1055,22 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "cvt");
-                    push_directive(tokens, "rn");
-                    push_directive(tokens, "bf16x2");
-                    push_directive(tokens, "ue8m0x2");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "rn");
+            push_directive(tokens, "bf16x2");
+            push_directive(tokens, "ue8m0x2");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

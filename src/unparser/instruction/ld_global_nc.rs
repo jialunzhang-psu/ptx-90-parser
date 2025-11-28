@@ -30,100 +30,110 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "ld");
-                    push_directive(tokens, "global");
-                    if let Some(cop_0) = self.cop.as_ref() {
-                            match cop_0 {
-                                    Cop::Ca => {
-                                            push_directive(tokens, "ca");
-                                    }
-                                    Cop::Cg => {
-                                            push_directive(tokens, "cg");
-                                    }
-                                    Cop::Cs => {
-                                            push_directive(tokens, "cs");
-                                    }
-                            }
+            push_directive(tokens, "global");
+            if let Some(cop_0) = self.cop.as_ref() {
+                match cop_0 {
+                    Cop::Ca => {
+                        push_directive(tokens, "ca");
                     }
-                    push_directive(tokens, "nc");
-                    if let Some(level_cache_hint_1) = self.level_cache_hint.as_ref() {
-                            match level_cache_hint_1 {
-                                    LevelCacheHint::L2CacheHint => {
-                                            push_directive(tokens, "L2::cache_hint");
-                                    }
-                            }
+                    Cop::Cg => {
+                        push_directive(tokens, "cg");
                     }
-                    if let Some(level_prefetch_size_2) = self.level_prefetch_size.as_ref() {
-                            match level_prefetch_size_2 {
-                                    LevelPrefetchSize::L2128b => {
-                                            push_directive(tokens, "L2::128B");
-                                    }
-                                    LevelPrefetchSize::L2256b => {
-                                            push_directive(tokens, "L2::256B");
-                                    }
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
-                            }
+                    Cop::Cs => {
+                        push_directive(tokens, "cs");
                     }
-                    match &self.type_ {
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Type::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Type::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Type::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Type::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Type::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Type::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Type::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
+                }
+            }
+            push_directive(tokens, "nc");
+            if let Some(level_cache_hint_1) = self.level_cache_hint.as_ref() {
+                match level_cache_hint_1 {
+                    LevelCacheHint::L2CacheHint => {
+                        push_directive(tokens, "L2::cache_hint");
                     }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            if let Some(level_prefetch_size_2) = self.level_prefetch_size.as_ref() {
+                match level_prefetch_size_2 {
+                    LevelPrefetchSize::L2128b => {
+                        push_directive(tokens, "L2::128B");
+                    }
+                    LevelPrefetchSize::L2256b => {
+                        push_directive(tokens, "L2::256B");
+                    }
+                    LevelPrefetchSize::L264b => {
+                        push_directive(tokens, "L2::64B");
+                    }
+                }
+            }
+            match &self.type_ {
+                Type::B128 => {
+                    push_directive(tokens, "b128");
+                }
+                Type::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Type::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Type::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Type::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Type::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Type::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Type::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Type::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Type::F64 => {
+                    push_directive(tokens, "f64");
+                }
+                Type::B8 => {
+                    push_directive(tokens, "b8");
+                }
+                Type::U8 => {
+                    push_directive(tokens, "u8");
+                }
+                Type::S8 => {
+                    push_directive(tokens, "s8");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
-            if self.cache_policy.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_3) = self.cache_policy.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_3.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
+            if self.cache_policy.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_3) = self.cache_policy.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_3.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -133,111 +143,121 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "ld");
-                    push_directive(tokens, "global");
-                    if let Some(cop_4) = self.cop.as_ref() {
-                            match cop_4 {
-                                    Cop::Ca => {
-                                            push_directive(tokens, "ca");
-                                    }
-                                    Cop::Cg => {
-                                            push_directive(tokens, "cg");
-                                    }
-                                    Cop::Cs => {
-                                            push_directive(tokens, "cs");
-                                    }
-                            }
+            push_directive(tokens, "global");
+            if let Some(cop_4) = self.cop.as_ref() {
+                match cop_4 {
+                    Cop::Ca => {
+                        push_directive(tokens, "ca");
                     }
-                    push_directive(tokens, "nc");
-                    if let Some(level_cache_hint_5) = self.level_cache_hint.as_ref() {
-                            match level_cache_hint_5 {
-                                    LevelCacheHint::L2CacheHint => {
-                                            push_directive(tokens, "L2::cache_hint");
-                                    }
-                            }
+                    Cop::Cg => {
+                        push_directive(tokens, "cg");
                     }
-                    if let Some(level_prefetch_size_6) = self.level_prefetch_size.as_ref() {
-                            match level_prefetch_size_6 {
-                                    LevelPrefetchSize::L2128b => {
-                                            push_directive(tokens, "L2::128B");
-                                    }
-                                    LevelPrefetchSize::L2256b => {
-                                            push_directive(tokens, "L2::256B");
-                                    }
-                                    LevelPrefetchSize::L264b => {
-                                            push_directive(tokens, "L2::64B");
-                                    }
-                            }
+                    Cop::Cs => {
+                        push_directive(tokens, "cs");
                     }
-                    match &self.vec {
-                            Vec::V2 => {
-                                    push_directive(tokens, "v2");
-                            }
-                            Vec::V4 => {
-                                    push_directive(tokens, "v4");
-                            }
-                            Vec::V8 => {
-                                    push_directive(tokens, "v8");
-                            }
+                }
+            }
+            push_directive(tokens, "nc");
+            if let Some(level_cache_hint_5) = self.level_cache_hint.as_ref() {
+                match level_cache_hint_5 {
+                    LevelCacheHint::L2CacheHint => {
+                        push_directive(tokens, "L2::cache_hint");
                     }
-                    match &self.type_ {
-                            Type::B128 => {
-                                    push_directive(tokens, "b128");
-                            }
-                            Type::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Type::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Type::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Type::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Type::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Type::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Type::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Type::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Type::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                            Type::B8 => {
-                                    push_directive(tokens, "b8");
-                            }
-                            Type::U8 => {
-                                    push_directive(tokens, "u8");
-                            }
-                            Type::S8 => {
-                                    push_directive(tokens, "s8");
-                            }
+                }
+            }
+            if let Some(level_prefetch_size_6) = self.level_prefetch_size.as_ref() {
+                match level_prefetch_size_6 {
+                    LevelPrefetchSize::L2128b => {
+                        push_directive(tokens, "L2::128B");
                     }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                    LevelPrefetchSize::L2256b => {
+                        push_directive(tokens, "L2::256B");
+                    }
+                    LevelPrefetchSize::L264b => {
+                        push_directive(tokens, "L2::64B");
+                    }
+                }
+            }
+            match &self.vec {
+                Vec::V2 => {
+                    push_directive(tokens, "v2");
+                }
+                Vec::V4 => {
+                    push_directive(tokens, "v4");
+                }
+                Vec::V8 => {
+                    push_directive(tokens, "v8");
+                }
+            }
+            match &self.type_ {
+                Type::B128 => {
+                    push_directive(tokens, "b128");
+                }
+                Type::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Type::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Type::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Type::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Type::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Type::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Type::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Type::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Type::F64 => {
+                    push_directive(tokens, "f64");
+                }
+                Type::B8 => {
+                    push_directive(tokens, "b8");
+                }
+                Type::U8 => {
+                    push_directive(tokens, "u8");
+                }
+                Type::S8 => {
+                    push_directive(tokens, "s8");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
-            if self.cache_policy.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_7) = self.cache_policy.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_7.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
+            if self.cache_policy.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_7) = self.cache_policy.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_7.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -495,6 +515,4 @@ pub mod section_0 {
             if spaced { tokens.push(PtxToken::Newline); }
         }
     }
-
 }
-

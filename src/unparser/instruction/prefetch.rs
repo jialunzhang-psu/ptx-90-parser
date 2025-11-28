@@ -24,28 +24,32 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "prefetch");
-                    if let Some(space_0) = self.space.as_ref() {
-                            match space_0 {
-                                    Space::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                                    Space::Local => {
-                                            push_directive(tokens, "local");
-                                    }
-                            }
+            if let Some(space_0) = self.space.as_ref() {
+                match space_0 {
+                    Space::Global => {
+                        push_directive(tokens, "global");
                     }
-                    match &self.level {
-                            Level::L1 => {
-                                    push_directive(tokens, "L1");
-                            }
-                            Level::L2 => {
-                                    push_directive(tokens, "L2");
-                            }
+                    Space::Local => {
+                        push_directive(tokens, "local");
                     }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            match &self.level {
+                Level::L1 => {
+                    push_directive(tokens, "L1");
+                }
+                Level::L2 => {
+                    push_directive(tokens, "L2");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -55,19 +59,23 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "prefetch");
-                    push_directive(tokens, "global");
-                    match &self.level_eviction_priority {
-                            LevelEvictionPriority::L2EvictNormal => {
-                                    push_directive(tokens, "L2::evict_normal");
-                            }
-                            LevelEvictionPriority::L2EvictLast => {
-                                    push_directive(tokens, "L2::evict_last");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "global");
+            match &self.level_eviction_priority {
+                LevelEvictionPriority::L2EvictNormal => {
+                    push_directive(tokens, "L2::evict_normal");
+                }
+                LevelEvictionPriority::L2EvictLast => {
+                    push_directive(tokens, "L2::evict_last");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -77,11 +85,15 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "prefetchu");
-                    push_directive(tokens, "L1");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "L1");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -91,23 +103,25 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "prefetch");
-                    if let Some(tensormap_space_1) = self.tensormap_space.as_ref() {
-                            match tensormap_space_1 {
-                                    TensormapSpace::Const => {
-                                            push_directive(tokens, "const");
-                                    }
-                                    TensormapSpace::Param => {
-                                            push_directive(tokens, "param");
-                                    }
-                            }
+            if let Some(tensormap_space_1) = self.tensormap_space.as_ref() {
+                match tensormap_space_1 {
+                    TensormapSpace::Const => {
+                        push_directive(tokens, "const");
                     }
-                    push_directive(tokens, "tensormap");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+                    TensormapSpace::Param => {
+                        push_directive(tokens, "param");
+                    }
+                }
+            }
+            push_directive(tokens, "tensormap");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

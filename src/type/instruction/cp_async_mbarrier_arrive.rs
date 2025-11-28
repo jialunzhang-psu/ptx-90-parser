@@ -7,30 +7,29 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum State {
         SharedCta, // .shared::cta
-        Shared, // .shared
+        Shared,    // .shared
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct CpAsyncMbarrierArriveNoincStateB64 {
-        pub async_: (), // .async
-        pub mbarrier: (), // .mbarrier
-        pub arrive: (), // .arrive
-        pub noinc: bool, // {.noinc}
+        pub async_: (),           // .async
+        pub mbarrier: (),         // .mbarrier
+        pub arrive: (),           // .arrive
+        pub noinc: bool,          // {.noinc}
         pub state: Option<State>, // {.state}
-        pub b64: (), // .b64
+        pub b64: (),              // .b64
         pub addr: AddressOperand, // [addr]
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

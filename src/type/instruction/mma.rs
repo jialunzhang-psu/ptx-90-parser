@@ -73,9 +73,9 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -105,15 +105,15 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedM8n8k4AlayoutBlayoutDtypeF16F16Ctype {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub m8n8k4: (), // .m8n8k4
-        pub alayout: Alayout, // .alayout
-        pub blayout: Blayout, // .blayout
-        pub dtype: Dtype, // .dtype
-        pub f16: (), // .f16
-        pub f162: (), // .f16
-        pub ctype: Ctype, // .ctype
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub m8n8k4: (),        // .m8n8k4
+        pub alayout: Alayout,  // .alayout
+        pub blayout: Blayout,  // .blayout
+        pub dtype: Dtype,      // .dtype
+        pub f16: (),           // .f16
+        pub f162: (),          // .f16
+        pub ctype: Ctype,      // .ctype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -123,15 +123,15 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedM16n8k8RowColDtypeF16F16Ctype {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub m16n8k8: (), // .m16n8k8
-        pub row: (), // .row
-        pub col: (), // .col
-        pub dtype: Dtype, // .dtype
-        pub f16: (), // .f16
-        pub f162: (), // .f16
-        pub ctype: Ctype, // .ctype
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub m16n8k8: (),       // .m16n8k8
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub dtype: Dtype,      // .dtype
+        pub f16: (),           // .f16
+        pub f162: (),          // .f16
+        pub ctype: Ctype,      // .ctype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -141,28 +141,27 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedM16n8k16RowColDtypeF16F16Ctype {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub m16n8k16: (), // .m16n8k16
-        pub row: (), // .row
-        pub col: (), // .col
-        pub dtype: Dtype, // .dtype
-        pub f16: (), // .f16
-        pub f162: (), // .f16
-        pub ctype: Ctype, // .ctype
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub m16n8k16: (),      // .m16n8k16
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub dtype: Dtype,      // .dtype
+        pub f16: (),           // .f16
+        pub f162: (),          // .f16
+        pub ctype: Ctype,      // .ctype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
         pub span: Span,
     }
-
 }
 
 pub mod section_1 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -218,15 +217,15 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedM16n8k4RowColF32Tf32Tf32F32 {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub m16n8k4: (), // .m16n8k4
-        pub row: (), // .row
-        pub col: (), // .col
-        pub f32: (), // .f32
-        pub tf32: (), // .tf32
-        pub tf322: (), // .tf32
-        pub f322: (), // .f32
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub m16n8k4: (),       // .m16n8k4
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub f32: (),           // .f32
+        pub tf32: (),          // .tf32
+        pub tf322: (),         // .tf32
+        pub f322: (),          // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -236,15 +235,15 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedM16n8k8RowColF32AtypeBtypeF32 {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub m16n8k8: (), // .m16n8k8
-        pub row: (), // .row
-        pub col: (), // .col
-        pub f32: (), // .f32
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub f322: (), // .f32
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub m16n8k8: (),       // .m16n8k8
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub f32: (),           // .f32
+        pub atype: Atype,      // .atype
+        pub btype: Btype,      // .btype
+        pub f322: (),          // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -254,15 +253,15 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedM16n8k16RowColF32Bf16Bf16F32 {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub m16n8k16: (), // .m16n8k16
-        pub row: (), // .row
-        pub col: (), // .col
-        pub f32: (), // .f32
-        pub bf16: (), // .bf16
-        pub bf162: (), // .bf16
-        pub f322: (), // .f32
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub m16n8k16: (),      // .m16n8k16
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub f32: (),           // .f32
+        pub bf16: (),          // .bf16
+        pub bf162: (),         // .bf16
+        pub f322: (),          // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -272,15 +271,15 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedShapeRowColDtypeF8typeF8typeCtype {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub row: (), // .row
-        pub col: (), // .col
-        pub dtype: Dtype, // .dtype
-        pub f8type: F8type, // .f8type
-        pub f8type1: F8type, // .f8type
-        pub ctype: Ctype, // .ctype
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub shape: Shape,      // .shape
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub dtype: Dtype,      // .dtype
+        pub f8type: F8type,    // .f8type
+        pub f8type1: F8type,   // .f8type
+        pub ctype: Ctype,      // .ctype
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -290,29 +289,28 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedM16n8k32RowColKindDtypeF8f6f4typeF8f6f4typeCtype {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub m16n8k32: (), // .m16n8k32
-        pub row: (), // .row
-        pub col: (), // .col
-        pub kind: Kind, // .kind
-        pub dtype: Dtype, // .dtype
-        pub f8f6f4type: F8f6f4type, // .f8f6f4type
+        pub sync: (),                // .sync
+        pub aligned: (),             // .aligned
+        pub m16n8k32: (),            // .m16n8k32
+        pub row: (),                 // .row
+        pub col: (),                 // .col
+        pub kind: Kind,              // .kind
+        pub dtype: Dtype,            // .dtype
+        pub f8f6f4type: F8f6f4type,  // .f8f6f4type
         pub f8f6f4type1: F8f6f4type, // .f8f6f4type
-        pub ctype: Ctype, // .ctype
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
-        pub c: GeneralOperand, // c
+        pub ctype: Ctype,            // .ctype
+        pub d: GeneralOperand,       // d
+        pub a: GeneralOperand,       // a
+        pub b: GeneralOperand,       // b
+        pub c: GeneralOperand,       // c
         pub span: Span,
     }
-
 }
 
 pub mod section_2 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -333,36 +331,35 @@ pub mod section_2 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub m16n8k64: (), // .m16n8k64
-        pub row: (), // .row
-        pub col: (), // .col
-        pub kind: Kind, // .kind
-        pub block_scale: (), // .block_scale
+        pub sync: (),                             // .sync
+        pub aligned: (),                          // .aligned
+        pub m16n8k64: (),                         // .m16n8k64
+        pub row: (),                              // .row
+        pub col: (),                              // .col
+        pub kind: Kind,                           // .kind
+        pub block_scale: (),                      // .block_scale
         pub scale_vec_size: Option<ScaleVecSize>, // {.scale_vec_size}
-        pub f32: (), // .f32
-        pub e2m1: (), // .e2m1
-        pub e2m12: (), // .e2m1
-        pub f322: (), // .f32
-        pub stype: Stype, // .stype
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
-        pub c: GeneralOperand, // c
-        pub scale_a_data: GeneralOperand, // scale-a-data
-        pub byte_id_a: VectorOperand, // {byte-id-a, thread-id-a}
-        pub scale_b_data: GeneralOperand, // scale-b-data
-        pub byte_id_b: VectorOperand, // {byte-id-b, thread-id-b}
+        pub f32: (),                              // .f32
+        pub e2m1: (),                             // .e2m1
+        pub e2m12: (),                            // .e2m1
+        pub f322: (),                             // .f32
+        pub stype: Stype,                         // .stype
+        pub d: GeneralOperand,                    // d
+        pub a: GeneralOperand,                    // a
+        pub b: GeneralOperand,                    // b
+        pub c: GeneralOperand,                    // c
+        pub scale_a_data: GeneralOperand,         // scale-a-data
+        pub byte_id_a: VectorOperand,             // {byte-id-a, thread-id-a}
+        pub scale_b_data: GeneralOperand,         // scale-b-data
+        pub byte_id_b: VectorOperand,             // {byte-id-b, thread-id-b}
         pub span: Span,
     }
-
 }
 
 pub mod section_3 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -385,36 +382,35 @@ pub mod section_3 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype1 {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub m16n8k64: (), // .m16n8k64
-        pub row: (), // .row
-        pub col: (), // .col
-        pub kind: Kind, // .kind
-        pub block_scale: (), // .block_scale
+        pub sync: (),                     // .sync
+        pub aligned: (),                  // .aligned
+        pub m16n8k64: (),                 // .m16n8k64
+        pub row: (),                      // .row
+        pub col: (),                      // .col
+        pub kind: Kind,                   // .kind
+        pub block_scale: (),              // .block_scale
         pub scale_vec_size: ScaleVecSize, // .scale_vec_size
-        pub f32: (), // .f32
-        pub e2m1: (), // .e2m1
-        pub e2m12: (), // .e2m1
-        pub f322: (), // .f32
-        pub stype: Stype, // .stype
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
-        pub c: GeneralOperand, // c
+        pub f32: (),                      // .f32
+        pub e2m1: (),                     // .e2m1
+        pub e2m12: (),                    // .e2m1
+        pub f322: (),                     // .f32
+        pub stype: Stype,                 // .stype
+        pub d: GeneralOperand,            // d
+        pub a: GeneralOperand,            // a
+        pub b: GeneralOperand,            // b
+        pub c: GeneralOperand,            // c
         pub scale_a_data: GeneralOperand, // scale-a-data
-        pub byte_id_a: VectorOperand, // {byte-id-a, thread-id-a}
+        pub byte_id_a: VectorOperand,     // {byte-id-a, thread-id-a}
         pub scale_b_data: GeneralOperand, // scale-b-data
-        pub byte_id_b: VectorOperand, // {byte-id-b, thread-id-b}
+        pub byte_id_b: VectorOperand,     // {byte-id-b, thread-id-b}
         pub span: Span,
     }
-
 }
 
 pub mod section_4 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -444,71 +440,69 @@ pub mod section_4 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedM16n8k32RowColKindBlockScaleScaleVecSizeF32F8f6f4typeF8f6f4typeF32Stype {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub m16n8k32: (), // .m16n8k32
-        pub row: (), // .row
-        pub col: (), // .col
-        pub kind: Kind, // .kind
-        pub block_scale: (), // .block_scale
+        pub sync: (),                             // .sync
+        pub aligned: (),                          // .aligned
+        pub m16n8k32: (),                         // .m16n8k32
+        pub row: (),                              // .row
+        pub col: (),                              // .col
+        pub kind: Kind,                           // .kind
+        pub block_scale: (),                      // .block_scale
         pub scale_vec_size: Option<ScaleVecSize>, // {.scale_vec_size}
-        pub f32: (), // .f32
-        pub f8f6f4type: F8f6f4type, // .f8f6f4type
-        pub f8f6f4type1: F8f6f4type, // .f8f6f4type
-        pub f322: (), // .f32
-        pub stype: Stype, // .stype
-        pub d: GeneralOperand, // d
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
-        pub c: GeneralOperand, // c
-        pub scale_a_data: GeneralOperand, // scale-a-data
-        pub byte_id_a: VectorOperand, // {byte-id-a, thread-id-a}
-        pub scale_b_data: GeneralOperand, // scale-b-data
-        pub byte_id_b: VectorOperand, // {byte-id-b, thread-id-b}
+        pub f32: (),                              // .f32
+        pub f8f6f4type: F8f6f4type,               // .f8f6f4type
+        pub f8f6f4type1: F8f6f4type,              // .f8f6f4type
+        pub f322: (),                             // .f32
+        pub stype: Stype,                         // .stype
+        pub d: GeneralOperand,                    // d
+        pub a: GeneralOperand,                    // a
+        pub b: GeneralOperand,                    // b
+        pub c: GeneralOperand,                    // c
+        pub scale_a_data: GeneralOperand,         // scale-a-data
+        pub byte_id_a: VectorOperand,             // {byte-id-a, thread-id-a}
+        pub scale_b_data: GeneralOperand,         // scale-b-data
+        pub byte_id_b: VectorOperand,             // {byte-id-b, thread-id-b}
         pub span: Span,
     }
-
 }
 
 pub mod section_5 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Shape {
         M16n8k16, // .m16n8k16
-        M16n8k4, // .m16n8k4
-        M16n8k8, // .m16n8k8
-        M8n84, // .m8n84
+        M16n8k4,  // .m16n8k4
+        M16n8k8,  // .m16n8k8
+        M8n84,    // .m8n84
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedShapeRowColF64F64F64F64 {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub row: (), // .row
-        pub col: (), // .col
-        pub f64: (), // .f64
-        pub f642: (), // .f64
-        pub f644: (), // .f64
-        pub f646: (), // .f64
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub shape: Shape,      // .shape
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub f64: (),           // .f64
+        pub f642: (),          // .f64
+        pub f644: (),          // .f64
+        pub f646: (),          // .f64
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
         pub span: Span,
     }
-
 }
 
 pub mod section_6 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -516,7 +510,7 @@ pub mod section_6 {
     pub enum Shape {
         M16n8k16, // .m16n8k16
         M16n8k32, // .m16n8k32
-        M8n8k16, // .m8n8k16
+        M8n8k16,  // .m8n8k16
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -533,29 +527,28 @@ pub mod section_6 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS32 {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub row: (), // .row
-        pub col: (), // .col
-        pub satfinite: bool, // {.satfinite}
-        pub s32: (), // .s32
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub s322: (), // .s32
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub shape: Shape,      // .shape
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub satfinite: bool,   // {.satfinite}
+        pub s32: (),           // .s32
+        pub atype: Atype,      // .atype
+        pub btype: Btype,      // .btype
+        pub s322: (),          // .s32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
         pub span: Span,
     }
-
 }
 
 pub mod section_7 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -563,7 +556,7 @@ pub mod section_7 {
     pub enum Shape {
         M16n8k32, // .m16n8k32
         M16n8k64, // .m16n8k64
-        M8n8k32, // .m8n8k32
+        M8n8k32,  // .m8n8k32
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -580,29 +573,28 @@ pub mod section_7 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS321 {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub row: (), // .row
-        pub col: (), // .col
-        pub satfinite: bool, // {.satfinite}
-        pub s32: (), // .s32
-        pub atype: Atype, // .atype
-        pub btype: Btype, // .btype
-        pub s322: (), // .s32
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub shape: Shape,      // .shape
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub satfinite: bool,   // {.satfinite}
+        pub s32: (),           // .s32
+        pub atype: Atype,      // .atype
+        pub btype: Btype,      // .btype
+        pub s322: (),          // .s32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
         pub span: Span,
     }
-
 }
 
 pub mod section_8 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -610,7 +602,7 @@ pub mod section_8 {
     pub enum Shape {
         M16n8k128, // .m16n8k128
         M16n8k256, // .m16n8k256
-        M8n8k128, // .m8n8k128
+        M8n8k128,  // .m8n8k128
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -621,71 +613,70 @@ pub mod section_8 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MmaSyncAlignedShapeRowColS32B1B1S32BitopPopc {
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape: Shape, // .shape
-        pub row: (), // .row
-        pub col: (), // .col
-        pub s32: (), // .s32
-        pub b1: (), // .b1
-        pub b12: (), // .b1
-        pub s322: (), // .s32
-        pub bitop: Bitop, // .bitOp
-        pub popc: (), // .popc
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
+        pub shape: Shape,      // .shape
+        pub row: (),           // .row
+        pub col: (),           // .col
+        pub s32: (),           // .s32
+        pub b1: (),            // .b1
+        pub b12: (),           // .b1
+        pub s322: (),          // .s32
+        pub bitop: Bitop,      // .bitOp
+        pub popc: (),          // .popc
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts
 // e.g., Type0 for section_0::Type, Type1 for section_1::Type
+pub use section_0::Alayout as Alayout0;
+pub use section_0::Blayout as Blayout0;
+pub use section_0::Ctype as Ctype0;
+pub use section_0::Dtype as Dtype0;
 pub use section_0::MmaSyncAlignedM8n8k4AlayoutBlayoutDtypeF16F16Ctype;
 pub use section_0::MmaSyncAlignedM16n8k8RowColDtypeF16F16Ctype;
 pub use section_0::MmaSyncAlignedM16n8k16RowColDtypeF16F16Ctype;
-pub use section_0::Alayout as Alayout0;
-pub use section_0::Blayout as Blayout0;
-pub use section_0::Dtype as Dtype0;
-pub use section_0::Ctype as Ctype0;
+pub use section_1::Atype as Atype1;
+pub use section_1::Btype as Btype1;
+pub use section_1::Ctype as Ctype1;
+pub use section_1::Dtype as Dtype1;
+pub use section_1::F8f6f4type as F8f6f4type1;
+pub use section_1::F8type as F8type1;
+pub use section_1::Kind as Kind1;
 pub use section_1::MmaSyncAlignedM16n8k4RowColF32Tf32Tf32F32;
 pub use section_1::MmaSyncAlignedM16n8k8RowColF32AtypeBtypeF32;
 pub use section_1::MmaSyncAlignedM16n8k16RowColF32Bf16Bf16F32;
-pub use section_1::MmaSyncAlignedShapeRowColDtypeF8typeF8typeCtype;
 pub use section_1::MmaSyncAlignedM16n8k32RowColKindDtypeF8f6f4typeF8f6f4typeCtype;
-pub use section_1::Atype as Atype1;
-pub use section_1::Btype as Btype1;
+pub use section_1::MmaSyncAlignedShapeRowColDtypeF8typeF8typeCtype;
 pub use section_1::Shape as Shape1;
-pub use section_1::Dtype as Dtype1;
-pub use section_1::F8type as F8type1;
-pub use section_1::Ctype as Ctype1;
-pub use section_1::Kind as Kind1;
-pub use section_1::F8f6f4type as F8f6f4type1;
-pub use section_2::MmaSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype;
 pub use section_2::Kind as Kind2;
+pub use section_2::MmaSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype;
 pub use section_2::ScaleVecSize as ScaleVecSize2;
 pub use section_2::Stype as Stype2;
-pub use section_3::MmaSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype1;
 pub use section_3::Kind as Kind3;
+pub use section_3::MmaSyncAlignedM16n8k64RowColKindBlockScaleScaleVecSizeF32E2m1E2m1F32Stype1;
 pub use section_3::ScaleVecSize as ScaleVecSize3;
 pub use section_3::Stype as Stype3;
-pub use section_4::MmaSyncAlignedM16n8k32RowColKindBlockScaleScaleVecSizeF32F8f6f4typeF8f6f4typeF32Stype;
-pub use section_4::Kind as Kind4;
-pub use section_4::ScaleVecSize as ScaleVecSize4;
 pub use section_4::F8f6f4type as F8f6f4type4;
+pub use section_4::Kind as Kind4;
+pub use section_4::MmaSyncAlignedM16n8k32RowColKindBlockScaleScaleVecSizeF32F8f6f4typeF8f6f4typeF32Stype;
+pub use section_4::ScaleVecSize as ScaleVecSize4;
 pub use section_4::Stype as Stype4;
 pub use section_5::MmaSyncAlignedShapeRowColF64F64F64F64;
 pub use section_5::Shape as Shape5;
-pub use section_6::MmaSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS32;
-pub use section_6::Shape as Shape6;
 pub use section_6::Atype as Atype6;
 pub use section_6::Btype as Btype6;
-pub use section_7::MmaSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS321;
-pub use section_7::Shape as Shape7;
+pub use section_6::MmaSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS32;
+pub use section_6::Shape as Shape6;
 pub use section_7::Atype as Atype7;
 pub use section_7::Btype as Btype7;
+pub use section_7::MmaSyncAlignedShapeRowColSatfiniteS32AtypeBtypeS321;
+pub use section_7::Shape as Shape7;
+pub use section_8::Bitop as Bitop8;
 pub use section_8::MmaSyncAlignedShapeRowColS32B1B1S32BitopPopc;
 pub use section_8::Shape as Shape8;
-pub use section_8::Bitop as Bitop8;

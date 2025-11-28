@@ -1,6 +1,6 @@
 //! Original PTX specification:
 //!
-//! mov.type  d, a; 
+//! mov.type  d, a;
 //! // mov.type  d, sreg;
 //! // mov.type  d, avar;       // get address of variable
 //! // mov.type  d, avar+imm;   // get address of variable with offset
@@ -21,31 +21,31 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Type {
         Pred, // .pred
-        B16, // .b16
-        B32, // .b32
-        B64, // .b64
-        U16, // .u16
-        U32, // .u32
-        U64, // .u64
-        S16, // .s16
-        S32, // .s32
-        S64, // .s64
-        F32, // .f32
-        F64, // .f64
+        B16,  // .b16
+        B32,  // .b32
+        B64,  // .b64
+        U16,  // .u16
+        U32,  // .u32
+        U64,  // .u64
+        S16,  // .s16
+        S32,  // .s32
+        S64,  // .s64
+        F32,  // .f32
+        F64,  // .f64
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MovType {
-        pub type_: Type, // .type
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub span: Span,
@@ -53,61 +53,59 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MovU32 {
-        pub u32: (), // .u32
-        pub d: GeneralOperand, // d
+        pub u32: (),               // .u32
+        pub d: GeneralOperand,     // d
         pub fname: GeneralOperand, // fname
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MovU64 {
-        pub u64: (), // .u64
-        pub d: GeneralOperand, // d
+        pub u64: (),               // .u64
+        pub d: GeneralOperand,     // d
         pub fname: GeneralOperand, // fname
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MovU321 {
-        pub u32: (), // .u32
-        pub d: GeneralOperand, // d
+        pub u32: (),                // .u32
+        pub d: GeneralOperand,      // d
         pub kernel: GeneralOperand, // kernel
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MovU641 {
-        pub u64: (), // .u64
-        pub d: GeneralOperand, // d
+        pub u64: (),                // .u64
+        pub d: GeneralOperand,      // d
         pub kernel: GeneralOperand, // kernel
         pub span: Span,
     }
-
 }
 
 pub mod section_1 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Type {
         B128, // .b128
-        B16, // .b16
-        B32, // .b32
-        B64, // .b64
+        B16,  // .b16
+        B32,  // .b32
+        B64,  // .b64
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MovType1 {
-        pub type_: Type, // .type
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

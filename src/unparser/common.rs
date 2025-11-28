@@ -10,7 +10,7 @@ use crate::{
         function::{DwarfDirective, DwarfDirectiveKind},
         variable::ParamStateSpace,
     },
-    unparser::{PtxUnparser, push_space, push_newline},
+    unparser::{PtxUnparser, push_newline, push_space},
 };
 
 fn push_tokenized(tokens: &mut Vec<PtxToken>, text: &str) {

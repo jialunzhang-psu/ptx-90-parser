@@ -8,9 +8,9 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -22,22 +22,21 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct BarrierClusterArriveSemAligned {
-        pub cluster: (), // .cluster
-        pub arrive: (), // .arrive
+        pub cluster: (),      // .cluster
+        pub arrive: (),       // .arrive
         pub sem: Option<Sem>, // {.sem}
-        pub aligned: bool, // {.aligned}
+        pub aligned: bool,    // {.aligned}
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct BarrierClusterWaitAcquireAligned {
-        pub cluster: (), // .cluster
-        pub wait: (), // .wait
+        pub cluster: (),   // .cluster
+        pub wait: (),      // .wait
         pub acquire: bool, // {.acquire}
         pub aligned: bool, // {.aligned}
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

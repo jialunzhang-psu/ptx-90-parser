@@ -31,50 +31,57 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mul");
-                    match &self.mode {
-                            Mode::Wide => {
-                                    push_directive(tokens, "wide");
-                            }
-                            Mode::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Mode::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                    }
-                    match &self.type_ {
-                            Type::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Type::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Type::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Type::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Type::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Type::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.mode {
+                Mode::Wide => {
+                    push_directive(tokens, "wide");
+                }
+                Mode::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Mode::Lo => {
+                    push_directive(tokens, "lo");
+                }
+            }
+            match &self.type_ {
+                Type::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Type::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Type::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Type::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Type::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Type::S64 => {
+                    push_directive(tokens, "s64");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_1 {
@@ -87,39 +94,47 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_0) = self.rnd.as_ref() {
-                            match rnd_0 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                                    Rnd::Rz => {
-                                            push_directive(tokens, "rz");
-                                    }
-                                    Rnd::Rm => {
-                                            push_directive(tokens, "rm");
-                                    }
-                                    Rnd::Rp => {
-                                            push_directive(tokens, "rp");
-                                    }
-                            }
+            if let Some(rnd_0) = self.rnd.as_ref() {
+                match rnd_0 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
+                    Rnd::Rz => {
+                        push_directive(tokens, "rz");
                     }
-                    if self.sat {
-                            push_directive(tokens, "sat");
+                    Rnd::Rm => {
+                        push_directive(tokens, "rm");
                     }
-                    push_directive(tokens, "f32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                    Rnd::Rp => {
+                        push_directive(tokens, "rp");
+                    }
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            if self.sat {
+                push_directive(tokens, "sat");
+            }
+            push_directive(tokens, "f32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -129,36 +144,44 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_1) = self.rnd.as_ref() {
-                            match rnd_1 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                                    Rnd::Rz => {
-                                            push_directive(tokens, "rz");
-                                    }
-                                    Rnd::Rm => {
-                                            push_directive(tokens, "rm");
-                                    }
-                                    Rnd::Rp => {
-                                            push_directive(tokens, "rp");
-                                    }
-                            }
+            if let Some(rnd_1) = self.rnd.as_ref() {
+                match rnd_1 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
+                    Rnd::Rz => {
+                        push_directive(tokens, "rz");
                     }
-                    push_directive(tokens, "f32x2");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                    Rnd::Rm => {
+                        push_directive(tokens, "rm");
+                    }
+                    Rnd::Rp => {
+                        push_directive(tokens, "rp");
+                    }
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            push_directive(tokens, "f32x2");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -168,36 +191,43 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_2) = self.rnd.as_ref() {
-                            match rnd_2 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                                    Rnd::Rz => {
-                                            push_directive(tokens, "rz");
-                                    }
-                                    Rnd::Rm => {
-                                            push_directive(tokens, "rm");
-                                    }
-                                    Rnd::Rp => {
-                                            push_directive(tokens, "rp");
-                                    }
-                            }
+            if let Some(rnd_2) = self.rnd.as_ref() {
+                match rnd_2 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    push_directive(tokens, "f64");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                    Rnd::Rz => {
+                        push_directive(tokens, "rz");
+                    }
+                    Rnd::Rm => {
+                        push_directive(tokens, "rm");
+                    }
+                    Rnd::Rp => {
+                        push_directive(tokens, "rp");
+                    }
+                }
+            }
+            push_directive(tokens, "f64");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_2 {
@@ -210,30 +240,38 @@ pub mod section_2 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_3) = self.rnd.as_ref() {
-                            match rnd_3 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                            }
+            if let Some(rnd_3) = self.rnd.as_ref() {
+                match rnd_3 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    if self.sat {
-                            push_directive(tokens, "sat");
-                    }
-                    push_directive(tokens, "f16");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            if self.sat {
+                push_directive(tokens, "sat");
+            }
+            push_directive(tokens, "f16");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -243,30 +281,38 @@ pub mod section_2 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_4) = self.rnd.as_ref() {
-                            match rnd_4 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                            }
+            if let Some(rnd_4) = self.rnd.as_ref() {
+                match rnd_4 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    if self.sat {
-                            push_directive(tokens, "sat");
-                    }
-                    push_directive(tokens, "f16x2");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            if self.sat {
+                push_directive(tokens, "sat");
+            }
+            push_directive(tokens, "f16x2");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -276,24 +322,32 @@ pub mod section_2 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_5) = self.rnd.as_ref() {
-                            match rnd_5 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                            }
+            if let Some(rnd_5) = self.rnd.as_ref() {
+                match rnd_5 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    push_directive(tokens, "bf16");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            push_directive(tokens, "bf16");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -303,26 +357,32 @@ pub mod section_2 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "mul");
-                    if let Some(rnd_6) = self.rnd.as_ref() {
-                            match rnd_6 {
-                                    Rnd::Rn => {
-                                            push_directive(tokens, "rn");
-                                    }
-                            }
+            if let Some(rnd_6) = self.rnd.as_ref() {
+                match rnd_6 {
+                    Rnd::Rn => {
+                        push_directive(tokens, "rn");
                     }
-                    push_directive(tokens, "bf16x2");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            push_directive(tokens, "bf16x2");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

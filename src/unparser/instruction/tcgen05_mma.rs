@@ -80,52 +80,72 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    match &self.kind {
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
-                            }
-                            Kind::KindTf32 => {
-                                    push_directive(tokens, "kind::tf32");
-                            }
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            match &self.kind {
+                Kind::KindF8f6f4 => {
+                    push_directive(tokens, "kind::f8f6f4");
+                }
+                Kind::KindTf32 => {
+                    push_directive(tokens, "kind::tf32");
+                }
+                Kind::KindF16 => {
+                    push_directive(tokens, "kind::f16");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
-            if self.disable_output_lane.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_0) = self.disable_output_lane.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_0.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
+            if self.disable_output_lane.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_0) = self.disable_output_lane.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_0.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
-            if self.scale_input_d.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_1) = self.scale_input_d.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_1.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if self.scale_input_d.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_1) = self.scale_input_d.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_1.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -135,55 +155,74 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    match &self.kind {
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
-                            }
-                            Kind::KindTf32 => {
-                                    push_directive(tokens, "kind::tf32");
-                            }
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            match &self.kind {
+                Kind::KindF8f6f4 => {
+                    push_directive(tokens, "kind::f8f6f4");
+                }
+                Kind::KindTf32 => {
+                    push_directive(tokens, "kind::tf32");
+                }
+                Kind::KindF16 => {
+                    push_directive(tokens, "kind::f16");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
-            if self.disable_output_lane.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_2) = self.disable_output_lane.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_2.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
+            if self.disable_output_lane.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_2) = self.disable_output_lane.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_2.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
-            if self.scale_input_d.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_3) = self.scale_input_d.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_3.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if self.scale_input_d.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_3) = self.scale_input_d.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_3.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_1 {
@@ -196,68 +235,84 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            match &self.kind {
+                Kind::KindMxf8f6f4 => {
+                    push_directive(tokens, "kind::mxf8f6f4");
+                }
+                Kind::KindMxf4nvf4 => {
+                    push_directive(tokens, "kind::mxf4nvf4");
+                }
+                Kind::KindMxf4 => {
+                    push_directive(tokens, "kind::mxf4");
+                }
+            }
+            push_directive(tokens, "block_scale");
+            if let Some(scale_vectorsize_4) = self.scale_vectorsize.as_ref() {
+                match scale_vectorsize_4 {
+                    ScaleVectorsize::ScaleVec1x => {
+                        push_directive(tokens, "scale_vec::1X");
                     }
-                    match &self.kind {
-                            Kind::KindMxf8f6f4 => {
-                                    push_directive(tokens, "kind::mxf8f6f4");
-                            }
-                            Kind::KindMxf4nvf4 => {
-                                    push_directive(tokens, "kind::mxf4nvf4");
-                            }
-                            Kind::KindMxf4 => {
-                                    push_directive(tokens, "kind::mxf4");
-                            }
+                    ScaleVectorsize::ScaleVec2x => {
+                        push_directive(tokens, "scale_vec::2X");
                     }
-                    push_directive(tokens, "block_scale");
-                    if let Some(scale_vectorsize_4) = self.scale_vectorsize.as_ref() {
-                            match scale_vectorsize_4 {
-                                    ScaleVectorsize::ScaleVec1x => {
-                                            push_directive(tokens, "scale_vec::1X");
-                                    }
-                                    ScaleVectorsize::ScaleVec2x => {
-                                            push_directive(tokens, "scale_vec::2X");
-                                    }
-                                    ScaleVectorsize::ScaleVec4x => {
-                                            push_directive(tokens, "scale_vec::4X");
-                                    }
-                                    ScaleVectorsize::Block16 => {
-                                            push_directive(tokens, "block16");
-                                    }
-                                    ScaleVectorsize::Block32 => {
-                                            push_directive(tokens, "block32");
-                                    }
-                            }
+                    ScaleVectorsize::ScaleVec4x => {
+                        push_directive(tokens, "scale_vec::4X");
                     }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+                    ScaleVectorsize::Block16 => {
+                        push_directive(tokens, "block16");
+                    }
+                    ScaleVectorsize::Block32 => {
+                        push_directive(tokens, "block32");
+                    }
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.scale_a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.scale_a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.scale_b_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.scale_b_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -267,71 +322,86 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            match &self.kind {
+                Kind::KindMxf8f6f4 => {
+                    push_directive(tokens, "kind::mxf8f6f4");
+                }
+                Kind::KindMxf4nvf4 => {
+                    push_directive(tokens, "kind::mxf4nvf4");
+                }
+                Kind::KindMxf4 => {
+                    push_directive(tokens, "kind::mxf4");
+                }
+            }
+            push_directive(tokens, "block_scale");
+            if let Some(scale_vectorsize_5) = self.scale_vectorsize.as_ref() {
+                match scale_vectorsize_5 {
+                    ScaleVectorsize::ScaleVec1x => {
+                        push_directive(tokens, "scale_vec::1X");
                     }
-                    match &self.kind {
-                            Kind::KindMxf8f6f4 => {
-                                    push_directive(tokens, "kind::mxf8f6f4");
-                            }
-                            Kind::KindMxf4nvf4 => {
-                                    push_directive(tokens, "kind::mxf4nvf4");
-                            }
-                            Kind::KindMxf4 => {
-                                    push_directive(tokens, "kind::mxf4");
-                            }
+                    ScaleVectorsize::ScaleVec2x => {
+                        push_directive(tokens, "scale_vec::2X");
                     }
-                    push_directive(tokens, "block_scale");
-                    if let Some(scale_vectorsize_5) = self.scale_vectorsize.as_ref() {
-                            match scale_vectorsize_5 {
-                                    ScaleVectorsize::ScaleVec1x => {
-                                            push_directive(tokens, "scale_vec::1X");
-                                    }
-                                    ScaleVectorsize::ScaleVec2x => {
-                                            push_directive(tokens, "scale_vec::2X");
-                                    }
-                                    ScaleVectorsize::ScaleVec4x => {
-                                            push_directive(tokens, "scale_vec::4X");
-                                    }
-                                    ScaleVectorsize::Block16 => {
-                                            push_directive(tokens, "block16");
-                                    }
-                                    ScaleVectorsize::Block32 => {
-                                            push_directive(tokens, "block32");
-                                    }
-                            }
+                    ScaleVectorsize::ScaleVec4x => {
+                        push_directive(tokens, "scale_vec::4X");
                     }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+                    ScaleVectorsize::Block16 => {
+                        push_directive(tokens, "block16");
+                    }
+                    ScaleVectorsize::Block32 => {
+                        push_directive(tokens, "block32");
+                    }
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.scale_a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.scale_a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.scale_b_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.scale_b_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_2 {
@@ -344,61 +414,83 @@ pub mod section_2 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    match &self.kind {
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
-                            }
-                            Kind::KindTf32 => {
-                                    push_directive(tokens, "kind::tf32");
-                            }
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
-                            }
-                    }
-                    match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
-                                    let mut combined = String::new();
-                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
-                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
-                                    tokens.push(PtxToken::Dot);
-                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            match &self.kind {
+                Kind::KindF8f6f4 => {
+                    push_directive(tokens, "kind::f8f6f4");
+                }
+                Kind::KindTf32 => {
+                    push_directive(tokens, "kind::tf32");
+                }
+                Kind::KindF16 => {
+                    push_directive(tokens, "kind::f16");
+                }
+            }
+            match &self.collector_usage {
+                CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                    let mut combined = String::new();
+                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                    tokens.push(PtxToken::Dot);
+                    tokens.push(PtxToken::Identifier(
+                        format!("{}{}", "collector", combined).into(),
+                    ));
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
-            if self.disable_output_lane.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_6) = self.disable_output_lane.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_6.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
+            if self.disable_output_lane.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_6) = self.disable_output_lane.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_6.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
-            if self.scale_input_d.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_7) = self.scale_input_d.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_7.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if self.scale_input_d.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_7) = self.scale_input_d.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_7.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -408,64 +500,86 @@ pub mod section_2 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    match &self.kind {
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
-                            }
-                            Kind::KindTf32 => {
-                                    push_directive(tokens, "kind::tf32");
-                            }
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
-                            }
-                    }
-                    if self.ashift {
-                            push_directive(tokens, "ashift");
-                    }
-                    match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
-                                    let mut combined = String::new();
-                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
-                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
-                                    tokens.push(PtxToken::Dot);
-                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            match &self.kind {
+                Kind::KindF8f6f4 => {
+                    push_directive(tokens, "kind::f8f6f4");
+                }
+                Kind::KindTf32 => {
+                    push_directive(tokens, "kind::tf32");
+                }
+                Kind::KindF16 => {
+                    push_directive(tokens, "kind::f16");
+                }
+            }
+            if self.ashift {
+                push_directive(tokens, "ashift");
+            }
+            match &self.collector_usage {
+                CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                    let mut combined = String::new();
+                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                    tokens.push(PtxToken::Dot);
+                    tokens.push(PtxToken::Identifier(
+                        format!("{}{}", "collector", combined).into(),
+                    ));
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
-            if self.disable_output_lane.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_8) = self.disable_output_lane.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_8.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
+            if self.disable_output_lane.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_8) = self.disable_output_lane.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_8.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
-            if self.scale_input_d.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_9) = self.scale_input_d.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_9.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if self.scale_input_d.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_9) = self.scale_input_d.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_9.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -475,67 +589,88 @@ pub mod section_2 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            match &self.kind {
+                Kind::KindF8f6f4 => {
+                    push_directive(tokens, "kind::f8f6f4");
+                }
+                Kind::KindTf32 => {
+                    push_directive(tokens, "kind::tf32");
+                }
+                Kind::KindF16 => {
+                    push_directive(tokens, "kind::f16");
+                }
+            }
+            push_directive(tokens, "ashift");
+            if let Some(collector_usage_10) = self.collector_usage.as_ref() {
+                match collector_usage_10 {
+                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                        let mut combined = String::new();
+                        combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                        combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                        tokens.push(PtxToken::Dot);
+                        tokens.push(PtxToken::Identifier(
+                            format!("{}{}", "collector", combined).into(),
+                        ));
                     }
-                    match &self.kind {
-                            Kind::KindF8f6f4 => {
-                                    push_directive(tokens, "kind::f8f6f4");
-                            }
-                            Kind::KindTf32 => {
-                                    push_directive(tokens, "kind::tf32");
-                            }
-                            Kind::KindF16 => {
-                                    push_directive(tokens, "kind::f16");
-                            }
-                    }
-                    push_directive(tokens, "ashift");
-                    if let Some(collector_usage_10) = self.collector_usage.as_ref() {
-                            match collector_usage_10 {
-                                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
-                                            let mut combined = String::new();
-                                            combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
-                                            combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
-                                            tokens.push(PtxToken::Dot);
-                                            tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
-                                    }
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
-            if self.disable_output_lane.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_11) = self.disable_output_lane.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_11.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
+            if self.disable_output_lane.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_11) = self.disable_output_lane.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_11.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
-            if self.scale_input_d.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_12) = self.scale_input_d.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_12.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if self.scale_input_d.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_12) = self.scale_input_d.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_12.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_3 {
@@ -548,77 +683,95 @@ pub mod section_3 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            match &self.kind {
+                Kind::KindMxf8f6f4 => {
+                    push_directive(tokens, "kind::mxf8f6f4");
+                }
+                Kind::KindMxf4nvf4 => {
+                    push_directive(tokens, "kind::mxf4nvf4");
+                }
+                Kind::KindMxf4 => {
+                    push_directive(tokens, "kind::mxf4");
+                }
+            }
+            push_directive(tokens, "block_scale");
+            if let Some(scale_vectorsize_13) = self.scale_vectorsize.as_ref() {
+                match scale_vectorsize_13 {
+                    ScaleVectorsize::ScaleVec1x => {
+                        push_directive(tokens, "scale_vec::1X");
                     }
-                    match &self.kind {
-                            Kind::KindMxf8f6f4 => {
-                                    push_directive(tokens, "kind::mxf8f6f4");
-                            }
-                            Kind::KindMxf4nvf4 => {
-                                    push_directive(tokens, "kind::mxf4nvf4");
-                            }
-                            Kind::KindMxf4 => {
-                                    push_directive(tokens, "kind::mxf4");
-                            }
+                    ScaleVectorsize::ScaleVec2x => {
+                        push_directive(tokens, "scale_vec::2X");
                     }
-                    push_directive(tokens, "block_scale");
-                    if let Some(scale_vectorsize_13) = self.scale_vectorsize.as_ref() {
-                            match scale_vectorsize_13 {
-                                    ScaleVectorsize::ScaleVec1x => {
-                                            push_directive(tokens, "scale_vec::1X");
-                                    }
-                                    ScaleVectorsize::ScaleVec2x => {
-                                            push_directive(tokens, "scale_vec::2X");
-                                    }
-                                    ScaleVectorsize::ScaleVec4x => {
-                                            push_directive(tokens, "scale_vec::4X");
-                                    }
-                                    ScaleVectorsize::Block16 => {
-                                            push_directive(tokens, "block16");
-                                    }
-                                    ScaleVectorsize::Block32 => {
-                                            push_directive(tokens, "block32");
-                                    }
-                            }
+                    ScaleVectorsize::ScaleVec4x => {
+                        push_directive(tokens, "scale_vec::4X");
                     }
-                    match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
-                                    let mut combined = String::new();
-                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
-                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
-                                    tokens.push(PtxToken::Dot);
-                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
-                            }
+                    ScaleVectorsize::Block16 => {
+                        push_directive(tokens, "block16");
                     }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+                    ScaleVectorsize::Block32 => {
+                        push_directive(tokens, "block32");
+                    }
+                }
+            }
+            match &self.collector_usage {
+                CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                    let mut combined = String::new();
+                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                    tokens.push(PtxToken::Dot);
+                    tokens.push(PtxToken::Identifier(
+                        format!("{}{}", "collector", combined).into(),
+                    ));
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.scale_a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.scale_a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.scale_b_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.scale_b_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -628,80 +781,97 @@ pub mod section_3 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            match &self.kind {
+                Kind::KindMxf8f6f4 => {
+                    push_directive(tokens, "kind::mxf8f6f4");
+                }
+                Kind::KindMxf4nvf4 => {
+                    push_directive(tokens, "kind::mxf4nvf4");
+                }
+                Kind::KindMxf4 => {
+                    push_directive(tokens, "kind::mxf4");
+                }
+            }
+            push_directive(tokens, "block_scale");
+            if let Some(scale_vectorsize_14) = self.scale_vectorsize.as_ref() {
+                match scale_vectorsize_14 {
+                    ScaleVectorsize::ScaleVec1x => {
+                        push_directive(tokens, "scale_vec::1X");
                     }
-                    match &self.kind {
-                            Kind::KindMxf8f6f4 => {
-                                    push_directive(tokens, "kind::mxf8f6f4");
-                            }
-                            Kind::KindMxf4nvf4 => {
-                                    push_directive(tokens, "kind::mxf4nvf4");
-                            }
-                            Kind::KindMxf4 => {
-                                    push_directive(tokens, "kind::mxf4");
-                            }
+                    ScaleVectorsize::ScaleVec2x => {
+                        push_directive(tokens, "scale_vec::2X");
                     }
-                    push_directive(tokens, "block_scale");
-                    if let Some(scale_vectorsize_14) = self.scale_vectorsize.as_ref() {
-                            match scale_vectorsize_14 {
-                                    ScaleVectorsize::ScaleVec1x => {
-                                            push_directive(tokens, "scale_vec::1X");
-                                    }
-                                    ScaleVectorsize::ScaleVec2x => {
-                                            push_directive(tokens, "scale_vec::2X");
-                                    }
-                                    ScaleVectorsize::ScaleVec4x => {
-                                            push_directive(tokens, "scale_vec::4X");
-                                    }
-                                    ScaleVectorsize::Block16 => {
-                                            push_directive(tokens, "block16");
-                                    }
-                                    ScaleVectorsize::Block32 => {
-                                            push_directive(tokens, "block32");
-                                    }
-                            }
+                    ScaleVectorsize::ScaleVec4x => {
+                        push_directive(tokens, "scale_vec::4X");
                     }
-                    match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
-                                    let mut combined = String::new();
-                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
-                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
-                                    tokens.push(PtxToken::Dot);
-                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
-                            }
+                    ScaleVectorsize::Block16 => {
+                        push_directive(tokens, "block16");
                     }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+                    ScaleVectorsize::Block32 => {
+                        push_directive(tokens, "block32");
+                    }
+                }
+            }
+            match &self.collector_usage {
+                CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                    let mut combined = String::new();
+                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                    tokens.push(PtxToken::Dot);
+                    tokens.push(PtxToken::Identifier(
+                        format!("{}{}", "collector", combined).into(),
+                    ));
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.scale_a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.scale_a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.scale_b_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.scale_b_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_4 {
@@ -714,37 +884,53 @@ pub mod section_4 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "kind::i8");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "kind::i8");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
-            if self.disable_output_lane.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_15) = self.disable_output_lane.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_15.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
+            if self.disable_output_lane.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_15) = self.disable_output_lane.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_15.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -754,40 +940,55 @@ pub mod section_4 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "kind::i8");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "kind::i8");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
-            if self.disable_output_lane.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_16) = self.disable_output_lane.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_16.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
+            if self.disable_output_lane.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_16) = self.disable_output_lane.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_16.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_5 {
@@ -800,46 +1001,64 @@ pub mod section_5 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "kind::i8");
-                    match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
-                                    let mut combined = String::new();
-                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
-                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
-                                    tokens.push(PtxToken::Dot);
-                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "kind::i8");
+            match &self.collector_usage {
+                CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                    let mut combined = String::new();
+                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                    tokens.push(PtxToken::Dot);
+                    tokens.push(PtxToken::Identifier(
+                        format!("{}{}", "collector", combined).into(),
+                    ));
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
-            if self.disable_output_lane.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_17) = self.disable_output_lane.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_17.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
+            if self.disable_output_lane.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_17) = self.disable_output_lane.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_17.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -849,49 +1068,67 @@ pub mod section_5 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "kind::i8");
+            push_directive(tokens, "ashift");
+            if let Some(collector_usage_18) = self.collector_usage.as_ref() {
+                match collector_usage_18 {
+                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                        let mut combined = String::new();
+                        combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                        combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                        tokens.push(PtxToken::Dot);
+                        tokens.push(PtxToken::Identifier(
+                            format!("{}{}", "collector", combined).into(),
+                        ));
                     }
-                    push_directive(tokens, "kind::i8");
-                    push_directive(tokens, "ashift");
-                    if let Some(collector_usage_18) = self.collector_usage.as_ref() {
-                            match collector_usage_18 {
-                                    CollectorUsage::CollectorBufferOp(_, n1, n2) => {
-                                            let mut combined = String::new();
-                                            combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
-                                            combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
-                                            tokens.push(PtxToken::Dot);
-                                            tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
-                                    }
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
-            if self.disable_output_lane.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_19) = self.disable_output_lane.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_19.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
+            if self.disable_output_lane.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_19) = self.disable_output_lane.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_19.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -901,51 +1138,67 @@ pub mod section_5 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "mma");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "kind::i8");
-                    if self.ashift {
-                            push_directive(tokens, "ashift");
-                    }
-                    match &self.collector_usage {
-                            CollectorUsage::CollectorBufferOp(_, n1, n2) => {
-                                    let mut combined = String::new();
-                                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
-                                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
-                                    tokens.push(PtxToken::Dot);
-                                    tokens.push(PtxToken::Identifier(format!("{}{}", "collector", combined).into()));
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d_tmem.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "mma");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "kind::i8");
+            if self.ashift {
+                push_directive(tokens, "ashift");
+            }
+            match &self.collector_usage {
+                CollectorUsage::CollectorBufferOp(_, n1, n2) => {
+                    let mut combined = String::new();
+                    combined.push_str(format!("{:?}", n1).trim_start_matches('_'));
+                    combined.push_str(format!("{:?}", n2).trim_start_matches('_'));
+                    tokens.push(PtxToken::Dot);
+                    tokens.push(PtxToken::Identifier(
+                        format!("{}{}", "collector", combined).into(),
+                    ));
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a_tmem.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a_tmem.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b_desc.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b_desc.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.idesc.unparse_tokens_mode(tokens, spaced);
-            if self.disable_output_lane.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_20) = self.disable_output_lane.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_20.unparse_tokens_mode(tokens, spaced);
-                    }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.idesc.unparse_tokens_mode(tokens, spaced);
+            if self.disable_output_lane.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_20) = self.disable_output_lane.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_20.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.enable_input_d.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.enable_input_d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

@@ -6,21 +6,20 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct WgmmaWaitGroupSyncAligned {
-        pub wait_group: (), // .wait_group
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
+        pub wait_group: (),    // .wait_group
+        pub sync: (),          // .sync
+        pub aligned: (),       // .aligned
         pub n: GeneralOperand, // N
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

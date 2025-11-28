@@ -18,17 +18,23 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "brx");
-                    push_directive(tokens, "idx");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.index.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "idx");
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.index.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.tlist.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.tlist.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -38,19 +44,23 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "brx");
-                    push_directive(tokens, "idx");
-                    if self.uni {
-                            push_directive(tokens, "uni");
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.index.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "idx");
+            if self.uni {
+                push_directive(tokens, "uni");
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.index.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.tlist.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.tlist.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

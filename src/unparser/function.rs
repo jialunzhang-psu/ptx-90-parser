@@ -78,7 +78,11 @@ fn unparse_param_list(tokens: &mut Vec<PtxToken>, params: &[ParameterDirective],
     }
 }
 
-fn unparse_section_line(tokens: &mut Vec<PtxToken>, line: &StatementSectionDirectiveLine, spaced: bool) {
+fn unparse_section_line(
+    tokens: &mut Vec<PtxToken>,
+    line: &StatementSectionDirectiveLine,
+    spaced: bool,
+) {
     match line {
         StatementSectionDirectiveLine::B8 { values, .. } => {
             push_directive(tokens, "b8");

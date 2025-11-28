@@ -19,30 +19,40 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "vote");
-                    push_directive(tokens, "sync");
-                    match &self.mode {
-                            Mode::All => {
-                                    push_directive(tokens, "all");
-                            }
-                            Mode::Any => {
-                                    push_directive(tokens, "any");
-                            }
-                            Mode::Uni => {
-                                    push_directive(tokens, "uni");
-                            }
-                    }
-                    push_directive(tokens, "pred");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "sync");
+            match &self.mode {
+                Mode::All => {
+                    push_directive(tokens, "all");
+                }
+                Mode::Any => {
+                    push_directive(tokens, "any");
+                }
+                Mode::Uni => {
+                    push_directive(tokens, "uni");
+                }
+            }
+            push_directive(tokens, "pred");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.a_op { tokens.push(PtxToken::Exclaim); }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if self.a_op {
+                tokens.push(PtxToken::Exclaim);
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.membermask.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.membermask.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -52,22 +62,30 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "vote");
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "ballot");
-                    push_directive(tokens, "b32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "sync");
+            push_directive(tokens, "ballot");
+            push_directive(tokens, "b32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.a_op { tokens.push(PtxToken::Exclaim); }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if self.a_op {
+                tokens.push(PtxToken::Exclaim);
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.membermask.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.membermask.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

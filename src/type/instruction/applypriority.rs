@@ -7,9 +7,9 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -20,13 +20,12 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct ApplypriorityGlobalLevelEvictionPriority {
-        pub global: bool, // {.global}
+        pub global: bool,                                   // {.global}
         pub level_eviction_priority: LevelEvictionPriority, // .level::eviction_priority
-        pub a: AddressOperand, // [a]
-        pub size: GeneralOperand, // size
+        pub a: AddressOperand,                              // [a]
+        pub size: GeneralOperand,                           // size
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

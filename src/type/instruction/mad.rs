@@ -5,7 +5,7 @@
 //! .mode = { .hi, .lo, .wide };
 //! .type = { .u16, .u32, .u64,
 //! .s16, .s32, .s64 };
-//! 
+//!
 //! mad{.ftz}{.sat}.f32      d, a, b, c;    // .target sm_1x
 //! mad.rnd{.ftz}{.sat}.f32  d, a, b, c;    // .target sm_20
 //! mad.rnd.f64              d, a, b, c;    // .target sm_13 and higher
@@ -15,17 +15,17 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Mode {
         Wide, // .wide
-        Hi, // .hi
-        Lo, // .lo
+        Hi,   // .hi
+        Lo,   // .lo
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -48,8 +48,8 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MadModeType {
-        pub mode: Mode, // .mode
-        pub type_: Type, // .type
+        pub mode: Mode,        // .mode
+        pub type_: Type,       // .type
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -59,9 +59,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MadHiSatS32 {
-        pub hi: (), // .hi
-        pub sat: (), // .sat
-        pub s32: (), // .s32
+        pub hi: (),            // .hi
+        pub sat: (),           // .sat
+        pub s32: (),           // .s32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -71,9 +71,9 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MadFtzSatF32 {
-        pub ftz: bool, // {.ftz}
-        pub sat: bool, // {.sat}
-        pub f32: (), // .f32
+        pub ftz: bool,         // {.ftz}
+        pub sat: bool,         // {.sat}
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -83,10 +83,10 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MadRndFtzSatF32 {
-        pub rnd: Rnd, // .rnd
-        pub ftz: bool, // {.ftz}
-        pub sat: bool, // {.sat}
-        pub f32: (), // .f32
+        pub rnd: Rnd,          // .rnd
+        pub ftz: bool,         // {.ftz}
+        pub sat: bool,         // {.sat}
+        pub f32: (),           // .f32
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -96,24 +96,23 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MadRndF64 {
-        pub rnd: Rnd, // .rnd
-        pub f64: (), // .f64
+        pub rnd: Rnd,          // .rnd
+        pub f64: (),           // .f64
         pub d: GeneralOperand, // d
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
         pub c: GeneralOperand, // c
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts
 // e.g., Type0 for section_0::Type, Type1 for section_1::Type
-pub use section_0::MadModeType;
-pub use section_0::MadHiSatS32;
 pub use section_0::MadFtzSatF32;
-pub use section_0::MadRndFtzSatF32;
+pub use section_0::MadHiSatS32;
+pub use section_0::MadModeType;
 pub use section_0::MadRndF64;
+pub use section_0::MadRndFtzSatF32;
 pub use section_0::Mode as Mode0;
-pub use section_0::Type as Type0;
 pub use section_0::Rnd as Rnd0;
+pub use section_0::Type as Type0;

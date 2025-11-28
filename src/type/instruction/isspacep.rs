@@ -7,32 +7,31 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Space {
         SharedCluster, // .shared::cluster
-        ParamEntry, // .param::entry
-        SharedCta, // .shared::cta
-        Global, // .global
-        Shared, // .shared
-        Const, // .const
-        Local, // .local
-        Param, // .param
+        ParamEntry,    // .param::entry
+        SharedCta,     // .shared::cta
+        Global,        // .global
+        Shared,        // .shared
+        Const,         // .const
+        Local,         // .local
+        Param,         // .param
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct IsspacepSpace {
-        pub space: Space, // .space
+        pub space: Space,      // .space
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

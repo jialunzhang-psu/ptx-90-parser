@@ -7,9 +7,9 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -21,13 +21,12 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct AllocaType {
-        pub type_: Type, // .type
-        pub ptr: GeneralOperand, // ptr
-        pub size: GeneralOperand, // size
+        pub type_: Type,                      // .type
+        pub ptr: GeneralOperand,              // ptr
+        pub size: GeneralOperand,             // size
         pub immalign: Option<GeneralOperand>, // {, immAlign}
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts

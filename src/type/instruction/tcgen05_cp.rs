@@ -10,9 +10,9 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -24,18 +24,18 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Shape {
-        _32x128b, // .32x128b***
-        _64x128b, // .64x128b**
+        _32x128b,  // .32x128b***
+        _64x128b,  // .64x128b**
         _128x256b, // .128x256b
         _128x128b, // .128x128b
-        _4x256b, // .4x256b
+        _4x256b,   // .4x256b
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Multicast {
         Warpx20213, // .warpx2::02_13**
         Warpx20123, // .warpx2::01_23**
-        Warpx4, // .warpx4***
+        Warpx4,     // .warpx4***
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -46,22 +46,21 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct Tcgen05CpCtaGroupShapeMulticastDstSrcFmt {
-        pub cp: (), // .cp
-        pub cta_group: CtaGroup, // .cta_group
-        pub shape: Shape, // .shape
-        pub multicast: Option<Multicast>, // {.multicast}
+        pub cp: (),                         // .cp
+        pub cta_group: CtaGroup,            // .cta_group
+        pub shape: Shape,                   // .shape
+        pub multicast: Option<Multicast>,   // {.multicast}
         pub dst_src_fmt: Option<DstSrcFmt>, // {.dst_src_fmt}
-        pub taddr: AddressOperand, // [taddr]
-        pub s_desc: GeneralOperand, // s-desc
+        pub taddr: AddressOperand,          // [taddr]
+        pub s_desc: GeneralOperand,         // s-desc
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts
 // e.g., Type0 for section_0::Type, Type1 for section_1::Type
-pub use section_0::Tcgen05CpCtaGroupShapeMulticastDstSrcFmt;
 pub use section_0::CtaGroup as CtaGroup0;
-pub use section_0::Shape as Shape0;
-pub use section_0::Multicast as Multicast0;
 pub use section_0::DstSrcFmt as DstSrcFmt0;
+pub use section_0::Multicast as Multicast0;
+pub use section_0::Shape as Shape0;
+pub use section_0::Tcgen05CpCtaGroupShapeMulticastDstSrcFmt;

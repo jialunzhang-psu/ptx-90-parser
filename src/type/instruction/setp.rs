@@ -21,9 +21,9 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -37,16 +37,16 @@ pub mod section_0 {
         Geu, // .geu
         Num, // .num
         Nan, // .nan
-        Eq, // .eq
-        Ne, // .ne
-        Lt, // .lt
-        Le, // .le
-        Gt, // .gt
-        Ge, // .ge
-        Lo, // .lo
-        Ls, // .ls
-        Hi, // .hi
-        Hs, // .hs
+        Eq,  // .eq
+        Ne,  // .ne
+        Lt,  // .lt
+        Le,  // .le
+        Gt,  // .gt
+        Ge,  // .ge
+        Lo,  // .lo
+        Ls,  // .ls
+        Hi,  // .hi
+        Hs,  // .hs
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -68,42 +68,41 @@ pub mod section_0 {
     pub enum Boolop {
         And, // .and
         Xor, // .xor
-        Or, // .or
+        Or,  // .or
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct SetpCmpopFtzType {
-        pub cmpop: Cmpop, // .CmpOp
-        pub ftz: bool, // {.ftz}
-        pub type_: Type, // .type
-        pub p: GeneralOperand, // first operand of p{|q}
+        pub cmpop: Cmpop,              // .CmpOp
+        pub ftz: bool,                 // {.ftz}
+        pub type_: Type,               // .type
+        pub p: GeneralOperand,         // first operand of p{|q}
         pub q: Option<GeneralOperand>, // optional second operand of p{|q}
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
+        pub a: GeneralOperand,         // a
+        pub b: GeneralOperand,         // b
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct SetpCmpopBoolopFtzType {
-        pub cmpop: Cmpop, // .CmpOp
-        pub boolop: Boolop, // .BoolOp
-        pub ftz: bool, // {.ftz}
-        pub type_: Type, // .type
-        pub p: GeneralOperand, // first operand of p{|q}
+        pub cmpop: Cmpop,              // .CmpOp
+        pub boolop: Boolop,            // .BoolOp
+        pub ftz: bool,                 // {.ftz}
+        pub type_: Type,               // .type
+        pub p: GeneralOperand,         // first operand of p{|q}
         pub q: Option<GeneralOperand>, // optional second operand of p{|q}
-        pub a: GeneralOperand, // a
-        pub b: GeneralOperand, // b
-        pub c_op: bool, // {!} operator
-        pub c: GeneralOperand, // {!}c
+        pub a: GeneralOperand,         // a
+        pub b: GeneralOperand,         // b
+        pub c_op: bool,                // {!} operator
+        pub c: GeneralOperand,         // {!}c
         pub span: Span,
     }
-
 }
 
 pub mod section_1 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -117,26 +116,26 @@ pub mod section_1 {
         Geu, // .geu
         Num, // .num
         Nan, // .nan
-        Eq, // .eq
-        Ne, // .ne
-        Lt, // .lt
-        Le, // .le
-        Gt, // .gt
-        Ge, // .ge
+        Eq,  // .eq
+        Ne,  // .ne
+        Lt,  // .lt
+        Le,  // .le
+        Gt,  // .gt
+        Ge,  // .ge
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Boolop {
         And, // .and
         Xor, // .xor
-        Or, // .or
+        Or,  // .or
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct SetpCmpopFtzF16 {
-        pub cmpop: Cmpop, // .CmpOp
-        pub ftz: bool, // {.ftz}
-        pub f16: (), // .f16
+        pub cmpop: Cmpop,      // .CmpOp
+        pub ftz: bool,         // {.ftz}
+        pub f16: (),           // .f16
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -145,23 +144,23 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct SetpCmpopBoolopFtzF16 {
-        pub cmpop: Cmpop, // .CmpOp
-        pub boolop: Boolop, // .BoolOp
-        pub ftz: bool, // {.ftz}
-        pub f16: (), // .f16
+        pub cmpop: Cmpop,      // .CmpOp
+        pub boolop: Boolop,    // .BoolOp
+        pub ftz: bool,         // {.ftz}
+        pub f16: (),           // .f16
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
-        pub c_op: bool, // {!} operator
+        pub c_op: bool,        // {!} operator
         pub c: GeneralOperand, // {!}c
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct SetpCmpopFtzF16x2 {
-        pub cmpop: Cmpop, // .CmpOp
-        pub ftz: bool, // {.ftz}
-        pub f16x2: (), // .f16x2
+        pub cmpop: Cmpop,      // .CmpOp
+        pub ftz: bool,         // {.ftz}
+        pub f16x2: (),         // .f16x2
         pub p: GeneralOperand, // first operand of p|q
         pub q: GeneralOperand, // second operand of p|q
         pub a: GeneralOperand, // a
@@ -171,23 +170,23 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct SetpCmpopBoolopFtzF16x2 {
-        pub cmpop: Cmpop, // .CmpOp
-        pub boolop: Boolop, // .BoolOp
-        pub ftz: bool, // {.ftz}
-        pub f16x2: (), // .f16x2
+        pub cmpop: Cmpop,      // .CmpOp
+        pub boolop: Boolop,    // .BoolOp
+        pub ftz: bool,         // {.ftz}
+        pub f16x2: (),         // .f16x2
         pub p: GeneralOperand, // first operand of p|q
         pub q: GeneralOperand, // second operand of p|q
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
-        pub c_op: bool, // {!} operator
+        pub c_op: bool,        // {!} operator
         pub c: GeneralOperand, // {!}c
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct SetpCmpopBf16 {
-        pub cmpop: Cmpop, // .CmpOp
-        pub bf16: (), // .bf16
+        pub cmpop: Cmpop,      // .CmpOp
+        pub bf16: (),          // .bf16
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
@@ -196,21 +195,21 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct SetpCmpopBoolopBf16 {
-        pub cmpop: Cmpop, // .CmpOp
-        pub boolop: Boolop, // .BoolOp
-        pub bf16: (), // .bf16
+        pub cmpop: Cmpop,      // .CmpOp
+        pub boolop: Boolop,    // .BoolOp
+        pub bf16: (),          // .bf16
         pub p: GeneralOperand, // p
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
-        pub c_op: bool, // {!} operator
+        pub c_op: bool,        // {!} operator
         pub c: GeneralOperand, // {!}c
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct SetpCmpopBf16x2 {
-        pub cmpop: Cmpop, // .CmpOp
-        pub bf16x2: (), // .bf16x2
+        pub cmpop: Cmpop,      // .CmpOp
+        pub bf16x2: (),        // .bf16x2
         pub p: GeneralOperand, // first operand of p|q
         pub q: GeneralOperand, // second operand of p|q
         pub a: GeneralOperand, // a
@@ -220,34 +219,33 @@ pub mod section_1 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct SetpCmpopBoolopBf16x2 {
-        pub cmpop: Cmpop, // .CmpOp
-        pub boolop: Boolop, // .BoolOp
-        pub bf16x2: (), // .bf16x2
+        pub cmpop: Cmpop,      // .CmpOp
+        pub boolop: Boolop,    // .BoolOp
+        pub bf16x2: (),        // .bf16x2
         pub p: GeneralOperand, // first operand of p|q
         pub q: GeneralOperand, // second operand of p|q
         pub a: GeneralOperand, // a
         pub b: GeneralOperand, // b
-        pub c_op: bool, // {!} operator
+        pub c_op: bool,        // {!} operator
         pub c: GeneralOperand, // {!}c
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts
 // e.g., Type0 for section_0::Type, Type1 for section_1::Type
-pub use section_0::SetpCmpopFtzType;
-pub use section_0::SetpCmpopBoolopFtzType;
-pub use section_0::Cmpop as Cmpop0;
-pub use section_0::Type as Type0;
 pub use section_0::Boolop as Boolop0;
-pub use section_1::SetpCmpopFtzF16;
-pub use section_1::SetpCmpopBoolopFtzF16;
-pub use section_1::SetpCmpopFtzF16x2;
-pub use section_1::SetpCmpopBoolopFtzF16x2;
-pub use section_1::SetpCmpopBf16;
-pub use section_1::SetpCmpopBoolopBf16;
-pub use section_1::SetpCmpopBf16x2;
-pub use section_1::SetpCmpopBoolopBf16x2;
-pub use section_1::Cmpop as Cmpop1;
+pub use section_0::Cmpop as Cmpop0;
+pub use section_0::SetpCmpopBoolopFtzType;
+pub use section_0::SetpCmpopFtzType;
+pub use section_0::Type as Type0;
 pub use section_1::Boolop as Boolop1;
+pub use section_1::Cmpop as Cmpop1;
+pub use section_1::SetpCmpopBf16;
+pub use section_1::SetpCmpopBf16x2;
+pub use section_1::SetpCmpopBoolopBf16;
+pub use section_1::SetpCmpopBoolopBf16x2;
+pub use section_1::SetpCmpopBoolopFtzF16;
+pub use section_1::SetpCmpopBoolopFtzF16x2;
+pub use section_1::SetpCmpopFtzF16;
+pub use section_1::SetpCmpopFtzF16x2;

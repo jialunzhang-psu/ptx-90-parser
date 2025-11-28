@@ -19,23 +19,25 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "barrier");
-                    push_directive(tokens, "cluster");
-                    push_directive(tokens, "arrive");
-                    if let Some(sem_0) = self.sem.as_ref() {
-                            match sem_0 {
-                                    Sem::Release => {
-                                            push_directive(tokens, "release");
-                                    }
-                                    Sem::Relaxed => {
-                                            push_directive(tokens, "relaxed");
-                                    }
-                            }
+            push_directive(tokens, "cluster");
+            push_directive(tokens, "arrive");
+            if let Some(sem_0) = self.sem.as_ref() {
+                match sem_0 {
+                    Sem::Release => {
+                        push_directive(tokens, "release");
                     }
-                    if self.aligned {
-                            push_directive(tokens, "aligned");
+                    Sem::Relaxed => {
+                        push_directive(tokens, "relaxed");
                     }
+                }
+            }
+            if self.aligned {
+                push_directive(tokens, "aligned");
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -45,18 +47,18 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "barrier");
-                    push_directive(tokens, "cluster");
-                    push_directive(tokens, "wait");
-                    if self.acquire {
-                            push_directive(tokens, "acquire");
-                    }
-                    if self.aligned {
-                            push_directive(tokens, "aligned");
-                    }
+            push_directive(tokens, "cluster");
+            push_directive(tokens, "wait");
+            if self.acquire {
+                push_directive(tokens, "acquire");
+            }
+            if self.aligned {
+                push_directive(tokens, "aligned");
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

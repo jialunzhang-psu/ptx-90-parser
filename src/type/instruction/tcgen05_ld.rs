@@ -22,9 +22,9 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -32,20 +32,20 @@ pub mod section_0 {
     pub enum Shape1 {
         _16x128b, // .16x128b
         _16x256b, // .16x256b
-        _16x64b, // .16x64b
-        _32x32b, // .32x32b
+        _16x64b,  // .16x64b
+        _32x32b,  // .32x32b
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Num {
         X128, // .x128
-        X16, // .x16
-        X32, // .x32
-        X64, // .x64
-        X1, // .x1
-        X2, // .x2
-        X4, // .x4
-        X8, // .x8
+        X16,  // .x16
+        X32,  // .x32
+        X64,  // .x64
+        X1,   // .x1
+        X2,   // .x2
+        X4,   // .x4
+        X8,   // .x8
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -82,118 +82,117 @@ pub mod section_0 {
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct Tcgen05LdSyncAlignedShape1NumPackB32 {
-        pub ld: (), // .ld
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape1: Shape1, // .shape1
-        pub num: Num, // .num
-        pub pack: Option<Pack>, // {.pack}
-        pub b32: (), // .b32
-        pub r: GeneralOperand, // r
+        pub ld: (),                // .ld
+        pub sync: (),              // .sync
+        pub aligned: (),           // .aligned
+        pub shape1: Shape1,        // .shape1
+        pub num: Num,              // .num
+        pub pack: Option<Pack>,    // {.pack}
+        pub b32: (),               // .b32
+        pub r: GeneralOperand,     // r
         pub taddr: AddressOperand, // [taddr]
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct Tcgen05LdSyncAlignedShape2NumPackB32 {
-        pub ld: (), // .ld
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape2: Shape2, // .shape2
-        pub num: Num, // .num
-        pub pack: Option<Pack>, // {.pack}
-        pub b32: (), // .b32
-        pub r: GeneralOperand, // r
-        pub taddr: AddressOperand, // [taddr]
+        pub ld: (),                          // .ld
+        pub sync: (),                        // .sync
+        pub aligned: (),                     // .aligned
+        pub shape2: Shape2,                  // .shape2
+        pub num: Num,                        // .num
+        pub pack: Option<Pack>,              // {.pack}
+        pub b32: (),                         // .b32
+        pub r: GeneralOperand,               // r
+        pub taddr: AddressOperand,           // [taddr]
         pub immhalfsplitoff: GeneralOperand, // immHalfSplitoff
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct Tcgen05LdRedSyncAlignedShape3NumRedopAbsNanF32 {
-        pub ld: (), // .ld
-        pub red: (), // .red
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape3: Shape3, // .shape3
-        pub num: Num, // .num
-        pub redop: Redop, // .redOp
-        pub abs: bool, // {.abs}
-        pub nan: bool, // {.NaN}
-        pub f32: (), // .f32
-        pub r: GeneralOperand, // r
+        pub ld: (),                 // .ld
+        pub red: (),                // .red
+        pub sync: (),               // .sync
+        pub aligned: (),            // .aligned
+        pub shape3: Shape3,         // .shape3
+        pub num: Num,               // .num
+        pub redop: Redop,           // .redOp
+        pub abs: bool,              // {.abs}
+        pub nan: bool,              // {.NaN}
+        pub f32: (),                // .f32
+        pub r: GeneralOperand,      // r
         pub redval: GeneralOperand, // redval
-        pub taddr: AddressOperand, // [taddr]
+        pub taddr: AddressOperand,  // [taddr]
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct Tcgen05LdRedSyncAlignedShape4NumRedopAbsNanF32 {
-        pub ld: (), // .ld
-        pub red: (), // .red
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape4: Shape4, // .shape4
-        pub num: Num, // .num
-        pub redop: Redop, // .redOp
-        pub abs: bool, // {.abs}
-        pub nan: bool, // {.NaN}
-        pub f32: (), // .f32
-        pub r: GeneralOperand, // r
-        pub redval: GeneralOperand, // redval
-        pub taddr: AddressOperand, // [taddr]
+        pub ld: (),                          // .ld
+        pub red: (),                         // .red
+        pub sync: (),                        // .sync
+        pub aligned: (),                     // .aligned
+        pub shape4: Shape4,                  // .shape4
+        pub num: Num,                        // .num
+        pub redop: Redop,                    // .redOp
+        pub abs: bool,                       // {.abs}
+        pub nan: bool,                       // {.NaN}
+        pub f32: (),                         // .f32
+        pub r: GeneralOperand,               // r
+        pub redval: GeneralOperand,          // redval
+        pub taddr: AddressOperand,           // [taddr]
         pub immhalfsplitoff: GeneralOperand, // immHalfSplitoff
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct Tcgen05LdRedSyncAlignedShape3NumRedopType {
-        pub ld: (), // .ld
-        pub red: (), // .red
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape3: Shape3, // .shape3
-        pub num: Num, // .num
-        pub redop: Redop, // .redOp
-        pub type_: Type, // .type
-        pub r: GeneralOperand, // r
+        pub ld: (),                 // .ld
+        pub red: (),                // .red
+        pub sync: (),               // .sync
+        pub aligned: (),            // .aligned
+        pub shape3: Shape3,         // .shape3
+        pub num: Num,               // .num
+        pub redop: Redop,           // .redOp
+        pub type_: Type,            // .type
+        pub r: GeneralOperand,      // r
         pub redval: GeneralOperand, // redval
-        pub taddr: AddressOperand, // [taddr]
+        pub taddr: AddressOperand,  // [taddr]
         pub span: Span,
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct Tcgen05LdRedSyncAlignedShape4NumRedopType {
-        pub ld: (), // .ld
-        pub red: (), // .red
-        pub sync: (), // .sync
-        pub aligned: (), // .aligned
-        pub shape4: Shape4, // .shape4
-        pub num: Num, // .num
-        pub redop: Redop, // .redOp
-        pub type_: Type, // .type
-        pub r: GeneralOperand, // r
-        pub redval: GeneralOperand, // redval
-        pub taddr: AddressOperand, // [taddr]
+        pub ld: (),                          // .ld
+        pub red: (),                         // .red
+        pub sync: (),                        // .sync
+        pub aligned: (),                     // .aligned
+        pub shape4: Shape4,                  // .shape4
+        pub num: Num,                        // .num
+        pub redop: Redop,                    // .redOp
+        pub type_: Type,                     // .type
+        pub r: GeneralOperand,               // r
+        pub redval: GeneralOperand,          // redval
+        pub taddr: AddressOperand,           // [taddr]
         pub immhalfsplitoff: GeneralOperand, // immHalfSplitoff
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts
 // e.g., Type0 for section_0::Type, Type1 for section_1::Type
-pub use section_0::Tcgen05LdSyncAlignedShape1NumPackB32;
-pub use section_0::Tcgen05LdSyncAlignedShape2NumPackB32;
-pub use section_0::Tcgen05LdRedSyncAlignedShape3NumRedopAbsNanF32;
-pub use section_0::Tcgen05LdRedSyncAlignedShape4NumRedopAbsNanF32;
-pub use section_0::Tcgen05LdRedSyncAlignedShape3NumRedopType;
-pub use section_0::Tcgen05LdRedSyncAlignedShape4NumRedopType;
-pub use section_0::Shape1 as Shape10;
 pub use section_0::Num as Num0;
 pub use section_0::Pack as Pack0;
+pub use section_0::Redop as Redop0;
+pub use section_0::Shape1 as Shape10;
 pub use section_0::Shape2 as Shape20;
 pub use section_0::Shape3 as Shape30;
-pub use section_0::Redop as Redop0;
 pub use section_0::Shape4 as Shape40;
+pub use section_0::Tcgen05LdRedSyncAlignedShape3NumRedopAbsNanF32;
+pub use section_0::Tcgen05LdRedSyncAlignedShape3NumRedopType;
+pub use section_0::Tcgen05LdRedSyncAlignedShape4NumRedopAbsNanF32;
+pub use section_0::Tcgen05LdRedSyncAlignedShape4NumRedopType;
+pub use section_0::Tcgen05LdSyncAlignedShape1NumPackB32;
+pub use section_0::Tcgen05LdSyncAlignedShape2NumPackB32;
 pub use section_0::Type as Type0;

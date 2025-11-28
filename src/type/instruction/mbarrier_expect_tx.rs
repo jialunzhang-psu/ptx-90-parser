@@ -9,9 +9,9 @@
 use crate::r#type::common::*;
 
 pub mod section_0 {
-    use crate::r#type::common::*;
-    use crate::parser::Span;
     use crate::Spanned;
+    use crate::parser::Span;
+    use crate::r#type::common::*;
 
     use serde::Serialize;
 
@@ -23,33 +23,32 @@ pub mod section_0 {
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Scope {
         Cluster, // .cluster
-        Cta, // .cta
+        Cta,     // .cta
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize)]
     pub enum Space {
         SharedCluster, // .shared::cluster
-        SharedCta, // .shared::cta
-        Shared, // .shared
+        SharedCta,     // .shared::cta
+        Shared,        // .shared
     }
 
     #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
     pub struct MbarrierExpectTxSemScopeSpaceB64 {
-        pub expect_tx: (), // .expect_tx
-        pub sem: Option<Sem>, // {.sem}
-        pub scope: Option<Scope>, // {.scope}
-        pub space: Option<Space>, // {.space}
-        pub b64: (), // .b64
-        pub addr: AddressOperand, // [addr]
+        pub expect_tx: (),           // .expect_tx
+        pub sem: Option<Sem>,        // {.sem}
+        pub scope: Option<Scope>,    // {.scope}
+        pub space: Option<Space>,    // {.space}
+        pub b64: (),                 // .b64
+        pub addr: AddressOperand,    // [addr]
         pub txcount: GeneralOperand, // txCount
         pub span: Span,
     }
-
 }
 
 // Re-export types with section suffixes to avoid naming conflicts
 // e.g., Type0 for section_0::Type, Type1 for section_1::Type
 pub use section_0::MbarrierExpectTxSemScopeSpaceB64;
-pub use section_0::Sem as Sem0;
 pub use section_0::Scope as Scope0;
+pub use section_0::Sem as Sem0;
 pub use section_0::Space as Space0;

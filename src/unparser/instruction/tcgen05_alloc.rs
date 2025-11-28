@@ -20,28 +20,34 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "alloc");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    if self.shared_cta {
-                            push_directive(tokens, "shared::cta");
-                    }
-                    push_directive(tokens, "b32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.dst.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "alloc");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            if self.shared_cta {
+                push_directive(tokens, "shared::cta");
+            }
+            push_directive(tokens, "b32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.dst.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.ncols.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.ncols.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -51,25 +57,31 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "dealloc");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
-                    push_directive(tokens, "b32");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.taddr.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "dealloc");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
+            push_directive(tokens, "b32");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.taddr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.ncols.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.ncols.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -79,21 +91,21 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tcgen05");
-                    push_directive(tokens, "relinquish_alloc_permit");
-                    match &self.cta_group {
-                            CtaGroup::CtaGroup1 => {
-                                    push_directive(tokens, "cta_group::1");
-                            }
-                            CtaGroup::CtaGroup2 => {
-                                    push_directive(tokens, "cta_group::2");
-                            }
-                    }
-                    push_directive(tokens, "sync");
-                    push_directive(tokens, "aligned");
+            push_directive(tokens, "relinquish_alloc_permit");
+            match &self.cta_group {
+                CtaGroup::CtaGroup1 => {
+                    push_directive(tokens, "cta_group::1");
+                }
+                CtaGroup::CtaGroup2 => {
+                    push_directive(tokens, "cta_group::2");
+                }
+            }
+            push_directive(tokens, "sync");
+            push_directive(tokens, "aligned");
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

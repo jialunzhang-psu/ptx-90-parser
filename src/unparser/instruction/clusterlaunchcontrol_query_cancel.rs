@@ -20,17 +20,23 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "clusterlaunchcontrol");
-                    push_directive(tokens, "query_cancel");
-                    push_directive(tokens, "is_canceled");
-                    push_directive(tokens, "pred");
-                    push_directive(tokens, "b128");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.pred2.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "query_cancel");
+            push_directive(tokens, "is_canceled");
+            push_directive(tokens, "pred");
+            push_directive(tokens, "b128");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.pred2.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.try_cancel_response.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.try_cancel_response.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -40,18 +46,24 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "clusterlaunchcontrol");
-                    push_directive(tokens, "query_cancel");
-                    push_directive(tokens, "get_first_ctaid");
-                    push_directive(tokens, "v4");
-                    push_directive(tokens, "b32");
-                    push_directive(tokens, "b128");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.xdim.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "query_cancel");
+            push_directive(tokens, "get_first_ctaid");
+            push_directive(tokens, "v4");
+            push_directive(tokens, "b32");
+            push_directive(tokens, "b128");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.xdim.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.try_cancel_response.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.try_cancel_response.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -61,31 +73,35 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "clusterlaunchcontrol");
-                    push_directive(tokens, "query_cancel");
-                    if let Some(get_first_ctaid_dimension_0) = self.get_first_ctaid_dimension.as_ref() {
-                            match get_first_ctaid_dimension_0 {
-                                    GetFirstCtaidDimension::GetFirstCtaidX => {
-                                            push_directive(tokens, "get_first_ctaid::x");
-                                    }
-                                    GetFirstCtaidDimension::GetFirstCtaidY => {
-                                            push_directive(tokens, "get_first_ctaid::y");
-                                    }
-                                    GetFirstCtaidDimension::GetFirstCtaidZ => {
-                                            push_directive(tokens, "get_first_ctaid::z");
-                                    }
-                            }
+            push_directive(tokens, "query_cancel");
+            if let Some(get_first_ctaid_dimension_0) = self.get_first_ctaid_dimension.as_ref() {
+                match get_first_ctaid_dimension_0 {
+                    GetFirstCtaidDimension::GetFirstCtaidX => {
+                        push_directive(tokens, "get_first_ctaid::x");
                     }
-                    push_directive(tokens, "b32");
-                    push_directive(tokens, "b128");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.reg.unparse_tokens_mode(tokens, spaced);
+                    GetFirstCtaidDimension::GetFirstCtaidY => {
+                        push_directive(tokens, "get_first_ctaid::y");
+                    }
+                    GetFirstCtaidDimension::GetFirstCtaidZ => {
+                        push_directive(tokens, "get_first_ctaid::z");
+                    }
+                }
+            }
+            push_directive(tokens, "b32");
+            push_directive(tokens, "b128");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.reg.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.try_cancel_response.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.try_cancel_response.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

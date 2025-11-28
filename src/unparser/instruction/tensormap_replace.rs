@@ -25,46 +25,52 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tensormap");
-                    push_directive(tokens, "replace");
-                    match &self.mode {
-                            Mode::Tile => {
-                                    push_directive(tokens, "tile");
-                            }
+            push_directive(tokens, "replace");
+            match &self.mode {
+                Mode::Tile => {
+                    push_directive(tokens, "tile");
+                }
+            }
+            match &self.field1 {
+                Field1::GlobalAddress => {
+                    push_directive(tokens, "global_address");
+                }
+                Field1::Rank => {
+                    push_directive(tokens, "rank");
+                }
+            }
+            if let Some(ss_0) = self.ss.as_ref() {
+                match ss_0 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.field1 {
-                            Field1::GlobalAddress => {
-                                    push_directive(tokens, "global_address");
-                            }
-                            Field1::Rank => {
-                                    push_directive(tokens, "rank");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_0) = self.ss.as_ref() {
-                            match ss_0 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                            }
-                    }
-                    push_directive(tokens, "b1024");
-                    match &self.type_ {
-                            Type::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Type::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.addr.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            push_directive(tokens, "b1024");
+            match &self.type_ {
+                Type::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Type::B64 => {
+                    push_directive(tokens, "b64");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.addr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.new_val.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.new_val.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -74,55 +80,63 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tensormap");
-                    push_directive(tokens, "replace");
-                    match &self.mode {
-                            Mode::Tile => {
-                                    push_directive(tokens, "tile");
-                            }
+            push_directive(tokens, "replace");
+            match &self.mode {
+                Mode::Tile => {
+                    push_directive(tokens, "tile");
+                }
+            }
+            match &self.field2 {
+                Field2::ElementStride => {
+                    push_directive(tokens, "element_stride");
+                }
+                Field2::GlobalStride => {
+                    push_directive(tokens, "global_stride");
+                }
+                Field2::GlobalDim => {
+                    push_directive(tokens, "global_dim");
+                }
+                Field2::BoxDim => {
+                    push_directive(tokens, "box_dim");
+                }
+            }
+            if let Some(ss_1) = self.ss.as_ref() {
+                match ss_1 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.field2 {
-                            Field2::ElementStride => {
-                                    push_directive(tokens, "element_stride");
-                            }
-                            Field2::GlobalStride => {
-                                    push_directive(tokens, "global_stride");
-                            }
-                            Field2::GlobalDim => {
-                                    push_directive(tokens, "global_dim");
-                            }
-                            Field2::BoxDim => {
-                                    push_directive(tokens, "box_dim");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_1) = self.ss.as_ref() {
-                            match ss_1 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                            }
-                    }
-                    push_directive(tokens, "b1024");
-                    match &self.type_ {
-                            Type::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Type::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.addr.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            push_directive(tokens, "b1024");
+            match &self.type_ {
+                Type::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Type::B64 => {
+                    push_directive(tokens, "b64");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.addr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.ord.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.ord.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.new_val.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.new_val.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -132,57 +146,61 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "tensormap");
-                    push_directive(tokens, "replace");
-                    match &self.mode {
-                            Mode::Tile => {
-                                    push_directive(tokens, "tile");
-                            }
+            push_directive(tokens, "replace");
+            match &self.mode {
+                Mode::Tile => {
+                    push_directive(tokens, "tile");
+                }
+            }
+            match &self.field3 {
+                Field3::InterleaveLayout => {
+                    push_directive(tokens, "interleave_layout");
+                }
+                Field3::SwizzleAtomicity => {
+                    push_directive(tokens, "swizzle_atomicity");
+                }
+                Field3::SwizzleMode => {
+                    push_directive(tokens, "swizzle_mode");
+                }
+                Field3::FillMode => {
+                    push_directive(tokens, "fill_mode");
+                }
+                Field3::Elemtype => {
+                    push_directive(tokens, "elemtype");
+                }
+            }
+            if let Some(ss_2) = self.ss.as_ref() {
+                match ss_2 {
+                    Ss::SharedCta => {
+                        push_directive(tokens, "shared::cta");
                     }
-                    match &self.field3 {
-                            Field3::InterleaveLayout => {
-                                    push_directive(tokens, "interleave_layout");
-                            }
-                            Field3::SwizzleAtomicity => {
-                                    push_directive(tokens, "swizzle_atomicity");
-                            }
-                            Field3::SwizzleMode => {
-                                    push_directive(tokens, "swizzle_mode");
-                            }
-                            Field3::FillMode => {
-                                    push_directive(tokens, "fill_mode");
-                            }
-                            Field3::Elemtype => {
-                                    push_directive(tokens, "elemtype");
-                            }
+                    Ss::Global => {
+                        push_directive(tokens, "global");
                     }
-                    if let Some(ss_2) = self.ss.as_ref() {
-                            match ss_2 {
-                                    Ss::SharedCta => {
-                                            push_directive(tokens, "shared::cta");
-                                    }
-                                    Ss::Global => {
-                                            push_directive(tokens, "global");
-                                    }
-                            }
-                    }
-                    push_directive(tokens, "b1024");
-                    match &self.type_ {
-                            Type::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Type::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.addr.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            push_directive(tokens, "b1024");
+            match &self.type_ {
+                Type::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Type::B64 => {
+                    push_directive(tokens, "b64");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.addr.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.new_val.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.new_val.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

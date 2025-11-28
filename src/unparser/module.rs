@@ -204,7 +204,9 @@ impl PtxUnparser for ModuleDirective {
             ModuleDirective::ModuleInfo { directive, .. } => {
                 directive.unparse_tokens_mode(tokens, spaced)
             }
-            ModuleDirective::Debug { directive, .. } => directive.unparse_tokens_mode(tokens, spaced),
+            ModuleDirective::Debug { directive, .. } => {
+                directive.unparse_tokens_mode(tokens, spaced)
+            }
         }
     }
 }

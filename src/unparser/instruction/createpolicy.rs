@@ -27,48 +27,58 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "createpolicy");
-                    push_directive(tokens, "range");
-                    if self.global {
-                            push_directive(tokens, "global");
+            push_directive(tokens, "range");
+            if self.global {
+                push_directive(tokens, "global");
+            }
+            match &self.level_primary_priority {
+                LevelPrimaryPriority::L2EvictUnchanged => {
+                    push_directive(tokens, "L2::evict_unchanged");
+                }
+                LevelPrimaryPriority::L2EvictNormal => {
+                    push_directive(tokens, "L2::evict_normal");
+                }
+                LevelPrimaryPriority::L2EvictFirst => {
+                    push_directive(tokens, "L2::evict_first");
+                }
+                LevelPrimaryPriority::L2EvictLast => {
+                    push_directive(tokens, "L2::evict_last");
+                }
+            }
+            if let Some(level_secondary_priority_0) = self.level_secondary_priority.as_ref() {
+                match level_secondary_priority_0 {
+                    LevelSecondaryPriority::L2EvictUnchanged => {
+                        push_directive(tokens, "L2::evict_unchanged");
                     }
-                    match &self.level_primary_priority {
-                            LevelPrimaryPriority::L2EvictUnchanged => {
-                                    push_directive(tokens, "L2::evict_unchanged");
-                            }
-                            LevelPrimaryPriority::L2EvictNormal => {
-                                    push_directive(tokens, "L2::evict_normal");
-                            }
-                            LevelPrimaryPriority::L2EvictFirst => {
-                                    push_directive(tokens, "L2::evict_first");
-                            }
-                            LevelPrimaryPriority::L2EvictLast => {
-                                    push_directive(tokens, "L2::evict_last");
-                            }
+                    LevelSecondaryPriority::L2EvictFirst => {
+                        push_directive(tokens, "L2::evict_first");
                     }
-                    if let Some(level_secondary_priority_0) = self.level_secondary_priority.as_ref() {
-                            match level_secondary_priority_0 {
-                                    LevelSecondaryPriority::L2EvictUnchanged => {
-                                            push_directive(tokens, "L2::evict_unchanged");
-                                    }
-                                    LevelSecondaryPriority::L2EvictFirst => {
-                                            push_directive(tokens, "L2::evict_first");
-                                    }
-                            }
-                    }
-                    push_directive(tokens, "b64");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.cache_policy.unparse_tokens_mode(tokens, spaced);
+                }
+            }
+            push_directive(tokens, "b64");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.cache_policy.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.primary_size.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.primary_size.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.total_size.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.total_size.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -78,41 +88,49 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "createpolicy");
-                    push_directive(tokens, "fractional");
-                    match &self.level_primary_priority {
-                            LevelPrimaryPriority::L2EvictUnchanged => {
-                                    push_directive(tokens, "L2::evict_unchanged");
-                            }
-                            LevelPrimaryPriority::L2EvictNormal => {
-                                    push_directive(tokens, "L2::evict_normal");
-                            }
-                            LevelPrimaryPriority::L2EvictFirst => {
-                                    push_directive(tokens, "L2::evict_first");
-                            }
-                            LevelPrimaryPriority::L2EvictLast => {
-                                    push_directive(tokens, "L2::evict_last");
-                            }
+            push_directive(tokens, "fractional");
+            match &self.level_primary_priority {
+                LevelPrimaryPriority::L2EvictUnchanged => {
+                    push_directive(tokens, "L2::evict_unchanged");
+                }
+                LevelPrimaryPriority::L2EvictNormal => {
+                    push_directive(tokens, "L2::evict_normal");
+                }
+                LevelPrimaryPriority::L2EvictFirst => {
+                    push_directive(tokens, "L2::evict_first");
+                }
+                LevelPrimaryPriority::L2EvictLast => {
+                    push_directive(tokens, "L2::evict_last");
+                }
+            }
+            if let Some(level_secondary_priority_1) = self.level_secondary_priority.as_ref() {
+                match level_secondary_priority_1 {
+                    LevelSecondaryPriority::L2EvictUnchanged => {
+                        push_directive(tokens, "L2::evict_unchanged");
                     }
-                    if let Some(level_secondary_priority_1) = self.level_secondary_priority.as_ref() {
-                            match level_secondary_priority_1 {
-                                    LevelSecondaryPriority::L2EvictUnchanged => {
-                                            push_directive(tokens, "L2::evict_unchanged");
-                                    }
-                                    LevelSecondaryPriority::L2EvictFirst => {
-                                            push_directive(tokens, "L2::evict_first");
-                                    }
-                            }
+                    LevelSecondaryPriority::L2EvictFirst => {
+                        push_directive(tokens, "L2::evict_first");
                     }
-                    push_directive(tokens, "b64");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.cache_policy.unparse_tokens_mode(tokens, spaced);
-            if self.fraction.is_some() { tokens.push(PtxToken::Comma); }
-                    if let Some(opt_2) = self.fraction.as_ref() {
-                        if spaced { tokens.push(PtxToken::Space); }
-                        opt_2.unparse_tokens_mode(tokens, spaced);
-                    }
+                }
+            }
+            push_directive(tokens, "b64");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.cache_policy.unparse_tokens_mode(tokens, spaced);
+            if self.fraction.is_some() {
+                tokens.push(PtxToken::Comma);
+            }
+            if let Some(opt_2) = self.fraction.as_ref() {
+                if spaced {
+                    tokens.push(PtxToken::Space);
+                }
+                opt_2.unparse_tokens_mode(tokens, spaced);
+            }
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -122,18 +140,22 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "createpolicy");
-                    push_directive(tokens, "cvt");
-                    push_directive(tokens, "L2");
-                    push_directive(tokens, "b64");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.cache_policy.unparse_tokens_mode(tokens, spaced);
+            push_directive(tokens, "cvt");
+            push_directive(tokens, "L2");
+            push_directive(tokens, "b64");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.cache_policy.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.access_property.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.access_property.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

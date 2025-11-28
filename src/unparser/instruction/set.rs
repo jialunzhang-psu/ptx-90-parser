@@ -56,121 +56,129 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    match &self.dtype {
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Dtype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                    }
-                    match &self.stype {
-                            Stype::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Stype::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Stype::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Stype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Stype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Stype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Stype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Stype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Stype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Stype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Stype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            match &self.dtype {
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Dtype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+            }
+            match &self.stype {
+                Stype::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Stype::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Stype::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Stype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Stype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Stype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Stype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Stype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Stype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Stype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Stype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -180,139 +188,150 @@ pub mod section_0 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    match &self.boolop {
-                            Boolop::And => {
-                                    push_directive(tokens, "and");
-                            }
-                            Boolop::Xor => {
-                                    push_directive(tokens, "xor");
-                            }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
-                    }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    match &self.dtype {
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Dtype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                    }
-                    match &self.stype {
-                            Stype::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Stype::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Stype::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Stype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Stype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Stype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Stype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Stype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Stype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Stype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Stype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            match &self.boolop {
+                Boolop::And => {
+                    push_directive(tokens, "and");
+                }
+                Boolop::Xor => {
+                    push_directive(tokens, "xor");
+                }
+                Boolop::Or => {
+                    push_directive(tokens, "or");
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            match &self.dtype {
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Dtype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+            }
+            match &self.stype {
+                Stype::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Stype::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Stype::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Stype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Stype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Stype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Stype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Stype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Stype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Stype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Stype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.c_op { tokens.push(PtxToken::Exclaim); }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.c.unparse_tokens_mode(tokens, spaced);
+            if self.c_op {
+                tokens.push(PtxToken::Exclaim);
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_1 {
@@ -325,111 +344,119 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    push_directive(tokens, "f16");
-                    match &self.stype {
-                            Stype::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Stype::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Stype::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Stype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Stype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Stype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Stype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Stype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Stype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Stype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Stype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            push_directive(tokens, "f16");
+            match &self.stype {
+                Stype::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Stype::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Stype::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Stype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Stype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Stype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Stype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Stype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Stype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Stype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Stype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -439,126 +466,138 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    match &self.boolop {
-                            Boolop::And => {
-                                    push_directive(tokens, "and");
-                            }
-                            Boolop::Xor => {
-                                    push_directive(tokens, "xor");
-                            }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
-                    }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    push_directive(tokens, "f16");
-                    match &self.stype {
-                            Stype::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Stype::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Stype::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Stype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Stype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Stype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Stype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Stype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Stype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Stype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Stype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            match &self.boolop {
+                Boolop::And => {
+                    push_directive(tokens, "and");
+                }
+                Boolop::Xor => {
+                    push_directive(tokens, "xor");
+                }
+                Boolop::Or => {
+                    push_directive(tokens, "or");
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            push_directive(tokens, "f16");
+            match &self.stype {
+                Stype::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Stype::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Stype::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Stype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Stype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Stype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Stype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Stype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Stype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Stype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Stype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.c_op { tokens.push(PtxToken::Exclaim); }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.c.unparse_tokens_mode(tokens, spaced);
+            if self.c_op {
+                tokens.push(PtxToken::Exclaim);
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -568,108 +607,116 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    push_directive(tokens, "bf16");
-                    match &self.stype {
-                            Stype::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Stype::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Stype::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Stype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Stype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Stype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Stype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Stype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Stype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Stype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Stype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            push_directive(tokens, "bf16");
+            match &self.stype {
+                Stype::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Stype::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Stype::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Stype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Stype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Stype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Stype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Stype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Stype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Stype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Stype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -679,123 +726,135 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    match &self.boolop {
-                            Boolop::And => {
-                                    push_directive(tokens, "and");
-                            }
-                            Boolop::Xor => {
-                                    push_directive(tokens, "xor");
-                            }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
-                    }
-                    push_directive(tokens, "bf16");
-                    match &self.stype {
-                            Stype::B16 => {
-                                    push_directive(tokens, "b16");
-                            }
-                            Stype::B32 => {
-                                    push_directive(tokens, "b32");
-                            }
-                            Stype::B64 => {
-                                    push_directive(tokens, "b64");
-                            }
-                            Stype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Stype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Stype::U64 => {
-                                    push_directive(tokens, "u64");
-                            }
-                            Stype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Stype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                            Stype::S64 => {
-                                    push_directive(tokens, "s64");
-                            }
-                            Stype::F32 => {
-                                    push_directive(tokens, "f32");
-                            }
-                            Stype::F64 => {
-                                    push_directive(tokens, "f64");
-                            }
-                    }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            match &self.boolop {
+                Boolop::And => {
+                    push_directive(tokens, "and");
+                }
+                Boolop::Xor => {
+                    push_directive(tokens, "xor");
+                }
+                Boolop::Or => {
+                    push_directive(tokens, "or");
+                }
+            }
+            push_directive(tokens, "bf16");
+            match &self.stype {
+                Stype::B16 => {
+                    push_directive(tokens, "b16");
+                }
+                Stype::B32 => {
+                    push_directive(tokens, "b32");
+                }
+                Stype::B64 => {
+                    push_directive(tokens, "b64");
+                }
+                Stype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Stype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Stype::U64 => {
+                    push_directive(tokens, "u64");
+                }
+                Stype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Stype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+                Stype::S64 => {
+                    push_directive(tokens, "s64");
+                }
+                Stype::F32 => {
+                    push_directive(tokens, "f32");
+                }
+                Stype::F64 => {
+                    push_directive(tokens, "f64");
+                }
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.c_op { tokens.push(PtxToken::Exclaim); }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.c.unparse_tokens_mode(tokens, spaced);
+            if self.c_op {
+                tokens.push(PtxToken::Exclaim);
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -805,90 +864,98 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    match &self.dtype {
-                            Dtype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Dtype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
-                    push_directive(tokens, "f16");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            match &self.dtype {
+                Dtype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Dtype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            push_directive(tokens, "f16");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -898,108 +965,119 @@ pub mod section_1 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    match &self.boolop {
-                            Boolop::And => {
-                                    push_directive(tokens, "and");
-                            }
-                            Boolop::Xor => {
-                                    push_directive(tokens, "xor");
-                            }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
-                    }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    match &self.dtype {
-                            Dtype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Dtype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
-                    push_directive(tokens, "f16");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            match &self.boolop {
+                Boolop::And => {
+                    push_directive(tokens, "and");
+                }
+                Boolop::Xor => {
+                    push_directive(tokens, "xor");
+                }
+                Boolop::Or => {
+                    push_directive(tokens, "or");
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            match &self.dtype {
+                Dtype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Dtype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            push_directive(tokens, "f16");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.c_op { tokens.push(PtxToken::Exclaim); }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.c.unparse_tokens_mode(tokens, spaced);
+            if self.c_op {
+                tokens.push(PtxToken::Exclaim);
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_2 {
@@ -1012,87 +1090,95 @@ pub mod section_2 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    match &self.dtype {
-                            Dtype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Dtype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
-                    push_directive(tokens, "bf16");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            match &self.dtype {
+                Dtype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Dtype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            push_directive(tokens, "bf16");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -1102,105 +1188,116 @@ pub mod section_2 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    match &self.boolop {
-                            Boolop::And => {
-                                    push_directive(tokens, "and");
-                            }
-                            Boolop::Xor => {
-                                    push_directive(tokens, "xor");
-                            }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
-                    }
-                    match &self.dtype {
-                            Dtype::U16 => {
-                                    push_directive(tokens, "u16");
-                            }
-                            Dtype::S16 => {
-                                    push_directive(tokens, "s16");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
-                    push_directive(tokens, "bf16");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            match &self.boolop {
+                Boolop::And => {
+                    push_directive(tokens, "and");
+                }
+                Boolop::Xor => {
+                    push_directive(tokens, "xor");
+                }
+                Boolop::Or => {
+                    push_directive(tokens, "or");
+                }
+            }
+            match &self.dtype {
+                Dtype::U16 => {
+                    push_directive(tokens, "u16");
+                }
+                Dtype::S16 => {
+                    push_directive(tokens, "s16");
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            push_directive(tokens, "bf16");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.c_op { tokens.push(PtxToken::Exclaim); }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.c.unparse_tokens_mode(tokens, spaced);
+            if self.c_op {
+                tokens.push(PtxToken::Exclaim);
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_3 {
@@ -1213,87 +1310,95 @@ pub mod section_3 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    match &self.dtype {
-                            Dtype::F16x2 => {
-                                    push_directive(tokens, "f16x2");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            match &self.dtype {
+                Dtype::F16x2 => {
                     push_directive(tokens, "f16x2");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            push_directive(tokens, "f16x2");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -1303,105 +1408,116 @@ pub mod section_3 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                            Cmpop::Lo => {
-                                    push_directive(tokens, "lo");
-                            }
-                            Cmpop::Ls => {
-                                    push_directive(tokens, "ls");
-                            }
-                            Cmpop::Hi => {
-                                    push_directive(tokens, "hi");
-                            }
-                            Cmpop::Hs => {
-                                    push_directive(tokens, "hs");
-                            }
-                    }
-                    match &self.boolop {
-                            Boolop::And => {
-                                    push_directive(tokens, "and");
-                            }
-                            Boolop::Xor => {
-                                    push_directive(tokens, "xor");
-                            }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
-                    }
-                    if self.ftz {
-                            push_directive(tokens, "ftz");
-                    }
-                    match &self.dtype {
-                            Dtype::F16x2 => {
-                                    push_directive(tokens, "f16x2");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+                Cmpop::Lo => {
+                    push_directive(tokens, "lo");
+                }
+                Cmpop::Ls => {
+                    push_directive(tokens, "ls");
+                }
+                Cmpop::Hi => {
+                    push_directive(tokens, "hi");
+                }
+                Cmpop::Hs => {
+                    push_directive(tokens, "hs");
+                }
+            }
+            match &self.boolop {
+                Boolop::And => {
+                    push_directive(tokens, "and");
+                }
+                Boolop::Xor => {
+                    push_directive(tokens, "xor");
+                }
+                Boolop::Or => {
+                    push_directive(tokens, "or");
+                }
+            }
+            if self.ftz {
+                push_directive(tokens, "ftz");
+            }
+            match &self.dtype {
+                Dtype::F16x2 => {
                     push_directive(tokens, "f16x2");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            push_directive(tokens, "f16x2");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.c_op { tokens.push(PtxToken::Exclaim); }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.c.unparse_tokens_mode(tokens, spaced);
+            if self.c_op {
+                tokens.push(PtxToken::Exclaim);
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
 
 pub mod section_4 {
@@ -1414,72 +1530,80 @@ pub mod section_4 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                    }
-                    match &self.dtype {
-                            Dtype::Bf16x2 => {
-                                    push_directive(tokens, "bf16x2");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+            }
+            match &self.dtype {
+                Dtype::Bf16x2 => {
                     push_directive(tokens, "bf16x2");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            push_directive(tokens, "bf16x2");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
 
@@ -1489,89 +1613,99 @@ pub mod section_4 {
         }
         fn unparse_tokens_mode(&self, tokens: &mut ::std::vec::Vec<PtxToken>, spaced: bool) {
             push_opcode(tokens, "set");
-                    match &self.cmpop {
-                            Cmpop::Equ => {
-                                    push_directive(tokens, "equ");
-                            }
-                            Cmpop::Neu => {
-                                    push_directive(tokens, "neu");
-                            }
-                            Cmpop::Ltu => {
-                                    push_directive(tokens, "ltu");
-                            }
-                            Cmpop::Leu => {
-                                    push_directive(tokens, "leu");
-                            }
-                            Cmpop::Gtu => {
-                                    push_directive(tokens, "gtu");
-                            }
-                            Cmpop::Geu => {
-                                    push_directive(tokens, "geu");
-                            }
-                            Cmpop::Num => {
-                                    push_directive(tokens, "num");
-                            }
-                            Cmpop::Nan => {
-                                    push_directive(tokens, "nan");
-                            }
-                            Cmpop::Eq => {
-                                    push_directive(tokens, "eq");
-                            }
-                            Cmpop::Ne => {
-                                    push_directive(tokens, "ne");
-                            }
-                            Cmpop::Lt => {
-                                    push_directive(tokens, "lt");
-                            }
-                            Cmpop::Le => {
-                                    push_directive(tokens, "le");
-                            }
-                            Cmpop::Gt => {
-                                    push_directive(tokens, "gt");
-                            }
-                            Cmpop::Ge => {
-                                    push_directive(tokens, "ge");
-                            }
-                    }
-                    match &self.boolop {
-                            Boolop::And => {
-                                    push_directive(tokens, "and");
-                            }
-                            Boolop::Xor => {
-                                    push_directive(tokens, "xor");
-                            }
-                            Boolop::Or => {
-                                    push_directive(tokens, "or");
-                            }
-                    }
-                    match &self.dtype {
-                            Dtype::Bf16x2 => {
-                                    push_directive(tokens, "bf16x2");
-                            }
-                            Dtype::U32 => {
-                                    push_directive(tokens, "u32");
-                            }
-                            Dtype::S32 => {
-                                    push_directive(tokens, "s32");
-                            }
-                    }
+            match &self.cmpop {
+                Cmpop::Equ => {
+                    push_directive(tokens, "equ");
+                }
+                Cmpop::Neu => {
+                    push_directive(tokens, "neu");
+                }
+                Cmpop::Ltu => {
+                    push_directive(tokens, "ltu");
+                }
+                Cmpop::Leu => {
+                    push_directive(tokens, "leu");
+                }
+                Cmpop::Gtu => {
+                    push_directive(tokens, "gtu");
+                }
+                Cmpop::Geu => {
+                    push_directive(tokens, "geu");
+                }
+                Cmpop::Num => {
+                    push_directive(tokens, "num");
+                }
+                Cmpop::Nan => {
+                    push_directive(tokens, "nan");
+                }
+                Cmpop::Eq => {
+                    push_directive(tokens, "eq");
+                }
+                Cmpop::Ne => {
+                    push_directive(tokens, "ne");
+                }
+                Cmpop::Lt => {
+                    push_directive(tokens, "lt");
+                }
+                Cmpop::Le => {
+                    push_directive(tokens, "le");
+                }
+                Cmpop::Gt => {
+                    push_directive(tokens, "gt");
+                }
+                Cmpop::Ge => {
+                    push_directive(tokens, "ge");
+                }
+            }
+            match &self.boolop {
+                Boolop::And => {
+                    push_directive(tokens, "and");
+                }
+                Boolop::Xor => {
+                    push_directive(tokens, "xor");
+                }
+                Boolop::Or => {
+                    push_directive(tokens, "or");
+                }
+            }
+            match &self.dtype {
+                Dtype::Bf16x2 => {
                     push_directive(tokens, "bf16x2");
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.d.unparse_tokens_mode(tokens, spaced);
+                }
+                Dtype::U32 => {
+                    push_directive(tokens, "u32");
+                }
+                Dtype::S32 => {
+                    push_directive(tokens, "s32");
+                }
+            }
+            push_directive(tokens, "bf16x2");
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.d.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.a.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.a.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.b.unparse_tokens_mode(tokens, spaced);
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.b.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Comma);
-            if self.c_op { tokens.push(PtxToken::Exclaim); }
-                    if spaced { tokens.push(PtxToken::Space); }
-                    self.c.unparse_tokens_mode(tokens, spaced);
+            if self.c_op {
+                tokens.push(PtxToken::Exclaim);
+            }
+            if spaced {
+                tokens.push(PtxToken::Space);
+            }
+            self.c.unparse_tokens_mode(tokens, spaced);
             tokens.push(PtxToken::Semicolon);
-            if spaced { tokens.push(PtxToken::Newline); }
+            if spaced {
+                tokens.push(PtxToken::Newline);
+            }
         }
     }
-
 }
-

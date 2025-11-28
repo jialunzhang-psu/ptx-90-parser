@@ -1,8 +1,8 @@
 use crate::{LexError, lexer::PtxToken, span};
 use serde::Serialize;
-use thiserror::Error;
 #[cfg(debug_assertions)]
 use stacker;
+use thiserror::Error;
 
 pub(crate) mod common;
 pub(crate) mod function;

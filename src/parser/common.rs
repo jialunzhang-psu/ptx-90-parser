@@ -197,9 +197,11 @@ impl PtxParser for Label {
     fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
         alt(
             map(identifier_p(), |val, span| c!(Label { val })),
-            map(directive_p(), |name, span| c!(Label {
-                val = format!(".{name}")
-            })),
+            map(directive_p(), |name, span| {
+                c!(Label {
+                    val = format!(".{name}")
+                })
+            }),
         )
     }
 }
