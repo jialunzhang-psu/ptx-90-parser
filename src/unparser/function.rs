@@ -36,17 +36,19 @@ fn unparse_param(tokens: &mut Vec<PtxToken>, param: &ParameterDirective, spaced:
         } => {
             push_directive(tokens, "param");
             push_space(tokens, spaced);
+            // Alignment must come before type in PTX syntax
+            if let Some(value) = align {
+                push_directive(tokens, "align");
+                push_space(tokens, spaced);
+                push_decimal(tokens, *value);
+                push_space(tokens, spaced);
+            }
             ty.unparse_tokens_mode(tokens, spaced);
             if *ptr {
                 push_directive(tokens, "ptr");
             }
             if let Some(address_space) = space {
                 address_space.unparse_tokens_mode(tokens, spaced);
-            }
-            if let Some(value) = align {
-                push_directive(tokens, "align");
-                push_space(tokens, spaced);
-                push_decimal(tokens, *value);
             }
             push_space(tokens, spaced);
             push_identifier(tokens, &name.val);
