@@ -179,7 +179,8 @@ fn parses_callprototype_directive() {
     );
     assert_roundtrip::<StatementDirective>(multi_param_src);
 
-    let pointer_src = ".callprototype _ (.param .b64 .ptr .global .align 16 arg_ptr) .noreturn .abi_preserve 8 .abi_preserve_control 4;";
+    // Note: alignment must come before type in PTX syntax
+    let pointer_src = ".callprototype _ (.param .align 16 .b64 .ptr .global arg_ptr) .noreturn .abi_preserve 8 .abi_preserve_control 4;";
     let pointer = parse::<StatementDirective>(pointer_src);
     assert_statement_ast(
         &pointer,
