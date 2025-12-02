@@ -692,6 +692,11 @@ impl PtxUnparser for FuncFunctionDirective {
         tokens.push(PtxToken::LParen);
         unparse_param_list(tokens, &self.params, spaced);
         tokens.push(PtxToken::RParen);
+        // Emit pre-body declarations (.reg, .local, .shared, .param) before the body
+        for decl in &self.pre_body_declarations {
+            push_newline(tokens, spaced);
+            decl.unparse_tokens_mode(tokens, spaced);
+        }
         match &self.body {
             Some(body) => body.unparse_tokens_mode(tokens, spaced),
             None => {

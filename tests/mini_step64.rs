@@ -208,6 +208,7 @@ fn expected_module() -> Module {
                         span: span!(0..0),
                     }],
                     directives: vec![],
+                    pre_body_declarations: vec![],
                     body: Some(FunctionBody {
                         statements: vec![
                             reg("%r0", "b32"),

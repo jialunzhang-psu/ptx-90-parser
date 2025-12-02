@@ -42,6 +42,16 @@ pub struct FuncFunctionDirective {
     /// Example:
     /// .func foo (.reg .b32 N, .reg .f64 dbl) .noreturn { ... }
     pub directives: Vec<FuncFunctionHeaderDirective>,
+    /// Pre-body declarations (.reg, .local, .shared, .param) that appear between
+    /// the function header and the body. These are allowed by PTX but must appear
+    /// before the opening brace.
+    ///
+    /// Example:
+    /// .func foo()
+    ///     .reg .b32 %r0;
+    ///     .local .b8 stack[16];
+    /// { ... }
+    pub pre_body_declarations: Vec<StatementDirective>,
     /// Optional function body. Without body represents a function prototype.
     pub body: Option<FunctionBody>,
     pub span: Span,

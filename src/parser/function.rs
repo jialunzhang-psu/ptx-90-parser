@@ -670,6 +670,30 @@ impl PtxParser for FunctionBody {
     }
 }
 
+/// Parser for pre-body declarations (.reg, .local, .shared, .param) that appear
+/// between the function header and the opening brace.
+fn pre_body_declaration()
+-> impl Fn(&mut PtxTokenStream) -> Result<(StatementDirective, Span), PtxParseError> {
+    let reg_stmt = mapc!(register_statement(), StatementDirective::Reg { directive });
+
+    let local_stmt = mapc!(
+        skip_first(directive_exact_p("local"), VariableDirective::parse()),
+        StatementDirective::Local { directive }
+    );
+
+    let param_stmt = mapc!(
+        skip_first(directive_exact_p("param"), VariableDirective::parse()),
+        StatementDirective::Param { directive }
+    );
+
+    let shared_stmt = mapc!(
+        skip_first(directive_exact_p("shared"), VariableDirective::parse()),
+        StatementDirective::Shared { directive }
+    );
+
+    alt!(reg_stmt, local_stmt, param_stmt, shared_stmt)
+}
+
 impl PtxParser for FuncFunctionDirective {
     fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
         let return_spec = alt(
@@ -700,6 +724,7 @@ impl PtxParser for FuncFunctionDirective {
                     sep_by(ParameterDirective::parse(), comma_p()),
                 ),
                 many(FuncFunctionHeaderDirective::parse()),
+                many(pre_body_declaration()),
                 body_or_prototype,
             ),
             FuncFunctionDirective {
@@ -708,6 +733,7 @@ impl PtxParser for FuncFunctionDirective {
                 name,
                 params,
                 directives,
+                pre_body_declarations,
                 body
             }
         )
