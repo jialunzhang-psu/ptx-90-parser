@@ -457,6 +457,8 @@ pub struct CallTargetsDirective {
 ///     label: .callprototype (ret-param) _ (param-list) {.abi_preserve N} {.abi_preserve_control N};
 #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct CallPrototypeDirective {
+    /// Optional label for the call prototype (used for indirect calls)
+    pub label: Option<Label>,
     pub return_param: Option<ParameterDirective>,
     pub params: Vec<ParameterDirective>,
     pub noreturn: bool,

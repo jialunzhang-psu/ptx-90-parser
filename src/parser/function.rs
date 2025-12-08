@@ -69,6 +69,7 @@ impl PtxParser for StatementDirective {
             )),
             |(return_param, params, noreturn, abi_preserve, abi_preserve_control), span| {
                 let directive = CallPrototypeDirective {
+                    label: None,
                     return_param,
                     params,
                     noreturn,
@@ -161,7 +162,7 @@ impl PtxParser for FunctionStatement {
             FunctionStatement::Instruction { instruction }
         );
 
-        alt!(label_stmt, block_stmt, directive_stmt, instruction_stmt)
+        alt!(label_stmt, directive_stmt, block_stmt, instruction_stmt)
     }
 }
 

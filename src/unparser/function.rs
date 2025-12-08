@@ -372,6 +372,12 @@ impl PtxUnparser for StatementDirective {
                 section.unparse_tokens_mode(tokens, spaced);
             }
             StatementDirective::CallPrototype { directive, .. } => {
+                // Emit optional label prefix
+                if let Some(label) = &directive.label {
+                    label.unparse_tokens(tokens);
+                    tokens.push(PtxToken::Colon);
+                    push_space(tokens, spaced);
+                }
                 push_directive(tokens, "callprototype");
                 push_space(tokens, spaced);
                 if let Some(ret) = &directive.return_param {

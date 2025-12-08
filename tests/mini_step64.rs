@@ -330,6 +330,7 @@ fn expected_module() -> Module {
                             FunctionStatement::Directive {
                                 directive: StatementDirective::CallPrototype {
                                     directive: CallPrototypeDirective {
+                                        label: None,
                                         return_param: None,
                                         params: vec![ParameterDirective::Parameter {
                                             align: None,

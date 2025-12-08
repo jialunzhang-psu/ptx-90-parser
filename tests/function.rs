@@ -435,6 +435,7 @@ fn callproto_stmt(
 ) -> StatementDirective {
     StatementDirective::CallPrototype {
         directive: CallPrototypeDirective {
+            label: None,
             return_param,
             params,
             noreturn,
@@ -512,4 +513,64 @@ fn make_param(
         array: Vec::new(),
         span: span!(0..0),
     }
+}
+
+#[test]
+fn parses_labeled_callprototype_in_function_body() {
+    use ptx_parser::parse_ptx;
+
+    // Test labeled callprototype with underscore return (no return value)
+    let ptx_underscore = r#"
+.version 8.0
+.target sm_80
+.address_size 64
+
+.visible .func test_func()
+{
+    u0_92_call_proto_0: .callprototype _ ();
+    ret;
+}
+"#;
+    parse_ptx(ptx_underscore).expect("should parse labeled callprototype with underscore");
+
+    // Test simple labeled callprototype
+    let ptx_labeled = r#"
+.version 8.0
+.target sm_80
+.address_size 64
+
+.visible .func test_func()
+{
+    my_proto: .callprototype _ ();
+    ret;
+}
+"#;
+    parse_ptx(ptx_labeled).expect("should parse simple labeled callprototype");
+
+    // Test unlabeled callprototype (should still work)
+    let ptx_simple = r#"
+.version 8.0
+.target sm_80
+.address_size 64
+
+.visible .func test_func()
+{
+    .callprototype _ ();
+    ret;
+}
+"#;
+    parse_ptx(ptx_simple).expect("should parse unlabeled callprototype");
+
+    // Test function with return parameter
+    let ptx_func_ret = r#"
+.version 8.0
+.target sm_80
+.address_size 64
+
+.visible .func (.param .b8 func_retval0) test_func(.param .u64 param0)
+{
+    ret;
+}
+"#;
+    parse_ptx(ptx_func_ret).expect("should parse function with return parameter");
 }
