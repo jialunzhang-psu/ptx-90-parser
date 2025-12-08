@@ -574,3 +574,50 @@ fn parses_labeled_callprototype_in_function_body() {
 "#;
     parse_ptx(ptx_func_ret).expect("should parse function with return parameter");
 }
+
+#[test]
+fn parses_callprototype_with_parenthesized_return() {
+    // PTX allows two syntaxes for callprototype:
+    // 1. Bare return spec: .callprototype RET_SPEC (params);
+    // 2. Parenthesized return: .callprototype (RET_SPEC) _ (params);
+    // The parenthesized form includes an explicit function identifier placeholder `_`
+
+    // Test parenthesized return with param
+    let paren_return_src = ".callprototype (.param .b8 _) _ ();";
+    let paren_return = parse::<StatementDirective>(paren_return_src);
+    assert_statement_ast(
+        &paren_return,
+        callproto_stmt(
+            Some(make_param(DataType::B8 { span: span!(0..0) }, "_", None, false, None)),
+            vec![],
+            false,
+            None,
+            None,
+        ),
+        paren_return_src,
+    );
+
+    // Test parenthesized underscore (no return)
+    let paren_underscore_src = ".callprototype (_) _ ();";
+    let paren_underscore = parse::<StatementDirective>(paren_underscore_src);
+    assert_statement_ast(
+        &paren_underscore,
+        callproto_stmt(None, vec![], false, None, None),
+        paren_underscore_src,
+    );
+
+    // Test parenthesized return with params
+    let paren_with_params_src = ".callprototype (.param .u32 retval) _ (.param .u64 arg0);";
+    let paren_with_params = parse::<StatementDirective>(paren_with_params_src);
+    assert_statement_ast(
+        &paren_with_params,
+        callproto_stmt(
+            Some(make_param(DataType::U32 { span: span!(0..0) }, "retval", None, false, None)),
+            vec![make_param(DataType::U64 { span: span!(0..0) }, "arg0", None, false, None)],
+            false,
+            None,
+            None,
+        ),
+        paren_with_params_src,
+    );
+}

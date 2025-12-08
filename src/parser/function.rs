@@ -168,10 +168,32 @@ impl PtxParser for FunctionStatement {
 
 fn return_spec_parser()
 -> impl Fn(&mut PtxTokenStream) -> Result<(Option<ParameterDirective>, Span), PtxParseError> {
-    alt(
-        map(ParameterDirective::parse(), |param, _| Some(param)),
-        map(underscore_placeholder(), |_, _| None),
-    )
+    // Return spec can be:
+    // 1. (.param .type name) _ - parenthesized parameter with function ident placeholder
+    // 2. (_) _ - parenthesized underscore with function ident placeholder
+    // 3. .param .type name - bare parameter (no function ident)
+    // 4. _ - bare underscore placeholder (no function ident)
+    //
+    // When return spec is parenthesized, there's an explicit function identifier `_` after it.
+    // When return spec is bare (either _ or .param...), there's no explicit function ident.
+    let paren_param = map(
+        skip_second(
+            between(lparen_p(), rparen_p(), ParameterDirective::parse()),
+            underscore_placeholder(),
+        ),
+        |param, _| Some(param),
+    );
+    let paren_underscore = map(
+        skip_second(
+            between(lparen_p(), rparen_p(), underscore_placeholder()),
+            underscore_placeholder(),
+        ),
+        |_, _| None,
+    );
+    let bare_param = map(ParameterDirective::parse(), |param, _| Some(param));
+    let bare_underscore = map(underscore_placeholder(), |_, _| None);
+
+    alt!(paren_param, paren_underscore, bare_param, bare_underscore)
 }
 
 fn underscore_placeholder() -> impl Fn(&mut PtxTokenStream) -> Result<((), Span), PtxParseError> {
