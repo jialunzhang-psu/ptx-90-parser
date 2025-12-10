@@ -142,12 +142,9 @@ impl PtxUnparser for VariableDirective {
             &self.attributes,
             spaced,
         );
-        if spaced {
-            if let Some(PtxToken::Space) = tokens.last() {
-                // remove trailing space if prefix was empty
-                tokens.pop();
-            }
-        }
+        // Note: We don't remove any trailing space here. The caller (e.g., ModuleVariableDirective)
+        // adds a space before us, and unparse_prefix adds spaces after each modifier. Both are needed
+        // for proper spacing in the output.
         self.ty.unparse_tokens_mode(tokens, spaced);
         push_space(tokens, spaced);
         push_identifier(tokens, &self.name.val);

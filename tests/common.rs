@@ -1,5 +1,5 @@
 mod util;
-use ptx_parser::{ParseErrorKind, span, r#type::*};
+use ptx_parser::{ParseErrorKind, PtxUnlexer, PtxUnparser, span, r#type::*};
 use util::*;
 
 #[test]
@@ -328,6 +328,38 @@ fn parses_module_variable_directives() {
         },
         _ => panic!("expected global directive"),
     }
+}
+
+#[test]
+fn unparses_variable_with_alignment_spaced() {
+    // Test that to_tokens_spaced() produces valid PTX with proper spacing
+    // between alignment value and type (e.g., ".align 8 .b8" not ".align 8.b8")
+    let directive = parse::<ModuleVariableDirective>(".global .align 8 .b8 stack_slot[16];");
+    let tokens = directive.to_tokens_spaced();
+    let output = PtxUnlexer::to_string(&tokens).expect("unparse failed");
+    assert!(
+        !output.contains("8.b8"),
+        "Found malformed '8.b8' - missing space between alignment value and type. Output: {}",
+        output
+    );
+    assert!(
+        output.contains(".align 8 .b8"),
+        "Expected '.align 8 .b8' in output: {}",
+        output
+    );
+}
+
+#[test]
+fn unparses_variable_without_modifiers_spaced() {
+    // Test that variables without modifiers still have proper spacing
+    let directive = parse::<ModuleVariableDirective>(".global .b8 foo;");
+    let tokens = directive.to_tokens_spaced();
+    let output = PtxUnlexer::to_string(&tokens).expect("unparse failed");
+    assert!(
+        output.contains(".global .b8"),
+        "Expected '.global .b8' in output: {}",
+        output
+    );
 }
 
 #[test]
