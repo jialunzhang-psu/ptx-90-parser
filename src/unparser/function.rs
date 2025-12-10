@@ -374,14 +374,36 @@ impl PtxUnparser for StatementDirective {
             StatementDirective::CallPrototype { directive, .. } => {
                 push_directive(tokens, "callprototype");
                 push_space(tokens, spaced);
-                if let Some(ret) = &directive.return_param {
-                    unparse_param(tokens, ret, spaced);
-                } else {
-                    push_identifier(tokens, "_");
+
+                match &directive.return_spec {
+                    CallPrototypeReturnSpec::BareUnderscore => {
+                        push_identifier(tokens, "_");
+                    }
+                    CallPrototypeReturnSpec::BareParam(param) => {
+                        unparse_param(tokens, param, spaced);
+                    }
+                    CallPrototypeReturnSpec::ParenUnderscore => {
+                        tokens.push(PtxToken::LParen);
+                        push_identifier(tokens, "_");
+                        tokens.push(PtxToken::RParen);
+                        push_space(tokens, spaced);
+                        push_identifier(tokens, "_");
+                    }
+                    CallPrototypeReturnSpec::ParenParam(param) => {
+                        tokens.push(PtxToken::LParen);
+                        unparse_param(tokens, param, spaced);
+                        tokens.push(PtxToken::RParen);
+                        push_space(tokens, spaced);
+                        push_identifier(tokens, "_");
+                    }
                 }
+
+                // Parameter list
+                push_space(tokens, spaced);
                 tokens.push(PtxToken::LParen);
                 unparse_param_list(tokens, &directive.params, spaced);
                 tokens.push(PtxToken::RParen);
+
                 if directive.noreturn {
                     push_space(tokens, spaced);
                     push_directive(tokens, "noreturn");

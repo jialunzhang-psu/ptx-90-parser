@@ -36,12 +36,12 @@ pub use module::{
 
 // Re-export function types
 pub use function::{
-    AliasFunctionDirective, BranchTargetsDirective, CallPrototypeDirective, CallTargetsDirective,
-    DwarfDirective, DwarfDirectiveKind, EntryFunctionDirective, EntryFunctionHeaderDirective,
-    FuncFunctionDirective, FuncFunctionHeaderDirective, FunctionBody, FunctionDim,
-    FunctionStatement, LocationDirective, LocationInlinedAt, PragmaDirective, PragmaDirectiveKind,
-    RegisterDirective, RegisterTarget, SectionDirective, SectionEntry, StatementDirective,
-    StatementSectionDirectiveLine,
+    AliasFunctionDirective, BranchTargetsDirective, CallPrototypeDirective,
+    CallPrototypeReturnSpec, CallTargetsDirective, DwarfDirective, DwarfDirectiveKind,
+    EntryFunctionDirective, EntryFunctionHeaderDirective, FuncFunctionDirective,
+    FuncFunctionHeaderDirective, FunctionBody, FunctionDim, FunctionStatement, LocationDirective,
+    LocationInlinedAt, PragmaDirective, PragmaDirectiveKind, RegisterDirective, RegisterTarget,
+    SectionDirective, SectionEntry, StatementDirective, StatementSectionDirectiveLine,
 };
 
 // Re-export variable types

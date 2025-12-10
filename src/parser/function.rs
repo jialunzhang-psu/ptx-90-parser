@@ -17,12 +17,13 @@ use crate::{
     seq_n,
     r#type::{
         AliasFunctionDirective, AttributeDirective, BranchTargetsDirective, CallPrototypeDirective,
-        CallTargetsDirective, DataType, DwarfDirective, DwarfDirectiveKind, EntryFunctionDirective,
-        EntryFunctionHeaderDirective, FuncFunctionDirective, FuncFunctionHeaderDirective,
-        FunctionBody, FunctionDim, FunctionStatement, FunctionSymbol, Instruction, Label,
-        LocationDirective, LocationInlinedAt, ParameterDirective, PragmaDirective,
-        PragmaDirectiveKind, RegisterDirective, RegisterTarget, SectionDirective, SectionEntry,
-        StatementDirective, StatementSectionDirectiveLine, VariableDirective, VariableSymbol,
+        CallPrototypeReturnSpec, CallTargetsDirective, DataType, DwarfDirective, DwarfDirectiveKind,
+        EntryFunctionDirective, EntryFunctionHeaderDirective, FuncFunctionDirective,
+        FuncFunctionHeaderDirective, FunctionBody, FunctionDim, FunctionStatement, FunctionSymbol,
+        Instruction, Label, LocationDirective, LocationInlinedAt, ParameterDirective,
+        PragmaDirective, PragmaDirectiveKind, RegisterDirective, RegisterTarget, SectionDirective,
+        SectionEntry, StatementDirective, StatementSectionDirectiveLine, VariableDirective,
+        VariableSymbol,
     },
 };
 
@@ -67,9 +68,9 @@ impl PtxParser for StatementDirective {
                     abi_preserve_control_parser(),
                 ),
             )),
-            |(return_param, params, noreturn, abi_preserve, abi_preserve_control), span| {
+            |(return_spec, params, noreturn, abi_preserve, abi_preserve_control), span| {
                 let directive = CallPrototypeDirective {
-                    return_param,
+                    return_spec,
                     params,
                     noreturn,
                     abi_preserve,
@@ -166,11 +167,39 @@ impl PtxParser for FunctionStatement {
 }
 
 fn return_spec_parser()
--> impl Fn(&mut PtxTokenStream) -> Result<(Option<ParameterDirective>, Span), PtxParseError> {
-    alt(
-        map(ParameterDirective::parse(), |param, _| Some(param)),
-        map(underscore_placeholder(), |_, _| None),
-    )
+-> impl Fn(&mut PtxTokenStream) -> Result<(CallPrototypeReturnSpec, Span), PtxParseError> {
+    // Return spec can be:
+    // 1. (.param .type name) _ - parenthesized parameter with function ident placeholder
+    // 2. (_) _ - parenthesized underscore with function ident placeholder
+    // 3. .param .type name - bare parameter (no function ident)
+    // 4. _ - bare underscore placeholder (no function ident)
+    //
+    // When return spec is parenthesized, there's an explicit function identifier `_` after it.
+    // When return spec is bare (either _ or .param...), there's no explicit function ident.
+    let paren_param = map(
+        skip_second(
+            between(lparen_p(), rparen_p(), ParameterDirective::parse()),
+            underscore_placeholder(),
+        ),
+        |param, _| CallPrototypeReturnSpec::ParenParam(param),
+    );
+    let paren_underscore = map(
+        skip_second(
+            between(lparen_p(), rparen_p(), underscore_placeholder()),
+            underscore_placeholder(),
+        ),
+        |_, _| CallPrototypeReturnSpec::ParenUnderscore,
+    );
+    let bare_param = map(
+        ParameterDirective::parse(),
+        |param, _| CallPrototypeReturnSpec::BareParam(param),
+    );
+    let bare_underscore = map(
+        underscore_placeholder(),
+        |_, _| CallPrototypeReturnSpec::BareUnderscore,
+    );
+
+    alt!(paren_param, paren_underscore, bare_param, bare_underscore)
 }
 
 fn underscore_placeholder() -> impl Fn(&mut PtxTokenStream) -> Result<((), Span), PtxParseError> {
