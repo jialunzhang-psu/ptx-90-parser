@@ -742,6 +742,14 @@ impl PtxParser for FuncFunctionDirective {
 
 impl PtxParser for EntryFunctionDirective {
     fn parse() -> impl Fn(&mut PtxTokenStream) -> Result<(Self, Span), PtxParseError> {
+        // Entry functions can be either:
+        // 1. Forward declarations (prototypes): .entry name();
+        // 2. Definitions: .entry name() { ... }
+        let body_or_prototype = alt(
+            map(FunctionBody::parse(), |body, _| Some(body)),
+            map(semicolon_p(), |_, _| None),
+        );
+
         mapc!(
             seq_n!(
                 skip_first(directive_exact_p("entry"), FunctionSymbol::parse()),
@@ -751,7 +759,7 @@ impl PtxParser for EntryFunctionDirective {
                     sep_by(ParameterDirective::parse(), comma_p()),
                 ),
                 many(EntryFunctionHeaderDirective::parse()),
-                optional(FunctionBody::parse()),
+                body_or_prototype,
             ),
             EntryFunctionDirective {
                 name,

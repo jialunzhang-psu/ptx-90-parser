@@ -250,6 +250,60 @@ fn first_instruction_in_statements(statements: &[FunctionStatement]) -> Option<&
 }
 
 #[test]
+fn test_entry_function_forward_declaration() {
+    ptx_parser::run_with_large_stack(|| {
+        // Test parsing entry function forward declarations (prototypes)
+        let source = r#".version 8.0
+.target sm_80
+.address_size 64
+
+.visible .entry test();
+
+.visible .entry test()
+{
+    ret;
+}
+"#;
+
+        let tokens = tokenize(source).expect("tokenization should succeed");
+        let mut stream = PtxTokenStream::new(&tokens);
+        let (module, _) = Module::parse()(&mut stream).expect("module parsing should succeed");
+
+        // Should have 5 directives: version, target, address_size, entry prototype, entry definition
+        assert_eq!(module.directives.len(), 5, "should have 5 directives");
+
+        // Find entry functions
+        let entries: Vec<_> = module
+            .directives
+            .iter()
+            .filter_map(|d| match d {
+                ModuleDirective::EntryFunction { directive, .. } => Some(directive),
+                _ => None,
+            })
+            .collect();
+
+        assert_eq!(entries.len(), 2, "should have 2 entry function directives");
+
+        // First entry should be a forward declaration (no body)
+        assert!(
+            entries[0].body.is_none(),
+            "first entry should be a forward declaration (no body)"
+        );
+        assert_eq!(entries[0].name.val, "test", "first entry should be named 'test'");
+
+        // Second entry should have a body
+        assert!(
+            entries[1].body.is_some(),
+            "second entry should have a body"
+        );
+        assert_eq!(entries[1].name.val, "test", "second entry should be named 'test'");
+
+        // Test roundtrip
+        util::assert_roundtrip::<Module>(source);
+    });
+}
+
+#[test]
 fn test_parse_labels_and_predicates() {
     ptx_parser::run_with_large_stack(|| {
         let source = r#"
