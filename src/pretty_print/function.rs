@@ -393,7 +393,7 @@ impl TreeDisplay for CallPrototypeDirective {
             "CallPrototypeDirective [{}]",
             f.format_raw(self.span, source)
         ))?;
-        f.field_option(false, "return_param", &self.return_param, source)?;
+        f.field(false, "return_spec", &format!("{:?}", self.return_spec))?;
         f.field_vec(false, "params", &self.params, source)?;
         f.field(false, "noreturn", &self.noreturn.to_string())?;
         match self.abi_preserve {

@@ -4,13 +4,13 @@ use std::fs;
 
 use ptx_parser::r#type::{
     AddressSize, AddressSizeDirective, BranchTargetsDirective, CallPrototypeDirective,
-    CallTargetsDirective, CodeLinkage, DataLinkage, DataType, EntryFunctionDirective,
-    FileDirective, FuncFunctionDirective, FunctionBody, FunctionStatement, FunctionSymbol,
-    GlobalInitializer, Immediate, InitializerValue, Instruction, Label, LocationDirective, Module,
-    ModuleDebugDirective, ModuleDirective, ModuleInfoDirectiveKind, ModuleVariableDirective,
-    ParameterDirective, PragmaDirective, PragmaDirectiveKind, RegisterDirective, RegisterTarget,
-    StatementDirective, TargetDirective, TargetString, VariableDirective, VariableModifier,
-    VariableSymbol, VersionDirective,
+    CallPrototypeReturnSpec, CallTargetsDirective, CodeLinkage, DataLinkage, DataType,
+    EntryFunctionDirective, FileDirective, FuncFunctionDirective, FunctionBody, FunctionStatement,
+    FunctionSymbol, GlobalInitializer, Immediate, InitializerValue, Instruction, Label,
+    LocationDirective, Module, ModuleDebugDirective, ModuleDirective, ModuleInfoDirectiveKind,
+    ModuleVariableDirective, ParameterDirective, PragmaDirective, PragmaDirectiveKind,
+    RegisterDirective, RegisterTarget, StatementDirective, TargetDirective, TargetString,
+    VariableDirective, VariableModifier, VariableSymbol, VersionDirective,
 };
 use ptx_parser::{PtxParser, PtxTokenStream, PtxUnlexer, PtxUnparser, span, tokenize};
 
@@ -330,7 +330,7 @@ fn expected_module() -> Module {
                             FunctionStatement::Directive {
                                 directive: StatementDirective::CallPrototype {
                                     directive: CallPrototypeDirective {
-                                        return_param: None,
+                                        return_spec: CallPrototypeReturnSpec::BareUnderscore,
                                         params: vec![ParameterDirective::Parameter {
                                             align: None,
                                             ty: DataType::U32 { span: span!(0..0) },

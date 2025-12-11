@@ -444,6 +444,25 @@ pub struct CallTargetsDirective {
     pub span: Span,
 }
 
+/// Return specification for a `.callprototype` directive.
+///
+/// PTX supports two syntax forms for the return spec:
+/// - Bare: `.callprototype _ (params)` or `.callprototype .param .type name (params)`
+/// - Parenthesized: `.callprototype (_) _ (params)` or `.callprototype (.param .type name) _ (params)`
+///
+/// The parenthesized form includes an explicit `_` function identifier placeholder.
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub enum CallPrototypeReturnSpec {
+    /// Bare underscore: `.callprototype _ ...`
+    BareUnderscore,
+    /// Bare parameter: `.callprototype .param .type name ...`
+    BareParam(ParameterDirective),
+    /// Parenthesized underscore: `.callprototype (_) _ ...`
+    ParenUnderscore,
+    /// Parenthesized parameter: `.callprototype (.param .type name) _ ...`
+    ParenParam(ParameterDirective),
+}
+
 /// Structured representation of a `.callprototype` directive.
 ///
 /// Syntax:
@@ -457,7 +476,7 @@ pub struct CallTargetsDirective {
 ///     label: .callprototype (ret-param) _ (param-list) {.abi_preserve N} {.abi_preserve_control N};
 #[derive(Debug, Clone, PartialEq, Spanned, Serialize)]
 pub struct CallPrototypeDirective {
-    pub return_param: Option<ParameterDirective>,
+    pub return_spec: CallPrototypeReturnSpec,
     pub params: Vec<ParameterDirective>,
     pub noreturn: bool,
     pub abi_preserve: Option<u32>,
